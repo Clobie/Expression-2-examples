@@ -1,0 +1,1572 @@
+@name iRust
+@outputs CoreHolo:entity Master:entity Use Reload Attack1 Attack2 LastSaid:string LastSaidWhen Holo:entity
+@outputs Mode [R1 R2 R3 R4 R5 R6 EyeRanger]:ranger AimEnt:entity Interval M2Timer SpawnLag Materials:array Colors:array Sounds:array
+@outputs TempEntity:entity SoundsL:array SoundP:array SoundHologram:entity Skin
+#@model models/hunter/plates/plate2x3.mdl
+
+# SETTINGS
+Skin = 1
+
+# SKINS:
+# 1 - Rust
+# 2 - sci-fi base
+# 3 - plastic rainbow
+# 4 - black/white
+
+
+propSpawnUndo(0)
+
+if(!Master){Master=findPlayerByName("s u c c")}
+
+
+#runOnTick(1)
+interval(ops()/40)
+
+Master=owner()
+
+if(first()){
+    if(Skin==1){
+# MATERIALS AND COLORS
+# FOUNDATIONS
+Materials[1, string]="models/props_wasteland/wood_fence01a_skin2"
+Colors[1, vector]=vec(255)
+
+# PILLARS
+Materials[2, string]="models/props_wasteland/wood_fence01a_skin2"
+Colors[2, vector]=vec(200)
+
+# WALLS
+Materials[3, string]="models/props_wasteland/wood_fence01a_skin2"
+Colors[3, vector]=vec(255)
+
+# DOORWAYS
+Materials[4, string]="models/props_wasteland/wood_fence01a_skin2"
+Colors[4, vector]=vec(255)
+
+# WINDOWS
+Materials[5, string]="models/props_wasteland/wood_fence01a_skin2"
+Colors[5, vector]=vec(255)
+
+# STAIRS
+Materials[6, string]="models/props_wasteland/wood_fence01a_skin2"
+Colors[6, vector]=vec(200)
+
+#RAMPS
+Materials[7, string]="models/props_wasteland/wood_fence01a_skin2"
+Colors[7, vector]=vec(200)
+
+# SOUNDS
+Sounds[1,string]="doors/door1_stop.wav"
+SoundsL[1,number]=0.1
+SoundP[1,number]=255
+}
+
+if(Skin==2){
+# MATERIALS AND COLORS
+# FOUNDATIONS
+Materials[1, string]="phoenix_storms/metalfloor_2-3"
+Colors[1, vector]=vec(255)
+
+# PILLARS
+Materials[2, string]="phoenix_storms/stripes"
+Colors[2, vector]=vec(200)
+
+# WALLS
+Materials[3, string]="phoenix_storms/dome"
+Colors[3, vector]=vec(255)
+
+# DOORWAYS
+Materials[4, string]="phoenix_storms/dome"
+Colors[4, vector]=vec(255)
+
+# WINDOWS
+Materials[5, string]="phoenix_storms/dome"
+Colors[5, vector]=vec(255)
+
+# STAIRS
+Materials[6, string]="phoenix_storms/dome"
+Colors[6, vector]=vec(200)
+
+#RAMPS
+Materials[7, string]="phoenix_storms/dome"
+Colors[7, vector]=vec(200)
+
+# SOUNDS
+Sounds[1,string]="doors/door1_stop.wav"
+SoundsL[1,number]=0.1
+SoundP[1,number]=255
+}
+
+if(Skin==3){
+# MATERIALS AND COLORS
+# FOUNDATIONS
+Materials[1, string]="models/shiny"
+Colors[1, vector]=vec(255,0,255)
+
+# PILLARS
+Materials[2, string]="models/shiny"
+Colors[2, vector]=vec(255,100,60)
+
+# WALLS
+Materials[3, string]="models/shiny"
+Colors[3, vector]=vec(60,255,60)
+
+# DOORWAYS
+Materials[4, string]="models/shiny"
+Colors[4, vector]=vec(60,255,60)
+
+# WINDOWS
+Materials[5, string]="models/shiny"
+Colors[5, vector]=vec(60,255,60)
+
+# STAIRS
+Materials[6, string]="models/shiny"
+Colors[6, vector]=vec(60,200,60)
+
+#RAMPS
+Materials[7, string]="models/shiny"
+Colors[7, vector]=vec(60,200,60)
+
+# SOUNDS
+Sounds[1,string]="models/shiny"
+SoundsL[1,number]=0.1
+SoundP[1,number]=255
+}
+
+if(Skin==4){
+# MATERIALS AND COLORS
+# FOUNDATIONS
+Materials[1, string]="models/shiny"
+Colors[1, vector]=vec(0)
+
+# PILLARS
+Materials[2, string]="models/shiny"
+Colors[2, vector]=vec(0)
+
+# WALLS
+Materials[3, string]="models/shiny"
+Colors[3, vector]=vec(255)
+
+# DOORWAYS
+Materials[4, string]="models/shiny"
+Colors[4, vector]=vec(255)
+
+# WINDOWS
+Materials[5, string]="models/shiny"
+Colors[5, vector]=vec(255)
+
+# STAIRS
+Materials[6, string]="models/shiny"
+Colors[6, vector]=vec(255)
+
+#RAMPS
+Materials[7, string]="models/shiny"
+Colors[7, vector]=vec(255)
+
+# SOUNDS
+Sounds[1,string]="models/shiny"
+SoundsL[1,number]=0.1
+SoundP[1,number]=255
+}
+
+
+    entity():setColor(vec(255,255,0))
+    Mode=2
+        
+    for(I=1,37){
+        holoCreate(I)
+        holoPos(I, entity():boxCenterW()+vec(0,0,90)) # delete later
+        holoColor(I, randvec(40,255))
+        holoDisableShading(I, 1)
+    }
+    
+    # CORE HOLOGRAM FOR POINT-LINE INTERSECTION
+    holoPos(1, entity():toWorld(vec(0,0,60)))
+    holoAng(1, entity():toWorld(ang(-90,0,0)))
+    holoScaleUnits(1, vec(1))
+    holoParent(1, entity())
+    
+    CoreHolo=holoEntity(1)
+    for(I=1,9){holoColor(I,vec(0))}
+    #TOP BUTTON OUTLINE
+    holoPos(2, CoreHolo:toWorld(vec(15,0,0)))
+    holoAng(2, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(2, "hq_cylinder")
+    holoScaleUnits(2, vec(10,10,0.3))
+    holoParent(2, CoreHolo)
+    
+    #BOTTOM BUTTON OUTLINE
+    holoPos(3, CoreHolo:toWorld(vec(-15,0,0)))
+    holoAng(3, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(3, "hq_cylinder")
+    holoScaleUnits(3, vec(10,10,0.3))
+    holoParent(3, CoreHolo)
+    
+    #RIGHT BUTTON OUTLINE
+    holoPos(4, CoreHolo:toWorld(vec(0,15,0)))
+    holoAng(4, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(4, "hq_cylinder")
+    holoScaleUnits(4, vec(10,10,0.3))
+    holoParent(4, CoreHolo)
+    
+    #LEFT BUTTON OUTLINE
+    holoPos(5, CoreHolo:toWorld(vec(0,-15,0)))
+    holoAng(5, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(5, "hq_cylinder")
+    holoScaleUnits(5, vec(10,10,0.3))
+    holoParent(5, CoreHolo)
+    
+    #TOP-RIGHT BUTTON OUTLINE
+    holoPos(6, CoreHolo:toWorld(vec(10.7,10.7,0)))
+    holoAng(6, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(6, "hq_cylinder")
+    holoScaleUnits(6, vec(10,10,0.3))
+    holoParent(6, CoreHolo)
+    
+    #TOP-LEFT BUTTON OUTLINE
+    holoPos(7, CoreHolo:toWorld(vec(10.7,-10.7,0)))
+    holoAng(7, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(7, "hq_cylinder")
+    holoScaleUnits(7, vec(10,10,0.3))
+    holoParent(7, CoreHolo)
+    
+    #BOTTOM-RIGHT BUTTON OUTLINE
+    holoPos(8, CoreHolo:toWorld(vec(-10.7,10.7,0)))
+    holoAng(8, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(8, "hq_cylinder")
+    holoScaleUnits(8, vec(10,10,0.3))
+    holoParent(8, CoreHolo)
+    
+    #BOTTOM LEFT OUTLINE
+    holoPos(9, CoreHolo:toWorld(vec(-10.7,-10.7,0)))
+    holoAng(9, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(9, "hq_cylinder")
+    holoScaleUnits(9, vec(10,10,0.3))
+    holoParent(9, CoreHolo)
+    
+    # HOLOMARKER 1
+    # HOLOGRAM 10 RESERVED FOR MAIN SPAWN-MARKER
+    
+    for(I=11,18){holoColor(I,vec(255))}
+    #TOP BUTTON FILL
+    holoPos(11, CoreHolo:toWorld(vec(15,0,0.2)))
+    holoAng(11, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(11, "hq_cylinder")
+    holoScaleUnits(11, vec(9,9,0.3))
+    holoParent(11, CoreHolo)
+    holoColor(11, vec(255))
+        
+    #TOP BUTTON OUTLINE
+    holoPos(12, CoreHolo:toWorld(vec(-15,0,0.2)))
+    holoAng(12, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(12, "hq_cylinder")
+    holoScaleUnits(12, vec(9,9,0.3))
+    holoParent(12, CoreHolo)
+    
+    #RIGHT BUTTON OUTLINE
+    holoPos(13, CoreHolo:toWorld(vec(0,15,0.2)))
+    holoAng(13, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(13, "hq_cylinder")
+    holoScaleUnits(13, vec(9,9,0.3))
+    holoParent(13, CoreHolo)
+    
+    #LEFT BUTTON OUTLINE
+    holoPos(14, CoreHolo:toWorld(vec(0,-15,0.2)))
+    holoAng(14, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(14, "hq_cylinder")
+    holoScaleUnits(14, vec(9,9,0.3))
+    holoParent(14, CoreHolo)
+    
+    #TOP-RIGHT BUTTON OUTLINE
+    holoPos(15, CoreHolo:toWorld(vec(10.7,10.7,0.2)))
+    holoAng(15, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(15, "hq_cylinder")
+    holoScaleUnits(15, vec(9,9,0.3))
+    holoParent(15, CoreHolo)
+    
+    #TOP-LEFT BUTTON OUTLINE
+    holoPos(16, CoreHolo:toWorld(vec(10.7,-10.7,0.2)))
+    holoAng(16, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(16, "hq_cylinder")
+    holoScaleUnits(16, vec(9,9,0.3))
+    holoParent(16, CoreHolo)
+    
+    #BOTTOM-RIGHT BUTTON OUTLINE
+    holoPos(17, CoreHolo:toWorld(vec(-10.7,10.7,0.2)))
+    holoAng(17, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(17, "hq_cylinder")
+    holoScaleUnits(17, vec(9,9,0.3))
+    holoParent(17, CoreHolo)
+    
+    #BOTTOM LEFT OUTLINE
+    holoPos(18, CoreHolo:toWorld(vec(-10.7,-10.7,0.2)))
+    holoAng(18, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(18, "hq_cylinder")
+    holoScaleUnits(18, vec(9,9,0.3))
+    holoParent(18, CoreHolo)
+    # FILLS
+    ####
+    ####
+    ####
+    
+    #TOP BUTTON ICON
+    holoPos(19, CoreHolo:toWorld(vec(13.5,0,0.3)))
+    holoAng(19, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(19, "hq_cylinder")
+    holoScaleUnits(19, vec(1.5,5.5,0.3))
+    holoParent(19, CoreHolo)
+    holoColor(19, vec(0))
+    
+    #TOP BUTTON ICON
+    holoPos(20, CoreHolo:toWorld(vec(16,0,0.3)))
+    holoAng(20, CoreHolo:toWorld(ang(0,270,90)))
+    holoModel(20, "prism")
+    holoScaleUnits(20, vec(3,0.3,3))
+    holoParent(20, CoreHolo)
+    holoColor(20, vec(0))
+    
+    ####
+    
+    #TOP-RIGHT BUTTON ICON
+    holoPos(21, CoreHolo:toWorld(vec(10.7,-10.7,0.3)))
+    holoAng(21, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(21, "hq_cylinder")
+    holoScaleUnits(21, vec(6,2,0.3))
+    holoParent(21, CoreHolo)
+    holoColor(21, vec(0))
+    
+    ####
+    
+    #RIGHT BUTTON ICON
+    holoPos(22, CoreHolo:toWorld(vec(0,-15,0.3)))
+    holoAng(22, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(22, "hq_cylinder")
+    holoScaleUnits(22, vec(4.5,5,0.3))
+    holoParent(22, CoreHolo)
+    holoColor(22, vec(0))
+    
+    ####
+    
+    #BOTTOM RIGHT ICON
+    holoPos(23, CoreHolo:toWorld(vec(-9.2,-10.7,0.3)))
+    holoAng(23, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(23, "hq_cylinder")
+    holoScaleUnits(23, vec(2,2,0.3))
+    holoParent(23, CoreHolo)
+    holoColor(23, vec(0))
+    
+    holoPos(24, CoreHolo:toWorld(vec(-10.7,-12.7,0.3)))
+    holoAng(24, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(24, "hq_cylinder")
+    holoScaleUnits(24, vec(5,2,0.3))
+    holoParent(24, CoreHolo)
+    holoColor(24, vec(0))
+    
+    holoPos(25, CoreHolo:toWorld(vec(-10.7,-8.7,0.3)))
+    holoAng(25, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(25, "hq_cylinder")
+    holoScaleUnits(25, vec(5,2,0.3))
+    holoParent(25, CoreHolo)
+    holoColor(25, vec(0))
+    
+    ####
+    
+    #BOTTOM BUTTON ICON
+    holoPos(26, CoreHolo:toWorld(vec(-15,0,0.3)))
+    holoAng(26, CoreHolo:toWorld(ang(0,45,0)))
+    #holoModel(26, "hq_cylinder")
+    holoScaleUnits(26, vec(5,1,0.3))
+    holoParent(26, CoreHolo)
+    holoColor(26, vec(255,60,60))
+    
+     #BOTTOM BUTTON ICON
+    holoPos(27, CoreHolo:toWorld(vec(-15,0,0.3)))
+    holoAng(27, CoreHolo:toWorld(ang(0,-45,0)))
+    #holoModel(27, "hq_cylinder")
+    holoScaleUnits(27, vec(5,1,0.3))
+    holoParent(27, CoreHolo)
+    holoColor(27, vec(255,60,60))
+    
+    ####
+    
+    #BOTTOM-RIGHT BUTTON ICON
+    holoPos(28, CoreHolo:toWorld(vec(-10.7,10.7,0.3)))
+    holoAng(28, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(28, "hq_cylinder")
+    holoScaleUnits(28, vec(5.5,5.5,0.3))
+    holoParent(28, CoreHolo)
+    holoColor(28, vec(0))
+    
+    #BOTTOM-RIGHT BUTTON ICON
+    holoPos(29, CoreHolo:toWorld(vec(-10.7,10.7,0.35)))
+    holoAng(29, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(29, "hq_cylinder")
+    holoScaleUnits(29, vec(4.2,4.2,0.3))
+    holoParent(29, CoreHolo)
+    holoColor(29, vec(255))
+    
+    #BOTTOM-RIGHT BUTTON ICON
+    holoPos(30, CoreHolo:toWorld(vec(-10.7,10.7,0.4)))
+    holoAng(30, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(30, "hq_cylinder")
+    holoScaleUnits(30, vec(4.5,0.3,0.3))
+    holoParent(30, CoreHolo)
+    holoColor(30, vec(0))
+    
+    #BOTTOM-RIGHT BUTTON ICON
+    holoPos(31, CoreHolo:toWorld(vec(-10.7,10.7,0.4)))
+    holoAng(31, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(31, "hq_cylinder")
+    holoScaleUnits(31, vec(0.3,4.5,0.3))
+    holoParent(31, CoreHolo)
+    holoColor(31, vec(0))
+    
+    ####
+    
+    #LEFT BUTTON OUTLINE
+    holoPos(32, CoreHolo:toWorld(vec(0.5,15.5,0.3)))
+    holoAng(32, CoreHolo:toWorld(ang(0,90,90)))
+    holoModel(32, "right_prism")
+    holoScaleUnits(32, vec(0.3,6,6))
+    holoParent(32, CoreHolo)
+    holoColor(32, vec(0))
+    
+    ####
+    
+    #TOP-LEFT BUTTON OUTLINE
+    holoPos(33, CoreHolo:toWorld(vec(10.7,9.7,0.3)))
+    holoAng(33, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(33, "hq_cylinder")
+    holoScaleUnits(33, vec(2,4,0.3))
+    holoParent(33, CoreHolo)
+    holoColor(33, vec(0))
+
+    #TOP-LEFT BUTTON OUTLINE
+    holoPos(34, CoreHolo:toWorld(vec(12.7,8.7,0.3)))
+    holoAng(34, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(34, "hq_cylinder")
+    holoScaleUnits(34, vec(2,2,0.3))
+    holoParent(34, CoreHolo)
+    holoColor(34, vec(0))
+    
+    #TOP-LEFT BUTTON OUTLINE
+    holoPos(35, CoreHolo:toWorld(vec(8.7,10.7,0.3)))
+    holoAng(35, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(35, "hq_cylinder")
+    holoScaleUnits(35, vec(2,6,0.3))
+    holoParent(35, CoreHolo)
+    holoColor(35, vec(0))
+    
+    #HOLO ENTITY 36 RES
+    holoAlpha(36, 0)
+    
+    # HOLO ENTITY 37 RESERVED FOR SOUND HOLO
+    SoundHologram=holoEntity(37)
+    holoAlpha(37, 0)
+    
+    
+    
+    
+    
+    
+    
+    
+    holoAlpha(1,0)
+    
+}
+
+
+# GLOBALS
+Use = Master:keyUse()
+Reload = Master:keyReload()
+Attack1=Master:keyAttack1()
+Attack2 = Master:keyAttack2()
+LastSaid = Master:lastSaid()
+LastSaidWhen = Master:lastSaidWhen()
+AimEnt=Master:aimEntity()
+# POINT LINE INTERSECTION
+# HudCursor is cursor vec position
+Holo = holoEntity(1)
+
+Origin = Master:shootPos()
+OriginDirVec = Master:eye()
+
+#How does line-plane intersection work?
+PlanePoint = Holo:pos() #Get a point in the plane
+Normal = Holo:up() #Get the normal (a vector perpendicular to the surface) of the plane
+LinePoint1 = Origin #Get a point on the line
+LinePoint2 = Origin+OriginDirVec #Get a point on the line "after" point 1#
+X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1)) #Not really sure how, but it returns how many times the distance from point 1 to point 2 you need to go from point 1 to reach the intersection
+HudCursor = LinePoint1+X*(LinePoint2-LinePoint1) #Get the intersections position using f(X) = LinePoint1+X*(LinePoint2-LinePoint1)
+HudCursorLocal=holoEntity(1):toLocal(HudCursor)
+
+#holoPos(10, HudCursor)
+
+
+# M2Timer
+
+if(Attack2){M2Timer++}else{M2Timer=0 for(I=2,9){holoAlpha(I,0)} for(I=11,35){holoAlpha(I,0)}}
+
+
+
+
+if(Attack2&M2Timer<1.5){
+    rangerFilter(Master)
+    EyeRanger=rangerOffset(60, Master:shootPos(), Master:eye())
+    holoPos(1, EyeRanger:position())
+    for(I=2,35){holoAlpha(I,255)}
+}elseif(Attack2){
+
+    holoAng(1,((Master:pos()+vec(0,0,60))-CoreHolo:pos()):toAngle()+ang(-90,0,180) )
+    for(I=11,18){
+    if(HudCursor:distance(holoEntity(I):pos())<5){
+        Mode=I-10 
+        }
+    
+    holoColor(I, vec(230))
+    holoColor(Mode+10, vec(60,255,60))
+    }
+
+}
+#if(!Attack2){}
+
+# CHANGING MODE
+
+
+#holoColor(Mode+10, vec(60,255,60))
+
+
+
+
+
+
+
+
+# ROTATION FOR CORE HOLO
+#holoAng(1,((Master:pos()+vec(0,0,60))-CoreHolo:pos()):toAngle()+ang(-90,0,180) )
+
+
+# FOUNDATIONS/CEILING
+if(Mode==1){
+    
+    #FOUNDATION ON GROUND
+    if(!Master:aimEntity()){
+        
+
+        holoPos(10, Master:aimPos()+vec(0,0,0))
+        holoScaleUnits(10, vec(142.850006,142.849991,24.225000))
+        holoAlpha(10, 100)
+        holoAng(10, ang(0,(Master:pos()-Master:aimPos()):toAngle():yaw(),0))
+        
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(70,70,10)),holoEntity(10):toWorld(vec(-70,70,10)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(70,70,10)),holoEntity(10):toWorld(vec(70,-70,10)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(-70,-70,10)),holoEntity(10):toWorld(vec(-70,70,10)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(-70,-70,10)),holoEntity(10):toWorld(vec(70,-70,10)))
+        
+        if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){holoColor(10, vec(255,0,0))
+            holoPos(10, Master:aimPos()+vec())
+        holoScaleUnits(10, vec(142.850006,142.849991,24.225000))
+        holoAlpha(10, 100)
+        holoAng(10, ang(0,(Master:pos()-Master:aimPos()):toAngle():yaw(),0))
+            }else{
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                
+               TempEntity=propSpawn("models/hunter/blocks/cube3x3x05.mdl",holoEntity(10):pos(),holoEntity(10):angles(),1)
+            
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[1, string])
+            TempEntity:setColor(Colors[1,vector])
+            
+            SpawnLag=10
+            
+        }}}
+    
+        # ADDING FOUNDATIONS TO ALREADY EXISTING ONES
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube3x3x05.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*142.350006,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*142.349991,0)))
+        holoAng(10, AimEnt:angles())
+    
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(70,70,10)),holoEntity(10):toWorld(vec(-70,70,10)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(70,70,10)),holoEntity(10):toWorld(vec(70,-70,10)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(-70,-70,10)),holoEntity(10):toWorld(vec(-70,70,10)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(-70,-70,10)),holoEntity(10):toWorld(vec(70,-70,10)))
+        
+        if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){holoColor(10, vec(255,0,0))
+            }else{
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/blocks/cube3x3x05.mdl",holoEntity(10):pos(),holoEntity(10):angles(),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[1, string])
+            TempEntity:setColor(Colors[1,vector])
+            SpawnLag=10
+            
+    }}}
+    
+    # CEILING - PILLAR SPAWN
+    if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube025x2x025.mdl"){
+        
+        #holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*142.350006,0,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*142.349991)))
+        holoPos(10, AimEnt:toWorld(vec(-5.8,30,5.8)+vec(sign(round(AimEnt:toLocal(Master:aimPos()):x()+6))*71.155003,15.7,sign(round(AimEnt:toLocal(Master:aimPos()):z()-6))*71.1549955)))
+        holoScaleUnits(10, vec(142.850006,142.849991,3.500000))
+        holoAlpha(10, 100)
+        holoAng(10, AimEnt:angles()+ang(0,0,90))
+        
+        #print(4, AimEnt:toLocal(Master:aimPos()):x():toString())
+        #	142.350006 142.349991 3.000000	
+
+    # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(60,60,0)),holoEntity(10):toWorld(vec(-60,60,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(60,60,0)),holoEntity(10):toWorld(vec(60,-60,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(-60,-60,0)),holoEntity(10):toWorld(vec(-60,60,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(-60,-60,0)),holoEntity(10):toWorld(vec(60,-60,0)))
+        
+        if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){holoColor(10, vec(255,0,0))
+            }else{
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/plates/plate3x3.mdl",holoEntity(10):pos(),holoEntity(10):angles()+ang(0,0,180),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+                TempEntity:setMaterial(Materials[1, string])
+                TempEntity:setColor(Colors[1,vector])
+            SpawnLag=10
+        }
+}
+
+
+
+        #	142.850006 142.849991 3.500000	
+    }
+    
+    
+    # ADDING CEILINGS TO ALREADY EXISTING ONES
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/plates/plate3x3.mdl"){
+        holoAlpha(10,100)
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*142.350006,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*142.349991,0)))
+        holoAng(10, AimEnt:angles())
+        holoScaleUnits(10, vec(142.850006,142.849991,3.500000))
+    
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(60,60,0)),holoEntity(10):toWorld(vec(-60,60,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(60,60,0)),holoEntity(10):toWorld(vec(60,-60,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(-60,-60,0)),holoEntity(10):toWorld(vec(-60,60,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(-60,-60,0)),holoEntity(10):toWorld(vec(60,-60,0)))
+        
+        if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){holoColor(10, vec(255,0,0))
+            }else{
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/plates/plate3x3.mdl",holoEntity(10):pos(),holoEntity(10):angles(),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[1, string])
+            TempEntity:setColor(Colors[1,vector])
+            SpawnLag=10
+    }}}
+    
+    
+    
+    
+    if(Master:aimEntity()&Master:aimEntity():model()!="models/hunter/blocks/cube3x3x05.mdl"&
+    Master:aimEntity():model()!="models/hunter/blocks/cube025x2x025.mdl"&
+    Master:aimEntity():model()!="models/hunter/plates/plate3x3.mdl"){
+        holoPos(10, Master:aimPos()+vec())
+        holoScaleUnits(10, vec(142.850006,142.849991,24.225000))
+        holoAlpha(10, 0)
+        holoAng(10, ang(0,(Master:pos()-Master:aimPos()):toAngle():yaw(),0))
+}}
+## MODE 1 END(ceiling not completed)
+
+
+# PILLARS
+if(Mode==6){
+    holoAlpha(10,0)
+    # ADDING PILLARS TO FOUNDATIONS
+    if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube3x3x05.mdl"){
+        holoAlpha(10,100)
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.425003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*71.4249955,59.57-0.150002)))
+        holoScaleUnits(10, vec(12.362504,95.400002,12.362500))
+        holoAlpha(10, 100)
+        holoAng(10, AimEnt:angles()+ang(0,0,90))
+        
+    
+          
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):pos()+vec(3,3,-45),holoEntity(10):pos()+vec(3,3,40))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):pos()+vec(3,-3,-45),holoEntity(10):pos()+vec(3,-3,40))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):pos()+vec(-3,3,-45),holoEntity(10):pos()+vec(-3,3,40))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):pos()+vec(-3,-3,-45),holoEntity(10):pos()+vec(-3,-3,40))
+        
+        if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){holoColor(10, vec(255,0,0))
+            }else{
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/blocks/cube025x2x025.mdl",holoEntity(10):toWorld(vec(5.8,0,-5.8)),holoEntity(10):angles(),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[2, string])
+            TempEntity:setColor(Colors[2,vector])
+          SpawnLag=10
+    }}
+        
+        
+        
+    }
+    
+    # STACKING PILLARS
+    if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube025x2x025.mdl"){
+    holoAlpha(10,100)
+    holoPos(10, AimEnt:toWorld(vec(-5.8,95.150002,5.8)))
+        holoScaleUnits(10, vec(12.362504,95.400002,12.362500))
+        holoAlpha(10, 100)
+        holoAng(10, AimEnt:angles())
+    
+    # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):pos()+vec(3,3,-45),holoEntity(10):pos()+vec(3,3,40))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):pos()+vec(3,-3,-45),holoEntity(10):pos()+vec(3,-3,40))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):pos()+vec(-3,3,-45),holoEntity(10):pos()+vec(-3,3,40))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):pos()+vec(-3,-3,-45),holoEntity(10):pos()+vec(-3,-3,40))
+        
+        if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){holoColor(10, vec(255,0,0))
+            }else{
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/blocks/cube025x2x025.mdl",holoEntity(10):toWorld(vec(5.8,-0.25,-5.8)),holoEntity(10):angles(),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[2, string])
+            TempEntity:setColor(Colors[2,vector])
+          SpawnLag=10
+    }}
+    
+    
+    
+    
+    }
+    
+    
+    # ADDING PILLARS TO CEILINGS
+    if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/plates/plate3x3.mdl"){
+        holoAlpha(10,100)
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.125003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*70.65,49.050002)))
+        holoScaleUnits(10, vec(12.362504,95.400002,12.362500))
+        holoAlpha(10, 100)
+        holoAng(10, AimEnt:angles()+ang(0,0,90))
+        
+    
+          
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):pos()+vec(3,3,-45),holoEntity(10):pos()+vec(3,3,40))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):pos()+vec(3,-3,-45),holoEntity(10):pos()+vec(3,-3,40))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):pos()+vec(-3,3,-45),holoEntity(10):pos()+vec(-3,3,40))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):pos()+vec(-3,-3,-45),holoEntity(10):pos()+vec(-3,-3,40))
+        
+        if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){holoColor(10, vec(255,0,0))
+            }else{
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/blocks/cube025x2x025.mdl",holoEntity(10):toWorld(vec(5.8,0,-5.8)),holoEntity(10):angles()+ang(0,0,0),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[2, string])
+            TempEntity:setColor(Colors[2,vector])
+          SpawnLag=10
+    }}}}
+
+
+
+
+
+
+    # WALLS
+    if(Mode==4){
+    
+    
+    # ADDING WALLS TO FOUNDATION
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube3x3x05.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.175003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*71.1749955,59.175003)))
+
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(-70,0,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(70,0,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,70,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,-70,0)))
+        
+        holoAlpha(10,0)
+        holoAng(10, AimEnt:angles())
+        #holoScaleUnits(10, vec(95.400009,142.849991,3.500000))
+        
+        if(R1:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R2:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R1:distance()+R2:distance())>50
+        ){
+            holoScaleUnits(10, vec(142.849991,3.5,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/plates/plate2x3.mdl",holoEntity(10):pos(),holoEntity(10):angles()+ang(90,90,0),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[3, string])
+            TempEntity:setColor(Colors[3,vector])
+            SpawnLag=10
+            
+            }
+            }
+            
+            
+        if(R3:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R4:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R3:distance()+R4:distance())>50
+        ){
+            holoScaleUnits(10, vec(3.5,142.849991,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/plates/plate2x3.mdl",holoEntity(10):pos(),holoEntity(10):angles()+ang(90,180,0),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[3, string])
+            TempEntity:setColor(Colors[3,vector])
+            SpawnLag=10
+            
+    }}}
+    
+    # ADDING WALLS TO CEILING
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/plates/plate3x3.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.175003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*71.1749955,49.175003)))
+
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(-70,0,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(70,0,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,70,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,-70,0)))
+        
+        holoAlpha(10,0)
+        holoAng(10, AimEnt:angles())
+        #holoScaleUnits(10, vec(95.400009,142.849991,3.500000))
+        
+        if(R1:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R2:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R1:distance()+R2:distance())>50
+        ){
+            holoScaleUnits(10, vec(142.849991,3.5,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/plates/plate2x3.mdl",holoEntity(10):pos(),holoEntity(10):angles()+ang(90,90,0),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[3, string])
+            TempEntity:setColor(Colors[3,vector])
+            SpawnLag=10
+            
+            }
+            }
+            
+            
+        if(R3:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R4:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R3:distance()+R4:distance())>50
+        ){
+            holoScaleUnits(10, vec(3.5,142.849991,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/plates/plate2x3.mdl",holoEntity(10):pos(),holoEntity(10):angles()+ang(90,180,0),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[3, string])
+            TempEntity:setColor(Colors[3,vector])
+            SpawnLag=10
+            
+    }}}
+    
+    
+    
+    
+    # OTHER-WALL SPAWN
+    
+    if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/plates/plate2x3.mdl"){
+        #holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.175003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*71.1749955,59.175003)))
+        holoPos(10, AimEnt:toWorld(vec(-94.900009,0,0)))
+        #holoAng(10, AimEnt:angles()+ang(0,0,0))
+
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(0,0,70)),holoEntity(10):toWorld(vec(-70,0,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(0,0,70)),holoEntity(10):toWorld(vec(70,0,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(0,0,70)),holoEntity(10):toWorld(vec(0,70,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(0,0,70)),holoEntity(10):toWorld(vec(0,-70,0)))
+        
+        holoAlpha(10,0)
+        holoAng(10, AimEnt:angles())
+        #holoScaleUnits(10, vec(95.400009,142.849991,3.500000))
+        
+        if(R1:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R2:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R1:distance()+R2:distance())>50
+        ){
+            holoScaleUnits(10, vec(95.400009,3.5,142.849991))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/plates/plate2x3.mdl",holoEntity(10):pos(),holoEntity(10):angles()+ang(90,90,0),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[3, string])
+            TempEntity:setColor(Colors[3,vector])
+            SpawnLag=10
+            
+            }
+            }
+            
+            
+        if(R3:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R4:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R3:distance()+R4:distance())>50
+        ){
+            holoScaleUnits(10, vec(95.400009,142.849991,3.5))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+               TempEntity=propSpawn("models/hunter/plates/plate2x3.mdl",holoEntity(10):pos(),holoEntity(10):angles()+ang(0,180,0),1)
+            SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+            soundPitch(1, SoundP[1,number])
+            TempEntity:setMaterial(Materials[3, string])
+            TempEntity:setColor(Colors[3,vector])
+            SpawnLag=10
+            
+    }}}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    }
+
+# DELETING
+if(Mode!=2){
+    if(Attack1&$Attack1&AimEnt:getColor()!=vec(255,255,0)){AimEnt:propDelete()}
+}else{holoAlpha(10,0)}
+
+# DOORWAYS
+if(Mode==8){
+    
+    # ADDING DOORWAYS TO FOUNDATION
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube3x3x05.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.175003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*71.1749955,59.175003)))
+
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(-70,0,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(70,0,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,70,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,-70,0)))
+        
+        holoAlpha(10,0)
+        holoAng(10, AimEnt:angles())
+        #holoScaleUnits(10, vec(95.400009,142.849991,3.500000))
+        
+        if(R1:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R2:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R1:distance()+R2:distance())>50
+        ){
+            holoScaleUnits(10, vec(142.849991,3.5,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+               TempEntity=propSpawn("models/hunter/plates/plate025x1.mdl",holoEntity(10):pos()+vec(0,0,41.5),holoEntity(10):angles()+ang(90,90,0),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(47.3,0,0)),holoEntity(10):angles()+ang(0,180,90),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(-47.3,0,0)),holoEntity(10):angles()+ang(0,0,90),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+            
+            SpawnLag=10
+            
+            }
+            }
+            
+            
+        if(R3:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R4:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R3:distance()+R4:distance())>50
+        ){
+            holoScaleUnits(10, vec(3.5,142.849991,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+               TempEntity=propSpawn("models/hunter/plates/plate025x1.mdl",holoEntity(10):pos()+vec(0,0,41.5),holoEntity(10):angles()+ang(90,180,0),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(0,47.3,0)),holoEntity(10):angles()+ang(0,270,90),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(0,-47.3,0)),holoEntity(10):angles()+ang(0,90,90),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+            
+            
+            
+            
+            SpawnLag=10
+            
+    }}}
+    
+    # ADDING DOORWAYS TO CEILINGS
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/plates/plate3x3.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.175003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*71.1749955,49.175003)))
+
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(-70,0,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(70,0,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,70,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,-70,0)))
+        
+        holoAlpha(10,0)
+        holoAng(10, AimEnt:angles())
+        #holoScaleUnits(10, vec(95.400009,142.849991,3.500000))
+        
+        if(R1:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R2:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R1:distance()+R2:distance())>50
+        ){
+            holoScaleUnits(10, vec(142.849991,3.5,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+               TempEntity=propSpawn("models/hunter/plates/plate025x1.mdl",holoEntity(10):pos()+vec(0,0,41.5),holoEntity(10):angles()+ang(90,90,0),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(47.3,0,0)),holoEntity(10):angles()+ang(0,180,90),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(-47.3,0,0)),holoEntity(10):angles()+ang(0,0,90),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+            
+            SpawnLag=10
+            
+            }
+            }
+            
+            
+        if(R3:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R4:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R3:distance()+R4:distance())>50
+        ){
+            holoScaleUnits(10, vec(3.5,142.849991,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+               TempEntity=propSpawn("models/hunter/plates/plate025x1.mdl",holoEntity(10):pos()+vec(0,0,41.5),holoEntity(10):angles()+ang(90,180,0),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(0,47.3,0)),holoEntity(10):angles()+ang(0,270,90),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(0,-47.3,0)),holoEntity(10):angles()+ang(0,90,90),1)
+            TempEntity:setMaterial(Materials[4, string])
+            TempEntity:setColor(Colors[4,vector])
+            
+            
+            
+            SpawnLag=10
+            
+    }}}}
+
+# WINDOWS
+if(Mode==7){
+
+    # ADDING WINDOWS TO FOUNDATION
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube3x3x05.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.175003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*71.1749955,59.175003)))
+
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(-70,0,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(70,0,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,70,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,-70,0)))
+        
+        holoAlpha(10,0)
+        holoAng(10, AimEnt:angles())
+        #holoScaleUnits(10, vec(95.400009,142.849991,3.500000))
+        
+        if(R1:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R2:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R1:distance()+R2:distance())>50
+        ){
+            holoScaleUnits(10, vec(142.849991,3.5,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(47.3,0,0)),holoEntity(10):angles()+ang(0,180,90),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(-47.3,0,0)),holoEntity(10):angles()+ang(0,0,90),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate05x1.mdl",holoEntity(10):pos()+vec(0,0,35.6),holoEntity(10):angles()+ang(90,90,0),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate05x1.mdl",holoEntity(10):pos()+vec(0,0,-35.6),holoEntity(10):angles()+ang(270,90,0),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+            
+            SpawnLag=10
+            
+            }
+            }
+            
+            
+        if(R3:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R4:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R3:distance()+R4:distance())>50
+        ){
+            holoScaleUnits(10, vec(3.5,142.849991,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+               TempEntity=propSpawn("models/hunter/plates/plate05x1.mdl",holoEntity(10):pos()+vec(0,0,35.6),holoEntity(10):angles()+ang(90,180,0),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate05x1.mdl",holoEntity(10):pos()+vec(0,0,-35.6),holoEntity(10):angles()+ang(270,180,0),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(0,47.3,0)),holoEntity(10):angles()+ang(0,270,90),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(0,-47.3,0)),holoEntity(10):angles()+ang(0,90,90),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+            
+            SpawnLag=10
+            
+    }}}
+
+
+    # ADDING WINDOWS TO CEILING
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/plates/plate3x3.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*71.175003,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*71.1749955,49.175003)))
+
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(-70,0,0)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(70,0,0)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,70,0)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(0)),holoEntity(10):toWorld(vec(0,-70,0)))
+        
+        holoAlpha(10,0)
+        holoAng(10, AimEnt:angles())
+        #holoScaleUnits(10, vec(95.400009,142.849991,3.500000))
+        
+        if(R1:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R2:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R1:distance()+R2:distance())>50
+        ){
+            holoScaleUnits(10, vec(142.849991,3.5,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(47.3,0,0)),holoEntity(10):angles()+ang(0,180,90),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(-47.3,0,0)),holoEntity(10):angles()+ang(0,0,90),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate05x1.mdl",holoEntity(10):pos()+vec(0,0,35.6),holoEntity(10):angles()+ang(90,90,0),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate05x1.mdl",holoEntity(10):pos()+vec(0,0,-35.6),holoEntity(10):angles()+ang(270,90,0),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+            
+            SpawnLag=10
+            
+            }
+            }
+            
+            
+        if(R3:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&
+        R4:entity():model()=="models/hunter/blocks/cube025x2x025.mdl"&(R3:distance()+R4:distance())>50
+        ){
+            holoScaleUnits(10, vec(3.5,142.849991,95.400009))
+            holoAlpha(10,100)
+            holoColor(10, vec(255))
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+               TempEntity=propSpawn("models/hunter/plates/plate05x1.mdl",holoEntity(10):pos()+vec(0,0,35.6),holoEntity(10):angles()+ang(90,180,0),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate05x1.mdl",holoEntity(10):pos()+vec(0,0,-35.6),holoEntity(10):angles()+ang(270,180,0),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(0,47.3,0)),holoEntity(10):angles()+ang(0,270,90),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+               TempEntity=propSpawn("models/hunter/plates/plate1x2.mdl",holoEntity(10):toWorld(vec(0,-47.3,0)),holoEntity(10):angles()+ang(0,90,90),1)
+            TempEntity:setMaterial(Materials[5, string])
+            TempEntity:setColor(Colors[5,vector])
+            
+            SpawnLag=10
+            
+    }}}}
+
+
+# STAIRS
+if(Mode==5){
+    #holoPos(10, AimEnt:toWorld(vec(round(AimEnt:toLocal(Master:aimPos()):normalized()):x()*142.350006,round(AimEnt:toLocal(Master:aimPos()):normalized()):y()*142.349991,0)))
+       
+    
+    # ADDING STAIRS TO FOUNDATIONS
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube3x3x05.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(0,0,10.7)))
+        #holoAng(10, AimEnt:toWorld(ang(0,(round((Master:pos()-Master:aimPos()):toAngle():yaw()/90)*90),0)))
+        holoAng(10, AimEnt:toWorld(ang(0,(round((AimEnt:toLocal(Master:pos())-AimEnt:toLocal(Master:aimPos())):toAngle():yaw()/90)*90)-90,0)))
+
+        
+        AimEnt:toLocal(Master:pos())
+
+        holoScaleUnits(10, vec(142.850006,142.849991,3.500000))
+        
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(68,68,10)),holoEntity(10):toWorld(vec(68,68,10)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(-68,68,10)),holoEntity(10):toWorld(vec(-68,68,10)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(-68,-68,10)),holoEntity(10):toWorld(vec(-68,-68,10)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(68,-68,10)),holoEntity(10):toWorld(vec(68,-68,10)))
+        # CEILING RANGER
+        R5 = rangerOffset(holoEntity(10):toWorld(vec(0,0,20.400009)),holoEntity(10):toWorld(vec(0,0,95.400009)))
+        
+        if(
+        R1:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R2:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R3:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R4:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R5:hit()){
+            holoColor(10, vec(255,0,0))
+            holoAlpha(10, 100)
+            }else{
+            holoColor(10, vec(255))
+            holoAlpha(10, 100)
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+                TempEntity=propSpawn("models/hunter/misc/stair1x1.mdl",holoEntity(10):toWorld(vec(0,-47.3,48.4)),holoEntity(10):toWorld(ang(0,90,0)),1)
+            TempEntity:setMaterial(Materials[6, string])
+            TempEntity:setColor(Colors[6,vector])
+                TempEntity=propSpawn("models/hunter/misc/stair1x1.mdl",holoEntity(10):toWorld(vec(0,0,1.2)),holoEntity(10):toWorld(ang(0,90,0)),1)
+            TempEntity:setMaterial(Materials[6, string])
+            TempEntity:setColor(Colors[6,vector])
+                TempEntity=propSpawn("models/hunter/plates/plate1x3.mdl",holoEntity(10):toWorld(vec(47.7,0.3,94.4)),holoEntity(10):toWorld(ang(0,180,180)),1)
+            TempEntity:setMaterial(Materials[6, string])
+            TempEntity:setColor(Colors[6,vector])
+                TempEntity=propSpawn("models/hunter/plates/plate1x3.mdl",holoEntity(10):toWorld(vec(-47.7,0.3,94.4)),holoEntity(10):toWorld(ang(0,180,180)),1)
+            TempEntity:setMaterial(Materials[6, string])
+            TempEntity:setColor(Colors[6,vector])
+            
+            
+            SpawnLag=10
+            
+    }}}
+    
+    
+    # ADDING STAIRS TO CEILINGS
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/plates/plate3x3.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(0,0,0.5)))
+        holoAng(10, AimEnt:toWorld(ang(0,(round((AimEnt:toLocal(Master:pos())-AimEnt:toLocal(Master:aimPos())):toAngle():yaw()/90)*90)-90,0)))
+        holoScaleUnits(10, vec(142.850006,142.849991,3.500000))
+        
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(68,68,10)),holoEntity(10):toWorld(vec(68,68,10)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(-68,68,10)),holoEntity(10):toWorld(vec(-68,68,10)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(-68,-68,10)),holoEntity(10):toWorld(vec(-68,-68,10)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(68,-68,10)),holoEntity(10):toWorld(vec(68,-68,10)))
+        # CEILING RANGER
+        R5 = rangerOffset(holoEntity(10):toWorld(vec(0,0,20.400009)),holoEntity(10):toWorld(vec(0,0,95.400009)))
+        
+        if(
+        R1:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R2:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R3:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R4:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R5:hit()){
+            holoColor(10, vec(255,0,0))
+            holoAlpha(10, 100)
+            }else{
+            holoColor(10, vec(255))
+            holoAlpha(10, 100)
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+                TempEntity=propSpawn("models/hunter/misc/stair1x1.mdl",holoEntity(10):toWorld(vec(0,-47.3,48.4)),holoEntity(10):toWorld(ang(0,90,0)),1)
+                TempEntity:setMaterial(Materials[6, string])
+            TempEntity:setColor(Colors[6,vector])
+                TempEntity=propSpawn("models/hunter/misc/stair1x1.mdl",holoEntity(10):toWorld(vec(0,0,1.2)),holoEntity(10):toWorld(ang(0,90,0)),1)
+                TempEntity:setMaterial(Materials[6, string])
+            TempEntity:setColor(Colors[6,vector])
+                TempEntity=propSpawn("models/hunter/plates/plate1x3.mdl",holoEntity(10):toWorld(vec(47.7,0.3,94.4)),holoEntity(10):toWorld(ang(0,180,180)),1)
+                TempEntity:setMaterial(Materials[6, string])
+            TempEntity:setColor(Colors[6,vector])
+                TempEntity=propSpawn("models/hunter/plates/plate1x3.mdl",holoEntity(10):toWorld(vec(-47.7,0.3,94.4)),holoEntity(10):toWorld(ang(0,180,180)),1)
+                TempEntity:setMaterial(Materials[6, string])
+            TempEntity:setColor(Colors[6,vector])
+            
+            
+            SpawnLag=10
+            
+    }}}}
+
+# RAMPS
+if(Mode==3){
+    
+    # ADDING RAMP TO FOUNDATIONS
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/blocks/cube3x3x05.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(0,0,10.7)))
+        #holoAng(10, AimEnt:toWorld(ang(0,(round((Master:pos()-Master:aimPos()):toAngle():yaw()/90)*90),0)))
+        holoAng(10, AimEnt:toWorld(ang(0,(round((AimEnt:toLocal(Master:pos())-AimEnt:toLocal(Master:aimPos())):toAngle():yaw()/90)*90)-90,0)))
+
+        
+        AimEnt:toLocal(Master:pos())
+
+        holoScaleUnits(10, vec(142.850006,142.849991,3.500000))
+        
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(68,68,10)),holoEntity(10):toWorld(vec(68,68,10)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(-68,68,10)),holoEntity(10):toWorld(vec(-68,68,10)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(-68,-68,10)),holoEntity(10):toWorld(vec(-68,-68,10)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(68,-68,10)),holoEntity(10):toWorld(vec(68,-68,10)))
+        # CEILING RANGER
+        R5 = rangerOffset(holoEntity(10):toWorld(vec(0,0,20.400009)),holoEntity(10):toWorld(vec(0,0,95.400009)))
+        
+        if(
+        R1:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R2:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R3:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R4:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R5:hit()){
+            holoColor(10, vec(255,0,0))
+            holoAlpha(10, 100)
+            }else{
+            holoColor(10, vec(255))
+            holoAlpha(10, 100)
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+                TempEntity=propSpawn("models/hunter/triangles/2x2x2carved.mdl",holoEntity(10):toWorld(vec(0,-22.3,48.4)),holoEntity(10):toWorld(ang(0,-90,90)),1)
+                TempEntity:setMaterial(Materials[7, string])
+                TempEntity:setColor(Colors[7,vector])
+            
+            SpawnLag=10
+            
+    }}}
+    
+    
+    # ADDING RAMP TO CEILINGS
+        if(Master:aimEntity()&Master:aimEntity():model()=="models/hunter/plates/plate3x3.mdl"){
+        holoPos(10, AimEnt:toWorld(vec(0,0,0.5)))
+        #holoAng(10, AimEnt:toWorld(ang(0,(round((Master:pos()-Master:aimPos()):toAngle():yaw()/90)*90),0)))
+        holoAng(10, AimEnt:toWorld(ang(0,(round((AimEnt:toLocal(Master:pos())-AimEnt:toLocal(Master:aimPos())):toAngle():yaw()/90)*90)-90,0)))
+
+        
+        AimEnt:toLocal(Master:pos())
+
+        holoScaleUnits(10, vec(142.850006,142.849991,3.500000))
+        
+        # DETECTION RANGERS
+        # RIGHT EDGE
+        R1 = rangerOffset(holoEntity(10):toWorld(vec(68,68,10)),holoEntity(10):toWorld(vec(68,68,10)))
+        # BOTTOM EDGE(CLOSEST)
+        R2 = rangerOffset(holoEntity(10):toWorld(vec(-68,68,10)),holoEntity(10):toWorld(vec(-68,68,10)))
+        # TOP EDGE(FARTHEST)
+        R3 = rangerOffset(holoEntity(10):toWorld(vec(-68,-68,10)),holoEntity(10):toWorld(vec(-68,-68,10)))
+        # LEFT EDGE(FARTHEST)
+        R4 = rangerOffset(holoEntity(10):toWorld(vec(68,-68,10)),holoEntity(10):toWorld(vec(68,-68,10)))
+        # CEILING RANGER
+        R5 = rangerOffset(holoEntity(10):toWorld(vec(0,0,20.400009)),holoEntity(10):toWorld(vec(0,0,95.400009)))
+        
+        if(
+        R1:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R2:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R3:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R4:entity():model()!="models/hunter/blocks/cube025x2x025.mdl"|
+        R5:hit()){
+            holoColor(10, vec(255,0,0))
+            holoAlpha(10, 100)
+            }else{
+            holoColor(10, vec(255))
+            holoAlpha(10, 100)
+            if(SpawnLag==0&Use&$Use){
+                SoundHologram:soundPlay(1,SoundsL[1,number], Sounds[1,string])
+                soundPitch(1, SoundP[1,number])
+                TempEntity=propSpawn("models/hunter/triangles/2x2x2carved.mdl",holoEntity(10):toWorld(vec(0,-22.3,48.4)),holoEntity(10):toWorld(ang(0,-90,90)),1)
+            TempEntity:setMaterial(Materials[7, string])
+            TempEntity:setColor(Colors[7,vector])
+            
+            SpawnLag=10
+            
+    }}}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+
+
+
+
+
+
+
+
+
+
+
+    # DEBUG RANGER HOLOS
+    holoPos(50,R1:position())
+    holoPos(51,R2:position())
+    holoPos(52,R3:position())
+    holoPos(53,R4:position())
+    holoPos(54, R5:position())
+
+
+
+
+
+if(Mode!=2){SpawnLag--}
+if(Mode==2){SpawnLag-=0.001}
+if(SpawnLag<=0){SpawnLag=0}
+
+# SOUND HOLOGRAM
+holoPos(37, Master:pos())
+
+setName("iRust \n Current builder: "+Master:name())
+
+
+
+
+
+# WORKING FOUNDATION POSITIONING SCRIPT
+#holoPos(1, round(owner():aimPos()/vec(190.300018,190.300003,24.225000))*vec(190.300018,190.300003,24.225000))
+
+# FOUNDATION SIZES
+# BOXSIZE
+#	142.850006 142.849991 24.225000	
+#AAB - CORRECT ONE, DOESNT LEAVE GAPS
+#	142.350006 142.349991 23.725000	
+
+#PILLAR SIZES
+# BOXSIZE
+#	12.362504 95.400002 12.362500	
+# AAB
+#	11.862504 94.900002 11.862500	
+
+# CEILING SIZES
+# BOX SIZE
+#	142.850006 142.849991 3.500000	
+# AAB
+#	142.350006 142.349991 3.000000	
+
+# WALL SIZES
+# BOX SIZE
+#	95.400009 142.849991 3.500000	
+# AAB
+# 94.900009 142.349991 3.000000	

@@ -1,0 +1,75 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/20/2018 @ 1614
+# Holograms: 10
+# Notes: 
+# 1 -> anchor
+# 2 -> y+ right
+# 3 -> y- left
+# 4 -> x+ top
+# 5 -> x- bottom
+# 6 -> z- left
+# 7 ->  bottom
+# 8 -> z+ left
+# 9 ->  top
+# 10 -> create
+# --------------------------------------------- #
+@name carmenu
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,50),vec(0,-4.0996,50),vec(0,4.0996,50),vec(0,0,54.2109),vec(0,0,45.7891),vec(0,9.2998,46.9121),vec(0,9.2998,52.9883),vec(0,-10,50),vec(0,4.2002,41.7324),vec(0,-4,41.5332))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0))
+    Hologram[ "scale", array ] = array(vec(0.1,0.1,0.1),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(175,175,175,175,175,175,175,175,175,175)
+    Hologram[ "material", array ] = array("debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat")
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("anchor","y+ right","y- left","x+ top","x- bottom","z- left"," bottom","z+ left"," top","create")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next < Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else { for( I = 1, Hologram[ "model", array ]:count( ) ) { holoParent(I, Hologram["parent", array][I, number]) }, interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

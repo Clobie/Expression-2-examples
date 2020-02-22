@@ -1,0 +1,131 @@
+
+@persist TRAJECTORY_ARC_HIGH:number 
+@persist TRAJECTORY_ARC_LOW:number
+
+#include "libs/async"
+#include "libs/heap"
+
+if( first() || duped() || dupefinished() ) {
+    
+    TRAJECTORY_ARC_HIGH = 1
+    TRAJECTORY_ARC_LOW = -1
+    
+    function string createArtillery() {
+        return heapPush(    
+                            table(  
+                                    "projectile_origin" = entity():pos(),
+                                    "projectile_target" = entity():pos(),
+                                    "projectile_arc" = TRAJECTORY_ARC_HIGH,
+                                    "projectile_power" = fromUnit("m/s", 25),
+                                    "projectile_model" = "models/props_phx/ball.mdl",
+                                    "projectile_mass" = 50000,
+                                    "trail_startsize" = 2,
+                                    "trail_endsize" = 2,
+                                    "trail_length" = 10,
+                                    "trail_material" = "trails/smoke",
+                                    "trail_color" = vec(255),
+                                    "trail_alpha" = 255
+                                  )
+                        )
+    }
+    
+    function string:setTarget( V_TARGET:vector ) { This:heapPushVector( "projectile_target", V_TARGET ) }
+    function string:setOrigin( V_ORIGIN:vector ) { This:heapPushVector( "projectile_origin", V_ORIGIN ) }
+    function string:setProjectileArc( I_ARC:number ) { This:heapPushNumber( "projectile_arc", I_ARC ) }
+    function string:setProjectilePower( I_POWER:number ) { This:heapPushNumber( "projectile_power", fromUnit("m/s", I_POWER) ) }
+    function string:setProjectileModel( S_MODEL:string ) { This:heapPushString( "projectile_model", S_MODEL ) }
+    function string:setProjectileMass( I_WEIGHT:number ) { This:heapPushNumber( "projectile_nass", I_WEIGHT ) }
+    function string:setTrailStart( I_START:number ) { This:heapPushNumber( "trail_startsize", I_START ) }
+    function string:setTrailEnd( I_END:number ) { This:heapPushNumber( "trail_endsize", I_END ) }
+    function string:setTrailLength( I_LENGTH:number ) { This:heapPushNumber( "trail_length", I_LENGTH ) }
+    function string:setTrailMaterial( S_MATERIAL:string ) { This:heapPushString( "trail_material", S_MATERIAL ) }
+    function string:setTrailColor( V_COLOR:vector ) { This:heapPushVector( "trail_color", V_COLOR ) }
+    function string:setTrailAlpha( I_ALPHA:number ) { This:heapPushNumber( "trail_alpha", I_ALPHA ) }
+    
+    
+    function angle string:internal_aim() {
+        local I_ARC = This:heapPullNumber( "projectile_arc" )
+        local I_POWER = This:heapPullNumber( "projectile_power" )
+        local V_ORIGIN = This:heapPullVector( "projectile_origin" )
+        local V_TARGET = This:heapPullVector( "projectile_target" )
+        local I_RANGE = ( V_TARGET - V_ORIGIN ):setZ(0):length()
+        local I_HEIGHT = ( V_ORIGIN:z() - V_TARGET:z() ) * I_ARC
+        local I_ANGLE = atan( ( ( I_POWER ^ 2 ) + ( I_ARC * sqrt( ( I_POWER ^ 4) - gravity() * ( ( gravity() * ( I_RANGE ^ 2 ) ) + ( 2 * I_HEIGHT * ( I_POWER ^ 2 ) ) ) ) ) ) / ( gravity() * I_RANGE ) )
+        local I_HITTIME = ( ( I_POWER * sin( I_ANGLE ) ) + sqrt( ( I_POWER * sin( I_ANGLE ) ) ^ 2 + ( 2 * gravity() * I_HEIGHT ) ) ) / gravity()
+        return ( V_TARGET - V_ORIGIN ):toAngle():setPitch( -I_ANGLE )
+    }
+    
+    function number string:internal_hittime() {
+        local I_ARC = This:heapPullNumber( "projectile_arc" )
+        local I_POWER = This:heapPullNumber( "projectile_power" )
+        local V_ORIGIN = This:heapPullVector( "projectile_origin" )
+        local V_TARGET = This:heapPullVector( "projectile_target" )
+        local I_RANGE = ( V_TARGET - V_ORIGIN ):setZ(0):length()
+        local I_HEIGHT = ( V_ORIGIN:z() - V_TARGET:z() ) * I_ARC
+        local I_ANGLE = atan( ( ( I_POWER ^ 2 ) + ( I_ARC * sqrt( ( I_POWER ^ 4) - gravity() * ( ( gravity() * ( I_RANGE ^ 2 ) ) + ( 2 * I_HEIGHT * ( I_POWER ^ 2 ) ) ) ) ) ) / ( gravity() * I_RANGE ) )
+        local I_HITTIME = ( ( I_POWER * sin( I_ANGLE ) ) + sqrt( ( I_POWER * sin( I_ANGLE ) ) ^ 2 + ( 2 * gravity() * I_HEIGHT ) ) ) / gravity()
+        return I_HITTIME
+    }
+    
+    function number string:fire(  ) {
+        local I_POWER = This:heapPullNumber( "projectile_power" )
+        local V_DIRECTION = This:internal_aim()
+        local I_HITTIME = This:internal_hittime()
+        local I_MASS = This:heapPullNumber( "projectile_mass" )
+        
+        local E_PROJECTILE = propSpawn( This:heapPullString( "projectile_model" ), 0 )
+        E_PROJECTILE:propDrag( 0 )
+        E_PROJECTILE:setMass( This:heapPullNumber( "projectile_mass" ) )
+        E_PROJECTILE:setTrails(
+                                    This:heapPullNumber( "trail_startsize" ),
+                                    This:heapPullNumber( "trail_endsize" ),
+                                    This:heapPullNumber( "trail_length" ),
+                                    This:heapPullString( "trail_material" ),
+                                    This:heapPullVector( "trail_color" ),
+                                    This:heapPullNumber( "trail_alpha" )
+                               )
+        E_PROJECTILE:propFreeze(0)
+        E_PROJECTILE:applyForce( V_DIRECTION:forward() * I_POWER * I_MASS )
+        async( I_HITTIME, "propBreak", E_PROJECTILE )
+        return I_HITTIME
+    }
+}
+
+#[
+    Artillery = createArtillery()
+    
+    # OPTIONAL VARS
+    Artillery:setProjectileArc( TRAJECTORY_ARC_HIGH )
+    Artillery:setProjectileArc( TRAJECTORY_ARC_LOW )
+    Artillery:setProjectilePower( 50 )
+    Artillery:setProjectileModel( "models/props_phx/cannonball.mdl" )
+    Artillery:setProjectileMass( 50000 )
+    Artillery:setTrailStart( 1 )
+    Artillery:setTrailEnd( 10 )
+    Artillery:setTrailLength( 1 )
+    Artillery:setTrailMaterial( "trails/smoke" )
+    Artillery:setTrailColor( hsv2rgb( random(360), 1, 1 ) )
+    Artillery:setTrailAlpha( 255 )
+    # OPTIONAL VARS
+    
+    # Setting targets and stuff - both Origin and Target are required
+    Artillery:setOrigin( entity():pos() )
+    Artillery:setTarget( Me:aimPos() )
+    Artillery:setTrailColor( hsv2rgb( random(360), 1, 1 ) )
+    
+    # How to fire
+    local I_HITTIME = Artillery:fire()
+    
+    local Crosshair = randint( 2e10 )
+    holoCreate( Crosshair )
+    holoScaleUnits( Crosshair, vec(10):setX(100) )
+    holoColor( Crosshair, vec(0):setX(255) )
+    holoPos( Crosshair, Me:aimPos() )
+    holoCreate( Crosshair + 1 )
+    holoScaleUnits( Crosshair + 1, vec(10):setY(100) )
+    holoColor( Crosshair + 1, vec(0):setX(255) )
+    holoPos( Crosshair + 1, Me:aimPos() )
+    async( I_HITTIME, "holoDelete", Crosshair )
+    async( I_HITTIME, "holoDelete", Crosshair + 1 )
+    
+]#

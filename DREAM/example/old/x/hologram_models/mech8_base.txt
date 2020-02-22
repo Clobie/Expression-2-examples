@@ -1,0 +1,99 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/26/2018 @ 1448
+# Holograms: 33
+# Notes: 
+# 2 -> leg_pivot_a
+# 3 -> leg_pivot_b
+# 4 -> leg_pivot_c
+# 5 -> leg_foot
+# 6 -> leg_pivot_a
+# 7 -> leg_pivot_b
+# 8 -> leg_pivot_c
+# 9 -> leg_foot
+# 10 -> leg_pivot_a
+# 11 -> leg_pivot_b
+# 12 -> leg_pivot_c
+# 13 -> leg_foot
+# 14 -> leg_pivot_a
+# 15 -> leg_pivot_b
+# 16 -> leg_pivot_c
+# 17 -> leg_foot
+# 18 -> leg_pivot_a
+# 19 -> leg_pivot_b
+# 20 -> leg_pivot_c
+# 21 -> leg_foot
+# 22 -> leg_pivot_a
+# 23 -> leg_pivot_b
+# 24 -> leg_pivot_c
+# 25 -> leg_foot
+# 26 -> leg_pivot_a
+# 27 -> leg_pivot_b
+# 28 -> leg_pivot_c
+# 29 -> leg_foot
+# 30 -> leg_pivot_a
+# 31 -> leg_pivot_b
+# 32 -> leg_pivot_c
+# 33 -> leg_foot
+# --------------------------------------------- #
+@name t5
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,72.5),vec(-17.1006,-31.1055,72.5),vec(-17.1006,-31.1055,172.5),vec(-17.1006,-31.1055,272.5),vec(-17.1006,-31.1055,372.5),vec(2.4121,-37.3535,72.5),vec(2.4121,-37.3535,172.5),vec(2.4121,-37.3535,272.5),vec(2.4121,-37.3535,372.5),vec(21.3623,-37.7246,72.5),vec(21.3623,-37.7246,172.5),vec(21.3623,-37.7246,272.5),vec(21.3623,-37.7246,372.5),vec(39.4814,-32.2559,72.5),vec(39.4814,-32.2559,172.5),vec(39.4814,-32.2559,272.5),vec(39.4814,-32.2559,372.5),vec(-19.3877,29.835,72.5),vec(-19.3877,29.835,172.5),vec(-19.3877,29.835,272.5),vec(-19.3877,29.835,372.5),vec(2.4121,37.3535,72.5),vec(2.4121,37.3535,172.5),vec(2.4121,37.3535,272.5),vec(2.4121,37.3535,372.5),vec(21.3623,37.7246,72.5),vec(21.3623,37.7246,172.5),vec(21.3623,37.7246,272.5),vec(21.3623,37.7246,372.5),vec(39.4814,32.2559,72.5),vec(39.4814,32.2559,172.5),vec(39.4814,32.2559,272.5),vec(39.4814,32.2559,372.5))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1))
+    Hologram[ "color", array ] = array(vec(0,255,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    Hologram[ "parent", array ] = array(1,1,2,3,4,1,6,7,8,1,10,11,12,1,14,15,16,1,18,19,20,1,22,23,24,1,26,27,28,1,30,31,32)
+    Hologram[ "note", array ] = array("","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else {
+            for( I = 1, Hologram[ "model", array ]:count( ) ) {holoParent(I, Hologram["parent", array][I, number]) }
+            interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

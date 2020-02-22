@@ -1,0 +1,18 @@
+@name xl
+@persist Time
+
+if( first() ) {
+    runOnTick(1)
+    holoCreate(1)
+    holoAng(1, ang(90,0,0))
+    Time = 0
+}
+elseif( tickClk() ) {
+    local Diff = realtime() - Time
+    if( Diff > 0 ) {
+        setName( Diff:toString() )
+        holoScaleUnits( 1, vec( Diff * 1000, 12, 12 ) )
+        holoColor( 1, vec( Diff * 1000, 255 - ( Diff * 1000 ), 0 ) )
+        Time = realtime()
+    }
+}

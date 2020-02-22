@@ -1,0 +1,58 @@
+@name e2
+@persist Arrow:array E2:array Timer
+
+#include "libs/async"
+
+interval(50)
+
+if( first() ) {
+    
+    function number uid() {
+        return randint(2e10)
+    }
+    
+    function number createArrow() {
+        local I_BASE = uid()
+        holoCreate( I_BASE )
+        holoModel( I_BASE, "models/holograms/pyramid.mdl" )
+        holoAng( I_BASE, ang(180,0,0) )
+        holoColor( I_BASE, vec(100,255,50) )
+        holoScale( I_BASE, vec(4) )
+        local I_SHAFT = I_BASE + 1
+        holoCreate( I_SHAFT )
+        holoModel( I_SHAFT, "models/holograms/cube.mdl" )
+        holoPos( I_SHAFT, holoEntity( I_BASE ):pos() + vec(0,0,84) )
+        holoAng( I_SHAFT, ang(0,45,90) )
+        holoColor( I_SHAFT, vec(100,255,50) )
+        holoScale( I_SHAFT, vec(1,10,1) )
+        holoParent( I_SHAFT, I_BASE )
+        return I_BASE
+    }
+    
+    function e2s() {
+        findByClass("gmod_wire_expression2")
+        E2 = findToArray()
+        async( 0.5, "e2s" )
+    }
+    
+    e2s()
+    print( 10000/255 )
+}
+
+if( clk() ) {
+    
+    Timer++
+    
+    if( E2:count() > Arrow:count() ) { Arrow:pushNumber( createArrow() ) }
+    elseif( E2:count() == Arrow:count() ) {
+        for( I = 1, E2:count() ) {
+            holoPos( Arrow[I, number], E2[I, entity]:pos() + vec(0,0, 200 + (sin(Timer*4) * 25)) )
+            holoAng( Arrow[I, number], ang( 180, Timer,0) )
+            #holoColor( Arrow[I, number], vec( E2[I, entity]:ops() / 39.2, 255 - E2[I, entity]:ops() / 39.2, 0 ) )
+            #holoColor( Arrow[I, number] + 1, vec( E2[I, entity]:ops() / 39.2, 255 - E2[I, entity]:ops() / 39.2, 0 ) )
+        }
+    } else {
+        holoDelete( Arrow[Arrow:count(), number] )
+        Arrow:remove( Arrow:count() )
+    }
+}

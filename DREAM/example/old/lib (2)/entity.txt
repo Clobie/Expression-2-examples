@@ -1,0 +1,42 @@
+##################################################
+#  ____                                          #
+# /\  _ `.                                       #
+# \ \ \/\ \  _ __    __     __      ___ ___      #
+#  \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\    #
+#   \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \   #
+#    \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\  #
+#     \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/  #
+#                                                #
+##################################################
+# Made by Dream                                  #
+#                                                #
+##################################################
+@name lib/entity
+@persist 
+
+if( first( ) ) {
+    
+    function entity playerFindClosest( ORIGIN:vector ) {
+        local TEMP_DISTANCE = 0
+        local ENTITY = entity()
+        local PLAYERS = players( )
+        for( I = 1, PLAYERS:count( ) ) {
+            local DISTANCE = PLAYERS[ I, entity ]:pos( ):distance( ORIGIN )
+            if( ( TEMP_DISTANCE == 0 | DISTANCE < TEMP_DISTANCE ) ) {
+                ENTITY = PLAYERS[ I, entity ]
+                TEMP_DISTANCE = DISTANCE
+            }
+        }
+        return ENTITY
+    }
+    #ifdef propSpawn( string, vector, number )
+        function entity:blowUp( PROP:string ) {
+            local BOOMBOOM = propSpawn( PROP, This:pos( ), 1 )
+            BOOMBOOM:setAlpha( 0 )
+            BOOMBOOM:propBreak( )
+        }
+    #endif
+        
+        
+    
+}

@@ -1,0 +1,115 @@
+@name ctaPropOrbit1.0
+@inputs 
+@outputs 
+@persist Me:entity Chip:entity PropArray:array Timer PropCount
+@persist GRAVITY:number
+#@model models/sprops/geometry/sphere_64.mdl
+
+if(first() | duped())
+{
+    runOnTick(1)
+    Timer = realtime()
+    Me = owner()
+    Chip = entity()
+    Chip:setPos(Chip:pos() + vec(0, 0, 10))
+    Chip:setMaterial("models/effects/splode_sheet")
+    Chip:setMass(50000)
+    
+    GRAVITY = 500
+    
+    function array ccListPlayers()
+    {
+        findByClass("player")
+        return findToArray()
+    }
+    
+    function array ccListPlayerProps(Player:entity)
+    {
+        findIncludePlayerProps(Player)
+        findExcludeEntity(Chip)
+        findByClass("prop_physics")
+        return findToArray()
+    }
+
+    function entity ccFindClosestPlayer(Entity:entity)
+    {
+        Players = ccListPlayers()
+        Distance = 99999999
+        ClosestPlayer = owner()
+        for(I = 0, Players:count())
+        {
+            TempDistance = Entity:pos():distance(Players[I, entity]:pos())
+            if(TempDistance < Distance)
+            {
+                if(Players[I, entity]:name() == owner():name() | !Players[I, entity]:isAlive())
+                {
+                    continue
+                }
+                ClosestPlayer = Players[I, entity]
+                Distance = TempDistance
+            }
+        }
+        return ClosestPlayer
+    }
+    
+    function vector ccGetNormalizedAimVector(To:vector, From:vector)
+    {
+        return ( To - From ):normalized()
+    }
+    
+    PropArray = ccListPlayerProps(Me)
+    PropCount = PropArray:count()
+    for(I = 1, PropArray:count())
+    {
+        PropArray[I, entity]:setMaterial("models/effects/splode_sheet")
+        PropArray[I, entity]:setColor(random(0, 255), random(0, 255), random(0, 255))
+        PropArray[I, entity]:setMass(50000)
+        PropArray[I, entity]:setTrails(2, 1, 10, "trails/smoke", vec(255, 0, 0), 255)
+        PropArray[I, entity]:propGravity(0)
+    }
+}
+
+for(I = 1, PropArray:count())
+{
+    Asdf = 50000
+    ToVec = ccGetNormalizedAimVector(Chip:pos(), PropArray[I, entity]:pos())
+    TotalGravity = ( PropArray[I, entity]:mass() * GRAVITY ) - ( PropArray[I, entity]:pos():distance(Chip:pos()) )
+    if(TotalGravity < 0)
+    {
+        PropArray[I, entity]:applyForce( ToVec )
+    }
+    else
+    {
+        PropArray[I, entity]:applyForce( ToVec * TotalGravity )
+    }
+}
+
+if(Timer < realtime())
+{
+    if(PropArray:count() < 0)
+    {
+        PropArray[PropArray:count(), entity] = propSpawn("models/sprops/geometry/sphere_24.mdl", Chip:pos() + vec(random(150,350), random(150,350), 0), Chip:angles(), 1)
+        PropArray[PropArray:count(), entity]:propFreeze(0)
+        PropArray[PropArray:count(), entity]:applyForce(vec(1, 0, 0) * PropArray[PropArray:count(), entity]:mass() * 700)
+    }
+    
+    PropArray = ccListPlayerProps(Me)
+    
+    if(PropCount < PropArray:count())
+    {
+        for(I = 1, PropArray:count())
+        {
+            if(PropArray[I, entity]:getMaterial() == "models/effects/splode_sheet")
+            {
+                continue
+            }
+            PropArray[I, entity]:setMaterial("models/effects/splode_sheet")
+            PropArray[I, entity]:setColor(random(0, 255), random(0, 255), random(0, 255))
+            PropArray[I, entity]:setMass(50000)
+            PropArray[I, entity]:setTrails(5, 5, 10, "trails/smoke", vec(255, 0, 0), 255)
+            PropArray[I, entity]:propGravity(0)
+        }
+        PropCount = PropArray:count()
+    }
+    Timer = realtime() + 1
+}

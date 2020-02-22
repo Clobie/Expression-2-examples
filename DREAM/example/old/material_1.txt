@@ -1,0 +1,38 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+Mat = "effects/strider_pinch_dudv"
+
+holoCreate(1)
+holoCreate(2)
+holoCreate(3)
+
+holoMaterial(1, Mat)
+holoMaterial(2, Mat)
+holoMaterial(3, Mat)
+
+holoPos(1, entity():toWorld(vec(0,0,60)))
+holoPos(2, entity():toWorld(vec(0,60,60)))
+holoPos(3, entity():toWorld(vec(0,-60,60)))
+
+holoModel(1, "hq_sphere")
+holoModel(2, "hq_tube")
+holoModel(3, "hq_cylinder")
+
+holoAng(2, ang(90,0,0))
+holoAng(3, ang(90,0,0))
+
+
+holoScale(1, vec(4,4,4))
+holoScale(2, vec(4,4,1))
+holoScale(3, vec(4,4,1))
+
+for(I=4,20){
+    holoCreate(I)
+    holoPos(I, entity():toWorld(vec(0,0,120)))
+    holoScale(I, vec(4,4,4))
+    holoMaterial(I, Mat)
+    }

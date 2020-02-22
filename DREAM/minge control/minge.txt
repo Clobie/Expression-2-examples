@@ -1,0 +1,536 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5
+# Date: 11/30/2018 @ 2024
+@name Menu
+@inputs A:entity
+@persist Hologram:table PlayerIndex:number Player:array PlayerJailed:table BoomBoomDelay PlayerBlind:table PlayerSoundSpam:table Me:entity
+@persist Lib_Holotext_CharPathMap:table 
+@persist Lib_Holotext_CharPath:string 
+@persist Lib_Holotext_CharPathExt:string
+@persist Lib_Holotext_Text:table
+@persist Lib_Holotext_Centered:number
+@persist Lib_Holotext_String:string
+@persist Lib_Holotext_Position:vector
+@persist Lib_Holotext_Angle:angle
+@persist Lib_Holotext_Scale:number
+@persist Lib_Holotext_TextColor:vector
+@persist Lib_Holotext_BackgroundColor:vector
+@persist Lib_Holotext_RootIndex:number
+@persist Lib_Holotext_RootEntity:entity
+@persist Lib_Holotext_Generating:number
+@persist Lib_Holotext_Generate:number
+@persist Lib_Holotext_LoopIndex:number
+@persist Lib_Holotext_LineIndex:number
+@persist Lib_Holotext_LetterIndex:number
+@persist Lib_Holotext_HologramCreationIndex:number
+@persist Lib_Holotext_TextLength:number
+@persist Lib_Holotext_DisplayOnlyToOwner:number
+@persist LIB_BUTTON_FUNCTIONDOWN:table
+@persist LIB_BUTTON_ONHOVER:table
+@persist LIB_BUTTON_ONHOVER_SHOW:number
+@persist LIB_BUTTON_FUNCTIONUP:table
+@persist LIB_BUTTON_TOGGLE:table
+@persist LIB_BUTTON_STATE:table
+@persist LIB_BUTTON_SCALE:table
+@persist LIB_BUTTON_COLOR_ON:vector
+@persist LIB_BUTTON_COLOR_OFF:vector
+@persist LIB_BUTTON_HOLD:number
+@persist LIB_BUTTON_LAST_PRESSED:number
+
+
+if( first( ) ) {
+    
+    Me = owner( )
+    
+    runOnKeys( owner( ), 1 )
+    LIB_BUTTON_FUNCTION = table( )
+    LIB_BUTTON_TOGGLE = table( )
+    LIB_BUTTON_STATE = table( )
+    LIB_BUTTON_SCALE = table( )
+    LIB_BUTTON_COLOR_ON = vec( 0, 255, 0 )
+    LIB_BUTTON_COLOR_OFF = vec( 255 )
+    LIB_BUTTON_ONHOVER_SHOW = 1
+    LIB_BUTTON_LAST_PRESSED = 0
+    
+    function vector hologramGetPlaneUp( PLAYER:entity, INDEX:number ) {
+        local EYE_LOCATION = PLAYER:shootPos( )
+        local EYE_DIRECTION = PLAYER:eye( )
+        local HOLO_ENTITY = holoEntity( INDEX )
+        local HOLO_UP = HOLO_ENTITY:up( )
+        return ( EYE_LOCATION + ( HOLO_UP:dot( HOLO_ENTITY:pos( ) - EYE_LOCATION ) / ( HOLO_UP:dot( EYE_DIRECTION ) ) ) * EYE_DIRECTION )
+    }
+    
+    function buttonCreate( INDEX:number, TOGGLE:number, FUNCTION_DOWN:string, FUNCTION_UP:string ) {
+        local SCALE = holoScaleUnits( INDEX )
+        LIB_BUTTON_SCALE[ INDEX, number ] = ( SCALE:x( ) + SCALE:y( ) ) / 4
+        LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ] = FUNCTION_DOWN
+        LIB_BUTTON_FUNCTIONUP[ INDEX, string ] = FUNCTION_UP
+        LIB_BUTTON_TOGGLE[ INDEX, number ] = TOGGLE
+        LIB_BUTTON_STATE[ INDEX, number ] = 0
+        LIB_BUTTON_ONHOVER[ INDEX, number ] = 0
+    }
+    
+    function number buttonGetState( INDEX ) {
+        return LIB_BUTTON_STATE[ INDEX, number ]
+    }
+    
+    function buttonSetColors( On:vector, Off:vector ) {
+        LIB_BUTTON_COLOR_ON = On
+        LIB_BUTTON_COLOR_OFF = Off
+    }
+}
+if( LIB_BUTTON_ONHOVER_SHOW ) {
+    if( clk( ) & LIB_BUTTON_ONHOVER:count( ) <= 30 ) {
+        local KEY = LIB_BUTTON_FUNCTIONDOWN:keys( )
+        for( I = 1, KEY:count( ) ) {
+            local X = KEY[ I, number ]
+            if( LIB_BUTTON_STATE[ X, number ] == 1 ) {
+                holoColor( X, LIB_BUTTON_COLOR_ON )
+            } else {
+                holoColor( X, LIB_BUTTON_COLOR_OFF )
+            }
+            local Pointer = hologramGetPlaneUp( owner( ), X )
+            if( Pointer:distance( holoEntity( X ):pos( ) ) <= LIB_BUTTON_SCALE[ X, number ] ) {
+                if( LIB_BUTTON_STATE[ X, number ] == 1 ) {
+                    holoColor( X, vec( 0, 255, 127.5 ) )
+                } else {
+                    holoColor( X, vec( 0, 255, 255 ) )
+                }
+            }
+        }
+    }
+}
+
+if( keyClk() ) {
+    local PLAYER = keyClk()
+    local KEY_PRESSED = keyClkPressed()
+    local DOWN = PLAYER:keyPressed( KEY_PRESSED ) ? 1 : 0
+    
+    if( KEY_PRESSED == "e" | KEY_PRESSED == "mouse_right" ) {
+        local INDEX = -1
+        local KEY = LIB_BUTTON_FUNCTIONDOWN:keys( )
+        for( I = 1, KEY:count( ) ) {
+            local X = KEY[ I, number ]
+            local Pointer = hologramGetPlaneUp( PLAYER, X )
+            if( Pointer:distance( holoEntity( X ):pos( ) ) <= LIB_BUTTON_SCALE[ X, number ] ) {
+                INDEX = X
+            }
+        }
+        if( INDEX > 0 ) {
+            if( DOWN == 1 ) {
+                if( LIB_BUTTON_STATE[ INDEX, number ] == 0 ) {
+                    LIB_BUTTON_LAST_PRESSED = INDEX
+                    LIB_BUTTON_HOLD = INDEX
+                    LIB_BUTTON_STATE[ INDEX, number ] = 1
+                    holoColor( INDEX, LIB_BUTTON_COLOR_ON )
+                    soundPlay( randint( 2e8 ), soundDuration( "common/wpn_moveselect.wav" ), "common/wpn_moveselect.wav" )
+                    if( LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ] != "" ) {
+                        if( LIB_BUTTON_FUNCTIONDOWN:exists( INDEX ) ) {
+                            LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ]( PLAYER )
+                        }
+                    }
+                } elseif( LIB_BUTTON_STATE[ INDEX, number ] == 1 & LIB_BUTTON_TOGGLE[ INDEX, number ] == 1 ) {
+                    LIB_BUTTON_STATE[ INDEX, number ] = 0
+                    holoColor( INDEX, LIB_BUTTON_COLOR_OFF )
+                    soundPlay( randint( 2e8 ), soundDuration( "common/wpn_denyselect.wav" ), "common/wpn_denyselect.wav" )
+                    if( LIB_BUTTON_FUNCTIONUP[ INDEX, string ] != "" ) {
+                        if( LIB_BUTTON_FUNCTIONUP:exists( INDEX ) ) {
+                            LIB_BUTTON_FUNCTIONUP[ INDEX, string ]( PLAYER )
+                        }
+                    }
+                }
+            } elseif( DOWN == 0 ) {
+                if( LIB_BUTTON_TOGGLE[ LIB_BUTTON_HOLD, number ] == 0 & LIB_BUTTON_HOLD > 0 & LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] == 1 ) {
+                    LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] = 0
+                    holoColor( LIB_BUTTON_HOLD, LIB_BUTTON_COLOR_OFF )
+                    #soundPlay( randint( 2e8 ), soundDuration( "common/wpn_denyselect.wav" ), "common/wpn_denyselect.wav" )
+                    if( LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ] != "" ) {
+                        if( LIB_BUTTON_FUNCTIONUP:exists( LIB_BUTTON_HOLD ) ) {
+                            LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ]( PLAYER )
+                        }
+                    }
+                    LIB_BUTTON_HOLD = 0
+                }
+            }
+        } else {
+            if( LIB_BUTTON_HOLD > 0 & LIB_BUTTON_TOGGLE[ LIB_BUTTON_HOLD, number ] == 0 ) {
+                LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] = 0
+                holoColor( LIB_BUTTON_HOLD, LIB_BUTTON_COLOR_OFF )
+                #soundPlay( randint( 2e8 ), soundDuration( "common/wpn_denyselect.wav" ), "common/wpn_denyselect.wav" )
+                if( LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ] != "" ) {
+                    if( LIB_BUTTON_FUNCTIONUP:exists( LIB_BUTTON_HOLD ) ) {
+                        LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ]( PLAYER )
+                    }
+                }
+                LIB_BUTTON_HOLD = 0
+            }
+        }
+    }
+}
+
+if( first( ) ) {
+    
+    Lib_Holotext_CharPath = "models/sprops/misc/alphanum/alphanum_"
+    Lib_Holotext_CharPathExt = ".mdl"
+    Lib_Holotext_CharPathMap = table( "." = "prd", "," = "com", ":" = "colon", ";" = "scolon", "?" = "qmark", "!" = "xmark", "\"" = "quote", "~" = "tilde", 
+                    "<" = "lessthan", ">" = "greaterthan", "_" = "underscore", "@" = "atsign", "#" = "pdsign", "$" = "dlsign", "%" = "pcnt",
+                    "^" = "crt", "&" = "and", "`" = "apost", "(" = "lpar", ")" = "rpar", "[" = "lbracket", "]" = "rbracket", "{" = "lcbracket",
+                    "}" = "rcbracket", "|" = "bar", "+" = "plu", "-" = "min", "*" = "ast", "/" = "div", "=" = "equal", "'" = "apost",
+                    "a" = "l_a", "b" = "l_b", "c" = "l_c", "d" = "l_d", "e" = "l_e", "f" = "l_f", "g" = "l_g", "h" = "l_h", "i" = "l_i", "j" = "l_j", "k" = "l_k", 
+                    "l" = "l_l", "m" = "l_m", "n" = "l_n", "o" = "l_o", "p" = "l_p", "q" = "l_q", "r" = "l_r", "s" = "l_s", "t" = "l_t", "u" = "l_u", "v" = "l_v", 
+                    "w" = "l_w", "x" = "l_x", "y" = "l_y", "z" = "l_z", "A" = "a", "B" = "b", "C" = "c", "D" = "d", "E" = "e", "F" = "f", "G" = "g", 
+                    "H" = "h", "I" = "i", "J" = "j", "K" = "k", "L" = "l", "M" = "m", "N" = "n", "O" = "o", "P" = "p", "Q" = "q", "R" = "r", "S" = "s", "T" = "t", 
+                    "U" = "u", "V" = "v", "W" = "w", "X" = "x", "Y" = "y", "Z" = "z", "0" = "0", "1" = "1", "2" = "2", "3" = "3", "4" = "4", "5" = "5", "6" = "6", 
+                    "7" = "7", "8" = "8", "9" = "9", " " = "space")
+    
+    Lib_Holotext_DisplayOnlyToOwner = 0
+    Lib_Holotext_Generate = 0
+    Lib_Holotext_HologramCreationIndex = 1
+    Lib_Holotext_RootIndex = randint( 2e8 )
+    Lib_Holotext_RootEntity = holoCreate( Lib_Holotext_RootIndex )
+    holoModel( Lib_Holotext_RootIndex, "models/sprops/cuboids/height96/size_1/cube_96x96x96.mdl" )
+    holoScaleUnits( Lib_Holotext_RootIndex, vec( 1 ) )
+    holoMaterial( Lib_Holotext_RootIndex, "debug/debugdrawflat" )
+    holoAlpha( Lib_Holotext_RootIndex, 0 )
+    
+    function holoTextColor( Color:vector ) {
+        for( I = 1, Lib_Holotext_HologramCreationIndex + 2 ) {
+            holoColor( Lib_Holotext_RootIndex + I, Color )
+        }
+    }
+    
+    function holoTextHideText( ) {
+        for( I = Lib_Holotext_RootIndex, Lib_Holotext_RootIndex + Lib_Holotext_TextLength + 1 ) {
+            holoAlpha( I, 0 )
+        }
+    }
+    
+    function holoTextShowText( ) {
+        for( I = Lib_Holotext_RootIndex, Lib_Holotext_RootIndex + Lib_Holotext_TextLength + 1 ) {
+            holoAlpha( I, 255 )
+        }
+    }
+    
+    function holoTextHideBackground( ) {
+        holoAlpha( Lib_Holotext_RootIndex, 0 )
+    }
+    
+    function holoTextShowBackground( ) {
+        holoAlpha( Lib_Holotext_RootIndex, 255 )
+    }
+    
+    function lib_holotext_generate( ) {
+        
+        interval( 60 )
+        
+        while( perf( 100 ) & holoCanCreate( ) & Lib_Holotext_LoopIndex <= Lib_Holotext_TextLength ) {
+            
+            Lib_Holotext_LoopIndex++
+            Lib_Holotext_LetterIndex++
+            
+            if( Lib_Holotext_LetterIndex > Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ]:count( ) | Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ]:count( ) == 0 ) {
+                Lib_Holotext_LineIndex++
+                Lib_Holotext_LetterIndex = 1
+            }
+            
+            if( Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ][ Lib_Holotext_LetterIndex, string ] != " " & Lib_Holotext_CharPathMap:exists( Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ][ Lib_Holotext_LetterIndex, string ] ) ) {
+            
+                local I = Lib_Holotext_RootIndex + Lib_Holotext_LoopIndex
+                local X = Lib_Holotext_Centered == 1 ? ( Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ]:count( ) / 2 - Lib_Holotext_LetterIndex + 0.5 ) * Lib_Holotext_Scale * 0.6 : ( Lib_Holotext_LetterIndex * Lib_Holotext_Scale * -0.6 ) + ( holoScaleUnits( Lib_Holotext_RootIndex ):x( ) / 2 ) + ( Lib_Holotext_Scale / 2 * 0.62 ) - 1.5
+                local Pos = vec(    X, 
+                                    0.1,
+                                    ( ( Lib_Holotext_Text:count( ) / 2 - Lib_Holotext_LineIndex + 0.5 ) * Lib_Holotext_Scale * 0.8 ) )
+                local Model = Lib_Holotext_CharPath + Lib_Holotext_CharPathMap[ Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ][ Lib_Holotext_LetterIndex, string ], string ] + Lib_Holotext_CharPathExt
+                
+                local A = Lib_Holotext_RootEntity:angles( ):setPitch( 0 )
+                #A = ang( A:roll( ), A:pitch( ), A:yaw( ) )
+                
+                if( !holoEntity( I ):isValid( ) ) {
+                    holoCreate( I, 
+                        Lib_Holotext_RootEntity:toWorld( Pos ),
+                        vec( Lib_Holotext_Scale, 0.1, Lib_Holotext_Scale ),
+                        A,
+                        Lib_Holotext_TextColor,
+                        Model
+                    )
+                    Lib_Holotext_HologramCreationIndex++
+                } else {
+                    holoPos( I, Lib_Holotext_RootEntity:toWorld( Pos ) )
+                    holoAng( I, A )
+                    holoColor( I, Lib_Holotext_TextColor )
+                    holoModel( I, Model )
+                }
+                holoMaterial( I, "debug/debugdrawflat" )
+                holoScale( I, vec( Lib_Holotext_Scale * 0.65 ):setY( 0.1 ) / 12.5 )
+                holoParent( I, Lib_Holotext_RootIndex )
+                holoAlpha( I, 255 )
+                #holoColor( I, ColorStep )
+                if( Lib_Holotext_DisplayOnlyToOwner ) {
+                    holoVisible( I , players( ), 0 )
+                    holoVisible( I , owner( ), 1 )
+                }
+            }
+        }
+        
+        if( Lib_Holotext_LoopIndex < Lib_Holotext_TextLength ) {
+            Lib_Holotext_Generate = 1
+        } else {
+            Lib_Holotext_Generate = 0
+            Lib_Holotext_Generating = 0
+        }
+        
+    }
+
+    function holoTextPos( Vector:vector ) {
+        holoPos( Lib_Holotext_RootIndex, Vector )
+    }
+    
+    function holoTextAng( Angle:angle ) {
+        holoAng( Lib_Holotext_RootIndex, ang( 0, Angle:yaw( ), Angle:pitch( ) ) )
+    }
+    
+    function holoTextParent( Index:number ) {
+        holoParent( Lib_Holotext_RootIndex, Index )
+    }
+    
+    function number holoText( Text:string, Position:vector, Angle:angle, Scale:number, Centered:number, TextColor:vector, BackgroundColor:vector ) {
+        
+        if( Lib_Holotext_Generating == 1 | Lib_Holotext_String == Text ) {
+            holoPos( Lib_Holotext_RootIndex, Position )
+            holoAng( Lib_Holotext_RootIndex, ang( 0, Angle:yaw( ), Angle:pitch( ) ) )
+            return -1
+        }
+        
+        Lib_Holotext_Text = table( )
+        Lib_Holotext_Generating = 1
+        local BGWidth = 0
+        local T = Text:explode( "\n" )
+        foreach( K, V:string = T ) {
+            local S = V:explode( "" )
+            if( S:count( ) > BGWidth ){
+                BGWidth = S:count( )
+            }
+            Lib_Holotext_Text:pushArray( V:explode( "" ) )
+        }
+        Lib_Holotext_Position = Position
+        Lib_Holotext_Angle = Angle
+        Lib_Holotext_Scale = Scale
+        Lib_Holotext_Centered = Centered
+        Lib_Holotext_TextColor = TextColor
+        Lib_Holotext_BackgroundColor = BackgroundColor
+        Lib_Holotext_TextLength = Text:replace( "\n", "" ):length( ) - 1
+        Lib_Holotext_LoopIndex = 0
+        Lib_Holotext_LineIndex = 1
+        Lib_Holotext_LetterIndex = 0
+        Lib_Holotext_String = Text
+        holoPos( Lib_Holotext_RootIndex, Position )
+        holoAng( Lib_Holotext_RootIndex, ang( 0, Angle:yaw( ), Angle:pitch( ) ) )
+        holoColor( Lib_Holotext_RootIndex, BackgroundColor )
+        holoAlpha( Lib_Holotext_RootIndex, 255 )
+        #holoParent( Lib_Holotext_RootIndex, entity( ) )
+        holoScaleUnits( Lib_Holotext_RootIndex, vec( ( BGWidth * 0.62 * Scale ) + 3, 0.001, ( Lib_Holotext_Text:count( ) * 0.8 * Scale ) + 1 ) )
+        
+        for( I = 1, Lib_Holotext_HologramCreationIndex + 10 ) {
+            holoAlpha( Lib_Holotext_RootIndex + I, 0 )
+        }
+        
+        if( Lib_Holotext_DisplayOnlyToOwner ) {
+            holoVisible( Lib_Holotext_RootIndex , players( ), 0 )
+            holoVisible( Lib_Holotext_RootIndex , owner( ), 1 )
+        }
+        
+        lib_holotext_generate( )
+        return Lib_Holotext_RootIndex
+    }
+}
+
+if( Lib_Holotext_Generate ) { lib_holotext_generate( ) }
+
+if( first( ) ) {
+    
+    function void async( T, F:string, X:number ) { 
+        timer( format( "cb:%.0f:%s:n:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+    }
+    function void async( T, F:string, X:entity ) { 
+        timer( format( "cb:%.0f:%s:e:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+    }
+    
+    Hologram = table( )
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/sprops/misc/alphanum/alphanum_lessthan.mdl","models/sprops/misc/alphanum/alphanum_lessthan.mdl","models/props_phx/misc/potato_launcher_explosive.mdl","models/holograms/cplane.mdl","models/props_c17/fence01a.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/bull/various/speaker.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,50),vec(0,0,65),vec(0.0879,0,65),vec(0,0,35),vec(0.0879,0,35),vec(0,20,50),vec(0.0879,20,50),vec(0,-20,50),vec(0.0879,-20,50),vec(0,12.3994,60.7002),vec(0.0879,12.3994,60.7002),vec(0,-12.4102,60.7002),vec(0.0879,-12.4102,60.7002),vec(0,-12.3994,39.291),vec(0.0879,-12.3994,39.291),vec(0,12.4365,39.291),vec(0.0879,12.4365,39.291),vec(0,20,50),vec(0,-20,50),vec(0,12.3994,58.21),vec(-0.2002,0,65),vec(-0.1001,-12.4102,60.7002),vec(-0.1001,0,35),vec(-0.2,12.4365,39.291),vec(0,-12.3994,39.291))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(0,90,0),ang(0,-90,0),ang(0,90,0),ang(90,-180,0),ang(0,0,0),ang(90,-180,0),ang(-90,0,0),ang(0,-180,-180))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(0.5,0.01,0.5),vec(0.5,0.01,0.5),vec(0.4,0.01,0.4),vec(0.5,0.5,0.5),vec(0.0206,0.0446,0.0552),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.05,0.5,0.5))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","debug/debugdrawflat","debug/debugdrawflat","","models/cheeze/buttons2/fire.mdl","","models/cheeze/buttons2/air","","")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","")
+    
+    BoomBoomDelay = realtime( )
+    
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            ) Hologram[ "next", number ] = I
+            holoMaterial(I, Hologram["material", array][I, string])
+            holoParent(I, Hologram["parent", array][I, number])
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 ) } else {
+            runOnKeys( owner( ), 1 )
+            PlayerIndex = 1
+            Player = players( )
+            PlayerBlind = table( )
+            PlayerJailed = table( )
+            PlayerSoundSpam = table( )
+            buttonCreate( 2, 1, "top", "" )
+            buttonCreate( 4, 1, "bottom", "" )
+            buttonCreate( 6, 0, "left", "" )
+            buttonCreate( 8, 0, "right", "" )
+            buttonCreate( 10, 1, "topleft", "" )
+            buttonCreate( 12, 0, "topright", "" )
+            buttonCreate( 14, 1, "bottomright", "" )
+            buttonCreate( 16, 0, "bottomleft", "" )
+            Lib_Holotext_DisplayOnlyToOwner = 0
+            interval( 1 )
+        }
+    } buffer( )
+    
+    function setMenuText( Text:string ) { holoText( Text, holoEntity( 1 ):pos( ), holoEntity( 1 ):angles( ) + ang( 0, 90, 0 ), 1.5, 1, vec( 255 ), vec( 0 ) ) }
+    
+    function left( Ply:entity ) {
+        Player = players( ), PlayerIndex = PlayerIndex - 1
+        if( PlayerIndex == 0 ) { PlayerIndex = Player:count( ) }
+        setMenuText( Player[ PlayerIndex, entity ]:name( ) ), holoTextColor( teamColor( Player[ PlayerIndex, entity ]:team( ) ) )
+    }
+    
+    function right( Ply:entity ) {
+        Player = players( ), PlayerIndex = PlayerIndex + 1
+        if( PlayerIndex == Player:count( ) + 1 ) { PlayerIndex = 1 }
+        setMenuText( Player[ PlayerIndex, entity ]:name( ) ), holoTextColor( teamColor( Player[ PlayerIndex, entity ]:team( ) ) )
+    }
+    
+    function top( Ply:entity ) {
+        local A = randint( 2e8 )
+        holoCreate( A ), holoPos( A, Player[ PlayerIndex, entity ]:pos( ) + vec( 0, 0, 20 ) )
+        holoEntity( A ):ignite( 10, 100 ), holoAlpha( A, 0 )
+        async( 10, "holoDelete", A )
+    }
+    
+    function topleft( Ply:entity ) { 
+        local X = propSpawn( "models/props_phx/misc/potato_launcher_explosive.mdl", Player[ PlayerIndex, entity ]:pos( ), ang( 0 ), 1 )
+        X:propBreak( )
+    }
+    
+    function topright( Ply:entity ) {
+        if( PlayerJailed[ Player[ PlayerIndex, entity ]:steamID( ), array ][ 1, number ] == 1 ) {
+            PlayerJailed[ Player[ PlayerIndex, entity ]:steamID( ), array ][ 1, number ] = 0
+            for( I = 1, 3 ) { PlayerJailed[ Player[ PlayerIndex, entity ]:steamID( ), array ][ I + 1, entity ]:propDelete( ) }
+        } else {
+            local A = propSpawn( "models/sprops/misc/tubes/size_5/tube_96x96.mdl", Player[ PlayerIndex, entity ]:pos( ) + vec( 0, 0, 50 ), 1 )
+            A:setAng( ang( 0, 0, 90 ) )
+            A:setMaterial( "debug/debugdrawflat" )
+            A:setAlpha( 255 )
+            A:setColor( vec( 0 ) )
+            local B = propSpawn( "models/sprops/geometry/fdisc_96.mdl", Player[ PlayerIndex, entity ]:pos( ) + vec( 0, 0, 97 ), 1 )
+            B:setAng( ang( 0, 0, 90 ) )
+            B:setMaterial( "debug/debugdrawflat" )
+            B:setAlpha( 255 )
+            B:setColor( vec( 0 ) )
+            local C = propSpawn( "models/sprops/geometry/fdisc_96.mdl", Player[ PlayerIndex, entity ]:pos( ) + vec( 0, 0, 3 ), 1 )
+            C:setAng( ang( 0, 0, 90 ) )
+            C:setMaterial( "debug/debugdrawflat" )
+            C:setAlpha( 255 )
+            C:setColor( vec( 0 ) )
+            PlayerJailed[ Player[ PlayerIndex, entity ]:steamID( ), array ] = array( 1, A, B, C )
+        }
+    }
+    
+    function bottom( Ply:entity ) {
+        Player[ PlayerIndex, entity ]:plyNoclip( 0 )
+        local Away = ( Player[ PlayerIndex, entity ]:pos( ) - vec( 0, 0, 250 ) ):normalized( )
+        local X = propSpawn( "models/sprops/cuboids/height06/size_1/cube_6x6x6.mdl", Player[ PlayerIndex, entity ]:pos( ) + ( Away * 100 ), 0 )
+        X:setMass( 50000 ), X:setAlpha( 0 ), X:applyForce( ( vec( 0, 0, 0.2 ) + ( Away * -1 ) ) * X:mass( ) * 5000 )
+        async( 0.4, "propDelete", X )
+    }
+    
+    function bottomleft( Ply:entity ) {
+        if( Player[ PlayerIndex, entity ] == owner( ) ) { return }
+        if( PlayerBlind[ Player[ PlayerIndex, entity ]:steamID64( ), number ] > 0 ) {
+            holoDelete( PlayerBlind[ Player[ PlayerIndex, entity ]:steamID64( ), number ] )
+            PlayerBlind[ Player[ PlayerIndex, entity ]:steamID64( ), number ] = 0
+        } else {
+            local H = randint( 2e8 )
+            PlayerBlind[ Player[ PlayerIndex, entity ]:steamID64( ), number ] = H
+            holoCreate( H, Player[ PlayerIndex, entity ]:shootPos( ), vec( -8 ), ang( 0 ), vec( 0 ), "hq_sphere" )
+            local Eyes = Player[ PlayerIndex, entity ]:lookupAttachment( "eyes" )
+            if( Eyes > 0 ) {
+                holoParentAttachment( H, Player[ PlayerIndex, entity ], "eyes" )
+            } else {
+                holoParent( H, Player[ PlayerIndex, entity ] )
+            }
+        }
+    }
+    
+    function bottomright( Ply:entity ) { PlayerSoundSpam[ Player[ PlayerIndex, entity ]:steamID64( ), number ] = realtime( ) + ( soundDuration( "npc/stalker/go_alert2a.wav" ) / 2 ) }
+    
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+    if( buttonGetState( 10 ) & BoomBoomDelay < realtime( ) ) { BoomBoomDelay = realtime( ) + 0.25, topleft( Player[ PlayerIndex, entity ] ) }
+    if( buttonGetState( 4 ) & BoomBoomDelay < realtime( ) ) { BoomBoomDelay = realtime( ) + 0.25, bottom( Player[ PlayerIndex, entity ]  ) }
+    if( buttonGetState( 2 ) & BoomBoomDelay < realtime( ) ) { BoomBoomDelay = realtime( ) + 0.1, top( Player[ PlayerIndex, entity ] ) }
+    if( buttonGetState( 14 ) ) {
+        if( PlayerSoundSpam[ Player[ PlayerIndex, entity ]:steamID64( ), number ] < realtime( ) ) {
+            Player[ PlayerIndex, entity ]:soundPlay( randint( 2e8 ), soundDuration( "npc/stalker/go_alert2a.wav" ), "npc/stalker/go_alert2a.wav" )
+            PlayerSoundSpam[ Player[ PlayerIndex, entity ]:steamID64( ), number ] = realtime( ) + ( soundDuration( "npc/stalker/go_alert2a.wav" ) - 1 )
+        }
+    }
+}
+
+if( keyClk( ) ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    if( Player == Me & Me:keyPressed( "lshift" ) ) {
+        if( Key == "mouse_right" & Player:keyPressed( Key ) == 1 ) {
+            holoPos( 1, owner( ):shootPos( ) + ( owner( ):eye() * 85 ) )
+            holoAng( 1, owner( ):eyeAngles( ) )
+            holoTextPos( holoEntity( 1 ):pos( ) )
+            holoTextAng( holoEntity( 1 ):angles( ) + ang( 0, 90, 0 ) )
+        }
+    }
+}
+
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) {
+            case "e", F( R[ 1, entity ] ), break
+            case "n", F( R[ 1, number ] ), break
+        }
+        exit()
+    }
+}
+
+

@@ -1,0 +1,120 @@
+@persist TRAJECTORY_ARC_HIGH:number 
+@persist TRAJECTORY_ARC_LOW:number
+
+#include "lib/heap"
+
+if( first() || dupefinished() ) {
+    
+    TRAJECTORY_ARC_HIGH = 1
+    TRAJECTORY_ARC_LOW = -1
+    
+    function string artilleryCreate() {
+        return new(    
+                            table(  
+                                    "projectile_origin" = entity():pos(),
+                                    "projectile_target" = entity():pos(),
+                                    "projectile_arc" = TRAJECTORY_ARC_HIGH,
+                                    "projectile_power" = fromUnit("m/s", 25),
+                                    "projectile_model" = "models/props_phx/ball.mdl",
+                                    "projectile_mass" = 50000,
+                                    "trail_startsize" = 2,
+                                    "trail_endsize" = 2,
+                                    "trail_length" = 10,
+                                    "trail_material" = "trails/smoke",
+                                    "trail_color" = vec(255),
+                                    "trail_alpha" = 255
+                                  )
+                        )
+    }
+    
+    function string:artillerySetOrigin( V:vector ) { local T = This:get(), T["projectile_origin", vector] = V }
+    function string:artillerySetTarget( V:vector ) { local T = This:get(), T["projectile_target", vector] = V }
+    function string:artillerySetArc( N:number ) { local T = This:get(), T["projectile_arc", number] = N }
+    function string:artillerySetPower( N:number ) { local T = This:get(), T["projectile_power", number] = fromUnit( "m/s", N ) }
+    function string:artillerySetProjectileModel( S:string ) { local T = This:get(), T["projectile_model", string] = S }
+    function string:artillerySetProjectileMass( N:number ) { local T = This:get(), T["projectile_mass", number] = N }
+    function string:artillerySetTrails( N1:number, N2:number, N3:number, S:string, V:vector, N4:number ) {
+        local T = This:get()
+        T["trail_startsize", number] = N1
+        T["trail_endsize", number] = N2
+        T["trail_length", number] = N3
+        T["trail_material", string] = S
+        T["trail_color", vector] = V
+        T["trail_alpha", number] = N4
+    }
+    
+    function angle string:artilleryGetAngle() {
+        local T = This:get()
+        local V_TARGET = T["projectile_target", vector]
+        local V_ORIGIN = T["projectile_origin", vector]
+        local I_POWER = T["projectile_power", number]
+        local I_ARC = T["projectile_arc", number]
+        local I_RANGE = ( V_TARGET - V_ORIGIN ):setZ(0):length()
+        local I_HEIGHT = ( V_ORIGIN:z() - V_TARGET:z() ) * I_ARC
+        local I_ANGLE = atan( ( ( I_POWER ^ 2 ) + ( I_ARC * sqrt( ( I_POWER ^ 4) - gravity() * ( ( gravity() * ( I_RANGE ^ 2 ) ) + ( 2 * I_HEIGHT * ( I_POWER ^ 2 ) ) ) ) ) ) / ( gravity() * I_RANGE ) )
+        return ( V_TARGET - V_ORIGIN ):toAngle():setPitch( -I_ANGLE )
+    }
+    
+    function number string:artilleryGetHitTime() {
+        local T = This:get()
+        local V_TARGET = T["projectile_target", vector]
+        local V_ORIGIN = T["projectile_origin", vector]
+        local I_POWER = T["projectile_power", number]
+        local I_ARC = T["projectile_arc", number]
+        local I_RANGE = ( V_TARGET - V_ORIGIN ):setZ(0):length()
+        local I_HEIGHT = ( V_ORIGIN:z() - V_TARGET:z() ) * I_ARC
+        local I_ANGLE = atan( ( ( I_POWER ^ 2 ) + ( I_ARC * sqrt( ( I_POWER ^ 4) - gravity() * ( ( gravity() * ( I_RANGE ^ 2 ) ) + ( 2 * I_HEIGHT * ( I_POWER ^ 2 ) ) ) ) ) ) / ( gravity() * I_RANGE ) )
+        local I_HITTIME = ( ( I_POWER * sin( I_ANGLE ) ) + sqrt( ( I_POWER * sin( I_ANGLE ) ) ^ 2 + ( 2 * gravity() * I_HEIGHT ) ) ) / gravity()
+        return I_HITTIME
+    }
+    
+    function entity string:artilleryFire() {
+        local T = This:get()
+        local I_POWER = T["projectile_power", number]
+        local V_ORIGIN = T["projectile_origin", vector]
+        local I_MASS = T["projectile_mass", number]
+        local A_ANGLE = This:artilleryGetAngle()
+        #local I_HITTIME = This:getHitTime()
+        local S_PROJECTILEMODEL = T["projectile_model", string]
+        local E_PROJECTILE = propSpawn( S_PROJECTILEMODEL, V_ORIGIN, A_ANGLE, 0 )
+        E_PROJECTILE:propDrag( 0 )
+        E_PROJECTILE:setMass( I_MASS )
+        E_PROJECTILE:setTrails(   
+                                    T["trail_startsize", number],
+                                    T["trail_endsize", number],
+                                    T["trail_length", number],
+                                    T["trail_material", string],
+                                    T["trail_color", vector],
+                                    T["trail_alpha", number]
+        )
+        E_PROJECTILE:propFreeze( 0 )
+        E_PROJECTILE:applyForce( A_ANGLE:forward() * I_POWER * I_MASS )
+        #async( I_HITTIME, "propDelete", E_PROJECTILE )
+        return E_PROJECTILE
+    }
+}
+
+#[
+#######################################################################
+# lib/artillery example
+#######################################################################
+@persist Artillery:string
+
+if( first() ) {
+    
+    Artillery = artilleryCreate()
+    
+    Artillery:artillerySetOrigin( entity():pos() )
+    Artillery:artillerySetTarget( entity():pos() + vec(1000,0,0) )
+    Artillery:artillerySetArc( TRAJECTORY_ARC_HIGH )
+    Artillery:artillerySetPower( 50 )
+    Artillery:artillerySetProjectileModel( "" )
+    Artillery:artillerySetProjectileMass( 50000 )
+    Artillery:artillerySetTrails( 10, 10, 10, "trails/smoke", vec(255), 255 )
+    
+    Artillery:artilleryGetAngle()
+    Artillery:artilleryGetHitTime()
+    Artillery:artilleryFire()
+    
+}
+]#

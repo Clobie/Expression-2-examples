@@ -1,0 +1,92 @@
+#include "lib/heap"
+
+if(first()){
+    typedef("Set", array("Members", "Negative"))
+    
+    function string empty(){
+        return new("Set", table("Members" = table(), "Negative" = 0))
+    }
+    function string universe(){
+        return new("Set", table("Members" = table(), "Negative" = 1))
+    }
+    function string singleton(E:string){
+        local T = table()
+        T[E, number] = 0
+        return new("Set", table("Members" = T, "Negative" = 0))
+    }
+    function string set(R:array){
+        local T = table()
+        foreach(K, E:string = R){ T[E, number] = 0 }
+        return new("Set", table("Members" = T, "Negative" = 0))
+    }
+    function array string:elements(){
+        local T = This:getData()
+        if(T["Negative", number]){
+            hint("Cannot list members of infinite set!", 10)
+            while(1){}
+        }
+        else{
+            return T["Members", table]:keys()
+        }
+    }
+    function number string:contains(E:string){
+        local T = This:getData()
+        return bXor(T["Members", table]:exists(E), T["Negative", number])
+    }
+    function number string:isEmpty(){
+        local T = This:getData()
+        return !T["Members", table]:count() && !T["Negative", number]
+    }
+    function number string:isFinite(){
+        local T = This:getData()
+        return !T["Negative", number]
+    }
+    function number string:isUniverse(){
+        local T = This:getData()
+        return !T["Members", table]:count() && T["Negative", number]
+    }
+    function number string:cardinality(){
+        local T = This:getData()
+        if(T["Negative", number]){ return 1 / 0 }
+        else{ return T["Members", table]:count() }
+    }
+    function string string:toString(){
+        local T = This:getData()
+        return (T["Negative", number] ? "U \\ " : "") + "[" + T["Members", table]:keys():concat(",") + "]"
+    }
+    
+    function string union([A B]:string){
+        local TA = A:getData()
+        local TB = B:getData()
+        if(TA["Negative", number] == TB["Negative", number]){
+            return new("Set", table(
+                "Members" = TA["Members", table]:merge(TB["Members", table]),
+                "Negative" = TA["Negative", number] && TB["Negative", number]
+            ))
+        }
+        else{
+            local X = TA["Members", table]
+            local Y = TB["Members", table]
+            return new("Set", table(
+                "Members" = TB["Negative", number] ? Y:difference(X) : X:difference(Y),
+                "Negative" = 1
+            ))
+        }
+    }
+    function string string:complement(){
+        local T = This:getData()
+        T["Negative", number] = !T["Negative", number]
+        return new("Set", T)
+    }
+    function string intersection([A B]:string){
+        return union(A:complement(), B:complement()):complement()
+    }
+    function string relativeComplement([A B]:string){
+        return intersection(A, B:complement())
+    }
+    function string symmetricDifference([A B]:string){
+        return relativeComplement(union(A, B), intersection(A, B))
+    }
+}
+
+

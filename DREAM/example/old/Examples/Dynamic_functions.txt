@@ -1,0 +1,21 @@
+@name Dynamic functions?
+@persist Me:entity
+
+if( first() )
+{
+    Me = owner()
+    runOnChat(1)
+}
+elseif( chatClk(Me) )
+{
+    local S = Me:lastSaid()
+    local Param = S:explode(" ")
+    local Command = Param[1, string]
+    
+    if(Command == "do")
+    {
+        if( Param:count() == 2 )                { Param[2, string](  ) }
+        elseif( Param:count() == 3 )            { Param[2, string]( Param[3, string] ) }
+        elseif( Param:count() == 4 )            { Param[2, string]( Param[3, string] + " " + Param[4, string] ) }
+    }
+}

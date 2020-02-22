@@ -1,0 +1,14 @@
+@name wat
+@persist E:entity
+
+interval(5)
+
+if( first() )
+{
+    E = entity():isWeldedTo()
+    E:setMaterial("debug/debugdrawflat")
+}
+elseif( clk() )
+{
+    E:setColor( vec( random(0,255), random(0,255), random(0,255) ) )
+}

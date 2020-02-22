@@ -1,0 +1,74 @@
+# --------------------------------------------------#
+# Bouncing Beam Barrier                             #
+# --------------------------------------------------#
+# ____                                              #
+#/\  _`\                                            #
+#\ \ \/\ \   _ __     __      __       ___ ___      #
+# \ \ \ \ \ /\`'__\ /'__`\  /'__`\   /' __` __`\    #
+#  \ \ \_\ \\ \ \/ /\  __/ /\ \_\.\_ /\ \/\ \/\ \   #
+#   \ \____/ \ \_\ \ \____\\ \__/.\_\\ \_\ \_\ \_\  #
+#    \/___/   \/_/  \/____/ \/__/\/_/ \/_/\/_/\/_/  #
+#                                                   #
+# --------------------------------------------------#
+@name Bouncing Beam
+@persist HoloOffset:number HolosBuffered:number EndHolo:number
+
+if( first( ) ) {
+    
+    rangerHitEntities( 0 )
+    HoloOffset = randint( 2e8 )
+    HolosBuffered = 0
+    entity( ):setAng( ang( 0, 0.7, 0 ) )
+    local A = randint( 2e8 )
+    holoCreate( A )
+    holoParent( A, entity( ) )
+    holoModel( A, "hq_sphere" )
+    
+    EndHolo = randint( 2e8 )
+    holoCreate( EndHolo )
+    holoModel( EndHolo, "hq_sphere" )
+    
+    function beam( Origin:vector, Direction:vector, Bounces:number ) {
+        
+        local Ranger = rangerOffset( 100000, Origin, Direction )
+        local HitPos = Ranger:pos( )
+        local Normal = Ranger:hitNormal( )
+        local Vec = ( HitPos - Origin )
+        
+        for( I = 1, Bounces ) {
+            if( HolosBuffered < Bounces & I >= HolosBuffered ) {
+                holoCreate( HoloOffset + I )
+                #holoAlpha( HoloOffset + I, 235 - ( I / Bounces ) * 255 )
+                HolosBuffered++
+            }
+            if( I > 1 ) {
+                Origin = HitPos
+                Direction = Vec - 2 * Vec:dot( Normal ) * Normal
+                Ranger = rangerOffset( 100000, Origin, Direction )
+                HitPos = Ranger:pos( )
+                Normal = Ranger:hitNormal( )
+                Vec = ( HitPos - Origin )
+            }
+            
+            #Ang = ( Direction - 2 * Direction:dot( XRD:hitNormal( ) ) * XRD:hitNormal( ) ):toAngle()
+            
+            
+            
+            
+            holoScaleUnits( HoloOffset + I, vec( Ranger:distance( ) , 2, 2 ) )
+            holoAng( HoloOffset + I, Vec:toAngle( ) + ang( 0, 0, 0 ) )
+            holoPos( HoloOffset + I, ( HitPos + Origin ) / 2 )
+            holoModel( HoloOffset + I, "models/xeon133/slider/slider_bar_10x10x1536.mdl" )
+            holoMaterial( HoloOffset + I, "debug/debugdrawflat" )
+            holoColor( HoloOffset + I, hsv2rgb( ( realtime( ) * 50 ) + I, 1, 1 ) )
+            if( I == Bounces ) {
+                #holoPos( EndHolo, Ranger:pos( ) )
+            }
+        }
+    }
+}
+interval( 60 )
+beam( entity( ):pos( ), entity( ):forward( ), 20 )
+entity( ):setAng( ang( ( realtime( ) * -3 ) % 360, ( realtime( ) * 3 ) % 360, 0 ) )
+
+#Vec = ( HitPos - Origin ), Direction = Vec - 2 * Vec:dot( Normal ) * Normal

@@ -1,0 +1,17 @@
+@name lolboom
+@persist Target:entity
+
+interval(250)
+
+if(first())
+{
+    Target = findPlayerByName("nobody")
+}
+
+if(Target:health() > 0)
+{
+    Prop = propSpawn("models/props_junk/gascan001a.mdl", 1)
+    #Prop = propSpawn("models/props_phx/mk-82.mdl", 1)
+    Prop:setPos(Target:pos() + vec(0, 0, 50))
+    Prop:propBreak()
+}

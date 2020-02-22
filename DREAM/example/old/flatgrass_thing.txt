@@ -1,0 +1,40 @@
+@name flatgrass thing
+
+if( first() ) {
+    
+    #[
+    local VectorMin = vec()
+    local VectorMax = vec()
+    
+    rangerHitEntities( 0 )
+    
+    Ranger=rangerOffset( 9999999, entity():pos(), vec(0,0,-1) )
+    VectorMin = VectorMin:setZ( Ranger:pos():z() )
+    Ranger=rangerOffset( 9999999, entity():pos(), vec(0,0,1) )
+    VectorMax = VectorMax:setZ( Ranger:pos():z() )
+    
+    Ranger=rangerOffset( 9999999, entity():pos(), vec(0,-1,0) )
+    VectorMin = VectorMin:setY( Ranger:pos():y() )
+    Ranger=rangerOffset( 9999999, entity():pos(), vec(0,1,0) )
+    VectorMax = VectorMax:setY( Ranger:pos():y() )
+    
+    Ranger=rangerOffset( 9999999, entity():pos(), vec(-1,0,0) )
+    VectorMin = VectorMin:setX( Ranger:pos():x() )
+    Ranger=rangerOffset( 9999999, entity():pos(), vec(1,0,0) )
+    VectorMax = VectorMax:setX( Ranger:pos():x() )
+    
+    print( VectorMin )
+    print( VectorMax )
+    ]#
+    
+    
+    VectorMin = vec( -15359.96875, -15359.96875, -12799.96875 )
+    VectorMax = vec( 15359.96875, 15359.971679688, 15359.970703125 )
+    
+    holoCreate( 1 )
+    holoModel( 1, "models/props_phx/huge/evildisc_corp.mdl" )
+    holoPos( 1, ( VectorMin + VectorMax ) / 2 )
+    holoScaleUnits( 1, -vec( VectorMax:x() * 2, VectorMax:y() * 2, VectorMax:z() * 3 ) )
+    holoColor( 1, vec() )
+    holoMaterial( 1, "debug/debugdrawflat" )
+}

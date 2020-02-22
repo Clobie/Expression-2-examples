@@ -1,0 +1,119 @@
+@name menu
+@inputs
+@outputs
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter Loaded Power Gravity ArcMode MovableHoloIndex_PitchYaw MovableHoloIndex_Pitch MovableHoloIndex_Yaw TargetCanHit]:number [Origin]:vector [Me Chip]:entity
+@persist
+@trigger
+
+interval(25)
+
+if( first() | dupefinished() )
+{
+    Me = owner()
+    Chip = entity()
+    #Chip:setAlpha(0)
+    Origin = Chip:pos()
+    Loaded = 0
+    Power = fromUnit("m/s", 12)
+    Gravity = gravity()
+    ArcMode = 1
+
+    MovableHoloIndex_PitchYaw = 0
+    MovableHoloIndex_Pitch = 0
+    MovableHoloIndex_Yaw = 0
+    
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    HoloCounter = 0
+    HologramModel = array("models/sprops/misc/alphanum/alphanum_greaterthan.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/sprops/misc/alphanum/alphanum_greaterthan.mdl","models/sprops/misc/alphanum/alphanum_greaterthan.mdl","models/sprops/misc/alphanum/alphanum_plu.mdl","models/sprops/misc/alphanum/alphanum_plu.mdl","models/sprops/misc/alphanum/alphanum_arrow_a.mdl","models/sprops/misc/alphanum/alphanum_v.mdl","models/sprops/misc/alphanum/alphanum_l_e.mdl","models/sprops/misc/alphanum/alphanum_l_c.mdl","models/sprops/misc/alphanum/alphanum_a.mdl","models/sprops/misc/alphanum/alphanum_l_n.mdl","models/sprops/misc/alphanum/alphanum_l_g.mdl","models/sprops/misc/alphanum/alphanum_l_a.mdl","models/sprops/misc/alphanum/alphanum_l_c.mdl","models/sprops/misc/alphanum/alphanum_s.mdl","models/sprops/misc/alphanum/alphanum_l_l.mdl","models/sprops/misc/alphanum/alphanum_l_e.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/hq_sphere.mdl","models/sprops/misc/alphanum/alphanum_y.mdl","models/sprops/misc/alphanum/alphanum_r.mdl","models/sprops/misc/alphanum/alphanum_p.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/sprops/misc/alphanum/alphanum_x.mdl","models/sprops/misc/alphanum/alphanum_z.mdl","models/sprops/misc/alphanum/alphanum_y.mdl","models/sprops/misc/alphanum/alphanum_z.mdl","models/sprops/misc/alphanum/alphanum_x.mdl","models/sprops/misc/alphanum/alphanum_y.mdl","models/sprops/misc/alphanum/alphanum_x.mdl","models/sprops/misc/alphanum/alphanum_y.mdl","models/sprops/misc/alphanum/alphanum_z.mdl","models/holograms/plane.mdl","models/sprops/misc/alphanum/alphanum_arrow_a.mdl","models/sprops/misc/alphanum/alphanum_x.mdl","models/sprops/misc/alphanum/alphanum_y.mdl","models/sprops/misc/alphanum/alphanum_z.mdl")
+    HologramPosition = array(vec(0,0,51),vec(0,0,66),vec(0.0879,0,66),vec(0,0,36),vec(0.0879,0,36),vec(0,20,51),vec(0.0879,20,51),vec(0,-20,51),vec(0.0879,-20,51),vec(0,12.3999,61.7002),vec(0.0879,12.3999,61.7002),vec(0,-12.4097,61.7002),vec(0.0879,-12.4097,61.7002),vec(0,-12.3999,40.291),vec(0.0879,-12.3999,40.291),vec(0,12.4365,40.291),vec(0.0879,12.4365,40.291),vec(0,-20.2002,51),vec(0,20,51),vec(0,12.4365,40.291),vec(0,0,36),vec(-0.1001,-10.1277,42.4834),vec(0,14.1016,61.7002),vec(0,12.3999,61.7002),vec(0,10.6982,61.7002),vec(0,1.8018,66),vec(0,0,66),vec(0,-1.6016,66),vec(0,-12.4097,61.7002),vec(0,-10.8081,61.7002),vec(0,-9.2065,61.7002),vec(0,-13.7109,61.7002),vec(0,-15.0122,61.7002),vec(0,0,76.1748),vec(0.0342,0,76.1748),vec(0,-6.5527,73.8418),vec(0.0342,-6.5527,73.8418),vec(0,6.5068,73.8125),vec(0.0342,6.5068,73.8125),vec(0,0,47.1621),vec(0,0,76.1748),vec(0,-6.5527,73.8418),vec(0,6.5068,73.8125),vec(0,19.5483,68.8486),vec(0.04,19.459,68.8486),vec(0,-19.5483,68.8486),vec(0.0342,-19.5483,68.8486),vec(0,-13.1714,71.7002),vec(0.0342,-13.1714,71.7002),vec(0,-22.4238,62.457),vec(0.0703,-22.4238,62.457),vec(0,22.4238,62.457),vec(0.0342,22.4238,62.457),vec(0,13.1714,71.7002),vec(0.0342,13.1714,71.7002),vec(0,20.0781,68.8877),vec(0,12.6831,71.749),vec(0,13.6963,71.7178),vec(0,19.0479,68.8486),vec(-0.1958,22.9534,62.457),vec(-0.1958,21.8611,62.457),vec(-0.0249,-13.1714,71.7002),vec(0,-19.5483,68.8486),vec(0,-22.4238,62.457),vec(-0.0498,-12.3999,40.291),vec(-0.1001,-14.7373,38.249),vec(0,22.4238,62.457),vec(0,19.5483,68.8486),vec(0,13.1714,71.7002))
+    HologramAngle = array(ang(0,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(0,90,0),ang(0,-90,0),ang(0,-90,0),ang(45,-90,0),ang(-90,-90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(0,0,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(-89.9999,0,0),ang(-90,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(-45,90,-90),ang(90,-90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0))
+    HologramScale = array(vec(1,1,1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(0.5,0.01,0.5),vec(0.5,0.01,0.5),vec(0.5,0.01,0.5),vec(0.5,0.01,0.5),vec(0.3,0.001,0.3),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.5,0.5,0.5),vec(0.6,0.6,0.6),vec(0.1,0.01,0.1),vec(0.1,0.01,0.1),vec(0.1,0.01,0.1),vec(0.1,0.01,0.1),vec(0.1,0.01,0.1),vec(0.1,0.01,0.1),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.2,0.01,0.2),vec(0.05,0.8,1),vec(0.3,0.001,0.3),vec(0.1,0.01,0.1),vec(0.1,0.01,0.1),vec(0.1,0.01,0.1))
+    HologramColor = array(vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,0,255),vec(0,0,255),vec(0,255,0),vec(255,0,0),vec(255,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(255,0,0),vec(0,0,255),vec(0,255,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,255,0),vec(0,0,255),vec(255,0,0),vec(0,0,255),vec(0,255,0),vec(255,0,0),vec(0,255,0),vec(255,0,0),vec(0,0,255),vec(0,0,0),vec(0,255,0),vec(0,255,0),vec(255,0,0),vec(0,0,255))
+    HologramAlpha = array(0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,50,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    HologramMaterial = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,1,2,1,4,1,6,1,8,1,10,1,12,1,14,1,16,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,34,1,36,1,38,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    timer("createHolos", 1)
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    
+    function angle incrementedAngle(O:angle, T:angle, S:number)
+    {
+        CV=O:forward()
+        DV=T:forward()
+        Ang=acos(CV:dot(DV))
+        if(Ang>S)
+        {
+            TargetCanHit = 0
+            return slerp(quat(O),quat(T),S/Ang):toAngle()
+        }
+        else
+        {
+            TargetCanHit = 1
+            return T
+        }
+    }
+    
+    function angle getAngleOfAttack(O:vector, T:vector)
+    {
+        local VTar = T #+ ( Target:vel() * ( T:setZ(0):distance(O:setZ(0)) / ( Power * cos(holoEntity(8):angles():pitch()))))
+        local V = VTar - O
+        local Range = V:setZ(0):length()
+        local Height = V:z()
+        local Angle = atan(((Power^2) + ArcMode*sqrt((Power^4) - Gravity * ((Gravity*(Range^2)) + (2*Height*(Power^2)))))/(Gravity*Range))
+        local Time = (Power * sin(Angle) + sqrt((Power * sin(Angle))^2 + (2 * Gravity * Height))) / Gravity
+        Timer = Time
+        if( Time > 0 & abs(O:z() - T:z()) < 100) { return V:toAngle():setPitch(90-Angle) }
+        else { return ang(0,0,0) }
+    }
+}
+elseif( clk("createHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count() & holoCanCreate())
+    {
+        HoloCounter++
+        holoCreate( HoloCounter )
+        holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+        holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+        holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+        holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+        holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+        holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+        holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+        holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+    }
+    if(HoloCounter < HologramModel:count()) { timer("createHolos", 1) }
+    else { timer("parentHolos", 1) HoloCounter = 0 }
+}
+elseif( clk("parentHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count())
+    {
+        HoloCounter++
+        if(HologramParent[HoloCounter, number] > 0)
+        {
+            holoParent(HoloCounter, HologramParent[HoloCounter, number])
+        }
+    }
+    if(HoloCounter == HologramModel:count()) { Loaded = 1 }
+    else { timer("parentHolos", 1) }
+}
+elseif( clk() & Loaded == 1)
+{
+    TargetV = owner():pos()
+    AimV = TargetV - holoEntity(MovableHoloIndex_PitchYaw):pos()
+    AimA = incrementedAngle( holoEntity(MovableHoloIndex_PitchYaw):angles(), AimV:toAngle(), 2 )
+    
+    if( MovableHoloIndex_PitchYaw > 0 )
+    {
+        holoAng( MovableHoloIndex_PitchYaw, (AimA * ang(1,1,0)))
+    }
+    if( MovableHoloIndex_Pitch > 0)
+    {
+        holoAng( MovableHoloIndex_Pitch, (AimA * ang(1,0,0)))
+    }
+    if( MovableHoloIndex_Yaw > 0)
+    {
+        holoAng( MovableHoloIndex_Yaw, (AimA * ang(0,1,0)))
+    }
+}

@@ -1,0 +1,119 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/20/2018 @ 1624
+# Holograms: 40
+# --------------------------------------------- #
+@name turret03
+@persist Hologram:table Projectile:string OriginEnt:entity Target:entity TrajectoryArc ProjectilePower
+
+if( first( ) ) {
+    
+    Projectile = "models/sprops/geometry/sphere_3.mdl"
+    TrajectoryArc = -1 # 1 = high, -1 = low
+    Target = owner( )
+    
+    function void async( T, F:string, X:entity ) {
+        timer( format( "cb:%.0f:%s:e:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+    }
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/rcube_thick.mdl","models/holograms/cube.mdl","models/holograms/hq_tube_thin.mdl","models/holograms/hq_tube_thin.mdl","models/holograms/hq_tube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(0,0,2.96),vec(0,-7.0166,4.6006),vec(-6.3071,-7.0264,10.9102),vec(-6.3071,7.0264,10.9102),vec(0,7.0166,4.6006),vec(-3.9038,0,15.3096),vec(-3.9038,0,15.3096),vec(9.7974,0,15.3096),vec(24.7939,0,15.3096),vec(36.7905,0,15.3105))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,90,45),ang(90,90,0),ang(90,90,0),ang(0,90,45),ang(0,-180,0),ang(0,0,0),ang(90,-180,0),ang(90,-180,0),ang(90,-180,0))
+    Hologram[ "scale", array ] = array(vec(4,4,0.5),vec(3,3,0.5),vec(0.5,1.5,1.5),vec(1.5,1.5,0.5),vec(1.5,1.5,0.5),vec(0.5,1.5,1.5),vec(2,0.65,0.65),vec(0.1,0.1,0.1),vec(0.3,0.3,1),vec(0.26,0.26,2),vec(0.35,0.35,0.35))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3")
+    Hologram[ "parent", array ] = array(1,1,2,2,2,2,8,2,8,8,8)
+    
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next < Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 ) } else {
+            for( I = 1, 11 ) { holoParent(I, Hologram["parent", array][I, number]) }
+            OriginEnt = holoEntity( 8 )
+            runOnKeys( owner( ), 1 )
+            runOnChat( 1 )
+            interval( 100 )
+        }
+    } buffer( )
+    
+    function array trajectoryAngle( Origin:vector, Target:vector, Arc:number, Power:number ) {
+        local Power = fromUnit( "m/s", Power )
+        local Range = ( Target - Origin ):setZ( 0 ):length()
+        local Height = Arc == -1 ? ( Origin:z() - Target:z() ) * Arc : ( Target:z() - Origin:z() ) * Arc
+        local Pitch = atan( ( ( Power ^ 2 ) + ( Arc * sqrt( ( Power ^ 4) - gravity() * ( ( gravity() * ( Range ^ 2 ) ) + ( 2 * Height * ( Power ^ 2 ) ) ) ) ) ) / ( gravity() * Range ) )
+        local Time = ( ( Power * sin( Pitch ) ) + sqrt( ( Power * sin( Pitch ) ) ^ 2 + ( 2 * gravity() * Height ) ) ) / gravity()
+        local Angle = ( Target - Origin ):toAngle( ):setPitch( -Pitch )
+        return array( Angle, Time )
+    }
+    
+    function entity fire( ) {
+        local Trajectory = trajectoryAngle( OriginEnt:pos( ), Target:pos( ), TrajectoryArc, ProjectilePower )
+        local Entity = propSpawn( Projectile, OriginEnt:pos( ), OriginEnt:angles( ), 0 )
+        Entity:propDrag( 0 )
+        Entity:propFreeze( 0 )
+        Entity:setMass( 50000 )
+        Entity:setAng( Trajectory[ 1, angle ] )
+        Entity:applyForce( Entity:forward() * Entity:mass() * fromUnit( "m/s", ProjectilePower ) )
+        async( abs( Trajectory[ 2, number ] ) + 3, "propDelete", Entity )
+        return Entity
+    }
+}
+
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        switch( Match[ 2, string ] ) { case "e", Match[ 1, string ]( vonDecode( Match[ 3, string ] )[ 1, entity ] ), break }
+        exit()
+    }
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+    local Trajectory = trajectoryAngle( OriginEnt:pos( ), Target:pos( ), TrajectoryArc, ProjectilePower )
+    while( perf( 20 ) & isnan( Trajectory[ 2, number ] ) ) {
+        ProjectilePower += 5, if( ProjectilePower > 100 ) { ProjectilePower = 15 }
+        Trajectory = trajectoryAngle( OriginEnt:pos( ), Target:pos( ), TrajectoryArc, ProjectilePower )
+    }
+    holoAng( 2, Trajectory[ 1, angle ]:setPitch( 0 ) )
+    holoAng( 8, Trajectory[ 1, angle ] )
+}
+
+if( chatClk( ) & lastSpoke( ) == owner( ) ) {
+    local Param = owner( ):lastSaid( ):explode(" ")
+    if( Param[ 1, string ]:left( 1 ) == "/" ) {
+        hideChat( 1 )
+        if(     Param[ 1, string ] == "/t")           { Target = findPlayerByName( Param[ 2, string ] ), print( "Target: " + Target:name( ) ) }
+        elseif( Param[ 1, string ] == "/high")        { TrajectoryArc =  1, print( "Arc: high" ) }
+        elseif( Param[ 1, string ] == "/low")         { TrajectoryArc = -1, print( "Arc: low" ) }
+    }
+}
+
+if( keyClk( ) & keyClk( ) == owner( ) ) {
+    if( keyClk( ):keyPressed( "lshift" ) & keyClkPressed( ) == "e" & keyClk( ):keyPressed( keyClkPressed( ) ) ) { 
+        fire( ):setTrails( 1, 1, 10, "trails/smoke", vec( 0, 255, 255 ), 255 )
+    }
+}

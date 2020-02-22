@@ -1,0 +1,555 @@
+@name HE2
+@persist [HmHologramData HmDefaultHologram HmFakeIndex HmSaveData]:table
+@persist [HmSpawnPoint HmDragOffsetVector]:vector
+@persist [HmIndex HmIndexCount HmXYZIndicator HmPYRIndicator HmDragToggled]:number
+@persist [HmPositionMode HmAngleMode HmScaleMode HmStringIndex HmDragIndex HmDragAxis]:string
+@persist [HmEditor]:entity
+@persist [HmDragOffsetAngle]:angle
+@persist 
+
+#include "dream/example/lib/async"
+#include "dream/example/lib/button"
+
+interval( 33.33 ) # 30 times / second
+
+if( first() ) {
+    
+    runOnChat( 1 )
+    
+    HmPositionMode = "world"        # local or world
+    HmAngleMode = "world"           # local or world
+    HmScaleMode = "units"           # units or scale
+    
+    HmEditor = findPlayerByName( "s u c c" )
+    HmIndex = 0
+    HmIndexCount = 0
+    HmStringIndex = ""
+    HmDragIndex = ""
+    HmDragAxis = ""
+    HmHologramData = table()
+    HmSaveData = table()
+    HmSpawnPoint = entity():pos()
+    HmDragOffsetVector = vec()
+    HmDragOffsetAngle = ang()
+    HmDragToggled = 0
+    HmDefaultHologram = table(  
+                                "position_world" = entity():pos(),
+                                "position_local" = vec(),
+                                "scale" = vec(1),
+                                "scaleunits" = vec(12),
+                                "angle" = ang(),
+                                "color" = vec(255),
+                                "model" = "cube",
+                                "material" = "",
+                                "alpha" = 255,
+                                "renderfx" = 0,
+                                "skin" = 1,
+                                "shadow" = 1,
+                                "shading" = 0,
+                                "parent" = 0,
+                                "parente" = noentity(),
+                                "fakeindex" = 0
+                             )
+    HmFakeIndex = table()
+    
+    function string:hmCloneToDefault( I ) {
+        local IID = This:toNumber()
+        local E = holoEntity( IID )
+        HmDefaultHologram[ "position_world", vector ] = E:pos()
+        HmDefaultHologram[ "position_local", vector ] = E:toWorld( HmSpawnPoint )
+        HmDefaultHologram[ "scale", vector ] = holoScale( IID )
+        HmDefaultHologram[ "scaleunits", vector ] = holoScaleUnits( IID )
+        HmDefaultHologram[ "angle", angle ] = E:angles()
+    }
+    
+    function vector entity:hmGetPlaneXY( I:number ) { local E = holoEntity( I ), return ( This:shootPos() + ( E:up():dot( E:pos() - This:shootPos() ) / ( E:up():dot( This:eye() ) ) ) * This:eye() ) }
+    function vector entity:hmGetPlaneXZ( I:number ) { local E = holoEntity( I ), return ( This:shootPos() + ( E:right():dot( E:pos() - This:shootPos() ) / ( E:right():dot( This:eye() ) ) ) * This:eye() ) }
+    function vector entity:hmGetPlaneYZ( I:number ) { local E = holoEntity( I ), return ( This:shootPos() + ( E:forward():dot( E:pos() - This:shootPos() ) / ( E:forward():dot( This:eye() ) ) ) * This:eye() ) }
+    function vector entity:hmGetPlaneXY( E:entity ) { return ( This:shootPos() + ( E:up():dot( E:pos() - This:shootPos() ) / ( E:up():dot( This:eye() ) ) ) * This:eye() ) }
+    function vector entity:hmGetPlaneXZ( E:entity ) { return ( This:shootPos() + ( E:right():dot( E:pos() - This:shootPos() ) / ( E:right():dot( This:eye() ) ) ) * This:eye() ) }
+    function vector entity:hmGetPlaneYZ( E:entity ) { return ( This:shootPos() + ( E:forward():dot( E:pos() - This:shootPos() ) / ( E:forward():dot( This:eye() ) ) ) * This:eye() ) }
+    
+    function string hmCreateHologram() {
+        if( !holoCanCreate() ) { return "" }
+        HmIndexCount++
+        HmIndex = HmIndexCount
+        local TABLE = HmDefaultHologram:clone()
+        local SID = TABLE:id():sub(10):toNumber(16):toString()
+        local IID = SID:toNumber()
+        HmStringIndex = SID
+        TABLE[ "iid", number ] = IID
+        TABLE[ "fakeindex", number ] = HmIndexCount
+        HmHologramData[ SID, table ] = TABLE
+        local Position = HmPositionMode == "local" ? HmSpawnPoint + HmDefaultHologram["position_local", vector] : HmDefaultHologram["position_world", vector]
+        local Scale = HmScaleMode == "units" ? HmDefaultHologram["scaleunits", vector] / 12 : HmDefaultHologram["scale", vector]
+        holoCreate( IID, Position, Scale, HmDefaultHologram["angle", angle], HmDefaultHologram["color", vector], HmDefaultHologram["model", string] )
+        holoMaterial( IID, HmDefaultHologram["material", string] )
+        holoAlpha( IID, HmDefaultHologram["alpha", number] )
+        holoRenderFX( IID, HmDefaultHologram["renderfx", number] )
+        holoSkin( IID, HmDefaultHologram["skin", number] )
+        holoShadow( IID, HmDefaultHologram["shadow", number] )
+        holoDisableShading( IID, HmDefaultHologram["shading", number] )
+        TABLE[ "holoentity", entity ] = holoEntity( IID )
+        HmFakeIndex[HmIndexCount:toString(), string] = SID
+        print( "Hologram " + HmIndexCount + " created." )
+        return SID
+    }
+    
+    function string:hmDeleteHologram() {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData:remove( This )
+        HmFakeIndex:remove( HmHologramData[ This, table ][ "fakeindex", number ]:toString() )
+        holoDelete( IID )
+    }
+    
+    function number hmFakeIndexIsValid( I ) {
+        return HmFakeIndex:exists( I:toString() )
+    }
+    
+    function string hmGetRealIndex( I ) {
+        return HmFakeIndex[ I:toString(), string ]
+    }
+    
+    function number string:hmGetFakeIndex() {
+        return HmHologramData[ This, table ][ "iid", number ]
+    }
+    
+    function hmSelectIndex( I ) {
+        if( hmFakeIndexIsValid( I ) ) { HmIndex = I }
+        HmStringIndex = hmGetRealIndex( I )
+    }
+    
+    function entity string:hmGetEntity()        { return HmHologramData[ This, table ][ "holoentity", entity ] }
+    function vector string:hmGetScale()         { return holoScale( HmHologramData[ This, table ][ "iid", number ] ) }
+    function vector string:hmGetScaleUnits()    { return holoScaleUnits( HmHologramData[ This, table ][ "iid", number ] ) }
+    function angle  string:hmGetAngle()         { return This:hmGetEntity():angles() }
+    function vector string:hmGetPosition()      { return This:hmGetEntity():pos() }
+    function vector string:hmGetColor()         { return This:hmGetEntity():getColor() }
+    function number string:hmGetAlpha()         { return This:hmGetEntity():getAlpha() }
+    function string string:hmGetModel()         { return This:hmGetEntity():model() }
+    function string string:hmGetMaterial()      { return This:hmGetEntity():getMaterial() }
+    function number string:hmGetSkin()          { return This:hmGetEntity():getSkin() }
+    function number string:hmGetParent()        { return HmHologramData[ This, table ][ "parent", number ] }
+    function entity string:hmGetParentE()       { return HmHologramData[ This, table ][ "parente", entity ] }
+    
+    
+    function string:hmSetScale( VECTOR:vector ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "scale", vector ] = VECTOR
+        holoScale( IID, VECTOR )
+    }
+    
+    function string:hmSetScaleUnits( VECTOR:vector ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "scaleunits", vector ] = VECTOR
+        holoScaleUnits( IID, VECTOR )
+    }
+    
+    function string:hmSetAngle( ANGLE:angle ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "angle", angle ] = ANGLE
+        holoAng( IID, ANGLE )
+    }
+    
+    function string:hmSetPosition( VECTOR:vector ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "position_world", vector ] = VECTOR
+        HmHologramData[ This, table ][ "position_local", vector ] = VECTOR - HmSpawnPoint
+        holoPos( IID, VECTOR )
+    }
+    
+    function string:hmSetColor( VECTOR:vector ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "color", vector ] = VECTOR
+        holoColor( IID, VECTOR )
+    }
+    
+    function string:hmSetAlpha( NUMBER ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "alpha", number ] = NUMBER
+        holoAlpha( IID, NUMBER )
+    }
+    
+    function string:hmSetModel( STRING:string ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "model", string ] = STRING
+        holoModel( IID, STRING )
+    }
+    
+    function string:hmSetMaterial( STRING:string ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "material", string ] = STRING
+        holoMaterial( IID, STRING )
+    }
+    
+    function string:hmSetSkin( NUMBER ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "skin", number ] = NUMBER
+        holoSkin( IID, NUMBER )
+    }
+    
+    function string:hmSetRenderFX( NUMBER ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "renderfx", number ] = NUMBER
+        holoRenderFX( IID, NUMBER )
+    }
+    
+    function string:hmDisableShading( NUMBER ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "shading", number ] = NUMBER
+        holoDisableShading( IID, NUMBER )
+    }
+    
+    function string:hmSetParent( NUMBER ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        local IID2 = hmGetRealIndex( NUMBER )
+        HmHologramData[ This, table ][ "parent", number ] = NUMBER
+        holoParent( IID, IID2:toNumber() )
+    }
+    
+    function string:hmSetParent( ENTITY:entity ) {
+        local IID = HmHologramData[ This, table ][ "iid", number ]
+        HmHologramData[ This, table ][ "parente", entity ] = ENTITY
+        holoParent( IID, ENTITY )
+    }
+    
+    function string:hmMirrorAngleSimple( NUMBER:number, STRING:string )
+    {
+        ADest = hmGetRealIndex( NUMBER ):hmGetAngle()
+        if( STRING:find("p") ) { ADest *= ang(-1,1,1) }
+        if( STRING:find("y") ) { ADest *= ang(1,-1,1) }
+        if( STRING:find("r") ) { ADest *= ang(1,1,-1) }
+        This:hmSetAngle( ADest )
+    }
+    
+    function string:hmMirrorVectorSimple( NUMBER:number, STRING:string )
+    {
+        PVec = hmGetRealIndex( NUMBER ):hmGetPosition() - HmSpawnPoint
+        if( STRING:find("x") ) { PVec *= vec(-1, 1, 1) }
+        if( STRING:find("y") ) { PVec *= vec(1, -1, 1) }
+        if( STRING:find("z") ) { PVec *= vec(1, 1, -1) }
+        This:hmSetPosition( HmSpawnPoint + PVec )
+    } 
+    
+    function string:hmCopyHologram( NUMBER:number ) {
+        
+    }
+    
+    function hmCreateXYZIndicator() {
+        HmXYZIndicator = randint( 2e8 )
+        holoCreate( HmXYZIndicator )
+        holoAlpha( HmXYZIndicator, 0 )
+        
+        holoCreate( HmXYZIndicator + 1 )
+        holoModel( HmXYZIndicator + 1, "cube" )
+        holoAlpha( HmXYZIndicator + 1, 150 )
+        holoColor( HmXYZIndicator + 1, vec( 0, 0, 0 ) )
+        holoScaleUnits( HmXYZIndicator + 1, vec( 0.3, 0.3, 96 ) )
+        holoPos( HmXYZIndicator + 1, entity():pos() + vec( 0, 0, 60 ) )
+        holoParent( HmXYZIndicator + 1, HmXYZIndicator )
+        holoDisableShading( HmXYZIndicator + 1, 1 )
+        
+        holoCreate( HmXYZIndicator + 2 )
+        holoModel( HmXYZIndicator + 2, "cube" )
+        holoAlpha( HmXYZIndicator + 2, 150 )
+        holoColor( HmXYZIndicator + 2, vec( 0, 0, 0 ) )
+        holoScaleUnits( HmXYZIndicator + 2, vec( 96, 0.3, 0.3 ) )
+        holoPos( HmXYZIndicator + 2, entity():pos() + vec( 60, 0, 0 ) )
+        holoParent( HmXYZIndicator + 2, HmXYZIndicator )
+        holoDisableShading( HmXYZIndicator + 2, 1 )
+        
+        holoCreate( HmXYZIndicator + 3 )
+        holoModel( HmXYZIndicator + 3, "cube" )
+        holoAlpha( HmXYZIndicator + 3, 150 )
+        holoColor( HmXYZIndicator + 3, vec( 0, 0, 0 ) )
+        holoScaleUnits( HmXYZIndicator + 3, vec( 0.3, 96, 0.3 ) )
+        holoPos( HmXYZIndicator + 3, entity():pos() + vec( 0, 60, 0 ) )
+        holoParent( HmXYZIndicator + 3, HmXYZIndicator )
+        holoDisableShading( HmXYZIndicator + 3, 1 )
+    }
+    
+    function hmCreatePYRIndicator() {
+        HmPYRindicator = randint( 2e8 )
+        holoCreate( HmPYRIndicator )
+        holoAlpha( HmPYRIndicator, 0 )
+        
+        holoCreate( HmPYRIndicator + 1 )
+        holoModel( HmPYRIndicator + 1, "models/hunter/tubes/tube4x4x025.mdl" )
+        holoAlpha( HmPYRIndicator + 1, 150 )
+        holoColor( HmPYRIndicator + 1, vec( 0, 0, 0 ) )
+        holoMaterial( HmPYRIndicator + 1, "debug/debugdrawflat" )
+        holoScaleUnits( HmPYRIndicator + 1, vec( 96, 96, 1 ) )
+        holoDisableShading( HmPYRIndicator + 1, 1 )
+        holoParent( HmPYRIndicator + 1, HmPYRIndicator )
+        
+        holoCreate( HmPYRIndicator + 2 )
+        holoModel( HmPYRIndicator + 2, "models/hunter/tubes/tube4x4x025.mdl" )
+        holoAlpha( HmPYRIndicator + 2, 150 )
+        holoColor( HmPYRIndicator + 2, vec( 0, 0, 0 ) )
+        holoMaterial( HmPYRIndicator + 2, "debug/debugdrawflat" )
+        holoScaleUnits( HmPYRIndicator + 2, vec( 96, 96, 1 ) )
+        holoAng( HmPYRIndicator + 2, ang( 90, 0, 0 ) )
+        holoDisableShading( HmPYRIndicator + 2, 2 )
+        holoParent( HmPYRIndicator + 2, HmPYRIndicator )
+        
+        holoCreate( HmPYRIndicator + 3 )
+        holoModel( HmPYRIndicator + 3, "models/hunter/tubes/tube4x4x025.mdl" )
+        holoAlpha( HmPYRIndicator + 3, 150 )
+        holoColor( HmPYRIndicator + 3, vec( 0, 0, 0 ) )
+        holoMaterial( HmPYRIndicator + 3, "debug/debugdrawflat" )
+        holoScaleUnits( HmPYRIndicator + 3, vec( 96, 96, 1 ) )
+        holoAng( HmPYRIndicator + 3, ang( 0, 0, 90 ) )
+        holoDisableShading( HmPYRIndicator + 2, 2 )
+        holoParent( HmPYRIndicator + 3, HmPYRIndicator )
+    }
+    
+    function hmUpdateXYZIndicator() {
+        if( HmStringIndex != "" ) {
+            holoPos( HmXYZIndicator, HmStringIndex:hmGetPosition() )
+            #holoAng( HmXYZIndicator, HmStringIndex:hmGetAngle() )
+        }
+    }
+    
+    function hmUpdatePYRIndicator() {
+        if( HmStringIndex != "" ) {
+            holoPos( HmPYRIndicator, HmStringIndex:hmGetPosition() )
+            #holoAng( HmPYRIndicator, HmStringIndex:hmGetAngle() )
+        }
+    }
+    
+    function hmSelectXYZIndicatorAxis( STRING:string ) {
+        if( STRING:find( "x" ) ) {
+            holoColor( HmXYZIndicator + 2, vec( 255, 0, 0 ) )
+            holoAlpha( HmXYZIndicator + 2, 200 )
+        } else {
+            holoColor( HmXYZIndicator + 2, vec( 0, 0, 0 ) )
+            holoAlpha( HmXYZIndicator + 2, 150 )
+        }
+        if( STRING:find( "y" ) ) {
+            holoColor( HmXYZIndicator + 3, vec( 0, 255, 0 ) )
+            holoAlpha( HmXYZIndicator + 3, 200 )
+        } else {
+            holoColor( HmXYZIndicator + 3, vec( 0, 0, 0 ) )
+            holoAlpha( HmXYZIndicator + 3, 150 )
+        }
+        if( STRING:find( "z" ) ) {
+            holoColor( HmXYZIndicator + 1, vec( 0, 0, 255 ) )
+            holoAlpha( HmXYZIndicator + 1, 200 )
+        } else {
+            holoColor( HmXYZIndicator + 1, vec( 0, 0, 0 ) )
+            holoAlpha( HmXYZIndicator + 1, 150 )
+        }
+    }
+    
+    function hmSelectPYRIndicatorAxis( STRING:string ) {
+        if( STRING:find( "p" ) ) {
+            holoColor( HmPYRIndicator + 2, vec( 255, 0, 0 ) )
+            holoAlpha( HmPYRIndicator + 2, 200 )
+        } else {
+            holoColor( HmPYRIndicator + 2, vec( 0, 0, 0 ) )
+            holoAlpha( HmPYRIndicator + 2, 150 )
+        }
+        if( STRING:find( "r" ) ) {
+            holoColor( HmPYRIndicator + 3, vec( 0, 0, 255 ) )
+            holoAlpha( HmPYRIndicator + 3, 200 )
+        } else {
+            holoColor( HmPYRIndicator + 3, vec( 0, 0, 0 ) )
+            holoAlpha( HmPYRIndicator + 3, 150 )
+        }
+        if( STRING:find( "y" ) ) {
+            holoColor( HmPYRIndicator + 1, vec( 0, 255, 0 ) )
+            holoAlpha( HmPYRIndicator + 1, 200 )
+        } else {
+            holoColor( HmPYRIndicator + 1, vec( 0, 0, 0 ) )
+            holoAlpha( HmPYRIndicator + 1, 150 )
+        }
+    }
+    
+    
+    hmCreateXYZIndicator()
+    #hmCreatePYRIndicator()
+    hmCreateHologram()
+}
+
+if( clk() ) {
+    
+    hmUpdateXYZIndicator()
+    #hmUpdatePYRIndicator()
+    
+    Numpad0 =           HmEditor:keyPressed( "pad_0" )
+    Numpad1 =           HmEditor:keyPressed( "pad_1" )
+    Numpad2 =           HmEditor:keyPressed( "pad_2" )
+    Numpad3 =           HmEditor:keyPressed( "pad_3" )
+    Numpad4 =           HmEditor:keyPressed( "pad_4" )
+    Numpad5 =           HmEditor:keyPressed( "pad_5" )
+    Numpad6 =           HmEditor:keyPressed( "pad_6" )
+    Numpad7 =           HmEditor:keyPressed( "pad_7" )
+    Numpad8 =           HmEditor:keyPressed( "pad_8" )
+    Numpad9 =           HmEditor:keyPressed( "pad_9" )
+    NumpadPeriod =      HmEditor:keyPressed( "pad_decimal" )
+    NumpadPlus =        HmEditor:keyPressed( "pad_plus" )
+    NumpadMinus =       HmEditor:keyPressed( "pad_minus" )
+    NumpadMultiply =    HmEditor:keyPressed( "pad_multiply" )
+    NumpadDivide =      HmEditor:keyPressed( "pad_divide" )
+    NumpadEnter =       HmEditor:keyPressed( "pad_enter" )
+    Shift =             HmEditor:keyPressed( "lshift" )
+    Control =           HmEditor:keyPressed( "lcontrol" )
+    Alt =               HmEditor:keyPressed( "lalt" )
+    KeyE =              HmEditor:keyUse()
+    KeyAttack1 =        HmEditor:keyAttack1()
+    KeyAttack2 =        HmEditor:keyAttack2()
+    KeyReload =         HmEditor:keyReload()
+    
+    if( changed( KeyE ) && !KeyE && HmDragToggled) {
+        if( HmDragToggled ) { HmDragToggled = 0, HmDragAxis = "" }
+        hmSelectXYZIndicatorAxis( "" )
+    } elseif( changed( KeyE ) && KeyE && !HmDragToggled ) {
+        local PlaneXY = HmEditor:hmGetPlaneXY( HmXYZIndicator )
+        local PlaneXZ = HmEditor:hmGetPlaneXZ( HmXYZIndicator )
+        
+        local AxisBoundingBoxX = holoScaleUnits( HmXYZIndicator + 2 ):setY( 5 ):setZ( 2 )
+        local AxisBoundingBoxY = holoScaleUnits( HmXYZIndicator + 3 ):setX( 5 ):setZ( 2 )
+        local AxisBoundingBoxZ = holoScaleUnits( HmXYZIndicator + 1 ):setX( 5 ):setY( 2 )
+        
+        local AxisX = holoEntity( HmXYZIndicator + 2 ):pos()
+        local AxisY = holoEntity( HmXYZIndicator + 3 ):pos()
+        local AxisZ = holoEntity( HmXYZIndicator + 1 ):pos()
+        
+        local IntersectX = inrange( PlaneXY, AxisX - AxisBoundingBoxX, AxisX + AxisBoundingBoxX )
+        local IntersectY = inrange( PlaneXY, AxisY - AxisBoundingBoxY, AxisY + AxisBoundingBoxY )
+        local IntersectZ = inrange( PlaneXZ, AxisZ - AxisBoundingBoxZ, AxisZ + AxisBoundingBoxZ )
+        
+        switch( 1 ) {
+            case IntersectX, HmDragOffsetVector = PlaneXY:setY( AxisX:y() ) - HmStringIndex:hmGetPosition(), HmDragToggled = 1, HmDragAxis = "x", break
+            case IntersectY, HmDragOffsetVector = PlaneXY:setX( AxisY:x() ) - HmStringIndex:hmGetPosition(), HmDragToggled = 1, HmDragAxis = "y", break
+            case IntersectZ, HmDragOffsetVector = PlaneXZ:setX( AxisZ:x() ) - HmStringIndex:hmGetPosition(), HmDragToggled = 1, HmDragAxis = "z", break
+            default, break
+        }
+        hmSelectXYZIndicatorAxis( HmDragAxis )
+    }
+    
+    if( HmDragToggled ) {
+        
+        local PlaneXY = HmEditor:hmGetPlaneXY( HmXYZIndicator )
+        local PlaneXZ = HmEditor:hmGetPlaneXZ( HmXYZIndicator )
+        
+        switch( HmDragAxis ) {
+            case "x",
+                local Point = PlaneXY:setY( HmStringIndex:hmGetPosition():y() )
+                HmStringIndex:hmSetPosition( Point - HmDragOffsetVector )
+                break
+            case "y",
+                local Point = PlaneXY:setX( HmStringIndex:hmGetPosition():x() )
+                HmStringIndex:hmSetPosition( Point - HmDragOffsetVector )
+                break
+            case "z",
+                local Point = PlaneXZ:setX( HmStringIndex:hmGetPosition():x() )
+                HmStringIndex:hmSetPosition( Point - HmDragOffsetVector )
+                break
+            default,
+                break
+        }
+    }
+    
+    if( changed( Numpad0 ) && Numpad0 ) {
+        hmCreateHologram()
+    }
+    
+    if( changed( NumpadEnter ) && NumpadEnter ) {
+        
+    }
+    
+    
+}
+
+if( chatClk() ) {
+    
+    local Player = lastSpoke()
+    if( Player == HmEditor ) {
+        local Text = Player:lastSaid()
+        local Parameter = Text:explode( " " )
+        local Call = Parameter[ 1, string ]
+        if( Text:left( 1 ) == "/" ) { hideChat( 1 ) }
+        
+        switch( Parameter:count() ) {
+            case 1,
+                switch( Call ) {
+                    case "/pos",
+                    case "/vec", print( HmStringIndex:hmGetPosition() - HmSpawnPoint ), break
+                    case "/ang", print( HmStringIndex:hmGetAngle() ), break
+                    case "/color", print( HmStringIndex:hmGetColor() ), break
+                    case "/model",
+                    case "/mdl", print( HmStringIndex:hmGetModel() ), break
+                    case "/material", print( HmStringIndex:hmGetMaterial() ), break
+                    case "/skin", print( HmStringIndex:hmGetSkin() ), break
+                    case "/skins", print( HmStringIndex:hmGetEntity():getSkinCount() ), break
+                    case "/scale", print( HmStringIndex:hmGetScale() ), break
+                    case "/units",
+                    case "/scaleunits", print( HmStringIndex:hmGetScaleUnits() ), break
+                    case "/parent", print( HmStringIndex:hmGetParent() ), break
+                    case "/parente", print( HmStringIndex:hmGetParentE() ), break
+                    case "/index", print( HmStringIndex:hmGetFakeIndex() ), break
+                    case "/parent", print( HmStringIndex:hmGetParent() ), break
+                    case "/delete", HmStringIndex:hmDeleteHologram(), break
+                    default, print( "Unknown command" ), break
+                }
+                break
+            case 2,
+                switch( Call ) {
+                    case "/color", HmStringIndex:hmSetColor( vec( Parameter[2, string]:toNumber() ) ), break
+                    case "/alpha", HmStringIndex:hmSetAlpha( clamp( Parameter[2, string]:toNumber(), 0, 255 ) ), break
+                    case "/mdl",
+                    case "/model", HmStringIndex:hmSetModel( Parameter[2, string] ), break
+                    case "/material", HmStringIndex:hmSetMaterial( Parameter[2, string] ), break
+                    case "/scale", HmStringIndex:hmSetScale( vec( Parameter[2, string]:toNumber() ) ), break
+                    case "/units",
+                    case "/scaleunits", HmStringIndex:hmSetScaleUnits( vec( Parameter[2, string]:toNumber() ) ), break
+                    case "/skin", HmStringIndex:hmSetSkin( Parameter[2, string]:toNumber() ), break
+                    case "/shadow",
+                    case "/shadows", HmStringIndex:hmDisableShading( Parameter[2, string]:toNumber() == 1 ? 0 : 1 ), break
+                    case "/fx",
+                    case "/renderfx", HmStringIndex:hmSetRenderFX( Parameter[2, string]:toNumber() ), break
+                    case "/parent", HmStringIndex:hmSetParent( Parameter[2, string]:toNumber() ), break
+                    case "/index",
+                    case "/select", hmSelectIndex( Parameter[2, string]:toNumber() ), break
+                    case "/cvec",
+                    case "/cpos", HmStringIndex:hmSetPosition( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetPosition() ), break
+                    case "/ccolor", HmStringIndex:hmSetColor( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetColor() ), break
+                    case "/cang", HmStringIndex:hmSetAngle( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetAngle() ), break
+                    case "/cscale", HmStringIndex:hmSetScale( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetScale() ), break
+                    case "/cscaleunits",
+                    case "/cunits", HmStringIndex:hmSetScaleUnits( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetScaleUnits() ), break
+                    case "/cmaterial", HmStringIndex:hmSetMaterial( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetMaterial() ), break
+                    case "/cmdl",
+                    case "/cmodel", HmStringIndex:hmSetModel( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetModel() ), break
+                    case "/cskin", HmStringIndex:hmSetSkin( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetSkin() ), break
+                    case "/cparent", HmStringIndex:hmSetParent( hmGetRealIndex( Parameter[2, string]:toNumber() ):hmGetParent() ), break
+                    case "/copy", HmStringIndex:hmCopyHologram( Parameter[2, string]:toNumber() ), break
+                    case "/shading", HmStringIndex:hmDisableShading( Parameter[2, string]:toNumber() ), break
+                    default, print( "Unknown command" ), break
+                }
+                break
+            case 3,
+                switch( Call ) {
+                    case "/mvec",
+                    case "/mpos", HmStringIndex:hmMirrorVectorSimple( Parameter[2, string]:toNumber(), Parameter[3, string] ), break
+                    case "/mang", HmStringIndex:hmMirrorAngleSimple( Parameter[2, string]:toNumber(), Parameter[3, string] ), break
+                    default, print( "Unknown command" ), break
+                }
+                break
+            case 4,
+                switch( Call ) {
+                    case "/pos",
+                    case "/vec", HmStringIndex:hmSetPosition( HmSpawnPoint + vec( Parameter[2, string]:toNumber(), Parameter[3, string]:toNumber(), Parameter[4, string]:toNumber() ) ), break
+                    case "/ang", HmStringIndex:hmSetAngle( ang( Parameter[2, string]:toNumber(), Parameter[3, string]:toNumber(), Parameter[4, string]:toNumber() ) ), break
+                    case "/color", HmStringIndex:hmSetColor( vec( Parameter[2, string]:toNumber(), Parameter[3, string]:toNumber(), Parameter[4, string]:toNumber() ) ), break
+                    case "/scale", HmStringIndex:hmSetScale( vec( Parameter[2, string]:toNumber(), Parameter[3, string]:toNumber(), Parameter[4, string]:toNumber() ) ), break
+                    case "/units",
+                    case "/scaleunits", HmStringIndex:hmSetScaleUnits( vec( Parameter[2, string]:toNumber(), Parameter[3, string]:toNumber(), Parameter[4, string]:toNumber() ) ), break
+                    default, print( "Unknown command" ), break
+                }
+                break
+            default, print( "Unknown command" ), break
+        }
+    }
+}

@@ -1,0 +1,28 @@
+@name rayOBBoxIntersection
+
+if( first() ) {
+    
+    holoCreate( 1 )
+    holoScale( 1, vec( 5 ) )
+    
+    holoCreate( 2 )
+    holoModel( 2, "hq_sphere" )
+    holoColor( 2, vec( 0, 255, 255 ) )
+    holoScale( 2, vec( 0.1 ) )
+    
+    runOnTick( 1 )
+}
+
+
+
+Entity = holoEntity( 1 )
+
+Intersect = rayOBBoxIntersection( 
+    owner():shootPos(), 
+    owner():eye(), 
+    Entity:pos(), 
+    holoScaleUnits( 1 ), 
+    Entity:angles() 
+)
+
+holoPos( 2, Intersect )

@@ -1,0 +1,39 @@
+@name rainbow thing
+@persist A:array
+
+if( first() ) {
+    
+    entity():setAlpha( 0 )
+    holoCreate( 0 )
+    holoModel( 0, "hq_cylinder" )
+    holoColor( 0, vec( 0 ) )
+    holoScale( 0, -vec( 4.5 ) )
+    holoPos( 0, entity():toWorld( vec( 0, 0, 50 ) ) )
+    
+    N = holoRemainingSpawns()
+    
+    for( I = 1, N ) {
+        A[ I, entity ] = holoCreate( I ), holoAlpha( I, 0 )
+        #A[ I, entity ]:setTrails( 0.75, 0.75, 50000, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+        #A[ I, entity ]:setTrails( 2, 2, 50000, "trails/laser", vec( 255, 0, 0 ), 255 )
+        A[ I, entity ]:setTrails( 1, 1, 5000000, "trails/laser", hsv2rgb( ( I / N ) * 360, 1, 1 ), 255 )
+    }
+}
+
+interval( 120 )
+
+for( I = 1, A:count() ) {
+    holoPos(
+        I,
+        entity():toWorld(
+            vec(
+                0 + sin( ( I / A:count() ) * 360 ) * 12 * ( 1 + sin( realtime() * 60 ) ),
+                0 + cos( ( I / A:count() ) * 360 ) * 12 * ( 1 + sin( realtime() * 60 ) ),
+                25 + ( ( 1 + sin( realtime() * 30 ) ) * 25 )
+            )
+        )
+    )
+    holoAng( I, ( entity():pos() - A[ I, entity ]:pos() ):toAngle() )
+}
+
+entity():setAng( ang( 0, realtime() * 100, 0 ) )

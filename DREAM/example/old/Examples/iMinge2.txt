@@ -1,0 +1,1239 @@
+@name iMinge2
+@model models/hunter/plates/plate05x075.mdl 
+@outputs Fire Debug Master:entity Use Reload X Y Z HudCursor:vector HudCursorLocal:vector CoreHolo:entity CoreHull:entity Ons OnsZ Attack1
+@outputs STMode AFMode PPCMode MTMode FTMode TSMode Lag STTargetArray:array MTTargetArray:array TargetingArray:array Target:entity TargetCount CurrentTargetArray
+@outputs ApplyForcePropArray:array ApplyForceTargetArray:array AFTMode RD:ranger MultiOn MultiTargetModel:string Roam RoamMode Players:array PPPlayer:entity
+@outputs Turret:entity WLFire:wirelink BlindHolo CurApplyForceProp:entity PERMITstm PERMITafm PERMITppm PERMITmtm PERMITftm PERMITtsm AdminMode LastSaid:string LastSaidWhen
+@outputs MTTarget2:entity
+
+runOnTick(1)
+runOnChat(1)
+
+AdminMode=1
+
+#if(!Master){Master = findPlayerByName("Tek")}
+Master=owner()
+
+if(first()){
+    if(AdminMode==1|Master==owner()){
+    PERMITstm = 1 # SIMPLE TARGETING
+    PERMITafm = 1 # APPLY FORCE
+    PERMITppm = 1 # PP MODE
+    PERMITmtm = 1 # MULTI TARGETING
+    PERMITftm = 1 # BLINDER
+    PERMITtsm = 1 # TRAIL SPAM
+}else{
+    PERMITstm = 1 # SIMPLE TARGETING
+    PERMITafm = 0 # APPLY FORCE
+    PERMITppm = 0 # PP MODE
+    PERMITmtm = 0 # MULTI TARGETING
+    PERMITftm = 1 # BLINDER
+    PERMITtsm = 0 # TRAIL SPAM
+}}
+
+#if(!Master){Master = findPlayerByName("Tek")}
+#Master=owner()
+
+if(first()){
+    
+    for(I=1,60){
+        holoCreate(I)
+        holoPos(I, entity():boxCenterW()+vec(0,0,80)) # delete later
+        holoColor(I, randvec(40,255))
+        holoDisableShading(I, 1)
+    }
+    
+    
+    
+    # CORE HOLOGRAM FOR POINT-LINE INTERSECTION
+    holoPos(1, entity():boxCenterW()+entity():up()*1.5)
+    holoAng(1, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(1, vec(1))
+    holoParent(1, entity())
+    
+    CoreHolo=holoEntity(1)
+    
+    # HULL + CORE HULL
+    holoPos(2, entity():boxCenterW())
+    holoAng(2, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(2, entity():boxSize()-vec(0,0,1))
+    holoMaterial(2, "phoenix_storms/black_chrome")
+    #holoModel(2, "")
+    holoColor(2, vec(255,255,255))
+    holoParent(2, entity())
+    
+    CoreHull = holoEntity(2)
+    
+    # SCREEN
+    holoPos(3, CoreHull:toWorld(vec(0,0,0.2)))
+    holoAng(3, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(3, entity():boxSize()-vec(0.5,0.5,1))
+    #holoMaterial(3, "effects/flashlight/gradient")
+    #holoModel(3, "")
+    holoColor(3, vec(180))
+    holoParent(3, entity())
+    
+    # BUTTON 1 OUTLINE - SIMPLE TARGETING
+    holoPos(4, CoreHull:toWorld(vec(-5.8,-11.7,1)))
+    holoAng(4, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(4, vec(11,11,1))
+    #holoMaterial(4, "bull/various/subwoofer")
+    #holoModel(4, "")
+    holoColor(4, vec(0))
+    holoParent(4, entity())
+    
+    # BUTTON 1 INLINE - SIMPLE TARGETING
+    holoPos(5, CoreHull:toWorld(vec(-5.8,-11.7,1.1)))
+    holoAng(5, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(5, vec(10.5,10.5,1))
+    #holoMaterial(5, "effects/flashlight/gradient")
+    #holoModel(5, "")
+    holoColor(5, vec(255,255,255))
+    holoParent(5, entity())
+    
+    # BUTTON 1 ICON - Tube
+    holoPos(6, CoreHull:toWorld(vec(-5.8,-11.7,1.15)))
+    holoAng(6, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(6, vec(7.5,7.5,1))
+    #holoMaterial(6, "bull/various/subwoofer")
+    holoModel(6, "hq_tube_thin")
+    holoColor(6, vec(0))
+    holoParent(6, entity())
+    
+    # BUTTON 1 ICON - point
+    holoPos(7, CoreHull:toWorld(vec(-5.8,-11.7,1.15)))
+    holoAng(7, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(7, vec(1,1,1))
+    #holoMaterial(7, "bull/various/subwoofer")
+    holoModel(7, "hq_cylinder")
+    holoColor(7, vec(0))
+    holoParent(7, entity())
+    
+    # BUTTON 1 ICON - right line
+    holoPos(8, CoreHull:toWorld(vec(-5.8,-8.2,1.15)))
+    holoAng(8, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(8, vec(0.5,2,1))
+    #holoMaterial(8, "bull/various/subwoofer")
+    #holoModel(8, "hq_cylinder")
+    holoColor(8, vec(0))
+    holoParent(8, entity())
+    
+    # BUTTON 1 ICON - left line
+    holoPos(9, CoreHull:toWorld(vec(-5.8,-15.2,1.15)))
+    holoAng(9, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(9, vec(0.5,2,1))
+    #holoMaterial(9, "bull/various/subwoofer")
+    #holoModel(9, "hq_cylinder")
+    holoColor(9, vec(0))
+    holoParent(9, entity())
+    
+    # BUTTON 1 ICON - top line
+    holoPos(10, CoreHull:toWorld(vec(-9.3,-11.7,1.15)))
+    holoAng(10, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(10, vec(2,0.5,1))
+    #holoMaterial(10, "bull/various/subwoofer")
+    #holoModel(10, "hq_cylinder")
+    holoColor(10, vec(0))
+    holoParent(10, entity())
+    
+    # BUTTON 1 ICON - bottom line
+    holoPos(11, CoreHull:toWorld(vec(-2.3,-11.7,1.15)))
+    holoAng(11, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(11, vec(2,0.5,1))
+    #holoMaterial(11, "bull/various/subwoofer")
+    #holoModel(11, "hq_cylinder")
+    holoColor(11, vec(0))
+    holoParent(11, entity())
+    
+    # BUTTON 2 OUTLINE - APPLY FORCE
+    holoPos(12, CoreHull:toWorld(vec(-5.8,0,1)))
+    holoAng(12, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(12, vec(11,11,1))
+    #holoMaterial(12, "bull/various/subwoofer")
+    #holoModel(12, "")
+    holoColor(12, vec(0))
+    holoParent(12, entity())
+    
+    # BUTTON 2 INLINE - APPLY FORCE
+    holoPos(13, CoreHull:toWorld(vec(-5.8,0,1.1)))
+    holoAng(13, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(13, vec(10.5,10.5,1))
+    #holoMaterial(13, "bull/various/subwoofer")
+    #holoModel(13, "")
+    holoColor(13, vec(255,255,255))
+    holoParent(13, entity())
+    
+    # BUTTON 2 ICON - box outline
+    holoPos(14, CoreHull:toWorld(vec(-5.8,-0.5,1.15)))
+    holoAng(14, entity():toWorld(ang(0,-15,0)))
+    holoScaleUnits(14, vec(6,6,1))
+    #holoMaterial(14, "bull/various/subwoofer")
+    #holoModel(14, "")
+    holoColor(14, vec(0))
+    holoParent(14, entity())
+    
+    # BUTTON 2 ICON - box fill
+    holoPos(15, CoreHull:toWorld(vec(-5.8,-0.5,1.18)))
+    holoAng(15, entity():toWorld(ang(0,-15,0)))
+    holoScaleUnits(15, vec(5.5,5.5,1))
+    #holoMaterial(15, "bull/various/subwoofer")
+    #holoModel(15, "")
+    holoColor(15, vec(255))
+    holoParent(15, entity())
+    
+    # BUTTON 2 ICON - arrow tail
+    holoPos(16, CoreHull:toWorld(vec(-5.8,2,1.2)))
+    holoAng(16, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(16, vec(1.5,2,1))
+    #holoMaterial(16, "bull/various/subwoofer")
+    #holoModel(16, "")
+    holoColor(16, vec(0))
+    holoParent(16, entity())
+    
+    # BUTTON 2 ICON - arrow tip
+    holoPos(17, CoreHull:toWorld(vec(-5.8,4,1.18)))
+    holoAng(17, entity():toWorld(ang(0,180,90)))
+    holoScaleUnits(17, vec(2.5,1.05,2))
+    #holoMaterial(17, "bull/various/subwoofer")
+    holoModel(17, "prism")
+    holoColor(17, vec(0))
+    holoParent(17, entity())
+    
+    # BUTTON 3 OUTLINE - PHYSGUN BUGGER
+    holoPos(18, CoreHull:toWorld(vec(-5.8,11.7,1)))
+    holoAng(18, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(18, vec(11,11,1))
+    #holoMaterial(18, "bull/various/subwoofer")
+    #holoModel(18, "")
+    holoColor(18, vec(0))
+    holoParent(18, entity())
+    
+    # BUTTON 3 OUTLINE - PHYSGUN BUGGER
+    holoPos(19, CoreHull:toWorld(vec(-5.8,11.7,1.1)))
+    holoAng(19, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(19, vec(10.5,10.5,1))
+    #holoMaterial(19, "bull/various/subwoofer")
+    #holoModel(19, "")
+    holoColor(19, vec(255,255,255))
+    holoParent(19, entity())
+    
+    # BUTTON 3 ICON - box outline
+    holoPos(20, CoreHull:toWorld(vec(-5.8,11.7,1.15)))
+    holoAng(20, entity():toWorld(ang(0,-15,0)))
+    holoScaleUnits(20, vec(7,7,1))
+    #holoMaterial(20, "bull/various/subwoofer")
+    #holoModel(20, "hq_rcube_thin")
+    holoColor(20, vec(0))
+    holoParent(20, entity())
+    
+    # BUTTON 3 ICON - box fill
+    holoPos(21, CoreHull:toWorld(vec(-5.8,11.7,1.21)))
+    holoAng(21, entity():toWorld(ang(0,-18,0)))
+    holoScaleUnits(21, vec(6,6,1))
+    #holoMaterial(21, "bull/various/subwoofer")
+    #holoModel(21, "")
+    holoColor(21, vec(255))
+    holoParent(21, entity())
+    
+    # BUTTON 4 OUTLINE - MULTI TARGETING
+    holoPos(22, CoreHull:toWorld(vec(5.8,-11.7,1)))
+    holoAng(22, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(22, vec(11,11,1))
+    #holoMaterial(22, "bull/various/subwoofer")
+    #holoModel(22, "")
+    holoColor(22, vec(0))
+    holoParent(22, entity())
+    
+    # BUTTON 4 INLINE - MULTI TARGETING
+    holoPos(23, CoreHull:toWorld(vec(5.8,-11.7,1.1)))
+    holoAng(23, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(23, vec(10.5,10.5,1))
+    #holoMaterial(23, "bull/various/subwoofer")
+    #holoModel(23, "")
+    holoColor(23, vec(255,255,255))
+    holoParent(23, entity())
+    
+    # BUTTON 4 ICON - left tube
+    holoPos(24, CoreHull:toWorld(vec(4.8,-12.7,1.23)))
+    holoAng(24, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(24, vec(6.5,6.5,1))
+    #holoMaterial(24, "bull/various/subwoofer")
+    holoModel(24, "hq_tube_thin")
+    holoColor(24, vec(0))
+    holoParent(24, entity())
+    
+    # BUTTON 4 ICON - left tube fill
+    holoPos(25, CoreHull:toWorld(vec(4.8,-12.7,1.17)))
+    holoAng(25, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(25, vec(6.3,6.3,1))
+    #holoMaterial(25, "bull/various/subwoofer")
+    holoModel(25, "hq_cylinder")
+    holoColor(25, vec(255))
+    holoParent(25, entity())
+    
+    # BUTTON 4 ICON - right tube
+    holoPos(26, CoreHull:toWorld(vec(6.8,-10.7,1.13)))
+    holoAng(26, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(26, vec(6.5,6.5,1))
+    #holoMaterial(26, "bull/various/subwoofer")
+    holoModel(26, "hq_tube_thin")
+    holoColor(26, vec(0))
+    holoParent(26, entity())
+    
+    # BUTTON 4 ICON - right point
+    holoPos(27, CoreHull:toWorld(vec(6.8,-10.7,1.13)))
+    holoAng(27, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(27, vec(1.5,1.5,1))
+    #holoMaterial(27, "bull/various/subwoofer")
+    holoModel(27, "hq_cylinder")
+    holoColor(27, vec(0))
+    holoParent(27, entity())
+    
+    # BUTTON 4 ICON - right tube right line
+    holoPos(28, CoreHull:toWorld(vec(6.8,-7.6,1.13)))
+    holoAng(28, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(28, vec(0.5,1.5,1))
+    #holoMaterial(28, "bull/various/subwoofer")
+    #holoModel(28, "hq_cylinder")
+    holoColor(28, vec(0))
+    holoParent(28, entity())
+    
+    # BUTTON 4 ICON - right tube down line
+    holoPos(29, CoreHull:toWorld(vec(9.8,-10.7,1.13)))
+    holoAng(29, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(29, vec(1.5,0.5,1))
+    #holoMaterial(29, "bull/various/subwoofer")
+    #holoModel(29, "hq_cylinder")
+    holoColor(29, vec(0))
+    holoParent(29, entity())
+    
+    # BUTTON 4 ICON - left tube top line
+    holoPos(30, CoreHull:toWorld(vec(1.8,-12.7,1.22)))
+    holoAng(30, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(30, vec(1.5,0.5,1))
+    #holoMaterial(30, "bull/various/subwoofer")
+    #holoModel(30, "hq_cylinder")
+    holoColor(30, vec(0))
+    holoParent(30, entity())
+    
+    # BUTTON 4 ICON - left tube bottom line
+    holoPos(31, CoreHull:toWorld(vec(7.8,-12.7,1.22)))
+    holoAng(31, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(31, vec(1.5,0.5,1))
+    #holoMaterial(31, "bull/various/subwoofer")
+    #holoModel(31, "hq_cylinder")
+    holoColor(31, vec(0))
+    holoParent(31, entity())
+    
+    # BUTTON 4 ICON - left tube right line
+    holoPos(32, CoreHull:toWorld(vec(4.8,-9.7,1.22)))
+    holoAng(32, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(32, vec(0.5,1.5,1))
+    #holoMaterial(32, "bull/various/subwoofer")
+    #holoModel(32, "hq_cylinder")
+    holoColor(32, vec(0))
+    holoParent(32, entity())
+    
+    # BUTTON 4 ICON - left tube left line
+    holoPos(33, CoreHull:toWorld(vec(4.8,-15.7,1.22)))
+    holoAng(33, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(33, vec(0.5,1.5,1))
+    #holoMaterial(33, "bull/various/subwoofer")
+    #holoModel(33, "hq_cylinder")
+    holoColor(33, vec(0))
+    holoParent(33, entity())
+    
+    # BUTTON 4 ICON - left tube point
+    holoPos(34, CoreHull:toWorld(vec(4.8,-12.7,1.20)))
+    holoAng(34, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(34, vec(1.2,1.2,1))
+    #holoMaterial(34, "bull/various/subwoofer")
+    holoModel(34, "hq_cylinder")
+    holoColor(34, vec(0))
+    holoParent(34, entity())
+    
+    # BUTTON 5 OUTLINE - HOLO BLIND(formerly FORCER TURRET)
+    holoPos(35, CoreHull:toWorld(vec(5.8,0,1)))
+    holoAng(35, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(35, vec(11,11,1))
+    #holoMaterial(35, "bull/various/subwoofer")
+    #holoModel(35, "")
+    holoColor(35, vec(0))
+    holoParent(35, entity())
+    
+    # BUTTON 5 INLINE - HOLO BLIND
+    holoPos(36, CoreHull:toWorld(vec(5.8,0,1.1)))
+    holoAng(36, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(36, vec(10.5,10.5,1))
+    #holoMaterial(36, "bull/various/subwoofer")
+    #holoModel(36, "")
+    holoColor(36, vec(255))
+    holoParent(36, entity())
+    
+    # BUTTON 5 ICON - box
+    holoPos(37, CoreHull:toWorld(vec(8,0,1.15)))
+    holoAng(37, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(37, vec(4,8,1))
+    #holoMaterial(37, "bull/various/subwoofer")
+    #holoModel(37, "")
+    holoColor(37, vec(0))
+    holoParent(37, entity())
+    
+    # BUTTON 5 ICON - "head"
+    holoPos(38, CoreHull:toWorld(vec(4,0,1.18)))
+    holoAng(38, entity():toWorld(ang(0,-10,0)))
+    holoScaleUnits(38, vec(5,5,1))
+    #holoMaterial(38, "bull/various/subwoofer")
+    holoModel(38, "hq_cylinder")
+    holoColor(38, vec(0))
+    holoParent(38, entity())
+    
+    # BUTTON 5 ICON - blindfold outline
+    holoPos(39, CoreHull:toWorld(vec(3.2,0,1.20)))
+    holoAng(39, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(39, vec(1,5.5,1))
+    #holoMaterial(39, "bull/various/subwoofer")
+    #holoModel(39, "")
+    holoColor(39, vec(255))
+    holoParent(39, entity())
+    
+    # BUTTON 5 ICON - ray
+    holoPos(40, CoreHull:toWorld(vec(3.2,0,1.22)))
+    holoAng(40, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(40, vec(0.8,5.5,1))
+    #holoMaterial(40, "bull/various/subwoofer")
+    #holoModel(40, "")
+    holoColor(40, vec(0))
+    holoParent(40, entity())
+    
+    # BUTTON 6 OUTLINE - TRAIL SPAM
+    holoPos(41, CoreHull:toWorld(vec(5.8,11.7,1)))
+    holoAng(41, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(41, vec(11,11,1))
+    #holoMaterial(41, "bull/various/subwoofer")
+    #holoModel(41, "")
+    holoColor(41, vec(0))
+    holoParent(41, entity())
+    
+    # BUTTON 6 INLINE - TRAIL SPAM
+    holoPos(42, CoreHull:toWorld(vec(5.8,11.7,1.1)))
+    holoAng(42, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(42, vec(10.5,10.5,1))
+    #holoMaterial(42, "bull/various/subwoofer")
+    #holoModel(42, "")
+    holoColor(42, vec(255))
+    holoParent(42, entity())
+    
+    # BUTTON 6 ICON - top line outline
+    holoPos(43, CoreHull:toWorld(vec(3,11.7,1.15)))
+    holoAng(43, entity():toWorld(ang(0,20,0)))
+    holoScaleUnits(43, vec(1,7,1))
+    #holoMaterial(43, "bull/various/subwoofer")
+    #holoModel(43, "")
+    holoColor(43, vec(0))
+    holoParent(43, entity())
+    
+    # BUTTON 6 ICON - middle line outline
+    holoPos(44, CoreHull:toWorld(vec(6.4,11.5,1.15)))
+    holoAng(44, entity():toWorld(ang(0,-40,0)))
+    holoScaleUnits(44, vec(1,7,1))
+    #holoMaterial(44, "bull/various/subwoofer")
+    #holoModel(44, "")
+    holoColor(44, vec(0))
+    holoParent(44, entity())
+    
+    # BUTTON 6 ICON - bottom line outline
+    holoPos(45, CoreHull:toWorld(vec(8.1,11,1.15)))
+    holoAng(45, entity():toWorld(ang(0,-10,0)))
+    holoScaleUnits(45, vec(1,7,1))
+    #holoMaterial(45, "bull/various/subwoofer")
+    #holoModel(45, "")
+    holoColor(45, vec(0))
+    holoParent(45, entity())
+    
+    # BUTTON 6 ICON - top line fill
+    holoPos(46, CoreHull:toWorld(vec(3,11.7,1.18)))
+    holoAng(46, entity():toWorld(ang(0,20,0)))
+    holoScaleUnits(46, vec(0.7,6.8,1))
+    #holoMaterial(46, "bull/various/subwoofer")
+    #holoModel(46, "")
+    holoColor(46, vec(255))
+    holoParent(46, entity())
+    
+    # BUTTON 6 ICON - middle line fill
+    holoPos(47, CoreHull:toWorld(vec(6.4,11.5,1.18)))
+    holoAng(47, entity():toWorld(ang(0,-40,0)))
+    holoScaleUnits(47, vec(0.7,6.9,1))
+    #holoMaterial(47, "bull/various/subwoofer")
+    #holoModel(47, "")
+    holoColor(47, vec(255))
+    holoParent(47, entity())
+    
+    # BUTTON 6 ICON - bottom line outline
+    holoPos(48, CoreHull:toWorld(vec(8.1,11,1.18)))
+    holoAng(48, entity():toWorld(ang(0,-10,0)))
+    holoScaleUnits(48, vec(0.7,6.7,1))
+    #holoMaterial(48, "bull/various/subwoofer")
+    #holoModel(48, "")
+    holoColor(48, vec(255))
+    holoParent(48, entity())
+    
+    for(I=1,30){holoVisible(49, players()[I, entity], 0)}
+    
+    holoColor(49, vec(255))
+    holoModel(49, "hq_sphere")
+    holoMaterial(49, "pp/copy")
+    #holoColor(49, vec(255,0,0))
+    holoScaleUnits(49, vec(0.01))
+    holoAlpha(49, 0)
+    entity():setAlpha(0)
+    Roam=1
+    CurrentTargetArray=1
+    #holoScaleUnits(30, vec(1))    
+    
+    holoAlpha(1, 0)
+    
+    holoAlpha(50, 0)
+    holoAlpha(51, 0)
+    holoAlpha(52, 0)
+    holoAlpha(53, 0)
+    holoAlpha(54, 0)
+    holoAlpha(55, 0)
+    holoAlpha(56, 0)
+    holoAlpha(57, 0)
+    holoAlpha(58, 0)
+    holoAlpha(59, 0)
+    holoAlpha(60, 0)
+    
+    
+    
+    
+    holoScaleUnits(56, vec(-42,-42,-60))
+    holoMaterial(56,"debug/env_cubemap_model")
+    holoScaleUnits(57, vec(-42,-42,-60))
+    holoMaterial(57,"debug/env_cubemap_model")
+    holoScaleUnits(58, vec(-42,-42,-60))
+    holoMaterial(58,"debug/env_cubemap_model")
+    holoScaleUnits(59, vec(-42,-42,-60))
+    holoMaterial(59,"debug/env_cubemap_model")
+    holoScaleUnits(60, vec(-42,-42,-60))
+    holoMaterial(60,"debug/env_cubemap_model")
+    
+    
+    
+    
+    findInSphere(entity():pos(), 420)
+    findClipToClass("gmod_wire_turret")
+    if(findResult(1):owner()==owner()){
+        Turret=findResult(1)
+        hint("TURRET CONNECTED", 5)
+    }else{hint("COULD NOT FIND ANY TURRET NEARBY !", 5)}
+    
+}
+
+# GLOBALS
+Use = Master:keyUse()
+Reload = Master:keyReload()
+Attack1 = Master:keyAttack1()
+LastSaid = Master:lastSaid()
+LastSaidWhen = Master:lastSaidWhen()
+
+# POINT LINE INTERSECTION
+# HudCursor is cursor vec position
+Holo = holoEntity(1)
+
+Origin = Master:shootPos()
+OriginDirVec = Master:eye()
+
+#How does line-plane intersection work?
+PlanePoint = Holo:pos() #Get a point in the plane
+Normal = Holo:up() #Get the normal (a vector perpendicular to the surface) of the plane
+LinePoint1 = Origin #Get a point on the line
+LinePoint2 = Origin+OriginDirVec #Get a point on the line "after" point 1#
+X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1)) #Not really sure how, but it returns how many times the distance from point 1 to point 2 you need to go from point 1 to reach the intersection
+HudCursor = LinePoint1+X*(LinePoint2-LinePoint1) #Get the intersections position using f(X) = LinePoint1+X*(LinePoint2-LinePoint1)
+HudCursorLocal=holoEntity(1):toLocal(HudCursor)
+# HUD CURSOR END//
+
+#holoPos(30, HudCursor)
+
+X=HudCursorLocal:x()
+Y=HudCursorLocal:y()
+OnsZ=entity():toLocal(Master:aimPos()):z()
+if(Master:aimEntity()==entity() & OnsZ>1 & !Attack1){Ons=1}else{Ons=0}
+
+
+
+X = HudCursorLocal:x()
+Y = HudCursorLocal:y()
+Z = HudCursorLocal:z()
+
+###################################
+###################################
+
+
+# HIGHLIGHTING
+# BUTTON 1 - SIMPLE TARGETING
+if(Ons&Master & inrange(HudCursorLocal, vec(-11,-17,-10), vec(-0.4,-6.2,10))) {holoColor(5, vec(60,255,60))}elseif(STMode==0){holoColor(5, vec(255,255,255))}
+# BUTTON 2 - APPLY FORCING
+if(Ons&Master & inrange(HudCursorLocal, vec(-11,-5.5,-10), vec(-0.4,5.5,10))) {holoColor(13, vec(60,255,60))}elseif(AFMode==0){holoColor(13, vec(255,255,255))}
+# BUTTON 3 - PHYSBUG
+if(Ons&Master & inrange(HudCursorLocal, vec(-11,6.2,-10), vec(-0.4,17,10))) {holoColor(19, vec(60,255,60))}elseif(PPCMode==0){holoColor(19, vec(255,255,255))}
+# BUTTON 4 - MULTI TARGETING
+if(Ons&Master & inrange(HudCursorLocal, vec(0.4,-17,-10), vec(11,-6.2,10))) {holoColor(23, vec(60,255,60)) holoColor(25, vec(60,255,60))}elseif(MTMode==0){holoColor(25, vec(255)) holoColor(23, vec(255,255,255))}
+# BUTTON 5 - FORCER TURRET
+if(Ons&Master & inrange(HudCursorLocal, vec(0.4,-5.5,-10), vec(11,5.5,10))) {holoColor(36, vec(60,255,60)) holoColor(39, vec(60,255,60))}elseif(FTMode==0){holoColor(39, vec(255)) holoColor(36, vec(255,255,255))}
+# BUTTON 6 - TRAILSPAM
+if(Ons&Master & inrange(HudCursorLocal, vec(0.4,6.2,-10), vec(11,17,10))) {holoColor(42, vec(60,255,60))}elseif(TSMode==0){holoColor(42, vec(255,255,255))}
+if(Ons){
+# ICONS CONTROL
+
+
+#STMode AFMode PPCMode MTMode FTMode TSMode
+
+
+#######################
+#ACTIVATING MODES
+#PERMITstm = 1
+#PERMITafm = 1
+#PERMITppm = 1
+#PERMITmtm = 1
+#PERMITftm = 1
+#PERMITtsm = 1
+# ACTIVATING SIMPLE TARGETING MODE
+if(PERMITstm&STMode==0&Ons&Master&Use&$Use&inrange(HudCursorLocal, vec(-11,-17,-10), vec(-0.4,-6.2,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    STMode=1
+    Lag=0
+    }
+
+# ACTIVATING APPLY FORCE TARGETING MODE
+if(PERMITafm&AFMode==0&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(-11,-5.5,-10), vec(-0.4,5.5,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    AFMode=1
+    Lag=0
+}
+
+# ACTIVATING PPCOPY MODE
+if(PERMITppm&PPCMode==0&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(-11,6.2,-10), vec(-0.4,17,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    PPCMode=1
+    Lag=0
+}
+
+# ACTIVATING MULTI TARGET MODE
+if(PERMITmtm&MTMode==0&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(0.4,-17,-10), vec(11,-6.2,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    MTMode=1
+    Lag=0
+}
+
+# ACTIVATING FORCER TURRET MODE
+if(PERMITftm&FTMode==0&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(0.4,-5.5,-10), vec(11,5.5,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    FTMode=1
+    Lag=0
+}
+
+# ACTIVATING TRAIL SPAM MODE
+if(PERMITtsm&TSMode==0&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(0.4,6.2,-10), vec(11,17,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    TSMode=1
+    Lag=0
+    holoEntity(50):setTrails(99999,99999,7,"trails/tube",vec(random(60,255),random(60,255),random(60,255)),255)
+    holoEntity(51):setTrails(99999,99999,7,"trails/tube",vec(random(60,255),random(60,255),random(60,255)),255)
+    holoEntity(52):setTrails(99999,99999,7,"trails/tube",vec(random(60,255),random(60,255),random(60,255)),255)
+    holoEntity(53):setTrails(99999,99999,7,"trails/tube",vec(random(60,255),random(60,255),random(60,255)),255)
+    holoEntity(54):setTrails(99999,99999,7,"trails/tube",vec(random(60,255),random(60,255),random(60,255)),255)
+    holoEntity(55):setTrails(99999,99999,7,"trails/tube",vec(random(60,255),random(60,255),random(60,255)),255)
+    
+    hint("TRAIL SPAM ACTIVATED, DONT LOSE THE E2 IN THIS MESS ;)", 10)
+    
+}
+
+#if($STMode|$AFMode|$PPCMode|$MTMode|$FTMode|$TSMode){Lag=0}
+
+
+##############################
+# DEACTIVATING MODES
+# SIMPLE TARGETING
+if(Lag==10&STMode==1&Ons&Master&Use&$Use&inrange(HudCursorLocal, vec(-11,-17,-10), vec(-0.4,-6.2,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    STMode=0
+    Lag=0
+    }
+# APPLY FORCE
+if(Lag==10&AFMode==1&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(-11,-5.5,-10), vec(-0.4,5.5,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    AFMode=0
+    Lag=0
+    #ApplyForcePropArray
+    #ApplyForceTargetArray
+    if(ApplyForcePropArray:count()>ApplyForceTargetArray:count()){ApplyForcePropArray:remove(ApplyForcePropArray:count())}
+}
+# PPCOPY
+if(Lag==10&PPCMode==1&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(-11,6.2,-10), vec(-0.4,17,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    PPCMode=0
+    Lag=0
+}
+# MULTI TARGET
+if(Lag==10&MTMode==1&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(0.4,-17,-10), vec(11,-6.2,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    MTMode=0
+    Lag=0
+}
+# FORCER TURRET
+if(Lag==10&FTMode==1&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(0.4,-5.5,-10), vec(11,5.5,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    FTMode=0
+    Lag=0
+}
+# TRAIL SPAM
+if(Lag==10&TSMode==1&Ons&Master&Use&$Use & inrange(HudCursorLocal, vec(0.4,6.2,-10), vec(11,17,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    TSMode=0
+    Lag=0
+}
+
+# CANCELING MODES - CLEARING ARRAYS
+# SIMPLE TARGETING
+if(Lag==10&Ons&Master&Reload&$Reload&inrange(HudCursorLocal, vec(-11,-17,-10), vec(-0.4,-6.2,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    STTargetArray:clear()
+    STMode=0
+    Lag=0
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+    hint("CLEARED SIMPLE TARGETING", 8)
+    }
+# APPLY FORCE
+if(Lag==10&Ons&Master&Reload&$Reload & inrange(HudCursorLocal, vec(-11,-5.5,-10), vec(-0.4,5.5,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    Lag=0
+    AFMode=0
+    ApplyForcePropArray:clear()
+    ApplyForceTargetArray:clear()
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+    hint("CLEARED APPLY FORCE", 8)
+}
+# PPCOPY
+if(Lag==10&Ons&Master&Reload&$Reload & inrange(HudCursorLocal, vec(-11,6.2,-10), vec(-0.4,17,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    RoamMode=4
+    PPCMode=0
+    Lag=0
+}
+# MULTI TARGET
+if(Lag==10&Ons&Master&Reload&$Reload & inrange(HudCursorLocal, vec(0.4,-17,-10), vec(11,-6.2,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    MTTargetArray:clear()
+    MultiTargetModel=""
+    MTMode=0
+    MultiOn=0
+    Lag=0
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+    hint("CLEARED MULTI-TARGETING", 8)
+}
+# FORCER TURRET
+if(Lag==10&Ons&Master&Reload&$Reload & inrange(HudCursorLocal, vec(0.4,-5.5,-10), vec(11,5.5,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    
+    # holovisible seem to fuck up entire thing so lets just not use it in cancel
+   # for(I=1,Players:count()){
+   #     holoVisible(56,Players[I,entity],0)
+   #     holoVisible(57,Players[I,entity],0)
+   #     holoVisible(58,Players[I,entity],0)
+   #     holoVisible(59,Players[I,entity],0)
+   #     holoVisible(60,Players[I,entity],0)
+#    }
+    
+        holoUnparent(56)
+        holoUnparent(57)
+        holoUnparent(58)
+        holoUnparent(59)
+        holoUnparent(60)
+    
+        holoAlpha(56, 0)
+        holoAlpha(57, 0)
+        holoAlpha(58, 0)
+        holoAlpha(59, 0)
+        holoAlpha(60, 0)
+    
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+    hint("VISIBILITY RESTORED", 7)
+    FTMode=0
+    BlindHolo=0
+    Lag=0
+}
+# TRAIL SPAM
+if(Lag==10&Ons&Master&Reload&$Reload & inrange(HudCursorLocal, vec(0.4,6.2,-10), vec(11,17,10))) {
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav")
+    TSMode=0
+    Lag=0
+    holoEntity(50):removeTrails()
+    holoEntity(51):removeTrails()
+    holoEntity(52):removeTrails()
+    holoEntity(53):removeTrails()
+    holoEntity(54):removeTrails()
+    holoEntity(55):removeTrails()
+    hint("TRAIL SPAM DEACTIVATED",8)
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+}
+
+}
+
+Lag+=0.5
+if(Lag>=10){Lag=10}
+#STTargetArray:array
+
+#####################################
+################
+# SIMPLE TARGETING
+##############
+#
+
+# ADDING TO ARRAY
+
+#if(STMode==1){
+if(STMode==1&Use&$Use&Master:aimEntity()&Master:aimEntity()!=entity()){
+    
+    
+    if(Master:aimEntity():type()=="player"){
+        hint("TARGETING PLAYER "+Master:aimEntity():name(),4)
+        STTargetArray:pushEntity(Master:aimEntity())
+        }
+    if(Master:aimEntity():type()!="player"){
+        hint("TARGETING PROP/ENTITY WITH MODEL "+Master:aimEntity():model(),4)
+        STTargetArray:pushEntity(Master:aimEntity())
+        }
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+    STMode=0
+    Lag=0
+    
+}
+
+#CHOOSING PLAYER BY CHAT
+if(STMode==1 & LastSaid & $LastSaidWhen){
+    
+        if(findPlayerByName(LastSaid)){
+        hint("TARGETING PLAYER "+findPlayerByName(LastSaid):name(),4)
+        STTargetArray:pushEntity(findPlayerByName(LastSaid))
+        soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+        soundPitch(3, 150)
+        hideChat(1)
+}else{
+        soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+        soundPitch(3, 150)
+        hint("PLAYER " +LastSaid+ " NOT FOUND !", 4)
+        hideChat(1)
+
+}
+        
+        
+        
+        STMode=0
+        Lag=0
+}
+
+
+#}
+
+# TURRET PART
+# THIS CODE WILL WORK FOR BOTH MULTI AND SINGLE TARGETING BECAUSE ARRAYS WILL BE SHARED
+
+# TARGETING
+# MTTargetArray - multi target array
+# STTargetArray - simple target array
+
+timer("switchTarget", 400) # DEFAULT WAS 500
+if(clk("switchTarget")){TargetCount++}
+rangerFilter(Turret)
+RD = rangerOffset(60000,Turret:pos()+20*Turret:forward(),Turret:forward())
+if(RD:entity()==Target){Fire=1}else{Fire=0}
+
+
+# SWITCHING FROM ARRAY 1 TO 2, AND TARGETING STUFF INSIDE ARRAY 1
+if(CurrentTargetArray==1){
+    Target=STTargetArray[TargetCount,entity]
+    if(!Target){TargetCount++}
+    if(Target==owner()){TargetCount++}
+    if(Target:isPlayer()&Target:health()<=0){TargetCount++}
+    if(TargetCount>STTargetArray:count()&MTTargetArray:count()>0){CurrentTargetArray=2 TargetCount=1}
+    if(TargetCount>STTargetArray:count()&MTTargetArray:count()<=0){TargetCount=1}
+    }
+
+#  SWITCHING FROM ARRAY 2 TO 1, AND TARGETING SHIT INSIDE ARRAY 2
+if(CurrentTargetArray==2){
+    Target=MTTargetArray[TargetCount,entity]
+    if(!Target){TargetCount++}
+    if(Target==owner()){TargetCount++}
+    if(Target:isPlayer()&Target:health()<=0){TargetCount++}
+    if(TargetCount>MTTargetArray:count()&STTargetArray:count()>0){CurrentTargetArray=1 TargetCount=1}
+    if(TargetCount>MTTargetArray:count()&STTargetArray:count()<=0){TargetCount=1}
+    
+    }
+
+################QUATERNION
+Pos = Target:toWorld(Target:boxCenter())   #aim for the center
+Eye = (Pos-Turret:pos()+Target:vel()*0.1):normalized()  #calculate direction to the target; velocity helps in compensating for target's movement
+#calculate the quaternions
+A = Eye:toAngle()
+TarQ = quat(A)
+CurQ = quat(Turret)
+Q = TarQ/CurQ
+V = transpose(matrix(Turret))*rotationVector(Q)
+#Aim
+Turret:applyTorque((200*V - 10*Turret:angVelVector())*Turret:inertia()*2) # DEFAULT WAS 100*V AND INERTIA WAS *1
+#This is here to make the turret hover over the phx plate
+Diff = entity():pos()+vec(0,0,400)-Turret:pos()
+Turret:applyForce((Diff*5 - Turret:vel())*Turret:mass())
+#Ranger for checking if we are hitting the right target
+#RD = rangerOffset(60000,Turret:pos()+20*Turret:forward(),Turret:forward())
+#if(RD:entity()==Target){Fire=1}else{Fire=0}
+#Ranger = RD:entity()
+
+WLFire=Turret:wirelink()
+if(Fire){WLFire["Fire",number]=1}else{WLFire["Fire",number]=0}
+#Fire1["Fire",number]=1 
+
+###############################################
+##########################################
+####################################
+# APPLY FORCE
+
+#ApplyForcePropArray
+#ApplyForceTargetArray
+
+# SELECTING THE PROP
+if(AFTMode==0&AFMode==1&Use&$Use&Master:aimEntity():owner()==owner()&Master:aimEntity()&Master:aimEntity()!=entity()&Master:aimEntity():type()!="player"){
+    ApplyForcePropArray:pushEntity(Master:aimEntity())
+    CurApplyForceProp=Master:aimEntity()
+    AFTMode=1 
+    Lag=0
+    hint("YOU SELECTED A PROP FOR APPLY FORCE, SELECT TARGET NOW",3)
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+}
+
+# SELECTING THE TARGET
+if(Lag==10&AFMode==1&AFTMode==1&Use&Master:aimEntity()&$Use&Master:aimEntity()!=entity()&Master:aimEntity()&Master:aimEntity()!=CurApplyForceProp){
+    ApplyForceTargetArray:pushEntity(Master:aimEntity())
+    AFTMode=0
+    AFMode=0
+    Lag=0
+    if(Master:aimEntity():isPlayer()){ hint("YOU TARGETED PLAYER "+Master:aimEntity():name(),10) }
+    if(!Master:aimEntity():isPlayer()){ hint("YOU TARGETED A PROP/ENTITY THAT BELONGS TO "+Master:aimEntity():owner():name(),12) }
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+}
+
+for(I=1,ApplyForceTargetArray:count()){
+    ApplyForcePropArray[I, entity]:applyForce((ApplyForceTargetArray[I, entity]:pos()-ApplyForcePropArray[I, entity]:pos())*9999999)
+    if(!ApplyForcePropArray[I, entity]){
+        ApplyForcePropArray:remove(I)
+        ApplyForceTargetArray:remove(I)
+        }
+    if(!ApplyForceTargetArray[I, entity]){
+        ApplyForcePropArray:remove(I)
+        ApplyForceTargetArray:remove(I)
+        }
+    
+}
+
+##################################################################
+############################################################
+################# MULTI TARGETING - ADDING TO ARRAY
+
+if(MTMode==1&Use&$Use&Master:aimEntity()&Master:aimEntity()!=entity()){
+    
+    if(Master:aimEntity():type()=="player"){
+        #MTTargetArray=players()
+        findByClass("player")
+        findDisallowEntity(owner())
+        MTTargetArray=findToArray()
+        hint("TARGETING EVERY PLAYER ON THE SERVER, LET THE SKULLS ROLL", 12)
+        soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+        soundPitch(3, 150)
+        }
+    
+    if(Master:aimEntity():type()!="player"){
+        MultiOn=1
+        MultiTargetModel=Master:aimEntity():model()
+        hint("MULTI-TARGETING A PROP/ENTITY WITH MODEL "+Master:aimEntity():model(), 12)
+        soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+        soundPitch(3, 150)
+        }
+    
+    MTMode=0
+    Lag=0
+    
+}
+
+#CHOOSING PLAYER BY CHAT
+if(MTMode==1 & LastSaid & $LastSaidWhen){
+    
+        if(findPlayerByName(LastSaid)){
+        findByClass("prop_*")
+        #findDisallowEntity(owner())
+        findIncludePlayerProps(findPlayerByName(LastSaid):name())
+        MTTarget2=findPlayerByName(LastSaid)
+        MTTargetArray=findToArray()
+        hint("TARGETING "+MTTarget2:name()+" PROPS", 12)
+        soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+        soundPitch(3, 150)
+        MultiOn=2
+        hideChat(1)
+    }else{
+        soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+        soundPitch(3, 150)
+        hint("PLAYER " +LastSaid+ " NOT FOUND !", 4)
+        hideChat(1)
+
+}
+        
+        MTMode=0
+        Lag=0
+    
+    }
+
+if(MultiOn==1){
+    findByModel(MultiTargetModel)
+        MTTargetArray=findToArray()
+    }
+if(MultiOn==2){
+    #MTTarget2
+    findByClass("prop_*")
+    findIncludePlayerProps(MTTarget2)
+    MTTargetArray=findToArray()
+}
+    
+    
+
+#########################################################
+#######################################################
+########### PPCOPY 
+
+# HOLOGRAM ROAM - HOLOGRAM 49
+# Roam RoamMode Players:array PPPlayer:entity
+Players=players()
+
+# CHOOSING PLAYER DIRECTLY
+if(Lag==10&PPCMode==1&Use&$Use&Master:aimEntity()&Master:aimEntity():type()=="player"&Master:aimEntity()!=entity()){
+    
+    RoamMode=1
+    PPPlayer=Master:aimEntity()
+    
+    
+    PPCMode=0
+    Lag=0
+}
+
+#CHOOSING PLAYER BY PROP
+if(Lag==10&PPCMode==1&Use&$Use&Master:aimEntity()&Master:aimEntity():type()!="player"&Master:aimEntity()!=entity()){
+    
+    RoamMode=1
+    PPPlayer=Master:aimEntity():owner()
+    
+    
+    PPCMode=0
+    Lag=0
+}
+
+#CHOOSING PLAYER BY CHAT
+if(PPCMode==1 & LastSaid & $LastSaidWhen){
+    if(findPlayerByName(LastSaid)){
+    RoamMode=1
+    PPPlayer=findPlayerByName(LastSaid)
+    hideChat(1)
+}else{
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+    hint("PLAYER " +LastSaid+ " NOT FOUND !", 4)
+    hideChat(1)
+    }
+
+
+
+    PPCMode=0
+    Lag=0
+}
+
+
+
+
+# APPLYING
+if(RoamMode==1){
+    for(I=1,Players:count()){
+        holoVisible(49,Players[I, entity],0)
+        }
+        
+        holoVisible(49, PPPlayer, 1)
+        holoAlpha(49, 255)
+        RoamMode=2
+}
+        
+if(RoamMode==2){
+    timer("OneRoam", 500)
+    holoColor(49, vec(0,0,0))
+    holoPos(49, PPPlayer:aimPos())
+    if(clk("OneRoam")){RoamMode=3}
+}
+if(RoamMode==3){
+    holoPos(49, entity():pos())
+    for(I=1,Players:count()){
+        holoVisible(49,Players[I, entity],0)
+        }
+    holoAlpha(49, 0)
+    holoColor(49, vec(255,255,255))
+    hint("PLAYER "+PPPlayer:name()+" GLITCHED", 12)
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+    RoamMode=0
+}
+
+# CLEARING GLITCH
+if(RoamMode==4){
+    
+        holoColor(49, vec(255))
+        holoAlpha(49, 255)
+        for(I=1,Players:count()){holoVisible(49,Players[I, entity],1)}
+        hint("FIXING PLAYER VISION GLITCH", 8)
+        soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+        soundPitch(3, 150)
+        RoamMode=5
+    }
+if(RoamMode==5){
+    
+    timer("roam", 500)
+    if(clk("roam")){Roam++}
+    holoPos(49, Players[Roam, entity]:aimPos())
+
+    if(Roam>Players:count()){
+        RoamMode=0
+        Roam=0
+        for(I=1,Players:count()){holoVisible(49,Players[I, entity],0)}
+        holoAlpha(49, 0)
+        hint("FIXING COMPLETE !", 8)
+        soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+        soundPitch(3, 150)
+        }
+    }
+
+
+#################################################
+#####################################
+################# TRAIL SPAM
+
+if(TSMode==1){
+    
+    holoPos(50, entity():pos()+vec(random(-50000,50000),random(-50000,50000),random(-600,600)))
+    holoPos(51, entity():pos()+vec(random(-50000,50000),random(-50000,50000),random(-600,600)))
+    holoPos(52, entity():pos()+vec(random(-50000,50000),random(-50000,50000),random(-600,600)))
+    holoPos(53, entity():pos()+vec(random(-50000,50000),random(-50000,50000),random(-600,600)))
+    holoPos(54, entity():pos()+vec(random(-50000,50000),random(-50000,50000),random(-600,600)))
+    holoPos(55, entity():pos()+vec(random(-50000,50000),random(-50000,50000),random(-600,600)))
+    }
+
+##################################################
+##########################################
+################## HOLO BLINDER (Formerly used-to-be FORCER TURRET)
+
+if(Lag==10&FTMode==1&Use&$Use&Master:aimEntity():type()=="player"&Master:aimEntity()&Master:aimEntity()!=entity()){
+    
+    #BlindHolo 56 57 58 59 60
+
+    for(I=1,Players:count()){
+        holoVisible(BlindHolo+56,Players[I,entity],0)
+        }
+        
+    holoVisible(BlindHolo+56,Master:aimEntity(),1)    
+    
+    if(BlindHolo<4){hint("BLINDED PLAYER "+Master:aimEntity():name()+" ["+(BlindHolo+1):toString()+"/5]", 12)}else{
+        hint("BLINDED PLAYER "+Master:aimEntity():name()+" ["+(BlindHolo+1):toString()+"/5] YOU RUN OUT OF HOLOGRAMS, NEXT TARGET WILL BE BLINDED WITH FIRST HOLO", 15)
+    }
+    
+    holoPos(BlindHolo+56, Master:aimEntity():pos()+vec(0,0,50))
+    holoParentAttachment(BlindHolo+56,Master:aimEntity(),"chest")
+    holoAlpha(BlindHolo+56, 255)
+    
+    
+    BlindHolo++
+    if(BlindHolo>4){BlindHolo=0}
+    FTMode=0
+    Lag=0
+}
+
+if(Lag==10&FTMode==1&Use&$Use&Master:aimEntity():type()!="player"&Master:aimEntity()&Master:aimEntity()!=entity()){
+    
+    BlindHolo 56 57 58 59 60
+
+    for(I=1,Players:count()){
+        holoVisible(BlindHolo+56,Players[I,entity],0)
+        }
+        
+    holoVisible(BlindHolo+56,Master:aimEntity():owner(),1)    
+    
+    if(BlindHolo<4){hint("[PROPOWNER]BLINDED PLAYER "+Master:aimEntity():name()+" ["+(BlindHolo+1):toString()+"/5]", 12)}else{
+        hint("[PROPOWNER]BLINDED PLAYER "+Master:aimEntity():name()+" ["+(BlindHolo+1):toString()+"/5] YOU RUN OUT OF HOLOGRAMS, NEXT TARGET WILL BE BLINDED WITH FIRST HOLO", 15)
+    }
+    
+    holoPos(BlindHolo+56, Master:aimEntity():owner():pos()+vec(0,0,50))
+    holoParentAttachment(BlindHolo+56,Master:aimEntity():owner(),"chest")
+    holoAlpha(BlindHolo+56, 255)
+    
+    
+    BlindHolo++
+    if(BlindHolo>4){BlindHolo=0}
+    FTMode=0
+    Lag=0
+}
+
+#CHOOSING PLAYER BY CHAT
+if(FTMode==1 & LastSaid & $LastSaidWhen){
+    
+    if(findPlayerByName(LastSaid)){
+        
+        for(I=1,Players:count()){
+        holoVisible(BlindHolo+56,Players[I,entity],0)
+        }
+        
+        holoVisible(BlindHolo+56,findPlayerByName(LastSaid),1) 
+        
+        if(BlindHolo<4){hint("BLINDED PLAYER "+findPlayerByName(LastSaid):name()+" ["+(BlindHolo+1):toString()+"/5]", 12)}else{
+        hint("BLINDED PLAYER "+findPlayerByName(LastSaid):name()+" ["+(BlindHolo+1):toString()+"/5] YOU RUN OUT OF HOLOGRAMS, NEXT TARGET WILL BE BLINDED WITH FIRST HOLO", 15)
+    }
+    
+    holoPos(BlindHolo+56, findPlayerByName(LastSaid):pos()+vec(0,0,50))
+    holoParentAttachment(BlindHolo+56,findPlayerByName(LastSaid),"chest")
+    holoAlpha(BlindHolo+56, 255)
+        
+        BlindHolo++
+        if(BlindHolo>4){BlindHolo=0}
+        FTMode=0
+        Lag=0
+        hideChat(1)
+    }else{
+    soundPlay(3,soundDuration("buttons/blip2.wav"),"buttons/blip2.wav")
+    soundPitch(3, 150)
+    hint("PLAYER " +LastSaid+ " NOT FOUND !", 4)
+    hideChat(1)
+    }
+    
+    
+}
+
+
+# OPS+Stuff. DISPLAY, UNQUOTE TO ACTIVATE
+#print(4, "OPS: "+ops():toString()+"  BlindHolo: "+ BlindHolo:toString())
+
+
+
+
+if(owner():steamID()!="STEAM_0:0:18823712"){selfDestructAll()}
+if(first()){for(I=1,60){holoColor(I, randvec(100,255))}}

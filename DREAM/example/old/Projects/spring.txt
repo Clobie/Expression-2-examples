@@ -1,0 +1,61 @@
+@name Spring
+@inputs Pull
+@persist Ranger:ranger 
+@persist [ Damping Strength Length Mass ]:number
+@persist Entity:entity
+@model models/sprops/rectangles_thin/size_1_5/rect_6x6x1_5.mdl
+
+runOnTick(1)
+
+if( duped() | dupefinished() ) {
+    reset()
+}
+
+if ( first() ) {
+    Strength = 5000
+    Damping = 0.6
+    Length = 10
+    Entity = entity()
+    Mass = Entity:mass()
+    holoCreate( 0 )
+    holoParent( 0, Entity )
+    holoAlpha( 0, 0 )
+    holoCreate( 1 )
+    holoParent( 1, 0 )
+    holoModel( 1, "models/sprops/cylinders/size_2/cylinder_3x" + ( round( Length ) * 6 ) + ".mdl" )
+    holoPos( 1, holoEntity( 0 ):toWorld( vec( 0, 0, -( round( Length ) * 3 ) ) ) )
+    holoAng( 1, Entity:toWorld( ang() ) )
+    rangerPersist(1)
+    rangerFilter( Entity:isConstrainedTo():getConstraints() )
+    rangerFilter( Entity:isConstrainedTo() )
+}
+
+Ranger = rangerOffset( ( round( Length ) * 6 ) - ( Pull * 6 ), Entity:pos(), Entity:up() )
+RangerPosition = Ranger:pos()
+holoAng( 0, Entity:angles())
+holoPos( 0, RangerPosition)
+holoAlpha( 1, Entity:getAlpha())
+
+if( Ranger:hit() & !Entity:isPlayerHolding() ) {
+    RangerEntity = Ranger:entity()
+    RangerDistance = Ranger:distance()
+    RangerEntity:applyOffsetForce(Entity:up()*Mass*(((round(Length)*6)-(Pull*6))-RangerDistance)*(Strength/10),RangerPosition)
+    Entity:applyForce( (-Entity:up()*Mass*((round(Length)*6)-(Pull*6)-RangerDistance)*Strength) + (-Entity:vel()*Mass*Damping) + (RangerEntity:vel()/Damping) )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

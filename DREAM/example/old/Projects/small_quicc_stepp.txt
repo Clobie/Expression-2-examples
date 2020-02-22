@@ -1,0 +1,40 @@
+@name Small Quicc Stepp
+@persist R:array
+if(first()){
+runOnTick(1)
+if( first() ) {
+    
+    function entity:ik3c( A, B, C, D, LengthA, LengthB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        Distance = AEntity:pos():distance( Destination )
+        Ae = max( Distance, LengthB )
+        Be = LengthA
+        Ce = min( Distance, LengthB )
+        Calc = sqrt( ( (Ae + Be - Ce + Be) * (-Ae + Be + Ce + Be) * (Ae - Be - Ce + Be) * (Ae + Be - Ce - Be) ) / ( 4 * (Ae - Ce) ^ 2 ) )
+        local Arcs = ( sign( Distance - LengthA ) + 1 ) / 2 ? asin( Calc / LengthA ) : acos( Calc / LengthA ) + 90
+        local YawAxis = This:toLocalAxis( Destination - AEntity:pos() )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        holoAng( B, holoEntity( A ):toWorld( ang( 0, -AEntity:bearing( Destination ) - 90, AEntity:elevation( Destination ) + Arcs - 90 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( 0, 0, -Arcs ) ) )
+        holoAng( D, holoEntity( C ):toWorld( ang( 0, 0, -Arcs ) ) )
+    }
+    
+}
+
+
+for(I=1,4){
+    for(M=1,5){
+        holoCreate(I*5+M,(holoEntity(I*5+M-1)?:entity()):toWorld(vec(0,0,25*(1-(M==1)))))
+        holoParent(I*5+M,holoEntity(I*5+M-1)?:entity())
+    }
+}
+
+}
+if(changed(floor(curtime()*15))) {
+
+#for(I=1,4){
+    entity():ik3c( 1, 2, 3, 4, 25, 25, owner():aimPos() )
+#}
+
+
+}

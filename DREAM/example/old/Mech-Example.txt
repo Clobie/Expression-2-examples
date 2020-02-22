@@ -1,0 +1,176 @@
+@name Mech-Example
+@inputs Seat:entity
+@outputs
+@persist Anim
+@trigger
+runOnTick(1)
+ 
+ 
+E = entity():isWeldedTo()  #checks the base
+#####driver ...
+ 
+if(Seat){
+ Driver = Seat:driver()
+W  =  Driver:keyForward()
+A  =  Driver:keyLeft()
+S  =  Driver:keyBack()
+D  =  Driver:keyRight()  
+Space = Driver:keyUse()
+}
+ 
+#options#
+MaxHover = 80
+Right_Left = 30
+Step = 50
+StepUp = 60
+##########
+if(changed(E)){
+    #functions#
+#function for toworld(vec
+         function vector entity:towv(VectorW:vector){
+return This:toWorld(VectorW)
+}
+#function for toworld(ang        
+  function angle entity:towa(AngleW:angle){
+return This:toWorld(AngleW)
+}
+#function for holoangle  
+    function entity holoa(Ho,Angl:angle){
+ holoAng(Ho,Angl)  
+}
+#function for holopos#
+    function entity holop(HT,Vectos:vector){
+ holoPos(HT,Vectos)  
+}
+#function for applyforce
+function vector entity:applyf(Vector1:vector){
+ This:applyForce(Vector1)  
+}
+#function for applyangforce
+function angle entity:applya(Angle1:angle){
+ This:applyAngForce(Angle1)  
+}
+ 
+ 
+###function for holocreate###  
+        function entity c(Index:number,Posi:vector,Scale:vector,Angle:angle,Colo:vector,Model:string,Parent:entity,Alpha:number){
+ holoCreate(Index) holoPos(Index,Posi) holoScale(Index,Scale) holoAng(Index,Angle) holoColor(Index,Colo) holoModel(Index,Model)
+holoParent(Index,Parent) holoAlpha(Index,Alpha)
+return holoEntity(Index)  
+}
+#############################
+#function for the leg angles##
+function number co(A, B, C){
+return acos((A^2 + B^2 - C^2) / (2*A*B))
+}
+function ik(L1,L2,Hip:vector,End:vector,I1,I2,Bs:entity){
+local Axis=Bs:toLocalAxis(End-Hip)
+local Angle=Axis:toAngle():setRoll(-bearing(Hip,Bs:angles(),End))
+local Dist=min(Axis:length(),L1+L2)
+local Quat=quat(Angle)*qRotation(vec(0,90+co(Dist,L1,L2),0))
+holoa(I1,Bs:towa(Quat:toAngle()))
+holoa(I2,holoEntity(I1):towa(ang(co(L2, L1, Dist)+180,0,0)))
+}
+####################
+####################
+##holos##
+#hips#
+c(1,E:towv(vec(0,Right_Left,0)),vec(1),E:towa(ang()),vec(255),"",E,255)
+c(2,E:towv(vec(0,-Right_Left,0)),vec(1),E:towa(ang()),vec(255),"",E,255)
+#######
+#kneess#
+c(3,E:towv(vec(0,Right_Left,MaxHover)),vec(1),E:towa(ang()),vec(255),"",holoEntity(1),255)
+c(4,E:towv(vec(0,-Right_Left,MaxHover)),vec(1),E:towa(ang()),vec(255),"",holoEntity(2),255)
+#########
+##feets##
+c(5,E:towv(vec(0,Right_Left,MaxHover*2)),vec(1),E:towa(ang()),vec(255),"",holoEntity(3),255)
+c(6,E:towv(vec(0,-Right_Left,MaxHover*2)),vec(1),E:towa(ang()),vec(255),"",holoEntity(4),255)
+#######
+ 
+#base holos that move##
+c(1000,E:towv(vec(-10,Right_Left,-MaxHover)),vec(1),E:towa(ang()),vec(255,0,0),"",E,255)
+c(2000,E:towv(vec(-10,-Right_Left,-MaxHover)),vec(1),E:towa(ang()),vec(0,255,0),"",E,255)
+ 
+#######################
+#rangerholo#
+c(5000,E:towv(vec(0,-Right_Left,-MaxHover)),vec(1),E:towa(ang()),vec(0,0,255),"hqsphere",E,255)
+######################
+###holos between the knee and feets usw###
+c(7,E:towv(vec(0,Right_Left,MaxHover/2)),vec(1,1,MaxHover/15),E:towa(ang()),vec(255),"hqcylinder",holoEntity(1),255)
+c(8,E:towv(vec(0,-Right_Left,MaxHover/2)),vec(1,1,MaxHover/15),E:towa(ang()),vec(255),"hqcylinder",holoEntity(2),255)
+ 
+ 
+c(9,E:towv(vec(0,Right_Left,MaxHover*1.5)),vec(1,1,MaxHover/15),E:towa(ang()),vec(255),"hqcylinder",holoEntity(3),255)
+c(10,E:towv(vec(0,-Right_Left,MaxHover*1.5)),vec(1,1,MaxHover/15),E:towa(ang()),vec(255),"hqcylinder",holoEntity(4),255)
+ 
+#########
+}
+ 
+#the ranger#
+rangerFilter( E )
+Ranger = rangerOffset(MaxHover*2,E:toWorld(vec(0,0,0)),vec(0,0,-1))
+ 
+holop(5000,Ranger:pos())
+ 
+#sets the angles with the gives function at line 66 - 76
+ik(MaxHover,MaxHover,holoEntity(1):pos(),holoEntity(1000):pos(),1,3,E)
+ik(MaxHover,MaxHover,holoEntity(2):pos(),holoEntity(2000):pos(),2,4,E)
+##########################################################
+#foot rangers#
+rangerFilter(E)
+Left_Ranger = rangerOffset(MaxHover,E:toWorld(vec(0,Right_Left,0)),vec(0,0,-1))
+ 
+rangerFilter(E)
+Right_Ranger = rangerOffset(MaxHover,E:toWorld(vec(0,-Right_Left,0)),vec(0,0,-1))
+##############
+ 
+#sets the right position between the ground and the feets + the animation
+ 
+if(W&!S){
+    Anim = Anim + 2
+}
+if(!W&S){
+    Anim = Anim - 2
+}
+###cos sin for the up and down and forward backward animtion
+Cos = cos(Anim * 2)
+Sin = sin(Anim * 2)
+##########################
+#distance for the right position between ground and feets
+ 
+Distance_1 = E:pos():distance(Left_Ranger:pos())
+Distance_2 = E:pos():distance(Right_Ranger:pos())
+###################
+#animtion fixer better dont remove it , it would fuck the animtion up!!
+ 
+if(Anim > 180){Anim = 0}
+if(Anim < 1&S){Anim = 180}
+#######################
+ 
+######the animation####
+if(Anim * 2 < 90 | Anim * 2 > 270){
+ 
+holop(1000,E:towv(vec(Sin*Step,Right_Left,-Distance_1+Cos*StepUp)))
+holop(2000,E:towv(vec(Sin*-Step,-Right_Left,-Distance_2+Cos*0)))
+}else{
+holop(1000,E:towv(vec(Sin*Step,Right_Left,-Distance_1+Cos*0)))
+holop(2000,E:towv(vec(Sin*-Step,-Right_Left,-Distance_2+Cos*-StepUp)))
+}
+#####################################
+ 
+ 
+##########
+###applyforce##
+ 
+E:applyf(((Ranger:pos( ) + vec(0,0,MaxHover) - E:massCenter())*5-E:vel())*E:mass()+(E:forward()*E:mass()*300*(W-S)))
+E:applya(((ang(0,E:angles():yaw() + (A-D)*100,0)-E:angles())*E:mass()*5)-E:angVel()*E:mass()*5)
+################
+#some stuff#
+if(!Driver){
+ holop(1000,E:towv(vec(20,Right_Left,-Distance_1)))  
+ holop(2000,E:towv(vec(20,-Right_Left,-Distance_2)))  
+Anim = 0
+Cos = 0
+Sin = 0
+}
+############

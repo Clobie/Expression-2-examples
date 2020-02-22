@@ -1,0 +1,149 @@
+@name Ranger Train 3
+@persist Steps:number
+@persist StepSize:number
+@persist Me:entity
+@persist Train:entity
+@persist Loop:number
+@persist Loop2:number
+@persist Loaded:number
+@persist TrainRangerOffsetA:vector
+@persist TrainRangerOffsetB:vector
+@persist TrainPosition:vector
+@persist NextVector:vector
+@persist Seat:entity
+@model models/props_phx/trains/trackslides_inner.mdl
+
+interval(1)
+
+if( first() )
+{
+    runOnChat(1)
+    
+    Me = owner()
+    Train = entity()
+    
+    Loop = 0
+    Loop2 = 0
+    Loaded = 0
+    
+    Steps = 50
+    StepSize = 4
+    
+    #Train:constraintBreakAll()
+    
+    TrainRangerOffsetA = (Train:right() * 38.5) + (Train:up() * 3)
+    TrainRangerOffsetB = (Train:right() * 43.5) + (Train:up() * 9.5)
+    TrainPosition = Train:pos()
+    
+    holoCreate(-1)
+    holoScale(-1, vec(0.05))
+    holoPos(-1, Train:pos() + TrainRangerOffsetA)
+    holoParent(-1, Train)
+    
+    holoCreate(-2)
+    holoScale(-2, vec(0.05))
+    holoPos(-2, Train:pos() + TrainRangerOffsetB)
+    holoParent(-2, Train)
+    
+    holoCreate(-3)
+    holoScale(-3, vec(1, 0.01, 0.5))
+    holoPos(-3, Train:pos() + TrainRangerOffsetA)
+    holoParent(-3, Train)
+    
+    holoCreate(-4)
+    holoScale(-4, vec(1, 0.5, 0.01))
+    holoPos(-4, Train:pos() + TrainRangerOffsetB)
+    holoParent(-4, Train)
+    
+    timer("setup",100)
+}
+elseif( clk("setup") )
+{
+    while( Loop < Steps & holoCanCreate() )
+    {
+        Loop++
+        holoCreate(Loop)
+        #holoScale(Loop, vec(1, 0.01, 0.5))
+        holoScale(Loop, vec(0.1))
+        holoParent(Loop, Train)
+    }
+    if( Loop < Steps ) { timer( "setup",1 ) }
+    else { Loaded = 1 }
+}
+elseif( clk() & Loaded )
+{
+    if( Me:keyReload() )
+    {
+        while( perf( ) & Loop2 < Steps )
+        {
+            Loop2++
+            if(Loop2 == 1)
+            {
+                NextVector = holoEntity(-1):pos() + holoEntity(-1):forward() * -StepSize
+            }
+            else
+            {
+                NextVector = NextVector + holoEntity(Loop2):forward() * -StepSize
+            }
+            local RangerA = rangerOffset(NextVector, NextVector + (holoEntity(Loop2):right() * 25))
+            local RangerB = rangerOffset(NextVector, NextVector + (holoEntity(Loop2):up() * -25))
+            NextVector = NextVector + (holoEntity(Loop2):right() * (NextVector:distance(RangerA:pos()) - 2.5))
+            holoPos(Loop2, NextVector)
+            
+            holoPos(-3, RangerA:pos())
+            holoAng(-3, holoEntity(Loop2):angles())
+            holoPos(-4, RangerB:pos())
+            holoAng(-4, holoEntity(Loop2):angles())
+            
+            local Ang = (RangerA:hitNormal():cross(RangerB:hitNormal())):toAngle()
+            holoAng(Loop2, Ang)
+        }
+        if( Loop2 == Steps )
+        {
+            Loop2 = 0
+            Train:setPos( holoEntity(Steps-1):pos() + (holoEntity(Steps-1):right() * -39) + (holoEntity(Steps-1):up() * -3) )
+            Train:setAng( holoEntity(Steps-1):angles() )
+        }
+        
+        #[
+        RangerAStart = holoEntity(-1):pos()
+        RangerBStart = holoEntity(-2):pos()
+        RangerA = rangerOffset(RangerAStart, RangerAStart + (Train:right() * 25))
+        RangerB = rangerOffset(RangerBStart, RangerBStart  + (Train:up() * -25))
+        RangerADistance = RangerAStart:distance(RangerA:pos())
+        RangerBDistance = RangerBStart:distance(RangerB:pos())
+        holoPos(-3, RangerA:pos())
+        holoAng(-3, Train:angles())
+        holoPos(-4, RangerB:pos())
+        holoAng(-4, Train:angles())
+        while( perf() & Loop2 < Steps )
+        {
+            local Vec = Train:pos()
+            Vec = Vec + Train:right() * (RangerADistance - 2.5)
+            Vec = Vec + Train:up() * -(RangerBDistance - 2.5)
+            Train:setPos( Vec + (RangerA:hitNormal():cross(RangerB:hitNormal()) * -StepSize) )
+            Train:setAng((RangerA:hitNormal():cross(RangerB:hitNormal())):toAngle() - ang(0,0,0))
+        }
+        ]#
+    }
+}
+elseif( chatClk(Me) )
+{
+    local S = Me:lastSaid()
+    if(S:left(6) == "/seats")
+    {
+        findByClass("prop_vehicle_prisoner_pod")
+        A = findToArray()
+        for(I = 1, A:count())
+        {
+            if(A[I, entity]:owner() == Me & A[I, entity]:pos():distance(Train:pos()) < 100)
+            {
+                Seat = A[I, entity]
+                Seat:parentTo(Train)
+                #Seat:setPos( Train:pos() + (Train:up() * 50) + (Train:forward() * 50) )
+                #Seat:setAng( Train:angles() + ang(0, 90, 0))
+                #break
+            }
+        }
+    }
+}

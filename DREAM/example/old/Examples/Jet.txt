@@ -1,0 +1,240 @@
+@name Jet
+@persist A Material1:string Material2:string Material3:string
+@persist Me:entity Entity:entity
+@persist HoloCount MoveTimer ExplodeTimer ThrowTimer ThrowDelay
+@persist HoloEntityArray:array HoloPositionArray:array HoloDirectionalVectoryArray:array HoloStateArray:array HoloExplodeSize:array
+@persist MaxTotalHolos
+@persist KeyAttack1
+@outputs CameraPosition:vector CameraAngles:angle CameraParent:entity Onnn
+#@model models/sprops/rectangles/size_4/rect_36x36x3.mdl
+if( first() | duped() )
+{
+    runOnTick(1)
+    Material1 = "models/effects/splode_sheet"
+    Material2 = "models/props_canal/metalwall005b"
+    Me = owner()
+    Entity = entity()
+    #Entity:setAlpha(0)
+    Entity:setMass(5000)
+    Onnn = 1
+    MaxTotalHolos = 15
+    HoloCount = 1
+    
+    ThrowTimer = realtime()
+    ThrowDelay = 0.25
+    
+    # Initialize
+    HoloEntityArray = array()
+    HoloPositionArray = array()
+    HoloDirectionalVectoryArray = array()
+    HoloStateArray = array()
+    HoloExplodeSize = array()
+    
+    for(I = 1, MaxTotalHolos)
+    {
+        HoloPositionArray[HoloCount, vector] = vec(0,0,0)
+        HoloDirectionalVectoryArray[HoloCount, vector] = vec(0,0,0)
+        HoloStateArray[HoloCount, number] = 0
+    }
+    
+    A = MaxTotalHolos + 1
+    holoCreate( A )
+    holoMaterial( A, Material2 )
+    holoModel( A, "hqsphere" )
+    holoPos( A, Entity:pos() + vec(0, 0, 40))
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(2, 0.3, 0.15) )
+    
+    A++
+    holoCreate( A )
+    holoModel( A, "hqsphere" )
+    holoPos( A, Entity:pos() + vec(8.5, 0, 0.4) + vec(0, 0, 40)  )
+    holoColor( A, vec(0, 0, 0) )
+    holoScale( A, vec(0.4, 0.175, 0.1))
+    holoAng( A, ang(4, 0, 0) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoMaterial( A, Material2 )
+    holoModel( A, "prism" )
+    holoPos( A, Entity:pos() + vec(0, -12, 1) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.4, 0.01, 2) )
+    holoAng( A, ang(0, -15, 83) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoMaterial( A, Material2 )
+    holoModel( A, "prism" )
+    holoPos( A, Entity:pos() + vec(0, 12, 1) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.4, 0.01, 2) )
+    holoAng( A, ang(0, 15, -83) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoModel( A, "prism" )
+    holoMaterial( A, Material2 )
+    holoPos( A, Entity:pos() + vec(-10, -3, 0.3) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.2, 0.01, 0.5) )
+    holoAng( A, ang(0, -15, 83) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoModel( A, "prism" )
+    holoMaterial( A, Material2 )
+    holoPos( A, Entity:pos() + vec(-10, 3, 0.3) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.2, 0.01, 0.5) )
+    holoAng( A, ang(0, 15, -83) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoModel( A, "prism" )
+    holoMaterial( A, Material2 )
+    holoPos( A, Entity:pos() + vec(-10, 0, 2.5) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.2, 0.01, 0.4) )
+    holoAng( A, ang(-15, 0, 0) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoModel( A, "hqcylinder" )
+    holoMaterial( A, Material2 )
+    holoPos( A, Entity:pos() + vec(0, 8, -0.4) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.135, 0.135, 0.2) )
+    holoAng( A, ang(90, 0, 0) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoModel( A, "hqcylinder" )
+    holoMaterial( A, Material2 )
+    holoPos( A, Entity:pos() + vec(0, -8, -0.4) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.135, 0.135, 0.2) )
+    holoAng( A, ang(90, 0, 0) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoModel( A, "hqcylinder" )
+    holoMaterial( A, Material2 )
+    holoPos( A, Entity:pos() + vec(-0.1, 8, -0.4) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.12, 0.12, 0.2) )
+    holoAng( A, ang(90, 0, 0) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    A++
+    holoCreate( A )
+    holoModel( A, "hqcylinder" )
+    holoMaterial( A, Material2 )
+    holoPos( A, Entity:pos() + vec(-0.1, -8, -0.4) + vec(0, 0, 40)  )
+    holoColor( A, vec(255, 255, 255) )
+    holoScale( A, vec(0.12, 0.12, 0.2) )
+    holoAng( A, ang(90, 0, 0) )
+    holoParent( A, MaxTotalHolos+1 )
+    
+    #CameraParent = holoEntity(MaxTotalHolos+1)
+    
+    
+    #cameraCreate(1)
+    #cameraPos(1, holoEntity(MaxTotalHolos+1):pos() - (holoEntity(MaxTotalHolos+1):forward() * 50) + vec(0, 0, 20))
+    #cameraAng(1, holoEntity(MaxTotalHolos+1):eyeAngles())
+    #cameraParent(1, holoEntity(MaxTotalHolos+1))
+    #cameraToggle(1, 1)
+    
+    holoEntity(A):setTrails(2, 1, 10, "trails/smoke", vec(255, 0, 0), 255)
+    holoEntity(A-1):setTrails(2, 1, 10, "trails/smoke", vec(255, 0, 0), 255)
+    
+}
+
+if( Me:keyReload() )
+{
+    #Entity:applyForce(Entity:forward() * Entity:mass() * 1000 )
+    holoPos(MaxTotalHolos+1, holoEntity(MaxTotalHolos+1):pos() + holoEntity(MaxTotalHolos+1):forward() * 50)
+    holoMaterial( A-1, Material1 )
+    holoMaterial( A, Material1 )
+}
+elseif( Me:keyUse() )
+{
+    holoPos(MaxTotalHolos+1, holoEntity(MaxTotalHolos+1):pos() + holoEntity(MaxTotalHolos+1):forward() * 5)
+    holoMaterial( A-1, Material1 )
+    holoMaterial( A, Material1 )
+}
+else
+{
+    holoMaterial( A-1, Material2 )
+    holoMaterial( A, Material2 )
+}
+
+holoAng(MaxTotalHolos+1, Me:eyeAngles())
+
+# When "attacking", toggle vars to start throwing a bomb
+KeyAttack1 = Me:keyAttack1()
+if( KeyAttack1 )
+{
+    if(realtime() > ThrowTimer & holoCanCreate() & HoloStateArray[HoloCount, number] == 0)
+    {
+        holoCreate( HoloCount, holoEntity(MaxTotalHolos+1):pos() + vec(0,0,50), vec(0.1, 0.1, 0.1), holoEntity(MaxTotalHolos+1):eyeAngles(), vec(255, 255, 255) )
+        holoModel( HoloCount, "hqsphere" )
+        #holoMaterial( HoloCount, "debug/env_cubemap_model")
+        ThrowTimer = realtime() + ThrowDelay
+        Dest = holoEntity(MaxTotalHolos+1):aimPos()
+        Src = holoEntity(MaxTotalHolos+1):pos() + vec(0,0,0)
+        DirectionalVector = holoEntity(MaxTotalHolos+1):eye() * (holoEntity(MaxTotalHolos+1):vel() + 1) #(Dest - Src):normalized()
+        HoloPositionArray[HoloCount, vector] = Src
+        HoloDirectionalVectoryArray[HoloCount, vector] = DirectionalVector
+        HoloStateArray[HoloCount, number] = 1
+        HoloEntityArray[HoloCount, entity] = holoEntity( HoloCount )
+        HoloCount++
+        if( HoloCount >= MaxTotalHolos )
+        {
+            HoloCount = 1
+        }
+    }
+}
+
+# Loop through bombs
+for(I = 1, MaxTotalHolos)
+{
+    if(HoloStateArray[I, number] == 0)
+    {
+        continue
+    }
+    
+    if(HoloStateArray[I, number] == 1)
+    {
+        HoloPositionArray[I, vector] = HoloPositionArray[I, vector] + (HoloDirectionalVectoryArray[I, vector] * 25)
+        holoPos( I, HoloPositionArray[I, vector])
+        if(HoloEntityArray[I, entity]:pos():distance(holoEntity(MaxTotalHolos+1):pos()) > 750)
+        {
+            HoloStateArray[I, number] = 2
+        }
+    }
+    elseif(HoloStateArray[I, number] == 2)
+    {
+        holoMaterial( I, "models/effects/splode_sheet" )
+        if( HoloExplodeSize[I, number] > 15 )
+        {
+            HoloStateArray[I, number] = 0
+            HoloExplodeSize[I, number] = 0
+            holoScale( I, vec(0.1, 0.1, 0.1))
+            holoDelete( I )
+        }
+        else
+        {
+            HoloExplodeSize[I, number] = HoloExplodeSize[I, number] + 0.75
+            holoScale( I, vec(1, 1, 1) * HoloExplodeSize[I, number])
+        }
+    }
+}

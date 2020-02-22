@@ -1,0 +1,144 @@
+@name snow's hover chip
+@inputs  SEAT:entity 
+@outputs 
+@persist LIGHTS COLOR3:vector PLAYERTIMER SEATFINDER MM BEDARRANGEMENT DOOROPEN DOORANG ENGV USERTOGGLE SONGSELECT CRASH STARTTIMER STABALIZER LASTPLAYED MUSV STEP:entity STRINGARRAY:array SONGDURATIONS:array COLOR:vector COLOR2:vector STRAFE ENTITIES NOCOLLIDE M SEAT:entity PASSENGERSEAT:entity SEAT2:entity PASSENGERSEAT2:entity SCALE  HEIGHTADD OVERSTEER REVERSESLOWER BRAKES ANGLERELATIVEAREA LEAN RANGERSTABALIZATION Pos:vector Prop:entity HEIGHT ANGLERESIST FORCERESIST YAWRESIST F T FB TURNRATE TRATE FRATE MAXSPEED ACCELERATION N HEIGHT2 JUMP JUMPPOWER
+@trigger 
+@model models/sprops/cuboids/height24/size_4/cube_96x240x24.mdl
+if(first()){
+SCALE=1
+HEIGHT=50
+HEIGHT2=15
+Prop=entity()
+FORCERESIST=0.3
+YAWRESIST=1
+MAXSPEED=2000
+TURNRATE=100
+ACCELERATION=40
+Prop:setMass(5000)
+ANGLERELATIVEAREA=40
+RANGERSTABALIZATION=1
+LEAN=10
+OVERSTEER=0.5 #1.1
+HEIGHTADD=3
+REVERSESLOWER=3
+BRAKES=2
+ENTITIES=1
+NOCOLLIDE=0
+JUMPPOWER=600
+COLOR=vec(255,180,75)
+COLOR2=vec(255,160,70)
+COLOR3=vec(255,255,255)
+#COLOR=randvec(vec(0,0,0),vec(255,255,255))
+#COLOR2=randvec(vec(0,0,0),vec(255,255,255))
+#COLOR3=randvec(vec(0,0,0),vec(255,255,255))
+
+ENGV=0.3
+MUSV=0.4
+STABALIZER=0.5
+SEATFINDER=0
+#COLOR=vec(255,0,255)
+#COLOR=vec(random(0,255),random(0,255),random(0,255))
+###never change this
+#Prop:setAng(ang())
+Prop:propInertia(vec(300,300,300))
+Prop:setAlpha(255)
+Prop:propPhysicalMaterial("metalvehicle")
+### 
+}
+interval(40)
+if(changed(time("sec"))&PLAYERTIMER!=0){PLAYERTIMER-=1}
+if(CRASH>0){CRASH-=1}
+
+if(changed(owner():keyPressed("backspace"))&owner():keyPressed("backspace")==1){USERTOGGLE++} if(USERTOGGLE>1){USERTOGGLE=0}
+if(changed(USERTOGGLE)){hint("user can drive> "+USERTOGGLE,1000)}
+#print( _HUD_PRINTCENTER,""+round((realtime()-STARTTIMER)/60,2))
+if(SEAT:driver():model()!=""&USERTOGGLE==1&CRASH==0|SEAT:driver()==owner()&CRASH==0){
+    DOOROPEN=0
+       Prop:propSetBuoyancy(0)
+MPH=round(toUnit("mph",Prop:vel():length()))  #print(MPH)
+rangerHitEntities(ENTITIES)
+rangerHitWater(1)
+R=rangerOffset(Prop:toWorld(vec(0,0,HEIGHT2*(SCALE))),Prop:toWorld(+vec(0,0,-HEIGHT*4)))
+rangerHitEntities(ENTITIES)
+rangerHitWater(1)
+RF=rangerOffset(Prop:toWorld(vec(ANGLERELATIVEAREA,0,HEIGHT2)),Prop:toWorld(vec(ANGLERELATIVEAREA,0,-HEIGHT*4)))
+rangerHitEntities(ENTITIES)
+rangerHitWater(1)
+RB=rangerOffset(Prop:toWorld(vec(-ANGLERELATIVEAREA,0,HEIGHT2)),Prop:toWorld(vec(-ANGLERELATIVEAREA,0,-HEIGHT*4)))
+rangerHitEntities(ENTITIES)
+rangerHitWater(1)
+RR=rangerOffset(Prop:toWorld(vec(0,ANGLERELATIVEAREA,HEIGHT2)),Prop:toWorld(vec(0,ANGLERELATIVEAREA,-HEIGHT*4)))
+rangerHitEntities(ENTITIES)
+rangerHitWater(1)
+RL=rangerOffset(Prop:toWorld(vec(0,-ANGLERELATIVEAREA,HEIGHT2)),Prop:toWorld(vec(0,-ANGLERELATIVEAREA,-HEIGHT*4)))
+#print(RF:distance()-RB:distance())
+SWAYANG=(ang(RB:distance()-RF:distance()+(F*LEAN),0,RR:distance()-RL:distance()+(TRATE*-LEAN)))
+#Pos=(R:pos()+vec(0,0,((HEIGHT*2)/2)+(((HEIGHT*HEIGHTADD)/2)*(abs(MPH)/844)))*SCALE)
+if(R:distance()<HEIGHT*4){
+Pos=Prop:toWorld(vec(0,0,((HEIGHT*2)/2)+(((HEIGHT*HEIGHTADD)/2)*(abs(MPH)/844))-R:distance()))
+} else{Pos=Prop:pos()+vec(0,0,((HEIGHT*2)/2)+(((HEIGHT*HEIGHTADD)/2)*(abs(MPH)/844))-R:distance())}
+if(SEAT:driver():keyAttack2()==0){
+if(SEAT:driver():keyPressed("w")==0&SEAT:driver():keyPressed("s")==0){
+
+if(MPH<20&FRATE>0){FRATE-=FRATE/10 } 
+if(MPH<10){if(abs(FRATE)>400){CRASH=50} FRATE=FRATE*-0.1 FB=1}
+}
+if(changed(SEAT:driver():keyPressed("w"))&SEAT:driver():keyPressed("w")==1){F=1 Prop:soundPlay(1,0,"ambient/desert_wind_low.wav") Prop:soundPlay(3,0,"ambient/levels/citadel/zapper_ambient_loop1.wav") }
+if(SEAT:driver():keyPressed("f")){SEAT:ejectPod()}
+if(changed(SEAT:driver():keyPressed("s"))&SEAT:driver():keyPressed("s")==1){F=-1 Prop:soundPlay(1,0,"ambience/mechwhine.wav") }
+if(changed(SEAT:driver():keyPressed("t"))&SEAT:driver():keyPressed("t")==1){LIGHTS++} if(LIGHTS>1){LIGHTS=0}
+
+F-=F/20
+if(SEAT:driver():keyPressed("w")&R:distance()<HEIGHT*4){FRATE+=ACCELERATION}
+if(SEAT:driver():keyPressed("s")&R:distance()<HEIGHT*4){if(FRATE>-MAXSPEED/REVERSESLOWER){FRATE-=ACCELERATION/2*BRAKES}}
+if(FRATE>MAXSPEED&SEAT:driver():keySprint()==0){FRATE=MAXSPEED}
+if(FRATE<-MAXSPEED/REVERSESLOWER){FRATE=-MAXSPEED/REVERSESLOWER}
+
+T=0 
+if(SEAT:driver():keyPressed("a")){T=1}
+if(SEAT:driver():keyPressed("d")){T=-1}
+if(SEAT:driver():keyPressed("d")==0&SEAT:driver():keyPressed("a")==0){T=0 
+  TRATE-=TRATE/1.5 
+}
+STRAFE=0
+if(SEAT:driver():keyPressed("d")&FRATE<1&SEAT:driver():keyJump()){STRAFE=70 T=0}
+if(SEAT:driver():keyPressed("a")&FRATE<1&SEAT:driver():keyJump()){STRAFE=-70 T=0}
+
+TRATE+=T*0.2
+if(TRATE<-1){TRATE=-1}
+if(TRATE>1){TRATE=1}
+if(FRATE>3){FB=1}
+if(FRATE<-3){FB=-1}
+if(SEAT:driver():keyJump()&R:distance()<HEIGHT*4|SEAT:driver():model()==""){FB=1 FRATE-=FRATE/10}
+if(R:distance()<HEIGHT*4){
+Prop:applyForce(((((Pos-Prop:pos())*4) - (Prop:vel()*vec(STABALIZER,STABALIZER,STABALIZER)))*Prop:mass())*vec(1,1,1)+(Prop:forward()*FRATE*(SCALE)*Prop:mass())+(Prop:right()*STRAFE*Prop:mass()))
+}
+Prop:applyAngForce(((( -Prop:angVel()*FORCERESIST)*Prop:mass())*ang(1,0,1)+ang(0,(-Prop:mass()*Prop:angVel()):yaw()*YAWRESIST,0))+(ang(0,TRATE*TURNRATE*Prop:mass()*FB-FRATE/MAXSPEED*OVERSTEER,0))+(SWAYANG*ang(1,0,1)*-RANGERSTABALIZATION*Prop:mass()))
+JUMP=JUMPPOWER
+if(changed(SEAT:driver():keyAttack1())&SEAT:driver():keyAttack1()==1){SEAT:hintDriver(MPH+" mph",1000)}
+}
+else{
+   if(JUMP==JUMPPOWER&R:distance()>HEIGHT*4&vec(Prop:angles()*ang(0,0,1)):length()>80&MPH<10) {Prop:applyForce(Prop:pos()+(vec(0,0,JUMP*Prop:mass()))) JUMP=0}
+   if(JUMP==JUMPPOWER&R:distance()<HEIGHT*4&vec(Prop:angles()*ang(0,0,1)):length()<100) { Prop:applyForce(Prop:toWorld(vec(0,0,JUMP*Prop:mass()))) JUMP=0}
+if(Prop:angVelVector():length()<300&R:distance()>HEIGHT*2){
+if(SEAT:driver():keyPressed("w")){Prop:applyAngForce(ang(40*Prop:mass(),0,0))}    
+if(SEAT:driver():keyPressed("s")){Prop:applyAngForce(ang(-40*Prop:mass(),0,0)) FRATE-=FRATE/10}   
+} 
+if(Prop:angVelVector():length()<350&R:distance()>HEIGHT*2){
+if(SEAT:driver():keyPressed("a")){Prop:applyAngForce(ang(0,0,-40*Prop:mass()))} 
+if(SEAT:driver():keyPressed("d")){Prop:applyAngForce(ang(0,0,40*Prop:mass()))}     
+}
+    }
+    if(changed(SEAT:driver():keyAttack2())&SEAT:driver():keyAttack2()==1&R:distance()<HEIGHT*2){Prop:soundPlay(2,0,"replay/performancesaved.wav")}
+        if(changed(SEAT:driver():keyAttack2()==0)&SEAT:driver():keyAttack2()==0==1){soundStop(2)}
+}
+else{soundStop(1) soundStop(2) soundStop(3) FRATE=0    Prop:propSetBuoyancy(1)}
+soundPitch(1,(100)*(abs(MPH)/200)+(100)+random(-1,1))
+soundVolume(1,ENGV*1)
+
+soundPitch(3,(100)*(abs(MPH)/200)+(100)+random(-1,1))
+soundVolume(3,ENGV*0.3)
+if(duped()){reset()}
+###holos
+
+

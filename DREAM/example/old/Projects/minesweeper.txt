@@ -1,0 +1,237 @@
+@name fucking minsweeper, god damnit
+@persist 
+
+#include "libs/vars"
+#include "libs/heap2"
+#include "libs/async"
+
+if( first() ) {
+    
+    runOnChat(1)
+    runOnTick(1)
+    
+    #entity():setAlpha(0)
+    
+    "wh":n( 15 )                # Sets how many across and how many high
+    "mines":n( 20 )             # Sets how many mines there will be
+    "gap":n( 0.1 )                # Gap between squares
+    "scale":n( 6 )            # Size of squares
+    
+    "mine":s( new() )
+    "node":s( new() )
+    "size":n( "wh":n()^2 )
+    "revealbuffer":s( new() )
+    "time":n( 0 )
+    "canclick":n( 0 )
+    "win":s( new() )
+    "start":n( 0 )
+    
+    function activateclick() { "canclick":n( 1 ) }
+    function deactivateclick() { "canclick":n( 0 ) }
+    function number slotX( N ) { return mod( N, "wh":n() ) == 0 ? "wh":n() : mod( N, "wh":n() ) }
+    function number slotY( N ) { return mod( N/"wh":n(), "wh":n() ) == 0 ? "wh":n() : ceil( mod( N/"wh":n(), "wh":n() ) ) }
+    function number isneighbor( A, B ) { return holoEntity(A):pos():distance(holoEntity(B):pos()) <= ("scale":n() + "gap:":n()) * 1.5 ? 1 : 0 }
+    function number isneighbor_nocorners( A, B ) { return holoEntity(A):pos():distance(holoEntity(B):pos()) <= ("scale":n() + "gap:":n()) * 1.2 ? 1 : 0 }
+    function vector getPlaneYZ(I:number) { return ( Me:shootPos() + ( holoEntity(I):right():dot( holoEntity(I):pos() - Me:shootPos() ) / ( holoEntity(I):right():dot( Me:eye() ) ) ) * Me:eye() ) }
+    
+    function indicators( N ) {
+        local T = "node":s():get()
+        while( N > 0 && perf(50) ) {
+            if( T[N, number] == 0 ) {
+                local A = array( N-1, N+1, N-"wh":n(), N+"wh":n(), N-"wh":n()-1, N-"wh":n()+1, N+"wh":n()-1, N+"wh":n()+1 )
+                for( I = 1, 8 ) {
+                    if( T[A[I, number], number] >= 10 && isneighbor( N, A[I, number] ) ) {
+                        T[A[I, number], number] = T[A[I, number], number] + 1
+                    }
+                }
+            }
+            N--
+        }
+        if( N > 0 ) { async( 0.1, "indicators", N ) } else { activateclick() }
+    }
+    
+    function mines() {
+        local Node = "node":s():get()
+        local Mine = "mine":s():get()
+        local MineCount = "mines":n()
+        for( I = 1, MineCount ){
+            local M = randint(1, "size":n())
+            Node[M, number] = 0
+        }
+        async( 0.1, "indicators", "wh":n()^2 )
+    }
+    
+    function clear() {
+        local Win = "win":s():get()
+        local Node = "node":s():get()
+        local Mine = "mine":s():get()
+        local FBlacklist = "fblacklist":s():get()
+        Win:clear()
+        Node:clear()
+        Mine:clear()
+        FBlacklist:clear()
+        for( I = 1, "size":n() ) {
+            Node[I, number] = 10
+            holoMaterial( I, "debug/debugdrawflat" )
+            holoColor( I, vec(75) )
+        }
+        async( 0.1, "mines" )
+    }
+    
+    function grid( N ) {
+        local Node = "node":s():get()
+        while( holoCanCreate() && perf() && N > 0 ) {
+            holoCreate( N )
+            holoMaterial( N, "debug/debugdrawflat" )
+            holoDisableShading( N, 1 )
+            holoPos( N, entity():pos() + vec( (slotX(N) * ("scale":n() + "gap":n())), 0, 12 + (slotY(N) * ("scale":n() + "gap":n())) ) )
+            holoScaleUnits( N, vec( "scale":n(), 0.1, "scale":n() ) )
+            #holoColor( N, hsv2rgb(N*2,1,1) )
+            holoColor( N, vec(75) )
+            Node[N, number] = 10
+            N--
+        }
+        if( N > 0 ) { async( 0.1, "grid", N ) }
+        else {
+            #holoCreate(0)
+            #holoPos(0, (( holoEntity( 1 ):pos() + holoEntity( "size":n() ):pos() ) / 2 ):setY( entity():pos():y() + 0.5 ) )
+            #holoScaleUnits(0, vec( ("wh":n() + ("gap":n() * 1.75)) * "scale":n() ):setY(0.1) )
+            #holoColor(0, vec())
+            async( 0.5, "mines" )
+        }
+    }
+    
+    function flood2( N ) {
+        local T = "node":s():get()
+        local R = "revealbuffer":s():get()
+        local A = array( N-1, N+1, N-"wh":n(), N+"wh":n() )
+        
+        while( perf(90) && R:count() > 0 ) {
+            for( I = 1, 4 ) {
+                if( isneighbor_nocorners( N, A[I, number] ) ) {
+                    if( T[ A[I, number], number] == 10 && holoEntity( A[I, number] ):getColor() != vec(255) ) {
+                        R:pushNumber( A[I, number] )
+                        holoColor( A[I, number], vec(255) )
+                    } elseif( T[ A[I, number], number] > 10 ) {
+                        holoMaterial( A[I, number], "models/cheeze/buttons2/" + (T[ A[I, number], number] - 10):toString() )
+                        holoColor( A[I, number], vec(255) )
+                    }
+                }
+            }
+            holoColor( N, vec(255) )
+            R:remove( N )
+            N = R[1, number]
+        }
+        if( R:count() > 0 ) { async( 0.1, "flood2", R[1, number] ) }
+    }
+    
+    function flood( N ) {
+        local T = "node":s():get()
+        if( isneighbor_nocorners( N, N-1 ) ) {
+            if( T[N-1, number] == 10 && holoEntity(N-1):getColor() != vec(255) ) {
+                async(0.1, "flood", N-1)
+                holoColor( N-1, vec(255) )
+            } elseif( T[N-1, number] > 10 ) {
+                holoMaterial( N-1, "models/cheeze/buttons2/" + (T[N-1, number]-10):toString() )
+                holoColor( N-1, vec(255) )
+            }
+        }
+        if( isneighbor_nocorners( N, N+1 ) ) {
+            if( T[N+1, number] == 10 && holoEntity(N+1):getColor() != vec(255) ) {
+                async(0.1, "flood", N+1)
+                holoColor( N+1, vec(255) )
+            } elseif( T[N+1, number] > 10 ) {
+                holoMaterial( N+1, "models/cheeze/buttons2/" + (T[N+1, number]-10):toString() )
+                holoColor( N+1, vec(255) )
+            }
+        }
+        if( isneighbor_nocorners( N, N+"wh":n() ) ) {
+            if( T[N+"wh":n(), number] == 10 && holoEntity(N+"wh":n()):getColor() != vec(255) ) {
+                async(0.1, "flood", N+"wh":n())
+                holoColor( N+"wh":n(), vec(255) )
+            } elseif( T[N+"wh":n(), number] > 10 ) {
+                holoMaterial( N+"wh":n(), "models/cheeze/buttons2/" + (T[N+"wh":n(), number]-10):toString() )
+                holoColor( N+"wh":n(), vec(255) )
+            }
+        }
+        if( isneighbor_nocorners( N, N-"wh":n() ) ) {
+            if( T[N-"wh":n(), number] == 10 && holoEntity(N-"wh":n()):getColor() != vec(255) ) {
+                async(0.1, "flood", N-"wh":n())
+                holoColor( N-"wh":n(), vec(255) )
+            } elseif( T[N-"wh":n(), number] > 10 ) {
+                holoMaterial( N-"wh":n(), "models/cheeze/buttons2/" + (T[N-"wh":n(), number]-10):toString() )
+                holoColor( N-"wh":n(), vec(255) )
+            }
+        }
+    }
+    
+    function win() {
+        local T = "node":s():get()
+        for( I = 1, "size":n() ) {
+            if( T[I, number] == 10 ) { holoMaterial( I, "debug/debugdrawflat" ), holoColor( I, vec(255) ) }
+            elseif( T[I, number] == 0 ) { holoMaterial( I, "maxofs2d/models/hover_plate" ), holoColor( I, vec(255) ) }
+            elseif( T[I, number] > 10 ) { holoMaterial( I, "models/cheeze/buttons2/" + (T[I, number]-10):toString() ), holoColor( I, vec(255) ) }
+        }
+        async( 2, "clear" )
+    }
+    
+    function lose() {
+        local T = "node":s():get()
+        for( I = 1, "size":n() ) {
+            #if( T[I, number] == 10 ) { holoMaterial( I, "debug/debugdrawflat" ), holoColor( I, vec(255) ) }
+            if( T[I, number] == 0 ) { holoMaterial( I, "models/effects/splode_sheet" ), holoColor( I, vec(255) ) }
+            #elseif( T[I, number] > 10 ) { holoMaterial( I, "models/cheeze/buttons2/" + (T[I, number]-10):toString() ) }
+        }
+        async( 2, "clear" )
+    }
+    
+    function click( N ) {
+        local T = "node":s():get()
+        local F = "revealbuffer":s():get()
+        local V = getPlaneYZ( 1 )
+        for( I = 1, "size":n() ) {
+            local V2 = holoEntity( I ):pos()
+            if( inrange( V, V2 - (vec("scale":n()) / 2), V2 + (vec("scale":n()) / 2) ) ) {
+                if( N == 0 && T[I, number] == 0 ) {
+                    "win":s():get():pushNumber( I )
+                    holoMaterial( I, "maxofs2d/models/hover_plate" )
+                    return
+                }
+                elseif( N == 1 && T[I, number] == 0 ) {
+                    deactivateclick()
+                    async(0.1, "lose")
+                    return
+                }
+                elseif( N == 1 && T[I, number] == 10 ) {
+                    #F:pushNumber( I )
+                    holoColor( I, vec(255) )
+                    async( 0.33, "activateclick" )
+                    F:pushNumber( I )
+                    #flood2( I )
+                    flood(I)
+                    return
+                }
+                elseif( N == 1 && T[I, number] >= 11 ) {
+                    holoMaterial( I, "models/cheeze/buttons2/" + (T[I, number]-10):toString() )
+                    holoColor( I, vec(255) )
+                    async( 0.33, "activateclick" )
+                    return
+                }
+            }
+        }
+        async( 0.33, "activateclick" )
+    }
+    
+    grid( "wh":n()^2 )
+}
+
+if( Me:keyUse() && changed(Me:keyUse()) && "canclick":n() && perf(50) ) {
+    click( 1 )
+    deactivateclick()
+}
+elseif( Me:keyReload() && changed(Me:keyReload()) ) {
+    click( 0 )
+    if( "win":s():get():count() >= "mines":n() ) { async(0.2, "win"), async( 2, "clear" ) }
+}
+
+if( chatClk( Me ) && Me:lastSaid() == "reset" ) { clear(), mines() }

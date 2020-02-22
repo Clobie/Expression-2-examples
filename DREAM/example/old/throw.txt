@@ -1,0 +1,52 @@
+@name generic
+@inputs 
+@outputs 
+@persist Width Length
+@trigger 
+
+if( first( ) ) {
+    
+    Width = 50
+    Length = 2
+    
+    function entity:playerThrow() {
+        if( holoCanCreate() && propCanCreate() ) {
+            local X = propSpawn( "models/sprops/geometry/sphere_6.mdl", ( This:shootPos() - vec( 0, 0, 15 ) )+  ( This:eye() * 75 ), This:eyeAngles( ), 0 )
+            X:setAlpha( 0 )
+            X:setMass( 50000 )
+            X:propGravity( 0 )
+            X:propFreeze( 0 )
+            X:applyForce( This:eye():toAngle():forward() * 50000 * 5000 )
+            X:applyAngForce( ang(0,0,1) * 50000 * 30 )
+            
+            local I = randint(2e8)
+            local J = 0
+            #for( J = 0, 3 ) {
+                holoCreate( I, X:pos( ) + ( X:right( ) * 35 ) + ( X:forward( ) * J * -20 ) ), holoAlpha( I, 0 ), holoParent( I, X )
+                holoEntity(I):setTrails( Width, Width, Length, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+                I++
+                holoCreate( I, X:pos( ) + ( X:right( ) * -35 ) + ( X:forward( ) * J * -20 ) ), holoAlpha( I, 0 ), holoParent( I, X )
+                holoEntity(I):setTrails( Width, Width, Length, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+                I++
+                holoCreate( I, X:pos( ) + ( X:up( ) * 35 ) + ( X:forward( ) * J * -20 ) ), holoAlpha( I, 0 ), holoParent( I, X )
+                holoEntity(I):setTrails( Width, Width, Length, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+                I++
+                holoCreate( I, X:pos( ) + ( X:up( ) * -35 ) + ( X:forward( ) * J * -20 ) ), holoAlpha( I, 0 ), holoParent( I, X )
+                holoEntity(I):setTrails( Width, Width, Length, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            #}
+            
+            #async( 30, "propDelete", X )
+        }
+    }
+    
+    runOnKeys( owner( ), 1 )
+}
+
+if( keyClk( ) ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    local Down = Player:keyPressed( Key ) ? 1 : 0
+    if( Player == owner( ) & Down & Key == "mouse_left" ) {
+        Player:playerThrow( )
+    }
+}

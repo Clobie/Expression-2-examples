@@ -1,0 +1,49 @@
+@persist [Types__ Heap__]:table
+if(first()){
+    function void typedef(Type:string, Fields:array){
+        local Proto = table()
+        foreach(K, Field:string = Fields){ Proto[Field, number] = 0 }
+        Types__[Type, table] = Proto
+    }
+    function string new(Type:string){
+        if(Types__:exists(Type)){
+            local ID = format("%6A", randint(0, 2 ^ 24))
+            local Proto = Types__[Type, table]:clone()
+            Heap__[ID, table] = table(1 = Type, 2 = Proto)
+            return ID
+        }
+    }
+    function string new(Type:string, Data:table){
+        if(Types__:exists(Type)){
+            local ID = format("%6X", randint(0, 2 ^ 24))
+            local Proto = Types__[Type, table]:clone()
+            Heap__[ID, table] = table(1 = Type, 2 = Proto:merge(Data:intersect(Proto)))
+            return ID
+        }
+    }
+    function void string:setData(NewData:table){
+        if(Heap__:exists(This)){
+            local T = Heap__[This, table]
+            local Data = T[2, table]
+            T[2, table] = Data:merge(NewData:intersect(Data))
+        }
+    }
+    function string string:getType(){
+        if(Heap__:exists(This)){ return Heap__[This, table][1, string] }
+    }
+    function table string:getData(){
+        if(Heap__:exists(This)){ return Heap__[This, table][2, table]:clone() }
+    }
+    function table string:getReference(){
+        if(Heap__:exists(This)){ return Heap__[This, table][2, table] }
+    }
+    function string string:clone(){
+        if(Heap__:exists(This)){
+            local T = Heap__[This, table]
+            return new(T["Type", string], T["Data", table])
+        }
+    }
+    function string:delete(){
+        Heap__:remove(This)
+    }
+}

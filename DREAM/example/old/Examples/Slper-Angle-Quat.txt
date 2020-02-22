@@ -1,0 +1,16 @@
+#-------------------------------------------------------------------
+# incrementedAngle(Origin, Target, Speed)
+# Usage:
+#
+#   Angle = incrementedAngle( CurrentAngle, TargetAngle, Speed )
+#   Prop:setAng( Angle )
+#-------------------------------------------------------------------
+
+function angle incrementedAngle(O:angle, T:angle, S:number)
+{
+    CV=O:forward()
+    DV=T:forward()
+    Ang=acos(CV:dot(DV))
+    if(Ang>S) { return slerp(quat(O),quat(T),S/Ang):toAngle() }
+    else { return T }
+}

@@ -1,0 +1,194 @@
+@name Quadcopter
+@model models/sprops/rectangles/size_3/rect_24x24x3.mdl
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter Loaded Timer]:number [Origin]:vector [Me Chip]:entity
+@persist HoverPoint:vector HoverHoloE:entity HoverHolo Destination:vector IndicatorHolo IndicatorHoloE:entity LaserHolo LaserHoloE:entity
+@persist Whitelist:table Props:array Turret:entity Missile:table Armed HealthProp:entity
+
+#include "lib/async"
+
+if( first() | dupefinished() )
+{
+    Me = owner()
+    Chip = entity()
+    Origin = Chip:pos()
+    Loaded = 0
+    HoloCounter = 0
+    Timer = 0
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    HologramModel = array("models/holograms/cube.mdl","models/hunter/blocks/cube025x025x025.mdl","models/hunter/blocks/cube025x025x025.mdl","models/hunter/tubes/tube2x2x025b.mdl","models/hunter/tubes/tube2x2x025b.mdl","models/hunter/tubes/tube2x2x025b.mdl","models/hunter/tubes/tube2x2x025b.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/sprops/trans/air/prop_5b_s.mdl","models/sprops/trans/air/prop_5b_s.mdl","models/sprops/trans/air/prop_5b_s.mdl","models/sprops/trans/air/prop_5b_s.mdl","models/sprops/trans/air/pcone_5b_s.mdl","models/sprops/trans/air/pcone_5b_s.mdl","models/sprops/trans/air/pcone_5b_s.mdl","models/sprops/trans/air/pcone_5b_s.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/sprops/trans/misc/shock_2.mdl","models/sprops/trans/misc/shock_2.mdl","models/sprops/trans/misc/shock_2.mdl","models/sprops/trans/misc/shock_2.mdl","models/jaanus/wiretool/wiretool_controlchip.mdl","models/jaanus/wiretool/wiretool_controlchip.mdl","models/cheeze/wires/cpu.mdl","models/cyborgmatt/capacitor_large.mdl","models/cyborgmatt/capacitor_large.mdl","models/cyborgmatt/capacitor_large.mdl","models/cheeze/wires/wireless_card.mdl","models/cheeze/wires/ram.mdl","models/cheeze/wires/ram.mdl","models/cheeze/wires/mini_chip.mdl","models/cheeze/wires/mini_chip.mdl","models/cheeze/wires/mini_chip.mdl","models/kobilica/transistor.mdl","models/kobilica/transistor.mdl","models/jaanus/wiretool/wiretool_gate.mdl","models/items/boxflares.mdl","models/items/boxflares.mdl","models/holograms/hq_rcube.mdl","models/sprops/trans/exhaust/tip_1.mdl")
+    HologramPosition = array(vec(0.0001,0,50),vec(0.0001,0,50),vec(0.0001,0,50),vec(0.0001,-8.1982,50),vec(0.0001,8.1978,50),vec(8.197,0,50),vec(-8.197,0,50),vec(0.0001,-8.1982,50),vec(0.0001,8.1978,50),vec(8.197,0,50),vec(-8.197,0,50),vec(0.0001,-8.1982,50),vec(0.0001,8.1978,50),vec(8.197,0,50),vec(-8.197,0,50),vec(0.0001,-8.1982,50),vec(0.0001,8.1978,50),vec(8.197,0,50),vec(-8.197,0,50),vec(0.0001,-8.1982,49.3994),vec(0.0001,8.1978,49.3994),vec(8.197,0,49.3994),vec(-8.197,0,49.3994),vec(0.0001,0,48.5986),vec(0.0001,0,48.5986),vec(0.0001,0,48.5986),vec(0.0001,0,48.5986),vec(1.9819,1.3604,50.2881),vec(1.9819,-1.3604,50.2881),vec(0.5605,-1.8608,50.2881),vec(0.9911,-0.8701,50.2881),vec(0.9911,-0.2695,50.2881),vec(0.9911,0.3311,50.2881),vec(-0.02,2.313,51.1475),vec(0.4404,0.6416,50.2783),vec(0.1802,0.6416,50.2783),vec(-2.2421,-2.2314,50.2881),vec(-2.2421,-1.5405,50.2881),vec(-2.2421,-0.8296,50.2881),vec(-2.162,2.272,50.5176),vec(1.0311,1.5015,50.5176),vec(-1.4713,0.7417,50.2881),vec(-0.8409,-1.5601,50.3369),vec(-1.241,-1.5601,50.3369),vec(0.0001,0,50.8008),vec(-0.1498,0,51.6016))
+    HologramAngle = array(ang(180,0,0),ang(0,45,0),ang(0,-45,0),ang(0,45,0),ang(0,-135,0),ang(0,135,0),ang(0,-45,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(89.9999,0,0),ang(89.9999,0,0),ang(89.9999,0,0),ang(0,45,0),ang(0,45,0),ang(0,45,0),ang(0,45,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,90,0),ang(90,180,0),ang(90,-90,0),ang(0,180,0),ang(0,180,0),ang(0,180,0),ang(0,180,0),ang(0,180,0),ang(0,-179.9999,0),ang(0,180,90),ang(0,180,0),ang(0,180,0),ang(0,180,0),ang(0,180,0),ang(0,-179.9999,0),ang(0,0,0),ang(0,0,0),ang(0,180,0),ang(0,90,0),ang(0,90,0),ang(180,0,0),ang(-90,0,0))
+    HologramScale = array(vec(0.44,0.44,0.05),vec(1,0.04,0.04),vec(1,0.04,0.04),vec(0.125,0.125,0.05),vec(0.125,0.125,0.05),vec(0.125,0.125,0.05),vec(0.125,0.125,0.05),vec(0.03,0.03,0.03),vec(0.03,0.03,0.03),vec(0.03,0.03,0.03),vec(0.03,0.03,0.03),vec(0.28,0.28,0.28),vec(0.28,0.28,0.28),vec(0.28,0.28,0.28),vec(0.28,0.28,0.28),vec(0.25,0.25,0.25),vec(0.25,0.25,0.25),vec(0.25,0.25,0.25),vec(0.25,0.25,0.25),vec(0.075,0.075,0.15),vec(0.075,0.075,0.15),vec(0.075,0.075,0.15),vec(0.075,0.075,0.15),vec(0.48,0.48,0.48),vec(0.48,0.48,0.48),vec(0.48,0.48,0.48),vec(0.48,0.48,0.48),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.02,0.02,0.02),vec(0.02,0.02,0.02),vec(0.02,0.02,0.02),vec(0.3,0.3,0.3),vec(0.2,0.2,0.2),vec(0.2,0.2,0.2),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.3,0.3,0.3),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.475,0.475,0.2),vec(0.5,0.17,0.17))
+    HologramColor = array(vec(90,90,90),vec(255,255,255),vec(255,255,255),vec(90,90,90),vec(90,90,90),vec(90,90,90),vec(90,90,90),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    HologramAlpha = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,50,255)
+    HologramMaterial = array("","","","phoenix_storms/Fender_white","phoenix_storms/Fender_white","phoenix_storms/Fender_white","phoenix_storms/Fender_white","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,1,1,1,1,1,1,1,1,1,1,8,9,10,11,8,9,10,11,8,9,10,11,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+
+    function modelParent() {
+        while( perf() ) { HoloCounter++, if(HologramParent[HoloCounter, number] > 0) { holoParent(HoloCounter, HologramParent[HoloCounter, number]) } }
+        if( HoloCounter < HologramModel:count() ) { async( 0.1, "modelParent" ) }
+        else { 
+            holoParent( 1, entity() )
+            HealthProp = propSpawn( "models/props_phx/ball.mdl", entity():pos() - vec(0,0,20), ang(0,0,0), 1 )
+            HealthProp:parentTo( entity() )
+            HealthProp:setAlpha(0)
+            holoPos( 1, entity():pos() )
+            entity():soundPlay( 1, 0, "acf_engines/electric_large.wav" )
+            entity():soundPlay( 2, 0, "ambient/tones/fan2_loop.wav" )
+            soundVolume( 1, 0.25 )
+            for( I = 12, 15 ) { holoColor( I, teamColor( owner():team() ) ) }
+            entity():propFreeze( 0 )
+            runOnTick(1) 
+        }
+    }
+    
+    function modelSpawn( ) {
+        while( perf() && holoCanCreate() && HoloCounter < HologramModel:count()) {
+            HoloCounter++
+            holoCreate( HoloCounter )
+            holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+            holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+            holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+            holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+            holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+            holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+            holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+            holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+        }
+        if( HoloCounter < HologramModel:count() ) { async( 1, "modelSpawn" ) }
+        else { HoloCounter = 0, modelParent() }
+    }
+    modelSpawn()
+    
+    #######################################################################################
+    # End of modeler spawning code
+    #######################################################################################
+    
+    runOnKeys( owner(), 1 )
+    Chip:setAlpha( 0 )
+    Chip:propNotSolid( 1 )
+    Chip:propDraw( 0 )
+    Chip:setMass( 50000 )
+    Destination = entity():pos()
+    
+    Missile = table()
+    
+    HoverHolo = randint( 2e8 )
+    holoCreate( HoverHolo )
+    holoAlpha( HoverHolo, 0 )
+    HoverHoloE = holoEntity( HoverHolo )
+    
+    IndicatorHolo = randint( 2e8 )
+    holoCreate( IndicatorHolo )
+    IndicatorHoloE = holoEntity( IndicatorHolo )
+    holoModel( IndicatorHolo, "models/sprops/geometry/sphere_144.mdl" )
+    holoScaleUnits( IndicatorHolo, vec( 24 ) )
+    holoColor( IndicatorHolo, vec( 0, 0, 0 ) )
+    holoAlpha( IndicatorHolo, 0 )
+    holoMaterial( IndicatorHolo, "debug/debugdrawflat" )
+    
+    function updatePos() {
+        if( HoverHoloE:pos():distance( Destination ) >= 20 ) {
+            holoAng( HoverHolo, ( Destination - HoverHoloE:pos() ):toAngle() )
+            holoPos( HoverHolo, HoverHoloE:pos() + ( HoverHoloE:forward() * 15 ) )
+        }
+    }
+    
+    function angle incrementedAngle(O:angle, T:angle, S:number)
+    {
+        Ang=acos(O:forward():dot(T:forward()))
+        if(Ang>S) { return slerp(quat(O),quat(T),S/Ang):toAngle() } else { return T }
+    }
+    
+    function missilesMove() {
+        foreach( K, V:table = Missile ) {
+            local MissileEnt = holoEntity( V["iid", number] )
+            local TargetPos = V["target", entity]:boxCenterW()
+            local Ang = incrementedAngle( MissileEnt:angles(), ( TargetPos - MissileEnt:pos() ):toAngle(), 3 )
+            holoAng( V["iid", number], Ang )
+            holoPos( V["iid", number], MissileEnt:pos() + ( MissileEnt:forward() * 5 ) )
+            if( MissileEnt:pos():distance( TargetPos ) <= 10 ) {
+                Missile:remove( K )
+                holoAlpha( V["iid", number], 0 )
+                async( 1, "holoDelete", V["iid", number] )
+                #local X = propSpawn( "models/props_phx/misc/potato_launcher_explosive.mdl", TargetPos, ang(), 1 )
+                #X:propBreak()
+            }
+        }
+    }
+    
+    function missileCreate( TARGET:entity ) {
+        local IID = randint( 2e8 )
+        Missile[ IID:toString(), table ] = table( "iid" = IID, "target" = TARGET )
+        #holoCreate( IID, holoEntity( 46 ):pos(), vec(0.1), ang(-90,0,0), vec(255), "models/weapons/w_models/w_rocket.mdl" )
+        holoCreate( IID, holoEntity( 46 ):pos(), vec(0.1), ang(-90,0,0), vec(255), "models/Items/AR2_Grenade.mdl" )
+        holoEntity( IID ):setTrails( 0.1, 50, 1, "trails/smoke", vec(255, 120, 120), 255 )
+    }
+    
+    function tryFiring() {
+        if( Armed ) {
+            foreach( K, V:entity = players() ) {
+                if( V:pos():distance( entity():pos() ) <= 500 && V != owner() ) {
+                    missileCreate( V )
+                }
+            }
+        }
+        async( 1, "tryFiring" )
+    }
+    tryFiring()
+    
+    runOnChat(1)
+}
+
+if( keyClk() ) {
+    if( owner():keyPressed( "mouse_right" ) ) {
+        Destination = owner():aimPos()
+        holoPos( IndicatorHolo, Destination )
+    }
+    if( owner():keyPressed( "r" ) ) {
+        #Armed = Armed == 1 ? 0 : 1
+        #print( "Armed: " + Armed )
+        if( owner():aimEntity():isValid() ) { missileCreate( owner():aimEntity() ) }
+    }
+}
+
+if( tickClk() ) {
+    Timer += 0.005
+    updatePos()
+    missilesMove()
+    
+    Offset = owner():pos() + vec( sin( realtime() * 45 ) * 350, cos( realtime() * 45 ) * 350, 25 )
+    holoPos( IndicatorHolo, Offset )
+    Destination = Offset
+    
+    if( !HealthProp:isValid() ) {
+        local X = propSpawn( "models/props_junk/gascan001a.mdl", entity():pos() - vec(0,0,0), ang(0,0,0), 1 )
+        X:propBreak()
+        selfDestructAll()
+    }
+        
+    
+    local VelL = entity():velL()
+    local Ang = ang( clamp( VelL:x() / 15, -45, 45 ), 0, -clamp( VelL:y() / 15, -45, 45 ) )
+    soundPitch( 1, 150 + ( abs( VelL:x() ) + abs( VelL:y() ) + clamp( VelL:z(), 0, 100000 ) ) / 5 )
+    soundPitch( 2, 250 + ( abs( VelL:x() ) + abs( VelL:y() ) + clamp( VelL:z(), 0, 100000 ) ) / 5 )
+    entity():setAng( Ang )
+    for( I = 8, 11 ) { holoAng( I, entity():toWorld( ang( 0, realtime() * 2000, 0 ) ) ) }
+    #HoverPoint = ( ( HoverHoloE:pos() +  vec( sin( realtime() * 25 ) * 200, cos( realtime() * 25 ) * 200, 100 + (sin( realtime() * 10) ) * 20 ) ) - entity():pos() ) * entity():mass()
+    #HoverPoint = ( ( owner():pos() +  vec( sin( Timer * 35 ) * 150, cos( Timer * 35 ) * 150, 65 + (sin( Timer * 20) ) * 30 ) ) - entity():pos() ) * entity():mass()
+    HoverPoint = ( ( HoverHoloE:pos() + vec( 0, 0, 50 ) ) - entity():pos() ) * entity():mass()
+    entity():applyForce( HoverPoint + $HoverPoint )
+}
+
+if( chatClk() ) {
+    
+    # Add your code here
+    # Set Destination to the shipment pos
+    # Don't change HoverPoint or anything else, leave as-is, height of 50 is already added too.
+    
+    #Destination = Grab:pos()    # This is all you should need to do after finding it
+    
+}

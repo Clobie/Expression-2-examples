@@ -1,0 +1,222 @@
+# --------------------------------------------------#
+# Dream's All In One E2                             #
+# --------------------------------------------------#
+# ____                                              #
+#/\  _`\                                            #
+#\ \ \/\ \   _ __     __      __       ___ ___      #
+# \ \ \ \ \ /\`'__\ /'__`\  /'__`\   /' __` __`\    #
+#  \ \ \_\ \\ \ \/ /\  __/ /\ \_\.\_ /\ \/\ \/\ \   #
+#   \ \____/ \ \_\ \ \____\\ \__/.\_\\ \_\ \_\ \_\  #
+#    \/___/   \/_/  \/____/ \/__/\/_/ \/_/\/_/\/_/  #
+#                                                   #
+# --------------------------------------------------#
+
+@name Dream's All In One E2 
+@persist Weapon:string CubePaused:number SoundIndex:number Defense:number DefenseRing:number
+
+#include "_/dream/lib/dream"
+
+if( first( ) ) {
+    
+    Model = array("models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    Position = array(vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039),vec(0,0,12.0039))
+    IsPositionLocal = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Angle = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(45,45,45),ang(45,45,45))
+    Scale = array(vec(-2,-2,-2),vec(-1.9167,-1.9167,-1.9167),vec(-1.8333,-1.8333,-1.8333),vec(-1.75,-1.75,-1.75),vec(-1.6667,-1.6667,-1.6667),vec(-1.5833,-1.5833,-1.5833),vec(-1.5,-1.5,-1.5),vec(-1.4167,-1.4167,-1.4167),vec(-1.3333,-1.3333,-1.3333),vec(-1.25,-1.25,-1.25),vec(-1.1667,-1.1667,-1.1667),vec(-1.0833,-1.0833,-1.0833),vec(-1,-1,-1),vec(-0.5833,-0.5833,-0.5833),vec(-0.5,-0.5,-0.5))
+    IsScaleUnits = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Color = array(vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0))
+    Alpha = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Material = array("","","","","","","","","","","","","","","")
+    Skin = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Parent = array(0,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Note = array("","","","","","","","","","","","","","","")
+
+    function setup( ) {
+        # This function runs after holograms are loaded
+        runOnKeys( Me, 1 )
+        runOnChat( 1 )
+        CubePaused = 0
+        SoundIndex = 1
+        Weapon = "laser"
+        Defense = 0
+        DefenseRing = randint( 2e8 )
+        holoCreate( DefenseRing )
+        holoModel( DefenseRing, "hq_torus_thin" )
+        holoAlpha( DefenseRing, 0 )
+        holoScaleUnits( DefenseRing, vec( 600, 600, 1 ) )
+    }
+    
+    function pauseCube( ) {
+        CubePaused = 1
+    }
+    
+    function unpauseCube( ) {
+        CubePaused -= 1
+    }
+    
+    function entity:launch( ) {
+        local Away = ( This:pos( ) - Me:pos( ) ):normalized( )
+        local X = propSpawn( "models/sprops/cuboids/height06/size_1/cube_6x6x6.mdl", This:pos( ) + ( Away * -100 ), 0 )
+        X:setMass( 50000 )
+        X:setAlpha( 0 )
+        X:applyForce( ( vec( 0, 0, 0.2 ) + ( Away * 1 ) ) * X:mass( ) * 5000 )
+        async( 0.4, "propDelete", X )
+    }
+    
+    function entity playerFindClosest( Origin:vector ) {
+        local TempDistance = 0
+        local Entity = noentity( )
+        local P = players( )
+        for( I = 1, P:count( ) ) {
+            local Dst = P[ I, entity ]:pos( ):distance( Origin )
+            if( ( TempDistance == 0 | Dst < TempDistance ) & P[ I, entity ] != Me ) {
+                Entity = P[ I, entity ]
+                TempDistance = Dst
+            }
+        }
+        return Entity
+    }
+    
+    function colorCube( ) {
+        local X = realtime( ) * 50
+        holoColor( 2, hsv2rgb( X, 1, 1 ) )
+        holoColor( 4, hsv2rgb( X + 10, 1, 1 ) )
+        holoColor( 6, hsv2rgb( X + 20, 1, 1 ) )
+        holoColor( 8, hsv2rgb( X + 30, 1, 1 ) )
+        holoColor( 10, hsv2rgb( X + 40, 1, 1 ) )
+        holoColor( 12, hsv2rgb( X + 50, 1, 1 ) )
+        holoColor( 14, hsv2rgb( X + 60, 1, 1 ) )
+    }
+    
+    function propShoot( Origin:vector, Destination:vector ) {
+        if( holoRemainingSpawns( ) >= 4 && propCanCreate() ) {
+            local X = propSpawn( "models/sprops/geometry/sphere_6.mdl", holoEntity( 1 ):pos( ), ( Destination - Origin ):toAngle( ), 0 )
+            X:setAlpha( 0 )
+            X:setMass( 50000 )
+            X:propGravity( 0 )
+            X:propFreeze( 0 )
+            X:applyForce( ( Destination - Origin ):normalized( ) * X:mass( ) * 8000 )
+            X:applyAngForce( ang(0,0,1) * X:mass( ) * 30 )
+            local Width = 5
+            local Length = 1
+            local I = randint(2e8)
+            local J = 0
+                holoCreate( I, X:pos( ) + ( X:right( ) * 5 ) + ( X:forward( ) * J * -20 ) ), holoAlpha( I, 0 ), holoParent( I, X )
+                holoEntity(I):setTrails( Width, Width, Length, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+                I++
+                holoCreate( I, X:pos( ) + ( X:right( ) * -5 ) + ( X:forward( ) * J * -20 ) ), holoAlpha( I, 0 ), holoParent( I, X )
+                holoEntity(I):setTrails( Width, Width, Length, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+                I++
+                holoCreate( I, X:pos( ) + ( X:up( ) * 5 ) + ( X:forward( ) * J * -20 ) ), holoAlpha( I, 0 ), holoParent( I, X )
+                holoEntity(I):setTrails( Width, Width, Length, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+                I++
+                holoCreate( I, X:pos( ) + ( X:up( ) * -5 ) + ( X:forward( ) * J * -20 ) ), holoAlpha( I, 0 ), holoParent( I, X )
+                holoEntity(I):setTrails( Width, Width, Length, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            async( 5, "propDelete", X )
+        }
+    }
+    
+    function angle incrementedAngle(O:angle, T:angle, S:number)
+    {
+        CV=O:forward()
+        DV=T:forward()
+        Ang=acos(CV:dot(DV))
+        if(Ang>S) { return slerp(quat(O),quat(T),S/Ang):toAngle() }
+        else { return T }
+    }
+    
+    function lookAtMe( ) {
+        local A = ( Me:shootPos( ) - holoEntity( 1 ):pos( ) ):toAngle( )
+        holoAng( 1, incrementedAngle( holoEntity( 1 ):angles( ), A, 5 ) )
+        
+    }
+    
+    function followMe( ) {
+        if( holoEntity( 1 ):pos( ):distance( Me:pos( ) ) > 150 ) {
+            holoPos( 1, holoEntity( 1 ):pos( ) + ( holoEntity( 1 ):forward( ) * ( clamp( ( holoEntity( 1 ):pos( ):distance( Me:pos( ) ) ) / 50, 0, 500 ) ) ) )
+        } else {
+            holoPos( 1, holoEntity( 1 ):pos( ) + ( holoEntity( 1 ):right( ) * 1 ) )
+        }
+    }
+    
+    function main( ) {
+        colorCube( )
+        if( !CubePaused ) {
+            #lookAtMe( )
+            #followMe( )
+        }
+        if( Defense ) {
+            local X = realtime( ) * 175
+            holoColor( DefenseRing, hsv2rgb( X, 1, 1 ) )
+            holoPos( DefenseRing, Me:pos( ) )
+            local P = playerFindClosest( Me:pos( ) )
+            if( P:pos( ):distance( Me:pos( ) ) <= 300 & !P:inNoclip( ) ) {
+                P:launch( )
+            }
+            
+        }
+    }
+    
+    function chat( Player:entity, Text:string ) {
+        if( Player == Me & Text:left( 1 ) == "/" ) {
+            hideChat( 1 )
+            if( Text:left( 6 ) == "/laser" )        { Weapon = "laser",    print( "Weapon: laser" ) }
+            elseif( Text:left( 5 ) == "/prop" )     { Weapon = "prop",     print( "Weapon: prop" ) }
+            elseif( Text:left( 6 ) == "/text " ) {
+                local X = Text:replace( "/text ", "" )
+                #holoText( Text:string, Position:vector, Angle:angle, Scale:number, Color:vector, Center:number, Parent:number )
+                #holoText( X, holoEntity( 1 ):pos( ) + ( holoEntity( 1 ):forward( ) * 20 ), holoEntity( 1 ):forward( ):toAngle( ):setPitch( 0 ), 3, vec(255), 1, 1 )
+                CubePaused += 1 
+                async( 1, "unpauseCube" )
+            }
+            elseif( Text:left( 7 ) == "/def on" ) { Defense = 1, holoAlpha( DefenseRing, 100 ) }
+            elseif( Text:left( 8 ) == "/def off" ) { Defense = 0, holoAlpha( DefenseRing, 0 ) }
+            elseif( Text:left( 7 ) == "/model " ) {
+                local M = Text:replace( "/model ", "" )
+                for( I = 1, 15 ) {
+                    holoModel( I, M )
+                }
+            }
+        }
+    }
+    
+    function key( Player:entity, Key:string, Down:number ) {
+        if( Me:keyPressed( "lshift" ) ) {
+            if( Key == "mouse_left" & Down ) {
+                switch( Weapon ) {
+                    case "laser", 
+                    if( holoRemainingSpawns( ) >= 15 ) {
+                            local Pos = playerFindClosest( Me:aimPos( ) ):shootPos( )
+                            fireLaser( holoEntity( 1 ):pos( ), Pos, 15 )
+                            local X = propSpawn( "models/props_phx/cannonball.mdl", Pos, 1 )
+                            X:setAlpha( 0 )
+                            X:propBreak( )
+                            CubePaused += 1
+                            async( 4, "unpauseCube" )
+                            SoundIndex++
+                            if( SoundIndex > 10 ) {
+                                SoundIndex = 1
+                            }
+                            holoEntity( SoundIndex ):soundPlay( SoundIndex, soundDuration( "/ambient/explosions/citadel_end_explosion1.wav" ) / 10, "/ambient/explosions/citadel_end_explosion1.wav" )
+                        }
+                        break
+                    case "prop",
+                        propShoot( holoEntity( 1 ):pos( ), playerFindClosest( Me:aimPos( ) ):shootPos( ) ),
+                        break
+                }
+            }
+        }
+    }
+}
+
+if( ModelLoaded ) {
+    interval( 60 )
+    if( clk( ) ) { main( ) }
+    if( chatClk( ) ) { chat( lastSpoke( ), lastSaid( ) ) }
+    if( keyClk( ) ) {
+        local Player = keyClk()
+        local Key = keyClkPressed()
+        local Down = Player:keyPressed( Key ) ? 1 : 0
+        key( Player, Key, Down )
+    }
+}

@@ -1,0 +1,68 @@
+@name SNEK!
+
+#include "lib/button"
+#include "lib/variable"
+
+if( first() ) {
+    
+    # Configurable
+    "distance":n( 10 )
+    "scale":n( 1 )
+    
+    # Noap
+    "snek":n( 1 )
+    "direction":v( vec(1,0,0) )
+    "food":n( randint( 2e10 ) )
+    
+    function snekDirection( V:vector ) {
+        "direction":v( V )
+    }
+    
+    function snekFoodCreate() {
+        holoDelete( "food":n() )
+        "food":n( randint( 2e10 ) )
+        holoCreate( "food":n() )
+        holoPos( "food":n(), entity():pos() + ( vec( randint( -"distance":n(), "distance":n() ) ):setZ( 0 ) * 12 ) )
+        holoColor( "food":n(), vec(0,255,0) )
+    }
+    
+    function snekNodeCreate() {
+        local LastNode = holoEntity( "snek":n() )
+        "snek":n( "snek":n() + 1 )
+        holoCreate( "snek":n() )
+        holoPos( "snek":n(), LastNode:pos() + ( LastNode:forward() * -"scale":n() * 12 ) )
+        #holoAng( "snek":n(), ( LastNode:pos() - holoEntity( "snek":n() ):pos() ):toAngle() )
+    }
+    
+    function snekMove() {
+        
+        if( "snek":n() > 1 ) {
+            for( I = "snek":n(), 2 ) { holoPos( I, holoEntity( I - 1 ):pos() ) }
+        }
+        
+        holoPos( 1, holoEntity( 1 ):pos() + ( holoEntity( 1 ):forward() * "scale":n() * 12 ) )
+        
+        if( holoEntity( 1 ):pos():distance( holoEntity( "food":n() ):pos() ) <= "scale":n() / 2 ) {
+            snekNodeCreate()
+            snekFoodCreate()
+        }
+        async( 0.25, "snekMove" )
+    }
+    
+    bindcallback_keydown( "event_keydown" )
+    owner():keysListen(1)
+    function event_keydown( Ply:entity, Key:string ) {
+        if( Key == "left" ) { holoAng( 1, ang(0,90,0) ) }
+        elseif( Key == "right" ) { holoAng( 1, ang(0,-90,0) ) }
+        elseif( Key == "up" ) { holoAng( 1, ang(0,0,0) ) }
+        elseif( Key == "down" ) { holoAng( 1, ang(0,180,0) ) }
+    }
+    
+    holoCreate(1)
+    snekFoodCreate()
+    snekMove()
+}
+
+if( tickClk() ) {
+    
+}

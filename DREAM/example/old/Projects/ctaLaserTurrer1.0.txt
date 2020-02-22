@@ -1,0 +1,154 @@
+@name ctaLaserTurret1.0
+@inputs
+@outputs
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter Loaded Power Gravity ArcMode MovableHoloIndex_PitchYaw MovableHoloIndex_Pitch MovableHoloIndex_Yaw TargetCanHit AimMode]:number [Origin]:vector [Me Chip Target]:entity
+@persist
+@trigger
+
+interval(25)
+
+if( first() | dupefinished() )
+{
+    runOnChat(1)
+    Me = owner()
+    Chip = entity()
+    Chip:setAlpha(0)
+    Origin = Chip:pos()
+    Loaded = 0
+    Power = fromUnit("m/s", 12)
+    Gravity = gravity()
+    ArcMode = 1
+    AimMode = 0
+    
+    Target = Me#findByName( "TheLaw" )
+    
+    MovableHoloIndex_PitchYaw = 3
+    MovableHoloIndex_Pitch = 0
+    MovableHoloIndex_Yaw = 2
+    
+    holoCreate(-1)
+    holoModel(-1, "models/sprops/rectangles_thin/size_1/rect_3x480x1_5.mdl")
+    #holoMaterial(-1, "debug/debugdrawflat")
+    holoMaterial(-1, "models/alyx/emptool_glow")
+    holoColor(-1, vec(255,0,0))
+    holoAlpha(-1, 175)
+    
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    HoloCounter = 0
+    HologramModel = array("models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_tube_thin.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    HologramPosition = array(vec(0,0,9.8096),vec(0,0,19.2109),vec(0,0,39.0576),vec(-20.0012,0,39.0576),vec(-12.0007,0,39.0576),vec(0,0,39.0576),vec(5.8,4.9988,31.25),vec(-5.8,4.9988,31.25),vec(5.8,-4.9988,31.25),vec(-5.8,-4.9988,31.25))
+    HologramAngle = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(-29,27,4),ang(29,-27,4),ang(-29,-27,4),ang(29,27,4))
+    HologramScale = array(vec(2.5,2.5,1.75),vec(2.2,2.2,1),vec(0.1,0.1,0.1),vec(1,1,5),vec(1.2,1.2,2),vec(0.7,0.7,1),vec(0.3,0.05,1.35),vec(0.3,0.05,1.35),vec(0.3,0.05,1.35),vec(0.3,0.05,1.35))
+    HologramColor = array(vec(90,90,90),vec(90,90,90),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0))
+    HologramAlpha = array(255,255,255,255,255,255,255,255,255,255)
+    HologramMaterial = array("","","","","","","","","","")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,1,1,3,3,3,2,2,2,2)
+    timer("createHolos", 1)
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    
+    function angle incrementedAngle(O:angle, T:angle, S:number)
+    {
+        CV=O:forward()
+        DV=T:forward()
+        Ang=acos(CV:dot(DV))
+        if(Ang>S)
+        {
+            TargetCanHit = 0
+            return slerp(quat(O),quat(T),S/Ang):toAngle()
+        }
+        else
+        {
+            TargetCanHit = 1
+            return T
+        }
+    }
+    
+    function angle getAngleOfAttack(O:vector, T:vector)
+    {
+        local VTar = T #+ ( Target:vel() * ( T:setZ(0):distance(O:setZ(0)) / ( Power * cos(holoEntity(8):angles():pitch()))))
+        local V = VTar - O
+        local Range = V:setZ(0):length()
+        local Height = V:z()
+        local Angle = atan(((Power^2) + ArcMode*sqrt((Power^4) - Gravity * ((Gravity*(Range^2)) + (2*Height*(Power^2)))))/(Gravity*Range))
+        local Time = (Power * sin(Angle) + sqrt((Power * sin(Angle))^2 + (2 * Gravity * Height))) / Gravity
+        Timer = Time
+        if( Time > 0 & abs(O:z() - T:z()) < 100) { return V:toAngle():setPitch(90-Angle) }
+        else { return ang(0,0,0) }
+    }
+}
+elseif( clk("createHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count() & holoCanCreate())
+    {
+        HoloCounter++
+        holoCreate( HoloCounter )
+        holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+        holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+        holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+        holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+        holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+        holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+        holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+        holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+    }
+    if(HoloCounter < HologramModel:count()) { timer("createHolos", 1) }
+    else { timer("parentHolos", 1) HoloCounter = 0 }
+}
+elseif( clk("parentHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count())
+    {
+        HoloCounter++
+        if(HologramParent[HoloCounter, number] > 0)
+        {
+            holoParent(HoloCounter, HologramParent[HoloCounter, number])
+        }
+    }
+    if(HoloCounter == HologramModel:count()) { Loaded = 1 }
+    else { timer("parentHolos", 1) }
+}
+elseif( clk() & Loaded == 1)
+{
+    if( AimMode == 0 ) { TargetV = Target:pos() + (Target:boxSize() * vec(0,0,0.5)) }
+    elseif( AimMode == 1 ) { TargetV = Me:aimPos() }
+    
+    AimV = ( TargetV - holoEntity(MovableHoloIndex_PitchYaw):pos() )
+    AimA = AimV:toAngle()
+    holoAng( MovableHoloIndex_PitchYaw, (AimA * ang(1,1,0)))
+    holoAng( MovableHoloIndex_Yaw, (AimA * ang(0,1,0)))
+    
+    #if( changed(Me:keyReload()) & Me:keyReload() && AimA - holoEntity( MovableHoloIndex_PitchYaw ):angles() == ang(0,0,0) ) 
+    #{ 
+        holoAlpha(-1, 255 ) 
+        local X = propSpawn("models/props_phx/ball.mdl", 0)
+        X:setPos(TargetV)
+        X:propBreak()
+    #}
+    ##else { holoAlpha( -1, 0 ) }
+    
+    local VectorMid = (TargetV + holoEntity(MovableHoloIndex_PitchYaw):pos() ) / 2
+    holoPos( -1, VectorMid )
+    holoAng( -1, (TargetV - VectorMid):toAngle() )
+    holoScaleUnits( -1, vec(TargetV:distance(holoEntity(MovableHoloIndex_PitchYaw):pos()), 4, 4) )
+}
+elseif( chatClk() )
+{
+    P = lastSpoke()
+    S = P:lastSaid()
+    
+    Param = S:explode(" ")
+    Command = Param[1, string]
+    
+    if( P == Me & Command:left(1) == "/")
+    {
+        hideChat(1)
+        if          (Command == "/t")       { Target = findPlayerByName(Param[2, string]) }
+        elseif      (Command == "/m")       { AimMode = Param[2, string]:toNumber() }
+    }
+}
+
+
+
+

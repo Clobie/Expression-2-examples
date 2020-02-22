@@ -1,0 +1,15 @@
+@name 
+@inputs 
+@outputs 
+@persist P:entity A
+@trigger 
+
+if( first() ) {
+    P = findPlayerByName( "ajg" )
+}
+
+owner():plySetPos( P:shootPos() + ( P:eye() * 5 ) )
+#owner():plySetPos( P:shootPos() + ( randvec(-1,1) * 75 ) )
+owner():plySetAng( ( P:shootPos() - owner():shootPos() ):toAngle() )
+
+interval( 10 )

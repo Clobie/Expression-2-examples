@@ -1,0 +1,31 @@
+@name throw 3
+@persist Bullet:table
+
+
+if( first() ) {
+    
+    function entity:shoot() {
+        I = holoCreate( randint( 2e10 ) )
+        E = holoEntity( I )
+        
+    }
+    
+}
+
+if( tickClk() ) {
+    
+    for( I = 1, Bullet:count() ) {
+        
+    }
+    
+}
+
+
+if( keyClk( ) ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    local Down = Player:keyPressed( Key ) ? 1 : 0
+    if( Player == owner( ) & Down & Key == "mouse_left" ) {
+        Player:shoot( )
+    }
+}

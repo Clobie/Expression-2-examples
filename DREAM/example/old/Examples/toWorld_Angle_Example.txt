@@ -1,0 +1,21 @@
+@name toWorld Angle Example
+@persist Timer
+
+interval(10)
+
+if( first() )
+{
+    Timer = 0
+    holoCreate(1)
+    holoCreate(2)
+    holoPos(1, holoEntity(1):toWorld( vec(10,0,0)))
+    holoPos(2, holoEntity(2):toWorld( vec(-10,0,0)))
+    holoColor(1, vec(255,0,0))
+    holoColor(2, vec(0,255,0))
+}
+else
+{
+    Timer++
+    holoAng(1, ang(Timer))
+    holoAng(2, holoEntity(2):toWorld( ang(1) ))
+}

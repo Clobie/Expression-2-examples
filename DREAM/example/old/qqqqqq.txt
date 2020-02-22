@@ -1,0 +1,46 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+if( first() ) {
+    
+    # this is the function for using entity parameters with async
+    # removed all the stuff for other types of parameters
+    function void async( T, F:string, X:entity ) {
+        timer( format( "cb:%.0f:%s:e:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+        
+        # it creates a timer with this name:   format( "cb:%.0f:%s:e:%s", randint( 1e15 ), F, vonEncode( array( X ) ) )
+        # to see it easier lets print it
+        print( format( "cb:%.0f:%s:e:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ) )
+        # if the timer sees clk or whatever, it gets all the data from the timer name used
+        # then it calls the function
+        
+        # cb = identifier
+        # string of nubers like 98734587345 is the entity ID
+        # next is the function
+        # then the type
+        # so it shows up like cb;092784352435;propDelete;e;e97
+        # when the timer clk() happens it extracts the ent id, function, type, etc.
+        # and simply calls string function( parameters with id )
+        # soooooo basically deletes the prop at a later time with this
+    }
+}
+
+# this is the part that checks the async stuff
+# removed everything except the entity async checks
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        switch( Match[ 2, string ] ) { case "e", Match[ 1, string ]( vonDecode( Match[ 3, string ] )[ 1, entity ] ), break }
+        exit()
+    }
+}
+
+
+# spawn prop normally
+X = propSpawn( "models/props_c17/FurnitureCouch001a.mdl", 1 )
+
+# call async with 3 seconds, propDelete function, and prop entity X parameter
+async( 3, "propDelete", X )

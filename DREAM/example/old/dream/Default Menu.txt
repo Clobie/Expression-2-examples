@@ -1,0 +1,375 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/4/2018 @ 1425
+# --------------------------------------------- #
+@name default menu
+@persist Hologram:table
+@persist LIB_BUTTON_FUNCTIONDOWN:table
+@persist LIB_BUTTON_ONHOVER:table
+@persist LIB_BUTTON_ONHOVER_HIGHLIGHT:number
+@persist LIB_BUTTON_ONHOVER_TEXT:number
+@persist LIB_BUTTON_FUNCTIONUP:table
+@persist LIB_BUTTON_TOGGLE:table
+@persist LIB_BUTTON_STATE:table
+@persist LIB_BUTTON_SCALE:table
+@persist LIB_BUTTON_COLOR_ON:vector
+@persist LIB_BUTTON_COLOR_OFF:vector
+@persist LIB_BUTTON_HOLD:number
+@persist LIB_BUTTON_LAST_PRESSED:number
+@persist LIB_BUTTON_TOOLTIP:array
+@persist Lib_Holotext_CharPathMap:table 
+@persist Lib_Holotext_CharPath:string 
+@persist Lib_Holotext_CharPathExt:string
+@persist Lib_Holotext_Text:table
+@persist Lib_Holotext_Centered:number
+@persist Lib_Holotext_String:string
+@persist Lib_Holotext_Position:vector
+@persist Lib_Holotext_Angle:angle
+@persist Lib_Holotext_Scale:number
+@persist Lib_Holotext_TextColor:vector
+@persist Lib_Holotext_BackgroundColor:vector
+@persist Lib_Holotext_RootIndex:number
+@persist Lib_Holotext_RootEntity:entity
+@persist Lib_Holotext_Generating:number
+@persist Lib_Holotext_Generate:number
+@persist Lib_Holotext_LoopIndex:number
+@persist Lib_Holotext_LineIndex:number
+@persist Lib_Holotext_LetterIndex:number
+@persist Lib_Holotext_HologramCreationIndex:number
+@persist Lib_Holotext_TextLength:number
+@persist Lib_Holotext_DisplayOnlyToOwner:number
+@persist MENU_DISTANCE:number
+
+if( first( ) ) {
+    LIB_BUTTON_FUNCTION = table( )
+    LIB_BUTTON_TOGGLE = table( )
+    LIB_BUTTON_STATE = table( )
+    LIB_BUTTON_SCALE = table( )
+    LIB_BUTTON_LAST_PRESSED = 0
+    runOnKeys( owner( ), 1 )
+    function vector hologramGetPlaneUp( PLAYER:entity, INDEX:number ) {
+        local EYE_LOCATION = PLAYER:shootPos( )
+        local EYE_DIRECTION = PLAYER:eye( )
+        local HOLO_ENTITY = holoEntity( INDEX )
+        local HOLO_UP = HOLO_ENTITY:up( )
+        return ( EYE_LOCATION + ( HOLO_UP:dot( HOLO_ENTITY:pos( ) - EYE_LOCATION ) / ( HOLO_UP:dot( EYE_DIRECTION ) ) ) * EYE_DIRECTION )
+    }
+    function buttonCreate( INDEX:number, TOGGLE:number, TOOLTIP:string, FUNCTION_DOWN:string, FUNCTION_UP:string ) {
+        local SCALE = holoScaleUnits( INDEX )
+        LIB_BUTTON_SCALE[ INDEX, number ] = ( SCALE:x( ) + SCALE:y( ) ) / 4
+        LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ] = FUNCTION_DOWN
+        LIB_BUTTON_FUNCTIONUP[ INDEX, string ] = FUNCTION_UP
+        LIB_BUTTON_TOGGLE[ INDEX, number ] = TOGGLE
+        LIB_BUTTON_STATE[ INDEX, number ] = 0
+        LIB_BUTTON_ONHOVER[ INDEX, number ] = 0
+        LIB_BUTTON_TOOLTIP[ INDEX, string ] = TOOLTIP
+    }
+    function number buttonGetState( INDEX ) { return LIB_BUTTON_STATE[ INDEX, number ] }
+    function buttonSetColors( On:vector, Off:vector ) { LIB_BUTTON_COLOR_ON = On, LIB_BUTTON_COLOR_OFF = Off }
+}
+
+if( keyClk() ) {
+    local PLAYER = keyClk()
+    local KEY_PRESSED = keyClkPressed()
+    if( KEY_PRESSED == "e" ) {
+        local INDEX = -1
+        local KEY = LIB_BUTTON_FUNCTIONDOWN:keys( )
+        for( I = 1, KEY:count( ) ) {
+            local X = KEY[ I, number ]
+            local Pointer = hologramGetPlaneUp( PLAYER, X )
+            if( Pointer:distance( holoEntity( X ):pos( ) ) <= LIB_BUTTON_SCALE[ X, number ] ) { INDEX = X }
+        }
+        if( INDEX > 0 & PLAYER:keyPressed( KEY_PRESSED ) == 1 ) {
+            if( LIB_BUTTON_STATE[ INDEX, number ] == 0 ) {
+                LIB_BUTTON_LAST_PRESSED = INDEX
+                LIB_BUTTON_HOLD = INDEX
+                LIB_BUTTON_STATE[ INDEX, number ] = 1
+                holoColor( INDEX, LIB_BUTTON_COLOR_ON )
+                soundPlay( randint( 2e8 ), soundDuration( "common/wpn_moveselect.wav" ), "common/wpn_moveselect.wav" )
+                if( LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ] != "" ) { 
+                    if( LIB_BUTTON_FUNCTIONDOWN:exists( INDEX ) ) { 
+                        LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ]( PLAYER ) 
+                    } 
+                }
+            } elseif( LIB_BUTTON_STATE[ INDEX, number ] == 1 & LIB_BUTTON_TOGGLE[ INDEX, number ] == 1 ) {
+                LIB_BUTTON_STATE[ INDEX, number ] = 0
+                holoColor( INDEX, LIB_BUTTON_COLOR_OFF )
+                soundPlay( randint( 2e8 ), soundDuration( "common/wpn_denyselect.wav" ), "common/wpn_denyselect.wav" )
+                if( LIB_BUTTON_FUNCTIONUP[ INDEX, string ] != "" ) { if( LIB_BUTTON_FUNCTIONUP:exists( INDEX ) ) { LIB_BUTTON_FUNCTIONUP[ INDEX, string ]( PLAYER ) } }
+            }
+        } elseif( PLAYER:keyPressed( KEY_PRESSED ) == 1 == 0 ) {
+            if( LIB_BUTTON_TOGGLE[ LIB_BUTTON_HOLD, number ] == 0 & LIB_BUTTON_HOLD > 0 & LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] == 1 ) {
+                LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] = 0
+                holoColor( LIB_BUTTON_HOLD, LIB_BUTTON_COLOR_OFF )
+                if( LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ] != "" ) { if( LIB_BUTTON_FUNCTIONUP:exists( LIB_BUTTON_HOLD ) ) { LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ]( PLAYER ) } }, LIB_BUTTON_HOLD = 0 }
+        }
+    } else {
+        if( LIB_BUTTON_HOLD > 0 & LIB_BUTTON_TOGGLE[ LIB_BUTTON_HOLD, number ] == 0 ) {
+            LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] = 0
+            holoColor( LIB_BUTTON_HOLD, LIB_BUTTON_COLOR_OFF )
+            if( LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ] != "" ) { if( LIB_BUTTON_FUNCTIONUP:exists( LIB_BUTTON_HOLD ) ) { LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ]( PLAYER ) } }, LIB_BUTTON_HOLD = 0 }
+    }
+}
+
+
+if( first( ) ) {
+    Lib_Holotext_CharPath = "models/sprops/misc/alphanum/alphanum_"
+    Lib_Holotext_CharPathExt = ".mdl"
+    Lib_Holotext_CharPathMap = table( "." = "prd", "," = "com", ":" = "colon", ";" = "scolon", "?" = "qmark", "!" = "xmark", "\"" = "quote", "~" = "tilde", 
+                    "<" = "lessthan", ">" = "greaterthan", "_" = "underscore", "@" = "atsign", "#" = "pdsign", "$" = "dlsign", "%" = "pcnt",
+                    "^" = "crt", "&" = "and", "`" = "apost", "(" = "lpar", ")" = "rpar", "[" = "lbracket", "]" = "rbracket", "{" = "lcbracket",
+                    "}" = "rcbracket", "|" = "bar", "+" = "plu", "-" = "min", "*" = "ast", "/" = "div", "=" = "equal", "'" = "apost",
+                    "a" = "l_a", "b" = "l_b", "c" = "l_c", "d" = "l_d", "e" = "l_e", "f" = "l_f", "g" = "l_g", "h" = "l_h", "i" = "l_i", "j" = "l_j", "k" = "l_k", 
+                    "l" = "l_l", "m" = "l_m", "n" = "l_n", "o" = "l_o", "p" = "l_p", "q" = "l_q", "r" = "l_r", "s" = "l_s", "t" = "l_t", "u" = "l_u", "v" = "l_v", 
+                    "w" = "l_w", "x" = "l_x", "y" = "l_y", "z" = "l_z", "A" = "a", "B" = "b", "C" = "c", "D" = "d", "E" = "e", "F" = "f", "G" = "g", 
+                    "H" = "h", "I" = "i", "J" = "j", "K" = "k", "L" = "l", "M" = "m", "N" = "n", "O" = "o", "P" = "p", "Q" = "q", "R" = "r", "S" = "s", "T" = "t", 
+                    "U" = "u", "V" = "v", "W" = "w", "X" = "x", "Y" = "y", "Z" = "z", "0" = "0", "1" = "1", "2" = "2", "3" = "3", "4" = "4", "5" = "5", "6" = "6", 
+                    "7" = "7", "8" = "8", "9" = "9", " " = "space")
+    Lib_Holotext_DisplayOnlyToOwner = 0
+    Lib_Holotext_Generate = 0
+    Lib_Holotext_HologramCreationIndex = 1
+    Lib_Holotext_RootIndex = randint( 2e8 )
+    Lib_Holotext_RootEntity = holoCreate( Lib_Holotext_RootIndex )
+    holoModel( Lib_Holotext_RootIndex, "models/sprops/cuboids/height96/size_1/cube_96x96x96.mdl" )
+    holoScaleUnits( Lib_Holotext_RootIndex, vec( 1 ) )
+    holoMaterial( Lib_Holotext_RootIndex, "debug/debugdrawflat" )
+    holoAlpha( Lib_Holotext_RootIndex, 255 )
+    function lib_holotext_generate( ) {
+        interval( 60 )
+        while( perf( 100 ) & holoCanCreate( ) & Lib_Holotext_LoopIndex <= Lib_Holotext_TextLength ) {
+            Lib_Holotext_LoopIndex++
+            Lib_Holotext_LetterIndex++
+            if( Lib_Holotext_LetterIndex > Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ]:count( ) | Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ]:count( ) == 0 ) {
+                Lib_Holotext_LineIndex++
+                Lib_Holotext_LetterIndex = 1
+            }
+            if( Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ][ Lib_Holotext_LetterIndex, string ] != " " & Lib_Holotext_CharPathMap:exists( Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ][ Lib_Holotext_LetterIndex, string ] ) ) {
+                local I = Lib_Holotext_RootIndex + Lib_Holotext_LoopIndex
+                local X = Lib_Holotext_Centered == 1 ? ( Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ]:count( ) / 2 - Lib_Holotext_LetterIndex + 0.5 ) * Lib_Holotext_Scale * 0.6 : ( Lib_Holotext_LetterIndex * Lib_Holotext_Scale * -0.6 ) + ( holoScaleUnits( Lib_Holotext_RootIndex ):x( ) / 2 ) + ( Lib_Holotext_Scale / 2 * 0.62 ) - 1.5
+                local Pos = vec(    X, 
+                                    0.1,
+                                    ( ( Lib_Holotext_Text:count( ) / 2 - Lib_Holotext_LineIndex + 0.5 ) * Lib_Holotext_Scale * 0.8 ) )
+                local Model = Lib_Holotext_CharPath + Lib_Holotext_CharPathMap[ Lib_Holotext_Text[ Lib_Holotext_LineIndex, array ][ Lib_Holotext_LetterIndex, string ], string ] + Lib_Holotext_CharPathExt
+                local A = Lib_Holotext_RootEntity:angles( ):setPitch( 0 )
+                if( !holoEntity( I ):isValid( ) ) {
+                    holoCreate( I, 
+                        Lib_Holotext_RootEntity:toWorld( Pos ),
+                        vec( Lib_Holotext_Scale, 0.1, Lib_Holotext_Scale ),
+                        A,
+                        Lib_Holotext_TextColor,
+                        Model
+                    )
+                    Lib_Holotext_HologramCreationIndex++
+                } else {
+                    holoPos( I, Lib_Holotext_RootEntity:toWorld( Pos ) )
+                    holoAng( I, A )
+                    holoColor( I, Lib_Holotext_TextColor )
+                    holoModel( I, Model )
+                }
+                holoMaterial( I, "debug/debugdrawflat" )
+                holoScale( I, vec( Lib_Holotext_Scale * 0.65 ):setY( 0.1 ) / 12.5 )
+                holoParent( I, Lib_Holotext_RootIndex )
+                holoAlpha( I, 255 )
+                #holoColor( I, ColorStep )
+                if( Lib_Holotext_DisplayOnlyToOwner ) {
+                    holoVisible( I , players( ), 0 )
+                    holoVisible( I , owner( ), 1 )
+                }
+            }
+        }
+        
+        if( Lib_Holotext_LoopIndex < Lib_Holotext_TextLength ) {
+            Lib_Holotext_Generate = 1
+        } else {
+            Lib_Holotext_Generate = 0
+            Lib_Holotext_Generating = 0
+        }
+    }
+
+    function holoTextPos( Vector:vector ) { holoPos( Lib_Holotext_RootIndex, Vector ) }
+    function holoTextAng( Angle:angle ) { holoAng( Lib_Holotext_RootIndex, ang( 0, Angle:yaw( ), Angle:pitch( ) ) ) }
+    
+    function number holoText( Text:string, Position:vector, Angle:angle, Scale:number, Centered:number, TextColor:vector, BackgroundColor:vector ) {
+        if( Lib_Holotext_Generating == 1 | Lib_Holotext_String == Text ) {
+            holoPos( Lib_Holotext_RootIndex, Position )
+            holoAng( Lib_Holotext_RootIndex, ang( 0, Angle:yaw( ), Angle:pitch( ) ) )
+            return -1
+        }
+        Lib_Holotext_Text = table( )
+        Lib_Holotext_Generating = 1
+        local BGWidth = 0
+        local T = Text:explode( "\n" )
+        foreach( K, V:string = T ) {
+            local S = V:explode( "" )
+            if( S:count( ) > BGWidth ){ BGWidth = S:count( ) }
+            Lib_Holotext_Text:pushArray( V:explode( "" ) )
+        }
+        Lib_Holotext_Position = Position
+        Lib_Holotext_Angle = Angle
+        Lib_Holotext_Scale = Scale
+        Lib_Holotext_Centered = Centered
+        Lib_Holotext_TextColor = TextColor
+        Lib_Holotext_BackgroundColor = BackgroundColor
+        Lib_Holotext_TextLength = Text:replace( "\n", "" ):length( ) - 1
+        Lib_Holotext_LoopIndex = 0
+        Lib_Holotext_LineIndex = 1
+        Lib_Holotext_LetterIndex = 0
+        Lib_Holotext_String = Text
+        holoPos( Lib_Holotext_RootIndex, Position )
+        holoAng( Lib_Holotext_RootIndex, ang( 0, Angle:yaw( ), Angle:pitch( ) ) )
+        holoColor( Lib_Holotext_RootIndex, BackgroundColor )
+        holoScaleUnits( Lib_Holotext_RootIndex, vec( ( BGWidth * 0.62 * Scale ) + 3, 0.001, ( Lib_Holotext_Text:count( ) * 0.8 * Scale ) + 1 ) )
+        for( I = 1, Lib_Holotext_HologramCreationIndex + 10 ) { holoAlpha( Lib_Holotext_RootIndex + I, 0 ) }
+        if( Lib_Holotext_DisplayOnlyToOwner ) { holoVisible( Lib_Holotext_RootIndex , players( ), 0 ), holoVisible( Lib_Holotext_RootIndex , owner( ), 1 ) }
+        lib_holotext_generate( )
+        return Lib_Holotext_RootIndex
+    }
+    
+    function setMenuText( Text:string ) { 
+        holoText( Text, holoEntity( 1 ):pos( ), holoEntity( 1 ):angles( ) + ang( 0, 90, 0 ), 1.5, 1, vec( 255 ), vec( 0 ) ) 
+    }
+}
+
+if( Lib_Holotext_Generate ) { 
+    lib_holotext_generate( ) 
+}
+
+if( keyClk( ) ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    if( Key == "mouse_right" & Player:keyPressed( Key ) == 1 ) {
+        holoPos( 1, owner( ):shootPos( ) + ( owner( ):eye() * MENU_DISTANCE ) )
+        holoAng( 1, owner( ):eyeAngles( ) )
+        holoTextPos( holoEntity( 1 ):pos( ) )
+        holoTextAng( holoEntity( 1 ):angles( ) + ang( 0, 90, 0 ) )
+    }
+}
+
+if( first( ) ) {
+    
+    Hologram = table( )
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,50),vec(0,0,65),vec(0.0879,0,65),vec(0,0,35),vec(0.0879,0,35),vec(0,20,50),vec(0.0879,20,50),vec(0,-20,50),vec(0.0879,-20,50),vec(0,12.3994,60.7002),vec(0.0879,12.3994,60.7002),vec(0,-12.4102,60.7002),vec(0.0879,-12.4102,60.7002),vec(0,-12.3994,39.291),vec(0.0879,-12.3994,39.291),vec(0,12.4365,39.291),vec(0.0879,12.4365,39.291))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0))
+    Hologram[ "alpha", array ] = array(0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","")
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    
+    function buffer( ) { 
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) { 
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+                )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else { 
+            for( I = 1, Hologram[ "model", array ]:count( ) ) { holoParent(I, Hologram["parent", array][I, number]) }
+            runOnKeys( owner( ), 1 )
+            local RF = array( "top", "bottom", "left", "right", "topleft", "topright", "bottomright", "bottomleft" )
+            local RT = array( "top", "bottom", "left", "right", "topleft", "topright", "bottomright", "bottomleft" )
+            for( I = 2, 16, 2 ) { 
+                buttonCreate( I, 0, RT[ I / 2, string ], RF[ I / 2, string ], "" ) 
+            }
+            interval( 100 )
+        }
+    } buffer( )
+    
+    setMenuText( "Default Menu" )
+}
+
+if( LIB_BUTTON_ONHOVER_HIGHLIGHT ) {
+    if( clk( ) & LIB_BUTTON_ONHOVER:count( ) <= 30 ) {
+        local KEY = LIB_BUTTON_FUNCTIONDOWN:keys( )
+        for( I = 1, KEY:count( ) ) {
+            
+            local X = KEY[ I, number ]
+            if( LIB_BUTTON_STATE[ X, number ] == 1 ) { 
+                holoColor( X, LIB_BUTTON_COLOR_ON )
+            } else {
+                holoColor( X, LIB_BUTTON_COLOR_OFF ) 
+            }
+            
+            local Pointer = hologramGetPlaneUp( owner( ), X )
+            if( Pointer:distance( holoEntity( X ):pos( ) ) <= LIB_BUTTON_SCALE[ X, number ] ) { 
+                if( LIB_BUTTON_ONHOVER_TEXT == 1 ) {
+                    setMenuText( LIB_BUTTON_TOOLTIP[ X, string ] )
+                }
+                if( LIB_BUTTON_STATE[ X, number ] == 1 ) { 
+                    holoColor( X, vec( 0, 255, 127.5 ) ) 
+                } else { 
+                    holoColor( X, vec( 0, 255, 255 ) ) 
+                } 
+            }
+        }
+    }
+}
+
+if( clk( "buffer" ) ) { 
+    buffer( ) 
+}
+
+if( first() ) {
+    MENU_DISTANCE = 45
+    LIB_BUTTON_COLOR_ON = vec( 30, 45, 200 )
+    LIB_BUTTON_COLOR_OFF = vec( 200 )
+    LIB_BUTTON_ONHOVER_HIGHLIGHT = 1
+    LIB_BUTTON_ONHOVER_TEXT = 1
+}
+
+if( first() ) {
+    
+    function left( Ply:entity ) {
+        print( "left" )
+    }
+    function right( Ply:entity ) {
+        print( "right" )
+    }
+    function top( Ply:entity ) {
+        print( "top" )
+    }
+    function topleft( Ply:entity ) {
+        print( "topleft" )
+    }
+    function topright( Ply:entity ) {
+        print( "topright" )
+    }
+    function bottom( Ply:entity ) {
+        print( "bottom" )
+    } 
+    function bottomleft( Ply:entity ) {
+        print( "bottomleft" )
+    }
+    function bottomright( Ply:entity ) {
+        print( "bottomright" )
+    }
+    
+}
+
+if( clk( ) ) {
+    interval( 60 )
+    
+    # put your interval() code here
+    
+}
+

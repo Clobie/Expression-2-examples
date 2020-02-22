@@ -1,0 +1,53 @@
+@name flatgrass_girl
+@inputs
+@outputs
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter Loaded]:number [Origin]:vector [Me Chip]:entity
+@persist
+
+#include "lib/async"
+
+if( first() | dupefinished() )
+{
+    Me = owner()
+    Chip = entity()
+    Origin = Chip:pos()
+    Loaded = 0
+    HoloCounter = 0
+    
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    HologramModel = array("models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/cube.mdl")
+    HologramPosition = array(vec(-16.801,0,8.6084),vec(-17.001,0,22.4219),vec(-7.8005,4.6,2.2021),vec(-7.8005,-4.6,2.2021),vec(-16.801,0,3.0029),vec(-16.801,0,16.0156),vec(-15.2009,7.4,13.2129),vec(-15.2009,-7.4,13.2129),vec(-11.2007,-3,26.0254),vec(-11.2007,3,26.0254),vec(-10.0006,0,22.6221))
+    HologramAngle = array(ang(0,0,0),ang(0,0,0),ang(104.5,11.5,0),ang(-72.5,-11.5,0),ang(0,0,0),ang(0,0,0),ang(132.5,64.5,0),ang(132.5,-64.5,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    HologramScale = array(vec(1,1,1),vec(1.2,1.2,1.2),vec(0.6,0.6,1),vec(0.6,0.6,1),vec(1.3,1.3,1.3),vec(1,1,1),vec(0.6,0.6,1),vec(0.6,0.6,1),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.1,0.3,0.1))
+    HologramColor = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0))
+    HologramAlpha = array(255,255,255,255,255,255,255,255,255,255,255)
+    HologramMaterial = array("","","","","","","","","","","")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,0,0,0,0,0,0,0,0,0,0)
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+
+    function modelParent() {
+        while( perf() ) { HoloCounter++, if(HologramParent[HoloCounter, number] > 0) { holoParent(HoloCounter, HologramParent[HoloCounter, number]) } }
+        if( HoloCounter < HologramModel:count() ) { async( 0.1, "modelParent" ) }
+        ##else { holoParent( 1, entity() ), runOnTick(1) }
+    }
+    
+    function modelSpawn( ) {
+        while( perf() && holoCanCreate() && HoloCounter < HologramModel:count()) {
+            HoloCounter++
+            holoCreate( HoloCounter )
+            holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+            holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+            holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+            holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+            holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+            holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+            holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+            holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+        }
+        if( HoloCounter < HologramModel:count() ) { async( 1, "modelSpawn" ) }
+        else { HoloCounter = 0, modelParent() }
+    }
+    modelSpawn()
+}

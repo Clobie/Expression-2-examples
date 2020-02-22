@@ -1,0 +1,225 @@
+@name ctaBabyTank1.1
+@inputs
+@outputs
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter Loaded SpeedStep SpeedMax CurrentSpeed Power ArcMode Gravity TrackPlayer]:number [Origin GoTo]:vector [Me Chip Target]:entity
+@persist [Sound Bullet BulletTimer]:array
+@trigger
+
+interval(100)
+
+if( first() | dupefinished() )
+{
+    runOnChat(1)
+    Me = owner()
+    Chip = entity()
+    Origin = Chip:pos()
+    Loaded = 0
+    Power = fromUnit("m/s", 22)
+    ArcMode = -1
+    Gravity = gravity()
+    SpeedMax = 2
+    SpeedStep = 0.3
+    CurrentSpeed = 0
+    TrackPlayer = 1
+    Sound = array(      "acf_extra/tankfx/20mm_01.wav",
+                        "acf_extra/tankfx/20mm_02.wav",
+                        "acf_extra/tankfx/20mm_03.wav",
+                        "acf_extra/tankfx/20mm_04.wav",
+                        "acf_extra/tankfx/20mm_05.wav")
+    BulletRemoveDelay = 10
+    holoCreate(300)
+    holoColor(300, vec(0,255,0))
+    holoModel(300, "hq_torus")
+    
+    GoTo = Origin
+    
+    Target = owner()
+    
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    HoloCounter = 0
+    HologramModel = array("models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/mechanics/gears2/gear_18t3.mdl","models/holograms/rcube_thick.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/rcube_thick.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/props_phx/wheels/metal_wheel2.mdl")
+    HologramPosition = array(vec(0,-0.1902,5.8188),vec(0,13.7778,6.2609),vec(0,11.7803,4.5674),vec(-8.7,18,4.6004),vec(-8.7,16.4905,3.4498),vec(-8.7,15.051,2.4262),vec(-8.7,14.1201,2.4262),vec(-8.7,13.1091,2.4262),vec(-8.7,12.2283,2.4262),vec(-8.7,11.2974,2.4262),vec(-8.7,10.3965,2.4262),vec(-8.7,9.4656,2.4262),vec(-8.7,8.4746,2.4262),vec(-8.7,7.5537,2.4262),vec(-8.7,6.5127,2.4262),vec(-8.7,5.5017,2.4262),vec(-8.7,4.4907,2.4262),vec(-8.7,3.5098,2.4262),vec(-8.7,2.5889,2.4262),vec(-8.7,1.678,2.4262),vec(-8.7,0.647,2.4262),vec(-8.7,-0.314,2.4262),vec(-8.7,-1.2849,2.4262),vec(-8.7,-2.2659,2.4262),vec(-8.7,-3.2368,2.4262),vec(-8.7,-4.1978,2.4262),vec(-8.7,-12.8682,4.6004),vec(-8.7,-11.1953,3.4498),vec(-8.7,-5.1887,2.4262),vec(-8.7,-6.1597,2.4262),vec(-8.7,-7.0906,2.4262),vec(-8.7,-8.0815,2.4262),vec(-8.7,-9.0125,2.4262),vec(-8.7,-9.9033,2.4262),vec(-8.7,17.0491,4.6004),vec(-8.7,16.0981,4.6004),vec(-8.7,15.1172,4.6004),vec(-8.7,14.1462,4.6004),vec(-8.7,13.1853,4.6004),vec(-8.7,12.1843,4.6004),vec(-8.7,11.1833,4.6004),vec(-8.7,10.1924,4.6004),vec(-8.7,9.1614,4.6004),vec(-8.7,8.1404,4.6004),vec(-8.7,7.1494,4.6004),vec(-8.7,6.1384,4.6004),vec(-8.7,5.1575,4.6004),vec(-8.7,4.1365,4.6004),vec(-8.7,3.1455,4.6004),vec(-8.7,2.1646,4.6004),vec(-8.7,1.1536,4.6004),vec(-8.7,0.1626,4.6004),vec(-8.7,-0.8484,4.6004),vec(-8.7,-1.8494,4.6004),vec(-8.7,-2.8604,4.6004),vec(-8.7,-3.8613,4.6004),vec(-8.7,-4.8423,4.6004),vec(-8.7,-5.8433,4.6004),vec(-8.7,-6.8542,4.6004),vec(-8.7,-7.8352,4.6004),vec(-8.7,-8.8662,4.6004),vec(-8.7,-9.8672,4.6004),vec(-8.7,-10.8582,4.6004),vec(-8.7,-11.8792,4.6004),vec(8.7,18,4.6004),vec(8.7,16.4905,3.4498),vec(8.7,15.051,2.4262),vec(8.7,14.1201,2.4262),vec(8.7,13.1091,2.4262),vec(8.7,12.2283,2.4262),vec(8.7,11.2974,2.4262),vec(8.7,10.3965,2.4262),vec(8.7,9.4656,2.4262),vec(8.7,7.5537,2.4262),vec(8.7,6.5127,2.4262),vec(8.7,5.5017,2.4262),vec(8.7,3.5098,2.4262),vec(8.7,4.4907,2.4262),vec(8.7,1.678,2.4262),vec(8.7,0.647,2.4262),vec(8.7,-0.314,2.4262),vec(8.7,-1.2849,2.4262),vec(8.7,-2.2659,2.4262),vec(8.7,-3.2368,2.4262),vec(8.7,-4.1978,2.4262),vec(8.7,-12.8682,4.6004),vec(8.7,-11.1953,3.4498),vec(8.7,-5.1887,2.4262),vec(8.7,-6.1597,2.4262),vec(8.7,-7.0906,2.4262),vec(8.7,-8.0815,2.4262),vec(8.7,-9.0125,2.4262),vec(8.7,-9.9033,2.4262),vec(8.7,17.0491,4.6004),vec(8.7,16.0981,4.6004),vec(8.7,15.1172,4.6004),vec(8.7,14.1462,4.6004),vec(8.7,13.1853,4.6004),vec(8.7,12.1843,4.6004),vec(8.7,11.1833,4.6004),vec(8.7,10.1924,4.6004),vec(8.7,9.1614,4.6004),vec(8.7,8.1404,4.6004),vec(8.7,7.1494,4.6004),vec(8.7,6.1384,4.6004),vec(8.7,5.1575,4.6004),vec(8.7,4.1365,4.6004),vec(8.7,3.1455,4.6004),vec(8.7,2.1646,4.6004),vec(8.7,1.1536,4.6004),vec(8.7,0.1626,4.6004),vec(8.7,-0.8484,4.6004),vec(8.7,-1.8494,4.6004),vec(8.7,-2.8604,4.6004),vec(8.7,-3.8613,4.6004),vec(8.7,-4.8423,4.6004),vec(8.7,-5.8433,4.6004),vec(8.7,-6.8542,4.6004),vec(8.7,-7.8352,4.6004),vec(8.7,-8.8662,4.6004),vec(8.7,-9.8672,4.6004),vec(8.7,-10.8582,4.6004),vec(8.7,-11.8792,4.6004),vec(0,-3.3992,11.0595),vec(2.5195,-2.7327,12.8243),vec(-2.5195,-2.7327,12.8243),vec(-2.5195,-5.3735,13.6294),vec(2.5195,-5.3735,13.6294),vec(0,-5.373,14.3743),vec(0,-3.1736,14.3743),vec(0,3.416,14.3743),vec(0,8.4009,14.3743),vec(0,15.6079,14.3743),vec(3.1831,8.4883,9.9606),vec(3.1831,8.4883,10.3804))
+    HologramAngle = array(ang(0,-90,0),ang(0,0,-17.5),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(0,90,0),ang(0,0,-43),ang(0,0,-43),ang(90,0,0),ang(90,0,0),ang(0,-90,0),ang(90,90,0),ang(90,90,0),ang(90,90,0),ang(90,90,0),ang(0,0,0),ang(0,0,0))
+    HologramScale = array(vec(2,1.2,0.7),vec(1.2,0.5,0.5),vec(1.2,0.8,0.5),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(0.13,0.13,0.13),vec(1.2,1.1,0.2),vec(0.15,0.4,0.2),vec(0.15,0.4,0.2),vec(0.4,0.4,0.15),vec(0.4,0.4,0.15),vec(0.1,0.1,0.1),vec(0.27,0.27,0.7),vec(0.15,0.15,0.5),vec(0.12,0.12,0.9),vec(0.1,0.1,0.9),vec(0.45,0.45,0.2),vec(0.03,0.03,0.03))
+    HologramColor = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    HologramAlpha = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    HologramMaterial = array("sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,124,124,124,124,124,129,129,129,129,1,1)
+    timer("createHolos", 1)
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    
+    print(HologramModel:count())
+    
+    function angle getAngleOfAttack(O:vector, T:vector, M:number)
+    {
+        local VTar = T #+ ( Target:vel() * ( T:setZ(0):distance(O:setZ(0)) / ( Power * cos(holoEntity(8):angles():pitch()))))
+        local V = VTar - O
+        local Range = V:setZ(0):length()
+        local Height = V:z()
+        local Angle = atan(((Power^2) + M*sqrt((Power^4) - Gravity * ((Gravity*(Range^2)) + (2*Height*(Power^2)))))/(Gravity*Range))
+        local Time = (Power * sin(Angle) + sqrt((Power * sin(Angle))^2 + (2 * Gravity * Height))) / Gravity
+        Timer = Time
+        if( Time > 0 ) { return V:toAngle():setPitch(90-Angle) }
+        else { return holoEntity(1):angles() + ang(0,180,0) }
+        #return V:toAngle():setPitch(90-Angle)
+    }
+    
+    function angle incrementedAngle(O:angle, T:angle, S:number)
+    {
+        
+        CV = O:forward()
+        DV = T:forward()
+        Ang = acos( CV:dot( DV ) )
+        if( Ang > S ) {
+            TargetCanHit = 0
+            return slerp( quat( O ), quat( T ), S / Ang ):toAngle()
+        }
+        else {
+            if( Timer > 0) { TargetCanHit = 1 }
+            return T
+        }
+    }
+}
+elseif( clk("createHolos") ) {
+    while(perf(90) & HoloCounter < HologramModel:count() & holoCanCreate()) {
+        HoloCounter++
+        holoCreate( HoloCounter )
+        holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+        holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+        holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+        holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+        holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+        holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+        holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+        holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+    }
+    if(HoloCounter < HologramModel:count()) { timer("createHolos", 1) }
+    else { timer("parentHolos", 1) HoloCounter = 0 }
+}
+elseif( clk("parentHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count())
+    {
+        HoloCounter++
+        if(HologramParent[HoloCounter, number] > 0)
+        {
+            holoParent(HoloCounter, HologramParent[HoloCounter, number])
+        }
+    }
+    if(HoloCounter == HologramModel:count()) 
+    { 
+        Loaded = 1
+        holoEntity(1):soundPlay(1, 0, "acf_extra/tankfx/abrams_tracks.wav")
+        soundVolume(1, 0.5)
+        timer("bulletChecker", 500)
+    }
+    else { timer("parentHolos", 1) }
+}
+elseif( clk( "bulletChecker" ) )
+{
+    for(I = 1, Bullet:count() )
+    {
+        if( BulletTimer[I, number] < realtime() - BulletRemoveDelay )
+        {
+            Bullet[I, entity]:propDelete()
+            #Bullet:remove(I)
+            BulletTimer:remove(I)
+            #timer( "bulletChecker", 100 )
+            break
+        }
+    }
+    timer( "bulletChecker", 500 )
+}
+elseif( clk() & Loaded == 1)
+{
+    # Turn
+    if( Me:keyAttack2() & Me:keySprint() ) 
+    { 
+        GoTo = Me:aimPos()
+    }
+    elseif( TrackPlayer )
+    {
+        GoTo = Target:pos()
+    }
+    
+    holoPos(300, GoTo)
+    
+    # Forward
+    local Ranger = rangerOffset(holoEntity(1):pos(), holoEntity(1):pos() + vec(0,0,-20))
+    local DistanceToGround = Ranger:pos():distance(holoEntity(1):pos()) - 6.068
+    
+    local NextPos = holoEntity(1):pos() + vec(0,0,-DistanceToGround)
+    if(Target:pos():distance(holoEntity(1):pos()) < 20000 & ((GoTo:distance(holoEntity(1):pos()) > 300 & TrackPlayer) | (GoTo:distance(holoEntity(1):pos()) > 40 & TrackPlayer == 0)))
+    {
+        if(CurrentSpeed < SpeedMax) { CurrentSpeed += SpeedStep }
+        local TankAng = getAngleOfAttack( holoEntity(1):pos(), GoTo, ArcMode )
+        local TankAngInc = incrementedAngle( holoEntity(1):angles(), TankAng + ang(0,180,0), 3 )
+        local BodyAng = ( TankAngInc * ang(0,1,0) )
+        holoAng( 1, BodyAng )
+    }
+    else
+    {
+        if(CurrentSpeed > 0) { CurrentSpeed -= SpeedStep }
+    }
+    
+    NextPos = NextPos + (holoEntity(1):forward() * -CurrentSpeed)
+    holoPos( 1, NextPos )
+    
+    # Tracks
+    for(I = 4, 123)
+    {
+        holoAng( I, holoEntity(I):toWorld(ang(0,-20 * CurrentSpeed,0)))
+    }
+    
+    soundPitch(1, 50 + (CurrentSpeed*15))
+    
+    # Gun
+    local GunAng = getAngleOfAttack(holoEntity(129):pos(), Target:pos() + Target:vel(), ArcMode)
+    local GunAngInc = incrementedAngle( holoEntity(129):angles(), GunAng + ang(0,180,0), 8 )
+    holoAng( 124, GunAngInc * ang(0,1,0) )
+    holoAng( 129, GunAngInc * ang(1,1,0) )
+    
+    # Fire
+    if( changed(Me:keyReload()) &  Me:keyReload() )
+    {
+        holoEntity(1):soundPlay(2, 0, Sound[random(1, Sound:count()), string])
+        soundVolume(2, 1)
+        local X = propSpawn("models/sprops/geometry/sphere_3.mdl", 0)
+        #local X = propSpawn("models/props_phx/ball.mdl", 0)
+        X:setPos( holoEntity(129):pos() )
+        X:setMass(50000)
+        X:setColor( vec(0,0,0) )
+        #X:setAlpha(1)
+        X:propFreeze(0)
+        X:setAng( holoEntity(129):toWorld( ang(90,0,0) ) )
+        if( ArcMode == -1 ) { X:applyForce( holoEntity(129):forward() * Power * X:mass() * -1.005) }
+        else { X:applyForce( holoEntity(129):forward() * Power * X:mass() * -1) }
+        X:setTrails(1, 1, 2, "trails/smoke", vec(255, 0, 0), 255)
+        #Bullet:pushEntity(X)
+        #BulletTimer:pushNumber(realtime())
+        holoAng( 129, holoEntity(129):toWorld( ang(1,0,0) ) )
+    }
+    
+}
+elseif( chatClk(Me) )
+{
+    local S = Me:lastSaid()
+    local Param = S:explode(" ")
+    local Command = Param[1, string]
+    
+    if(Command:left(1) == "/" | Command:left(1) == "!" ) { hideChat(1) }
+    
+    if( Param:count() == 1 )
+    {
+        if      (Command == "/high")    { ArcMode = -1 }
+        elseif  (Command == "/low")     { ArcMode = 1 }
+    }
+    elseif( Param:count() == 2)
+    {
+        if      (Command == "/t")       { Target = findPlayerByName(Param[2, string]) }
+        elseif  (Command == "/power")   { Power = fromUnit("m/s", Param[2, string]:toNumber()) }
+        elseif  (Command == "/mode")    { AimMode = Param[2, string]:toNumber() }
+    }
+}

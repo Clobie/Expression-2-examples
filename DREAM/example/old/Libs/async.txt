@@ -1,0 +1,58 @@
+
+if(first() || duped()){
+    function void async(T, F:string               ){ timer(format("cb:%.0f:%s:null:%s", randint(1e15), F, vonEncode(array())), T * 1000) }
+    function void async(T, F:string, X:angle      ){ timer(format("cb:%.0f:%s:a:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:bone       ){ timer(format("cb:%.0f:%s:b:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:complex    ){ timer(format("cb:%.0f:%s:c:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:entity     ){ timer(format("cb:%.0f:%s:e:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:matrix     ){ timer(format("cb:%.0f:%s:m:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:number     ){ timer(format("cb:%.0f:%s:n:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:quaternion ){ timer(format("cb:%.0f:%s:q:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:array      ){ timer(format("cb:%.0f:%s:r:%s",    randint(1e15), F, vonEncode(X)), T * 1000)        }
+    function void async(T, F:string, X:string     ){ timer(format("cb:%.0f:%s:s:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:table      ){ timer(format("cb:%.0f:%s:t:%s",    randint(1e15), F, vonEncode(X)), T * 1000)        }
+    function void async(T, F:string, X:vector     ){ timer(format("cb:%.0f:%s:v:%s",    randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:matrix2    ){ timer(format("cb:%.0f:%s:xm2:%s",  randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:matrix4    ){ timer(format("cb:%.0f:%s:xm4:%s",  randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:ranger     ){ timer(format("cb:%.0f:%s:xrd:%s",  randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:vector2    ){ timer(format("cb:%.0f:%s:xv2:%s",  randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:vector4    ){ timer(format("cb:%.0f:%s:xv4:%s",  randint(1e15), F, vonEncode(array(X))), T * 1000) }
+    function void async(T, F:string, X:wirelink   ){ timer(format("cb:%.0f:%s:xwl:%s",  randint(1e15), F, vonEncode(array(X))), T * 1000) }
+}
+
+
+if(clkName() != "" && !clk()){
+    local Match = clkName():match("^cb:%d+:([^:]+):([%a%d]+):(.*)$")
+    if(Match:count() == 3){
+        local F = Match[1, string]
+        local R = vonDecode(Match[3, string])
+        switch(Match[2, string]){
+            case "null", F(), break
+            case "a", F(R[1, angle]), break
+            case "b", F(R[1, bone]), break
+            case "c", F(R[1, complex]), break
+            case "e", F(R[1, entity]), break
+            case "m", F(R[1, matrix]), break
+            case "n", F(R[1, number]), break
+            case "q", F(R[1, quaternion]), break
+            case "r", F(R), break
+            case "s", F(R[1, string]), break
+            case "t", F(vonDecodeTable(Match[3, string])), break
+            case "v", F(R[1, vector]), break
+            case "xm2", F(R[1, matrix2]), break
+            case "xm4", F(R[1, matrix4]), break
+            case "xrd", F(R[1, ranger]), break
+            case "xv2", F(R[1, vector2]), break
+            case "xv4", F(R[1, vector4]), break
+            case "xwl", F(R[1, wirelink]), break
+        }
+        exit()
+    }
+}
+#[
+##############################
+# Example 1: "async"         #
+##############################
+async(0, "holoCreate", 1)
+async(1, "holoDelete", 1)
+]#

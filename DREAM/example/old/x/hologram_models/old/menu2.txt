@@ -1,0 +1,119 @@
+@name menu2
+@inputs
+@outputs
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter Loaded Power Gravity ArcMode MovableHoloIndex_PitchYaw MovableHoloIndex_Pitch MovableHoloIndex_Yaw TargetCanHit]:number [Origin]:vector [Me Chip]:entity
+@persist
+@trigger
+
+interval(25)
+
+if( first() | dupefinished() )
+{
+    Me = owner()
+    Chip = entity()
+    Chip:setAlpha(0)
+    Origin = Chip:pos()
+    Loaded = 0
+    Power = fromUnit("m/s", 12)
+    Gravity = gravity()
+    ArcMode = 1
+
+    MovableHoloIndex_PitchYaw = 0
+    MovableHoloIndex_Pitch = 0
+    MovableHoloIndex_Yaw = 0
+    
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    HoloCounter = 0
+    HologramModel = array("models/holograms/cube.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl")
+    HologramPosition = array(vec(0,0,50),vec(0,8.5,56.5),vec(0,10,50),vec(0,8.5,43.5),vec(0,-8.5,56.5),vec(0,-10,50),vec(0,-8.5,43.5),vec(0,0,55),vec(0,-3.5,53.5),vec(0,-5,50),vec(0,-3.5,46.5),vec(0,0,45),vec(0,3.5,46.5),vec(0,5,50),vec(0,3.5,53.5),vec(0,15.2003,50),vec(0,13.6303,53.8037),vec(0.05,8.5,56.5),vec(0.05,10,50),vec(0.05,8.5,43.5),vec(0.05,-8.5,56.5),vec(0.05,-10,50),vec(0.05,-8.5,43.5),vec(0.05,-3.5,53.5),vec(0.05,-5,50),vec(0.05,-3.5,46.5),vec(0.05,0,45),vec(0.05,3.5,46.5),vec(0.05,5,50),vec(0.05,3.5,53.5),vec(0.05,0,55),vec(0.05,15.2003,50),vec(0.05,13.6303,53.8037))
+    HologramAngle = array(ang(0,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0),ang(-89.9999,0,0))
+    HologramScale = array(vec(0.2,0.2,0.2),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.52,0.52,0.52),vec(0.52,0.52,0.52),vec(0.52,0.52,0.52),vec(0.52,0.52,0.52),vec(0.52,0.52,0.52),vec(0.52,0.52,0.52),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32),vec(0.32,0.32,0.32))
+    HologramColor = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0))
+    HologramAlpha = array(50,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    HologramMaterial = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    timer("createHolos", 1)
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    
+    function angle incrementedAngle(O:angle, T:angle, S:number)
+    {
+        CV=O:forward()
+        DV=T:forward()
+        Ang=acos(CV:dot(DV))
+        if(Ang>S)
+        {
+            TargetCanHit = 0
+            return slerp(quat(O),quat(T),S/Ang):toAngle()
+        }
+        else
+        {
+            TargetCanHit = 1
+            return T
+        }
+    }
+    
+    function angle getAngleOfAttack(O:vector, T:vector)
+    {
+        local VTar = T #+ ( Target:vel() * ( T:setZ(0):distance(O:setZ(0)) / ( Power * cos(holoEntity(8):angles():pitch()))))
+        local V = VTar - O
+        local Range = V:setZ(0):length()
+        local Height = V:z()
+        local Angle = atan(((Power^2) + ArcMode*sqrt((Power^4) - Gravity * ((Gravity*(Range^2)) + (2*Height*(Power^2)))))/(Gravity*Range))
+        local Time = (Power * sin(Angle) + sqrt((Power * sin(Angle))^2 + (2 * Gravity * Height))) / Gravity
+        Timer = Time
+        if( Time > 0 & abs(O:z() - T:z()) < 100) { return V:toAngle():setPitch(90-Angle) }
+        else { return ang(0,0,0) }
+    }
+}
+elseif( clk("createHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count() & holoCanCreate())
+    {
+        HoloCounter++
+        holoCreate( HoloCounter )
+        holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+        holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+        holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+        holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+        holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+        holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+        holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+        holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+    }
+    if(HoloCounter < HologramModel:count()) { timer("createHolos", 1) }
+    else { timer("parentHolos", 1) HoloCounter = 0 }
+}
+elseif( clk("parentHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count())
+    {
+        HoloCounter++
+        if(HologramParent[HoloCounter, number] > 0)
+        {
+            holoParent(HoloCounter, HologramParent[HoloCounter, number])
+        }
+    }
+    if(HoloCounter == HologramModel:count()) { Loaded = 1 }
+    else { timer("parentHolos", 1) }
+}
+elseif( clk() & Loaded == 1)
+{
+    TargetV = owner():pos()
+    AimV = TargetV - holoEntity(MovableHoloIndex_PitchYaw):pos()
+    AimA = incrementedAngle( holoEntity(MovableHoloIndex_PitchYaw):angles(), AimV:toAngle(), 2 )
+    
+    if( MovableHoloIndex_PitchYaw > 0 )
+    {
+        holoAng( MovableHoloIndex_PitchYaw, (AimA * ang(1,1,0)))
+    }
+    if( MovableHoloIndex_Pitch > 0)
+    {
+        holoAng( MovableHoloIndex_Pitch, (AimA * ang(1,0,0)))
+    }
+    if( MovableHoloIndex_Yaw > 0)
+    {
+        holoAng( MovableHoloIndex_Yaw, (AimA * ang(0,1,0)))
+    }
+}

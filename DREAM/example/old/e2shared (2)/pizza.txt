@@ -1,0 +1,68 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/20/2018 @ 1621
+# Holograms: 22
+# Notes: 
+# 1 -> createHolos
+# 2 ->  1
+# --------------------------------------------- #
+@name pizza
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/hq_cylinder.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(0,0,0),vec(0,0,0.3701),vec(-6.8765,-3.4033,0.3701),vec(-1.7515,6.2061,0.3701),vec(11.397,-11.9971,0.3701),vec(9.7974,10.7974,0.3701),vec(-1.3999,-13.7964,0.3701),vec(-15.5962,6.1987,0.3701),vec(-11.7969,-10.5972,0.3701),vec(4.1992,-6.3984,0.3701),vec(16.5957,1.1997,0.3701),vec(7.5981,1.7998,0.3701),vec(2.3994,14.7964,0.3701),vec(-8.1982,10.1973,0.3701),vec(-16.7959,-1.3999,0.3701),vec(5.5986,-18.1958,0.3701),vec(-7.3984,-17.7959,0.3701),vec(17.7959,-6.3984,0.3701),vec(-5.3989,18.3955,0.3701),vec(15.9961,10.1973,0.3701),vec(-10.3975,2.9995,0.3701))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(4,4,0.05),vec(4.1,4.1,4.1),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01),vec(0.3,0.3,0.01))
+    Hologram[ "color", array ] = array(vec(244,164,96),vec(220,140,80),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34),vec(178,34,34))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","","","","")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("createHolos"," 1","","","","","","","","","","","","","","","","","","","","")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next < Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else { for( I = 1, Hologram[ "model", array ]:count( ) ) { holoParent(I, Hologram["parent", array][I, number]) }, interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

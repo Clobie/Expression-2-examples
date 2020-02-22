@@ -1,0 +1,20 @@
+@name PD Controller
+@inputs In SP
+@outputs Out
+@persist V:vector M:matrix 
+@trigger none
+
+if(first() || duped()){
+    
+    local P = 0.3
+    local T = 0.05
+    
+    runOnTick(1)
+    
+    D = T / tickInterval()
+    V = vec()
+    M = matrix(0, 0, P, -D, 0, P * D, 0, 0, 1)
+}
+
+SP = ->SP ? SP : 150
+V = M * V:setZ(SP - In), Out = V:x() + V:y()

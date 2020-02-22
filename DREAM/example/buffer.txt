@@ -1,0 +1,56 @@
+@name boofer
+@persist 
+
+if( first() ) {
+    
+    function void async( T, F:string, X:array ) { 
+        timer( 
+            format( 
+                "cb:%.0f:%s:r:%s",    
+                randint( 1e15 ), 
+                F, 
+                vonEncode( X ) 
+            ), 
+            T * 1000 
+        )        
+    }
+    
+    function buffer( Var:array ) {
+        print( "Buffer exec step: " + Var[ 0, number ] )
+        local Step = Var[ 0, number ]
+        switch( Var[ 0, number ] ) {
+            case 0,
+                Step = 1
+                break
+            case 1,
+                Step = 2
+                break
+            case 2,
+                Step = 3
+                break
+            case 3,
+                Step = 4
+                break
+        }
+        if( Step <= 3 ) {
+            Var[ 0, number ] = Step
+            async( 1, "buffer", Var )
+        }
+    }
+    
+    buffer( array( 0 = 0 ) )
+}
+
+if( clkName() != "" && !clk() ) {
+    local Match = clkName():match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3 ) {
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) {
+            case "r", 
+                F( R )
+                break
+        }
+        exit()
+    }
+}

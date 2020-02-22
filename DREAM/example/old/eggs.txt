@@ -1,0 +1,23 @@
+@name 
+@persist P:array C Ply:array A
+
+if( first() ) {
+    propSpawnUndo( 0 )
+    C = 300
+    A = 1
+}
+
+if( propCanCreate() ) {
+    A++
+    if( A > Ply:count() ) {
+        A = 1
+    }
+    Ply = players()
+    local Rain = propSpawn( "models/props_phx/misc/egg.mdl", Ply[ A, entity ]:toWorld( vec( randint( -C, C ), randint( -C, C ), 3000 ) ), ang(0), 0 )
+    Rain:setTrails( 20, 20, 0.5, "trails/smoke", vec(0,randint(0,127.5),randint(127.5,255)), 255 )
+    Rain:setMass( 50000 )
+    Rain:propDraw( 0 )
+    Rain:propDrag( 0 )
+}
+
+interval( 200 )

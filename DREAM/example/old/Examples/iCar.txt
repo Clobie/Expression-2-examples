@@ -1,0 +1,939 @@
+@name iCar
+@model models/hunter/plates/plate05x075.mdl
+@outputs Debug [Car Seat Driver]:entity HullBodyColor:vector
+@outputs [R1 R2 R3 R4]:ranger D1 D2 D3 D4 Force Angles:angle [Right1 Right2 Right3 Right4]:vector ForwardVel SidesVel CarYawVel ParentTimer Parented Seats:array SeatYaw YawDot TargetSpeed Nitro
+@outputs FrontCollsionRanger:ranger FlipRanger:ranger Jump DoubleJump KeyJump CarAngles:angle SpeedThing Jumped AdditionalGravity
+
+runOnTick(1)
+
+Driver = Seat:driver()
+
+# SEAT PARENTING
+if(Parented==0){
+    findInSphere(Car:pos(), 50)
+    findClipToClass("pod")
+    Seats=findToArray()
+}
+if(Parented<2){ParentTimer++}
+if(ParentTimer>5 & Parented==0){
+    for(I=1,Seats:count()){
+        if(Seats[I, entity]:owner()==owner() & Seats[I, entity]:type()=="prop_vehicle_prisoner_pod"&!Seat){Seat=Seats[I, entity]
+            Parented=1
+            }}}
+if(Parented==1&ParentTimer>15){ 
+    Seat:setPos(entity():toWorld(vec(0,-6,-2.2)))
+    Seat:setAng(entity():toWorld(ang(0,0,0))) 
+}
+if(Parented==1&ParentTimer>60){ 
+Seat:parentTo(entity())
+Seat:setAlpha(0)
+entity():propFreeze(0)
+Parented=2
+}
+
+
+if(first()){
+    for(I=0,60){
+        holoCreate(I)
+        holoPos(I, entity():boxCenterW()+vec(0,0,80)) # delete later
+        holoAng(I, ang(0))
+        #holoColor(I, randvec(40,255))
+        #holoDisableShading(I, 1)
+    }
+    entity():setAlpha(0)
+    Car = entity()
+    HullBodyColor=hsv2rgb(vec(random(1,300),1,1))
+    HullBodyColor2=vec(255,80,80)
+    HullBodyColor3=vec(255,255,80)
+    HullBodyColor4=vec(255,80,255)
+    HullBodyColor5=vec(220)
+    
+    #CORE  
+    holoPos(0, Car:toWorld(vec(0,0,0)))
+    holoAng(0, Car:toWorld(ang(0,0,0)))
+    holoScaleUnits(0, vec(3))
+    #holoAlpha(0, 0)
+    holoParent(0, entity())
+    
+    Center = holoEntity(0)
+    
+    #FRONT-RIGHT WHEEL COVER
+    holoPos(1, Center:toWorld(vec(12,12.02,0)))
+    holoAng(1, Center:toWorld(ang(-90,0,0)))
+    holoColor(1, HullBodyColor)
+    holoModel(1, "hq_rcylinder_thick")
+    holoScaleUnits(1, vec(25,25,10))
+    holoParent(1, Center)
+    holoClipEnabled(1,1,1)
+    holoClip(1, 1, vec(1,0,0), vec(1,0,0), 0)
+    holoClipEnabled(1,2,1)
+    holoClip(1, 2, vec(0,0,-4.8), vec(0,0,1), 0)
+   
+    #FRONT-LEFT WHEEL COVER
+    holoPos(2, Center:toWorld(vec(-12,12.02,0)))
+    holoAng(2, Center:toWorld(ang(-90,0,0)))
+    holoColor(2, HullBodyColor)
+    holoModel(2, "hq_rcylinder_thick")
+    holoScaleUnits(2, vec(25,25,10))
+    holoParent(2, Center)
+    holoClipEnabled(2,1,1)
+    holoClip(2, 1, vec(1,0,0), vec(1,0,0), 0)
+    holoClipEnabled(2,2,1)
+    holoClip(2, 2, vec(0,0,4.8), vec(0,0,-1), 0)
+    
+    #REAR-RIGHT WHEEL COVER
+    holoPos(3, Center:toWorld(vec(12,-23.97,0)))
+    holoAng(3, Center:toWorld(ang(-90,0,0)))
+    holoColor(3, HullBodyColor)
+    holoModel(3, "hq_rcylinder_thick")
+    holoScaleUnits(3, vec(25,25,10))
+    holoParent(3, Center)
+    holoClipEnabled(3,1,1)
+    holoClip(3, 1, vec(1,0,0), vec(1,0,0), 0)
+    holoClipEnabled(3,2,1)
+    holoClip(3, 2, vec(0,0,-4.8), vec(0,0,1), 0)
+    
+    #REAR-LEFT WHEEL COVER
+    holoPos(4, Center:toWorld(vec(-12,-23.97,0)))
+    holoAng(4, Center:toWorld(ang(-90,0,0)))
+    holoColor(4, HullBodyColor)
+    holoModel(4, "hq_rcylinder_thick")
+    holoScaleUnits(4, vec(25,25,10))
+    holoParent(4, Center)
+    holoClipEnabled(4,1,1)
+    holoClip(4, 1, vec(1,0,0), vec(1,0,0), 0)
+    holoClipEnabled(4,2,1)
+    holoClip(4, 2, vec(0,0,4.8), vec(0,0,-1), 0)
+    
+    #REAR-LEFT WHEEL COVER
+    holoPos(5, Center:toWorld(vec(-12,-23.97,0)))
+    holoAng(5, Center:toWorld(ang(-90,0,0)))
+    holoColor(5, HullBodyColor )
+    holoModel(5, "hq_rcylinder_thick")
+    holoScaleUnits(5, vec(25,25,10))
+    holoParent(5, Center)
+    holoClipEnabled(5,1,1)
+    holoClip(5, 1, vec(1,0,0), vec(1,0,0), 0)
+    holoClipEnabled(5,2,1)
+    holoClip(5, 2, vec(0,0,4.8), vec(0,0,-1), 0)
+    
+    #WHEEL COVER CONNECTOR
+    holoPos(6, Center:toWorld(vec(0,-6,1.5)))
+    holoAng(6, Center:toWorld(ang(0,0,0)))
+    holoColor(6, HullBodyColor )
+    holoModel(6, "hq_cylinder")
+    holoScaleUnits(6, vec(34,80,1))
+    holoParent(6, Center)
+    holoClipEnabled(6,1,1)
+    holoClip(6, 1, vec(0,-9,0), vec(0,1,0), 0)
+    holoClipEnabled(6,2,1)
+    holoClip(6, 2, vec(0,9,0), vec(0,-1,0), 0)
+    
+    #FRONT CAR BODY
+    holoPos(7, Center:toWorld(vec(0,13,0)))
+    holoAng(7, Center:toWorld(ang(0,0,-79)))
+    holoColor(7, HullBodyColor )
+    holoModel(7, "hq_rcylinder_thick")
+    holoScaleUnits(7, vec(20,30,20))
+    holoParent(7, Center)
+    holoClipEnabled(7,1,1)
+    holoClip(7, 1, vec(0,1,0), vec(0,-1,0), 0)
+    holoClipEnabled(7,2,1)
+    holoClip(7, 2, vec(0,0,4), vec(0,0,1), 0)
+    holoClipEnabled(7,3,1)
+    holoClip(7, 3, vec(0,0,9), vec(0,0,-1), 0)
+    
+    
+    #FRONT BUMPER
+    holoPos(8, Center:toWorld(vec(0,18,2)))
+    holoAng(8, Center:toWorld(ang(0,0,0)))
+    holoColor(8, HullBodyColor3 )
+    holoModel(8, "hq_rcube_thick")
+    holoScaleUnits(8, vec(15,15,5))
+    holoParent(8, Center)
+    holoClipEnabled(8,1,1)
+    holoClip(8, 1, vec(0,4,0), vec(0,1,0), 0)
+    holoClipEnabled(8,2,1)
+    holoClip(8, 2, vec(0,0,2.3), vec(0,0,-1), 0)
+    holoClipEnabled(8,3,1)
+    holoClip(8, 3, vec(0,0,-2.3), vec(0,0,1), 0)
+    
+    #ARCH
+    holoPos(9, Center:toWorld(vec(0,19,5.3)))
+    holoAng(9, Center:toWorld(ang(0,0,102)))
+    holoColor(9, HullBodyColor3 )
+    holoModel(9, "hq_tube_thin")
+    holoScaleUnits(9, vec(14,22,7))
+    holoParent(9, Center)
+    holoClipEnabled(9,1,1)
+    holoClip(9, 1, vec(0,-2,0), vec(0,1,0), 0)
+    holoClipEnabled(9,2,1)
+    holoClip(9, 2, vec(0,0,-3), vec(0,0,-1), 0)
+    
+    #FRONT CAR BODY 2#
+    holoPos(10, Center:toWorld(vec(0,8,0.5)))
+    holoAng(10, Center:toWorld(ang(0,0,90)))
+    holoColor(10, HullBodyColor )
+    holoModel(10, "hq_cylinder")
+    holoScaleUnits(10, vec(20,30,15))
+    holoParent(10, Center)
+    holoClipEnabled(10,1,1)
+    holoClip(10, 1, vec(0,0,-10), vec(0,0,1), 0)
+    holoClipEnabled(10,2,1)
+    holoClip(10, 2, vec(0,1,0), vec(0,1,0), 0)
+    
+    #MID CAR BODY 1# ("doors")
+    holoPos(11, Center:toWorld(vec(0,-6,0.5)))
+    holoAng(11, Center:toWorld(ang(0,0,90)))
+    holoColor(11, HullBodyColor )
+    holoModel(11, "hq_tube_thin")
+    holoScaleUnits(11, vec(25,25,23))
+    holoParent(11, Center)
+    holoClipEnabled(11,1,1)
+    holoClip(11, 1, vec(0,1,0), vec(0,1,0), 0)
+    holoClipEnabled(11,2,1)
+    holoClip(11, 2, vec(0,9,0), vec(0,-1,0), 0)
+    
+    #GRILL BOLTS(middle)
+    holoPos(12, Center:toWorld(vec(0,19,8.3)))
+    holoAng(12, Center:toWorld(ang(0,0,102)))
+    holoColor(12, HullBodyColor3 )
+    holoModel(12, "hq_rcube_thin")
+    holoScaleUnits(12, vec(1,14,6))
+    holoParent(12, Center)
+    holoClipEnabled(12,1,1)
+    #holoClip(12, 1, vec(0,-2,0), vec(0,1,0), 0)
+    holoClipEnabled(12,2,1)
+    #holoClip(12, 2, vec(0,0,2), vec(0,0,-1), 0)
+    
+    #GRILL BOLTS(left 1)
+    holoPos(13, Center:toWorld(vec(2.5,19,8.3)))
+    holoAng(13, Center:toWorld(ang(0,0,102)))
+    holoColor(13, HullBodyColor3 )
+    holoModel(13, "hq_rcube_thin")
+    holoScaleUnits(13, vec(1,13,6))
+    holoParent(13, Center)
+    holoClipEnabled(13,1,1)
+    #holoClip(13, 1, vec(0,-2,0), vec(0,1,0), 0)
+    holoClipEnabled(13,2,1)
+    #holoClip(13, 2, vec(0,0,2), vec(0,0,-1), 0)
+    
+    #GRILL BOLTS(left 2)
+    holoPos(14, Center:toWorld(vec(5,19.2,6.6)))
+    holoAng(14, Center:toWorld(ang(0,0,102)))
+    holoColor(14, HullBodyColor3 )
+    holoModel(14, "hq_rcube_thin")
+    holoScaleUnits(14, vec(1,11,6))
+    holoParent(14, Center)
+    holoClipEnabled(14,1,1)
+    #holoClip(14, 1, vec(0,-2,0), vec(0,1,0), 0)
+    holoClipEnabled(14,2,1)
+    #holoClip(14, 2, vec(0,0,2), vec(0,0,-1), 0)
+    
+    #GRILL BOLTS(right 1)
+    holoPos(15, Center:toWorld(vec(-2.5,19,8.3)))
+    holoAng(15, Center:toWorld(ang(0,0,102)))
+    holoColor(15, HullBodyColor3 )
+    holoModel(15, "hq_rcube_thin")
+    holoScaleUnits(15, vec(1,13,6))
+    holoParent(15, Center)
+    holoClipEnabled(15,1,1)
+    #holoClip(15, 1, vec(0,-2,0), vec(0,1,0), 0)
+    holoClipEnabled(15,2,1)
+    #holoClip(15, 2, vec(0,0,2), vec(0,0,-1), 0)
+    
+    #GRILL BOLTS(right 2)
+    holoPos(16, Center:toWorld(vec(-5,19.2,6.6)))
+    holoAng(16, Center:toWorld(ang(0,0,102)))
+    holoColor(16, HullBodyColor3 )
+    holoModel(16, "hq_rcube_thin")
+    holoScaleUnits(16, vec(1,11,6))
+    holoParent(16, Center)
+    holoClipEnabled(16,1,1)
+    #holoClip(16, 1, vec(0,-2,0), vec(0,1,0), 0)
+    holoClipEnabled(16,2,1)
+    #holoClip(16, 2, vec(0,0,2), vec(0,0,-1), 0)
+    
+    #ARCH CONNECTOR
+    holoPos(17, Center:toWorld(vec(0,19,5.3)))
+    holoAng(17, Center:toWorld(ang(0,0,102)))
+    holoColor(17, HullBodyColor )
+    holoModel(17, "hq_tube_thin")
+    holoScaleUnits(17, vec(14,22,7))
+    holoParent(17, Center)
+    holoClipEnabled(17,1,1)
+    holoClip(17, 1, vec(0,-2,0), vec(0,1,0), 0)
+    holoClipEnabled(17,2,1)
+    holoClip(17, 2, vec(0,0,-3), vec(0,0,1), 0)
+    
+    #RIGHT DOOR FINISH
+    holoPos(18, Center:toWorld(vec(7.7,-8,4.75)))
+    holoAng(18, Center:toWorld(ang(0,0,0)))
+    holoColor(18, HullBodyColor )
+    #holoModel(18, "hq_tube_thin")
+    holoScaleUnits(18, vec(2,25,9.5))
+    holoParent(18, Center)
+    
+    #LEFT DOOR FINISH
+    holoPos(19, Center:toWorld(vec(-7.7,-8,4.75)))
+    holoAng(19, Center:toWorld(ang(0,0,0)))
+    holoColor(19, HullBodyColor )
+    #holoModel(19, "hq_tube_thin")
+    holoScaleUnits(19, vec(2,25,9.5))
+    holoParent(19, Center)
+    
+    #SEAT BASE
+    holoPos(20, Center:toWorld(vec(0,-15,5)))
+    holoAng(20, Center:toWorld(ang(0,0,110)))
+    holoColor(20, HullBodyColor )
+    holoModel(20, "hq_rcylinder_thin")
+    holoScaleUnits(20, vec(15,20,2))
+    holoParent(20, Center)
+    holoClipEnabled(20,1,1)
+    holoClip(20,vec(0,-5,0),vec(0,1,0),0)
+        
+    #CAR REAR BODY
+    holoPos(21, Center:toWorld(vec(0,-23.97,1)))
+    holoAng(21, Center:toWorld(ang(-90,0,0)))
+    holoColor(21, HullBodyColor)
+    holoModel(21, "hq_rcylinder_thin")
+    holoScaleUnits(21, vec(20,25,20))
+    holoParent(21, Center)
+    holoClipEnabled(21,1,1)
+    holoClip(21, 1, vec(-2,0,0), vec(1,0,0), 0)
+    holoClipEnabled(21,2,1)
+    holoClip(21, 2, vec(0,9,0), vec(0,-1,0), 0)
+    
+    #SEAT CLOTH
+    holoPos(22, Center:toWorld(vec(0,-15,5)))
+    holoAng(22, Center:toWorld(ang(0,0,110)))
+    holoColor(22, HullBodyColor3 )
+    holoModel(22, "hq_rcylinder_thin")
+    holoScaleUnits(22, vec(14,19,2.1))
+    holoParent(22, Center)
+    holoClipEnabled(22,1,1)
+    holoClip(22,vec(0,-5,0),vec(0,1,0),0)
+    
+    
+    #ARCH FILL
+    holoPos(23, Center:toWorld(vec(0,22,5.3)))
+    holoAng(23, Center:toWorld(ang(0,0,102)))
+    holoColor(23, vec(0) )
+    holoModel(23, "hq_cylinder")
+    holoScaleUnits(23, vec(14,22,1))
+    holoParent(23, Center)
+    holoClipEnabled(23,1,1)
+    holoClip(23, 1, vec(0,-4,0), vec(0,1,0), 0)
+
+    #PANEL
+    holoPos(24, Center:toWorld(vec(0,-2,0.7)))
+    holoAng(24, Center:toWorld(ang(0,0,75)))
+    holoColor(24, HullBodyColor )
+    holoModel(24, "hq_cylinder")
+    holoScaleUnits(24, vec(20,30,4))
+    holoParent(24, Center)
+    holoClipEnabled(24,1,1)
+    holoClip(24, 1, vec(0,0,-1), vec(0,0,1), 0)
+    holoClipEnabled(24,2,1)
+    holoClip(24, 2, vec(0,4,0), vec(0,1,0), 0)
+    
+    # LAMP LEFT BODY
+    holoPos(25, Center:toWorld(vec(9,21,12)))
+    holoAng(25, Center:toWorld(ang(0,0,90)))
+    holoColor(25, HullBodyColor )
+    holoModel(25, "hq_dome")
+    holoScaleUnits(25, vec(6,6,6))
+    holoParent(25, Center)
+    
+    # LAMP RIGHT BODY
+    holoPos(26, Center:toWorld(vec(-9,21,12)))
+    holoAng(26, Center:toWorld(ang(0,0,90)))
+    holoColor(26, HullBodyColor )
+    holoModel(26, "hq_dome")
+    holoScaleUnits(26, vec(6,6,6))
+    holoParent(26, Center)
+    
+     # LAMP LEFT FRAME
+    holoPos(27, Center:toWorld(vec(9,21,12)))
+    holoAng(27, Center:toWorld(ang(0,0,90)))
+    holoColor(27, HullBodyColor )
+    holoModel(27, "hq_torus")
+    holoScaleUnits(27, vec(6,6,6))
+    holoParent(27, Center)
+    
+    # RIGHT RIGHT FRAME
+    holoPos(28, Center:toWorld(vec(-9,21,12)))
+    holoAng(28, Center:toWorld(ang(0,0,90)))
+    holoColor(28, HullBodyColor )
+    holoModel(28, "hq_torus")
+    holoScaleUnits(28, vec(6,6,6))
+    holoParent(28, Center)
+    
+    # LAMP LEFT
+    holoPos(29, Center:toWorld(vec(9,21,12)))
+    holoAng(29, Center:toWorld(ang(0,0,90)))
+    holoColor(29, vec(200) )
+    holoModel(29, "hq_sphere")
+    holoScaleUnits(29, vec(5,5,2))
+    holoParent(29, Center)
+    
+    # LAMP RIGHT
+    holoPos(30, Center:toWorld(vec(-9,21,12)))
+    holoAng(30, Center:toWorld(ang(0,0,90)))
+    holoColor(30, vec(200) )
+    holoModel(30, "hq_sphere")
+    holoScaleUnits(30, vec(5,5,2))
+    holoParent(30, Center)
+    
+    # LICENSE PLATE FRAME
+    holoPos(31, Center:toWorld(vec(0,25.5,1)))
+    holoAng(31, Center:toWorld(ang(0,0,90)))
+    holoColor(31, HullBodyColor3 )
+    holoModel(31, "hq_rcube_thin")
+    holoScaleUnits(31, vec(7,3,1))
+    holoParent(31, Center)
+    
+    # LICENSE PLATE
+    holoPos(32, Center:toWorld(vec(0,25.9,1)))
+    holoAng(32, Center:toWorld(ang(0,0,90)))
+    holoColor(32, HullBodyColor )
+    holoModel(32, "hq_rcube_thin")
+    holoScaleUnits(32, vec(6.5,2.5,0.3))
+    holoParent(32, Center)
+    #holoMaterial(32, "models/weapons/v_toolgun/screen")
+    
+    # WINDSHIELD TOP FRAME
+    holoPos(33, Center:toWorld(vec(0,2.3,17)))
+    holoAng(33, Center:toWorld(ang(0,0,110)))
+    holoColor(33, HullBodyColor )
+    holoModel(33, "hq_torus_thin")
+    holoScaleUnits(33, vec(18,7,13))
+    holoParent(33, Center)
+    holoClipEnabled(33,1,1)
+    holoClip(33, 1, vec(0,1,0), vec(0,1,0), 0)
+    
+    # WINDSHIELD TOP GLASS
+    holoPos(34, Center:toWorld(vec(0,2.3,17)))
+    holoAng(34, Center:toWorld(ang(0,0,110)))
+    holoColor(34, vec(160,160,255) )
+    holoModel(34, "hq_cylinder")
+    holoScaleUnits(34, vec(17.5,6.5,0.3))
+    holoParent(34, Center)
+    holoClipEnabled(34,1,1)
+    holoClip(34, 1, vec(0,1,0), vec(0,1,0), 0)
+    holoDisableShading(34, 1)
+    
+    # WINDSHIELD LEFT FRAME
+    holoPos(35, Center:toWorld(vec(8.3,1.95,12.6)))
+    holoAng(35, Center:toWorld(ang(0,0,0)))
+    holoColor(35, HullBodyColor )
+    holoModel(35, "hq_cylinder")
+    holoScaleUnits(35, vec(0.6,0.6,10.8))
+    holoParent(35, Center)
+    
+    # WINDSHIELD RIGHT FRAME
+    holoPos(36, Center:toWorld(vec(-8.3,1.95,12.6)))
+    holoAng(36, Center:toWorld(ang(0,0,0)))
+    holoColor(36, HullBodyColor )
+    holoModel(36, "hq_cylinder")
+    holoScaleUnits(36, vec(0.6,0.6,10.8))
+    holoParent(36, Center)
+    
+    # WINDSHIELD
+    holoPos(37, Center:toWorld(vec(0,1.95,12.6)))
+    holoAng(37, Center:toWorld(ang(0,0,0)))
+    holoColor(37, vec(160,160,255) )
+    #holoModel(37, "hq_cylinder")
+    holoScaleUnits(37, vec(16.5,0.1,10.8))
+    holoParent(37, Center)
+    holoDisableShading(37, 1)
+    
+    #TROPHY
+    holoPos(38, Center:toWorld(vec(0,20.1,17.70)))
+    holoAng(38, Center:toWorld(ang(0,0,90)))
+    holoColor(38, HullBodyColor3 )
+    holoModel(38, "hq_rcylinder")
+    holoScaleUnits(38, vec(2,2,0.3))
+    holoParent(38, Center)
+    
+    # LEFT MIRROR FRAME
+    holoPos(39, Center:toWorld(vec(10.1,1.5,11.70)))
+    holoAng(39, Center:toWorld(ang(0,-10,-90)))
+    holoColor(39, HullBodyColor )
+    holoModel(39, "hq_dome")
+    holoScaleUnits(39, vec(4,3,2))
+    holoParent(39, Center)
+    
+    # RIGHT MIRROR FRAME
+    holoPos(40, Center:toWorld(vec(-10.1,1.5,11.70)))
+    holoAng(40, Center:toWorld(ang(0,10,-90)))
+    holoColor(40, HullBodyColor )
+    holoModel(40, "hq_dome")
+    holoScaleUnits(40, vec(4,3,2))
+    holoParent(40, Center)
+    
+    # LEFT MIRROR
+    holoPos(41, Center:toWorld(vec(10.1,1.5,11.70)))
+    holoAng(41, Center:toWorld(ang(0,-10,-90)))
+    #holoColor(41, HullBodyColor2 )
+    holoModel(41, "hq_cylinder")
+    holoScaleUnits(41, vec(3.5,2.5,0.1))
+    holoParent(41, Center)
+    holoMaterial(41, "debug/env_cubemap_model")
+    
+    # RIGHT MIRROR FRAME
+    holoPos(42, Center:toWorld(vec(-10.1,1.5,11.70)))
+    holoAng(42, Center:toWorld(ang(0,10,-90)))
+    #holoColor(42, HullBodyColor2 )
+    holoModel(42, "hq_cylinder")
+    holoScaleUnits(42, vec(3.5,2.5,0.1))
+    holoParent(42, Center)
+    holoMaterial(42, "debug/env_cubemap_model")
+    
+    # BUMPER
+    holoPos(43, Center:toWorld(vec(0,-31.5,0.75)))
+    holoAng(43, Center:toWorld(ang(0,0,0)))
+    holoColor(43, HullBodyColor3 )
+    holoModel(43, "hq_rcube_thick")
+    holoScaleUnits(43, vec(22,15,5))
+    holoParent(43, Center)
+    holoClipEnabled(43,1,1)
+    holoClip(43, 1, vec(0,-4,0), vec(0,-1,0), 0)
+    holoClipEnabled(43,2,1)
+    holoClip(43, 2, vec(0,0,2.3), vec(0,0,-1), 0)
+    holoClipEnabled(43,3,1)
+    holoClip(43, 3, vec(0,0,-2.3), vec(0,0,1), 0)
+    
+    # LICENSE PLATE FRAME
+    holoPos(49, Center:toWorld(vec(0,-38.8,1)))
+    holoAng(49, Center:toWorld(ang(0,0,90)))
+    holoColor(49, HullBodyColor3 )
+    holoModel(49, "hq_rcube_thin")
+    holoScaleUnits(49, vec(7,3,1))
+    holoParent(49, Center)
+    
+    # LICENSE PLATE
+    holoPos(50, Center:toWorld(vec(0,-39.2,1)))
+    holoAng(50, Center:toWorld(ang(0,0,90)))
+    holoColor(50, HullBodyColor )
+    holoModel(50, "hq_rcube_thin")
+    holoScaleUnits(50, vec(6.5,2.5,0.3))
+    holoParent(50, Center)
+    #holoMaterial(50, "models/weapons/v_toolgun/screen")
+    
+    #REAR RIGHT WHEEL AXIS
+    holoPos(52, entity():toWorld(vec(12,-23.97,0)))
+    holoAng(52, entity():toWorld(ang(0,0,0)))
+    holoColor(52, vec(255,0,0))
+    #holoModel(52, "hq_torus_oldsize")
+    holoScaleUnits(52, vec(3,3,3))
+    holoParent(52, entity())
+    holoMaterial(52,"models/cheeze/buttons2/1")
+    
+    #REAR LEFT WHEEL AXIS
+    holoPos(53, entity():toWorld(vec(-12,-23.97,0)))
+    holoAng(53, entity():toWorld(ang(0,0,0)))
+    holoColor(53, vec(255,0,0))
+    #holoModel(53, "hq_torus_oldsize")
+    holoScaleUnits(53, vec(3,3,3))
+    holoParent(53, entity())
+    holoMaterial(53,"models/cheeze/buttons2/2")
+    
+    #FRONT LEFT WHEEL AXIS
+    holoPos(54, entity():toWorld(vec(-12,12.02,0)))
+    holoAng(54, entity():toWorld(ang(0,0,0)))
+    holoColor(54, vec(255,0,0))
+    #holoModel(54, "hq_torus_oldsize")
+    holoScaleUnits(54, vec(3,3,3))
+    holoParent(54, entity())
+    holoMaterial(54,"models/cheeze/buttons2/3")
+    
+    #FRONT RIGHT WHEEL AXIS
+    holoPos(55, entity():toWorld(vec(12,12.02,0)))
+    holoAng(55, entity():toWorld(ang(0,0,0)))
+    holoColor(55, vec(255,0,0))
+    #holoModel(55, "hq_torus_oldsize")
+    holoScaleUnits(55, vec(3,3,3))
+    holoParent(55, entity())
+    holoMaterial(55,"models/cheeze/buttons2/4")
+    
+    ######## TIRES
+    
+    #REAR RIGHT TIRE
+    holoPos(56, entity():toWorld(vec(12,-23.97,0)))
+    holoAng(56, entity():toWorld(ang(-90,0,0)))
+    holoColor(56, vec(60))
+    holoModel(56, "hq_torus_oldsize")
+    holoScaleUnits(56, vec(20,20,30))
+    holoParent(56, holoEntity(52))
+    
+    
+    # REAR LEFT TIRE
+    holoPos(57, entity():toWorld(vec(-12,-23.97,0)))
+    holoAng(57, entity():toWorld(ang(-90,0,0)))
+    holoColor(57, vec(60))
+    holoModel(57, "hq_torus_oldsize")
+    holoScaleUnits(57, vec(20,20,30))
+    holoParent(57, holoEntity(53))
+    
+    # FRONT LEFT TIRE
+    holoPos(58, entity():toWorld(vec(-12,12.02,0)))
+    holoAng(58, entity():toWorld(ang(-90,0,0)))
+    holoColor(58, vec(60))
+    holoModel(58, "hq_torus_oldsize")
+    holoScaleUnits(58, vec(20,20,30))
+    holoParent(58, holoEntity(54))
+    
+    # FRONT RIGHT TIRE
+    holoPos(59, entity():toWorld(vec(12,12.02,0)))
+    holoAng(59, entity():toWorld(ang(-90,0,0)))
+    holoColor(59, vec(60))
+    holoModel(59, "hq_torus_oldsize")
+    holoScaleUnits(59, vec(20,20,30))
+    holoParent(59, holoEntity(55))
+    
+    # RIMS ##########################################################
+    #REAR RIGHT RIM
+    holoPos(44, entity():toWorld(vec(12,-23.97,0)))
+    holoAng(44, entity():toWorld(ang(-90,0,0)))
+    holoColor(44, HullBodyColor3)
+    holoModel(44, "hq_sphere")
+    holoScaleUnits(44, vec(18,18,10))
+    holoParent(44, holoEntity(52))
+    holoMaterial(44, "vgui/bg-lines")
+    
+    # REAR LEFT TIRE
+    holoPos(45, entity():toWorld(vec(-12,-23.97,0)))
+    holoAng(45, entity():toWorld(ang(-90,0,0)))
+    holoColor(45, HullBodyColor3)
+    holoModel(45, "hq_sphere")
+    holoScaleUnits(45, vec(18,18,10))
+    holoParent(45, holoEntity(53))
+    holoMaterial(45, "vgui/bg-lines")
+    
+    # FRONT LEFT TIRE
+    holoPos(46, entity():toWorld(vec(-12,12.02,0)))
+    holoAng(46, entity():toWorld(ang(-90,0,0)))
+    holoColor(46, HullBodyColor3)
+    holoModel(46, "hq_sphere")
+    holoScaleUnits(46, vec(18,18,10))
+    holoParent(46, holoEntity(54))
+    holoMaterial(46, "vgui/bg-lines")
+    
+    # FRONT RIGHT TIRE
+    holoPos(47, entity():toWorld(vec(12,12.02,0)))
+    holoAng(47, entity():toWorld(ang(-90,0,0)))
+    holoColor(47, HullBodyColor3)
+    holoModel(47, "hq_sphere")
+    holoScaleUnits(47, vec(18,18,10))
+    holoParent(47, holoEntity(55))
+    holoMaterial(47, "vgui/bg-lines")
+    
+    # BOTTOM COVER
+    holoModel(60, "hq_rcube_thick")
+    holoPos(60, entity():toWorld(vec(0,-7,0.5)))
+    holoAng(60, entity():toWorld(ang(0,0,0)))
+    holoParent(60, entity())
+    holoScaleUnits(60, vec(30,58,2))
+    holoColor(60, HullBodyColor)
+    
+    # EXHAUST RIGHT
+    holoModel(48, "hq_tube")
+    holoPos(48, entity():toWorld(vec(6,-35,0)))
+    holoAng(48, entity():toWorld(ang(0,0,100)))
+    holoParent(48, entity())
+    holoScaleUnits(48, vec(2,2,10))
+    holoColor(48, vec(200))
+    holoAlpha(48,255)
+    
+    # EXHAUST RIGHT
+    holoModel(51, "hq_tube")
+    holoPos(51, entity():toWorld(vec(-6,-35,0)))
+    holoAng(51, entity():toWorld(ang(0,0,100)))
+    holoParent(51, entity())
+    holoScaleUnits(51, vec(2,2,10))
+    holoColor(51, vec(200))
+    holoAlpha(51,255)
+    
+    
+    # SPARE HOLOGRAMS
+    #holoPos(48, entity():pos()+vec(0,50+random(3,6),0))
+    #holoPos(51, entity():pos()+vec(0,-50+random(3,6),0))
+    
+    
+    
+    
+    
+    # 44 - 48
+    # 51
+    soundPlay(1, 0, "vehicles/airboat/fan_motor_idle_loop1.wav")
+Force = 100
+}
+
+# DEBUG RANGER HOLOGRAMS
+# 56 55 54 53
+
+#holoPos(52, R1:position()) # REAR RIGHT
+#holoPos(53, R2:position()) # REAR LEFT
+#holoPos(54, R3:position()) # FRONT LEFT
+#holoPos(55, R4:position()) # FRONT RIGHT
+#for(I=53,56){holoScaleUnits(I, vec(1)) holoColor(I, vec(255,0,0))}
+
+
+# WHEEL RANGERS
+R1 = rangerOffset(25, entity():toWorld(vec(12,-23.97,0)), -Car:up())
+R2 = rangerOffset(25, entity():toWorld(vec(-12,-23.97,0)), -Car:up())
+R3 = rangerOffset(25, entity():toWorld(vec(-12,12.02,0)), -Car:up())
+R4 = rangerOffset(25, entity():toWorld(vec(12,12.02,0)), -Car:up())
+
+# RANGER DISTANCE
+D1 = R1:distance()
+D2 = R2:distance()
+D3 = R3:distance()
+D4 = R4:distance()
+
+# BASIC APPLY FORCE
+if(Jumped<=0){
+if(R1:hit()&R1:distance()<25){entity():applyOffsetForce(vec(0,0,Force-(D1+$D1*2)*10),(R1:position()))}
+if(R2:hit()&R2:distance()<25){entity():applyOffsetForce(vec(0,0,Force-(D2+$D2*2)*10),(R2:position()))}
+if(R3:hit()&R3:distance()<25){entity():applyOffsetForce(vec(0,0,Force-(D3+$D3*2)*10),(R3:position()))}
+if(R4:hit()&R4:distance()<25){entity():applyOffsetForce(vec(0,0,Force-(D4+$D4*2)*10),(R4:position()))}
+}
+# NO-HIT STABILIZATION
+Angles = Car:angles():setYaw(0)
+Car:applyAngForce(-(Angles+$Angles*8)*((!R1:hit()+!R2:hit()+!R3:hit()+!R4:hit())/8))
+#if(!R1:hit()&!R2:hit()&!R3:hit()&!R4:hit() & ){}
+
+# VEC VELOCITY NULLYFYING
+ForwardVel=entity():velL():y()
+SidesVel=entity():velL():x()
+if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){
+Car:applyForce(-((Car:forward()*SidesVel/3)+(-Car:right()*ForwardVel/10)))
+AdditionalGravity=0
+}elseif(AdditionalGravity<140){
+AdditionalGravity=0.3+AdditionalGravity+AdditionalGravity/40
+  Car:applyForce(vec(0,0,-AdditionalGravity))
+
+}
+
+# ANG VELOCITY STABILIZATION
+CarYawVel = Car:angVel():yaw()
+if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){
+Car:applyAngForce(ang(0,-CarYawVel*5,0))
+}else{Car:applyAngForce(ang(0,-CarYawVel*15,0))}
+
+
+# YAW DETECTION
+#SeatYaw=Seat:angles():yaw()
+# DOT PRODUCT( credit to Raveos )
+#YawDot=vec(Driver:eye():dot(Seat:right()),Driver:eye():dot(Seat:right()),0):y()
+
+
+# ############################# LOLOLOLOLOLOLOLOLOLOLO
+if(R1:hit()|R2:hit()|R3:hit()|R4:hit()){
+    
+    entity():applyForce((-(Car:right()*TargetSpeed)*((R1:hit()+R2:hit()+R3:hit()+R3:hit())/2)*Nitro))
+    
+    Jump=1
+    DoubleJump=1
+    
+    if(inrange(YawDot,-2,2)){
+if(Driver:keyRight()){YawDot+=0.1}
+if(Driver:keyLeft()){YawDot-=0.1}
+}
+
+if(YawDot>=2){YawDot=2}
+if(YawDot<=-2){YawDot=-2}
+
+}else{entity():applyForce((-(Car:right()*TargetSpeed)))
+
+
+
+if(inrange(YawDot,-6,6)){
+if(Driver:keyRight()){YawDot+=0.1}
+if(Driver:keyLeft()){YawDot-=0.1}
+}
+
+}
+
+if(YawDot>0 & !Driver:keyRight()){YawDot-=0.1}
+if(YawDot<0 & !Driver:keyLeft()){YawDot+=0.1}
+
+
+
+# WHEELS ROTATION(aesthetic)
+
+# KEY CONTROLLED
+#holoAng(54, entity():toWorld(ang(0,-YawDot*20,0)))
+#holoAng(55, entity():toWorld(ang(0,-YawDot*20,0)))
+
+SpeedThing+=Car:velL():y()/24
+
+# VELOCITY
+holoAng(54, entity():toWorld(ang(0,(CarYawVel/3),-SpeedThing)))
+holoAng(55, entity():toWorld(ang(0,(CarYawVel/3),-SpeedThing)))
+holoAng(53, entity():toWorld(ang(0,0,-SpeedThing)))
+holoAng(52, entity():toWorld(ang(0,0,-SpeedThing)))
+
+
+
+# FORWARD MOVEMENT
+if(Driver:keyForward() & inrange(TargetSpeed,0,30)){TargetSpeed+=0.6}
+if(Driver:keyForward() & inrange(TargetSpeed,-20,0)){TargetSpeed+=3}
+
+if(Driver:keyBack() & inrange(TargetSpeed,-22,10)){TargetSpeed-=0.6}
+if(Driver:keyBack() & TargetSpeed>=10){TargetSpeed-=18}
+if(!Driver){TargetSpeed=0}
+
+if(TargetSpeed>0 & !Driver:keyForward()){TargetSpeed-=0.2}
+if(TargetSpeed<0 & !Driver:keyBack()){TargetSpeed+=0.2}
+
+
+
+# MOVEMENT WAS MOVED TO "LOLOLOLOLOLOLOL"
+
+
+# TURNING
+
+if(TargetSpeed>=0){ Car:applyAngForce(ang(0,-clamp((YawDot*(TargetSpeed*5))*2,-320,320),0)) }
+if(TargetSpeed<=0){ Car:applyAngForce(ang(0,clamp((YawDot*(TargetSpeed*5))*2,-320,320),0)) }
+
+#print(4, ():toString())
+
+
+
+
+# SOUND
+soundPitch(1, abs(5*(TargetSpeed)+(Nitro*40)))
+soundVolume(1, Driver:isPlayer()/2)
+
+# FRONT COLLISION RANGER
+rangerFilter(Car)
+rangerFilter(Seat)
+FrontCollsionRanger = rangerOffset(20, Car:pos(), -Car:right())
+
+if(FrontCollsionRanger:hit() & Driver){
+    TargetSpeed=TargetSpeed/8
+    Nitro=0
+    Car:applyForce(Car:right()*80)
+    
+    soundPlay(2, soundDuration("physics/metal/metal_box_impact_hard1.wav"),"physics/metal/metal_box_impact_hard1.wav")
+    soundVolume(2, 0.2)
+}
+
+rangerFilter(Car)
+rangerFilter(Seat)
+rangerFilter(players())
+FlipRanger = rangerOffset(40, Car:pos(), Car:up())
+if(FlipRanger:hit()){
+    Car:applyForce(-Car:up()*80)
+    
+}
+
+
+# NITRO
+if(Driver:keySprint() & TargetSpeed>28){Nitro+=0.02}else{Nitro-=0.02}
+if(Nitro<=1){Nitro=1}
+if(Nitro>=2){Nitro=2}
+if(!Driver){Nitro=0}
+
+# JUMPING
+
+KeyJump = Driver:keyJump()
+
+CarAngles = Car:angles()
+
+if(KeyJump&$KeyJump & Jump==1){
+    
+    Car:applyForce(vec(0,0,8000)+(Car:right()*(-TargetSpeed*400)))
+    #Car:applyAngForce(ang(0,-CarYawVel*10,0))
+    #Car:applyAngForce(-$CarAngles*80)
+    
+    Jump=0
+    
+    soundPitch(4, 40)
+    soundPlay(4, soundDuration("garrysmod/balloon_pop_cute.wav"),"garrysmod/balloon_pop_cute.wav")
+    Jumped=100
+    }
+if(KeyJump&$KeyJump &!R1:hit()&!R2:hit()&!R3:hit()&!R4:hit()&DoubleJump==1){
+
+    soundPitch(4, 40)
+    soundPlay(4, soundDuration("garrysmod/balloon_pop_cute.wav"),"garrysmod/balloon_pop_cute.wav")
+
+    Car:applyForce(vec(0,0,12000)+(Car:right()*(-TargetSpeed*800)))
+    # 
+   # Car:applyAngForce(ang(0,-CarYawVel*80,0))
+    DoubleJump=0
+    Jumped=100
+
+}
+
+if(changed(Driver:keyAttack1())&Driver:keyAttack1()){ 
+    
+   holoEntity(30):soundPlay(30, soundDuration("hl1/fvox/beep.wav"), "hl1/fvox/beep.wav")
+    soundPitch(30, 40)
+    
+    }
+
+Jumped--
+
+# KICKING DRIVER IF OWNER PRESSES USE-KEY ON SEAT
+if(changed(owner():keyUse())&owner():keyUse()&Driver!=owner()&owner():pos():distance(Seat:pos())<100 ){
+    Seat:ejectPod()
+    
+    }
+
+
+
+
+
+
+
+
+
+#holoAng(56, holoEntity(56):angles()+ang(0,45,0))
+
+#Debug = Right1
+#print(1, owner():aimEntity():type())
+
+# FUCKED UP CODE, INSTEAD OF GETTING VELOCITY OF A HOLOGRAM I TOOK ITS FORWARD VECTOR WCHICH INDEED ELIMINATED ROTATION, 
+# BUT DID NOTHING TO COUNTER VECTOR MOVEMENT 
+#[
+Right1=holoEntity(52):right()
+Right2=holoEntity(53):right()
+Right3=holoEntity(54):right()
+Right4=holoEntity(55):right()
+
+if(R1:hit()){entity():applyOffsetForce(-$Right1*30,holoEntity(52):pos())}
+if(R2:hit()){entity():applyOffsetForce(-$Right2*30,holoEntity(53):pos())}
+if(R3:hit()){entity():applyOffsetForce($Right3*30,holoEntity(54):pos())}
+if(R4:hit()){entity():applyOffsetForce($Right4*30,holoEntity(55):pos())}
+]#
+
+
+
+
+# GENERAL FRICTION THAT USES RANGERS, WORKS ON BOTH ANGLES AND VECTOR ,CAN BE REPLACED EASILLY BY ENTITY -VEL SO SCREW THAT.
+#[
+Right1=R1:position()
+Right2=R2:position()
+Right3=R3:position()
+Right4=R4:position()
+
+if(R1:hit()){entity():applyOffsetForce(-$Right1*3,holoEntity(52):pos())}
+if(R2:hit()){entity():applyOffsetForce(-$Right2*3,holoEntity(53):pos())}
+if(R3:hit()){entity():applyOffsetForce(-$Right3*3,holoEntity(54):pos())}
+if(R4:hit()){entity():applyOffsetForce(-$Right4*3,holoEntity(55):pos())}
+]#
+
+
+# TEMP PROT
+#if(owner():name()!="Tek"){
+    #hint("GTFO FAGGET", 999)
+    #selfDestructAll()
+    #}
+
+
+
+
+

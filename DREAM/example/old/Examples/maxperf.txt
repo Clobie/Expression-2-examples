@@ -1,0 +1,8 @@
+@name MAXIMUM PERFORMANCE!
+@inputs 
+@outputs 
+@persist I
+@trigger 
+if(first()){I=0}
+runOnTick(1)
+while(perf(101)){I++}

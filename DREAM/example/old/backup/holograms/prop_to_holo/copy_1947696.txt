@@ -1,0 +1,68 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 1/11/2019 @ 2320
+# Holograms: 
+# Notes: 
+# --------------------------------------------- #
+@name copy_1947696
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/sprops/misc/tubes/size_2/h_tube_24x60.mdl","models/sprops/geometry/qhex_120.mdl","models/sprops/cuboids/height06/size_3/cube_18x24x6.mdl","models/sprops/cuboids/height06/size_3/cube_18x36x6.mdl","models/sprops/misc/domes/size_3/dome_36x60.mdl","models/sprops/rectangles/size_3_5/rect_30x54x3.mdl","models/sprops/cuboids/height06/size_3/cube_18x24x6.mdl","models/sprops/triangles/right/size_4/rtri_48x48.mdl","models/sprops/rectangles/size_3_5/rect_30x54x3.mdl","models/sprops/geometry/qhex_72.mdl","models/sprops/misc/domes/size_4/dome_48x144.mdl","models/hunter/blocks/cube4x8x05.mdl","models/sprops/rectangles/size_3_5/rect_30x54x3.mdl","models/sprops/misc/tubes/size_4/h_tube_48x72.mdl","models/sprops/misc/domes/size_4/dome_48x84.mdl","models/sprops/geometry/qhex_72.mdl","models/sprops/geometry/qhex_72.mdl","models/sprops/triangles/right/size_4/rtri_48x48.mdl","models/sprops/geometry/qhex_144.mdl","models/sprops/cuboids/height06/size_4/cube_24x36x6.mdl","models/hunter/triangles/2x2mirrored.mdl","models/sprops/geometry/qhex_72.mdl","models/hunter/triangles/2x2mirrored.mdl","models/sprops/rectangles/size_3_5/rect_30x54x3.mdl","models/sprops/misc/tubes/size_3/h_tube_36x42.mdl","models/sprops/rectangles/size_2/rect_12x108x3.mdl","models/sprops/rectangles/size_2/rect_12x108x3.mdl","models/sprops/geometry/qhex_72.mdl","models/sprops/cuboids/height06/size_4/cube_24x36x6.mdl","models/sprops/rectangles/size_3_5/rect_30x54x3.mdl","models/sprops/geometry/qhex_72.mdl","models/sprops/geometry/qhex_120.mdl","models/sprops/cuboids/height06/size_3/cube_18x36x6.mdl","models/sprops/cuboids/height06/size_4/cube_24x36x6.mdl","models/sprops/cuboids/height06/size_3/cube_18x60x6.mdl","models/sprops/rectangles/size_3_5/rect_30x54x3.mdl","models/sprops/cuboids/height24/size_4/cube_96x60x24.mdl","models/sprops/cuboids/height06/size_4/cube_24x36x6.mdl","models/sprops/geometry/qhex_120.mdl","models/props_phx/carseat2.mdl","models/sprops/rectangles/size_3_5/rect_30x54x3.mdl","models/sprops/misc/tubes/size_4/tube_48x120.mdl","models/sprops/cuboids/height36/size_2/cube_48x48x36.mdl","models/sprops/geometry/qhex_144.mdl","models/sprops/geometry/qhex_72.mdl","models/sprops/cuboids/height24/size_4/cube_96x60x24.mdl","models/sprops/geometry/qhex_72.mdl","models/sprops/misc/domes/size_3/dome_36x60.mdl","models/sprops/misc/tubes/size_2/h_tube_24x60.mdl","models/sprops/rectangles/size_3_5/rect_30x54x3.mdl","models/sprops/cuboids/height06/size_3/cube_18x60x6.mdl","models/sprops/geometry/qhex_120.mdl","models/sprops/cuboids/height06/size_3/cube_18x24x6.mdl","models/sprops/cuboids/height06/size_3/cube_18x24x6.mdl")
+    Hologram[ "position", array ] = array(vec(-7.3301,320.5142,32.4399),vec(-68.832,258.7656,9.6904),vec(54.5527,176.3127,56.9312),vec(17.1206,289.6248,19.6611),vec(-25.3804,347.0935,39.7954),vec(47.3779,147.9819,3.6113),vec(-61.8208,164.0623,56.9341),vec(-136.1631,170.7493,17.6699),vec(34.0337,146.6218,20.1089),vec(93.0898,171.9404,28.0469),vec(-25.4717,347.7112,23.6353),vec(-10.4937,227.4211,11.9556),vec(-52.752,134.9255,5.9639),vec(-22.1548,315.5652,11.4961),vec(-2.25,143.0906,19.8066),vec(-103.8555,152.2202,7.5288),vec(-72.6206,174.7065,49.5396),vec(128.4346,187.5,18.8135),vec(-44.396,131.0659,50.748),vec(90.9326,177.8938,17.2935),vec(-105.7236,163.5103,14.1763),vec(-100.104,152.6555,27.5376),vec(91.4824,171.3701,15.3096),vec(60.7749,149.2468,20.1133),vec(-23.5776,326.3989,48.9033),vec(49.8638,209.6548,32.9033),vec(-64.585,192.5671,33.0576),vec(-52.9009,177.4963,47.0615),vec(-63.4341,180.9028,47.3052),vec(-39.3481,136.1919,22.4609),vec(43.7524,186.957,49.5376),vec(-68.6255,256.8149,29.6904),vec(-54.5225,282.2258,19.6924),vec(52.939,193.1521,47.3018),vec(-81.3608,254.835,20.2578),vec(-66.0908,133.5654,22.4673),vec(45.2441,197.1179,19.0088),vec(-101.5474,157.3364,17.3843),vec(37.312,268.623,9.4746),vec(-23.2588,336.2,24.6226),vec(-52.4736,134.7986,36.0566),vec(-8.7173,203.1631,19.9785),vec(-16.9395,263.875,18.0957),vec(35.4341,134.8193,48.2446),vec(63.4712,189.7476,47.0576),vec(-61.168,185.9282,19.0107),vec(93.7217,172.0364,8.4785),vec(-21.3096,307.0608,39.9473),vec(-37.8188,317.7615,32.4814),vec(47.6445,147.854,33.7041),vec(49.0688,268.415,19.0894),vec(37.1084,270.5713,29.4756),vec(-113.9048,142.3008,17.1533),vec(106.1455,165.7576,17.5259))
+    Hologram[ "angle", array ] = array(ang(45.0015,6.0035,0.0014),ang(-0.0015,-173.9975,89.9991),ang(-0.6781,-174.131,-15.8002),ang(0.0051,6.0026,-89.9868),ang(-0.0015,-173.9975,89.999),ang(-0.0014,-84.1757,0.0035),ang(-0.6781,-174.131,-15.8002),ang(0.0947,-178.5894,89.6072),ang(0.0012,-83.9974,-89.9919),ang(-0.001,96.0026,90.0015),ang(0.0015,6.0026,-89.999),ang(-0.001,0.5927,-0.0053),ang(-0.0015,-84.1757,-0.0166),ang(-0.0015,-173.9975,179.999),ang(-0.1879,-174.0777,-89.9309),ang(0.0998,96.1081,-90.1332),ang(-8.6289,95.2593,2.5816),ang(-0.1082,-0.8873,-89.7201),ang(-0.001,96.0026,-44.9985),ang(-0.3915,-23.2097,-89.4251),ang(-0.2004,137.0819,-0.3404),ang(0.0998,96.1081,-90.1332),ang(-0.2901,45.5277,-179.9026),ang(0.001,-83.9975,90.0082),ang(-0.0015,-173.9975,-0.001),ang(0.0054,96.4641,0.1894),ang(0.1478,-83.3837,-0.0862),ang(0.1047,95.9865,-0.1446),ang(-45.0266,-84.0038,0.0276),ang(0.0009,-83.9974,89.9887),ang(-8.6289,95.2593,2.5816),ang(-0.0015,-173.9975,89.9991),ang(-0.0015,-173.9975,89.999),ang(-45.0266,-84.0038,0.0276),ang(0.3332,-112.4117,90.2899),ang(0.001,-83.9975,-90.0113),ang(0.0015,6.0026,0.001),ang(0.3874,-144.7852,90.5742),ang(0.0015,6.0026,-89.9989),ang(0.0015,6.0026,0.001),ang(-0.001,96.0026,0.0122),ang(0.0015,6.0029,0.001),ang(0.0015,6.0026,0.001),ang(-0.001,96.0025,45.0015),ang(0.1047,95.9865,-0.1446),ang(0.0015,6.0026,0.001),ang(-0.001,96.0026,90.0015),ang(0.0015,6.0026,90.001),ang(44.9985,-173.9984,-0.0014),ang(-0.0012,96.0026,-0.0083),ang(-0.319,-55.5832,-89.7065),ang(0.0015,6.0026,-89.9989),ang(89.9715,-173.9975,0),ang(-89.9656,-173.9975,0))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,179,255,255,255,255,255,255,0,255,255,255,255,255,255,255,255,255,255,255,255,179,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,179,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","WTP/metal_3","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite","models/debug/debugwhite")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else {
+            for( I = 1, Hologram[ "model", array ]:count( ) ) {holoParent(I, Hologram["parent", array][I, number]) }
+            interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

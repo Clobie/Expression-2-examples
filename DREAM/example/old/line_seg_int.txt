@@ -1,0 +1,37 @@
+@name line_seg_int
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+if (first()) {
+    
+    holoCreate(1)
+    holoCreate(2)
+    holoColor(1, vec(0, 255, 0))
+    holoColor(2, vec(255, 255, 0))
+    holoCreate(3)
+    holoAlpha(3, 50)
+
+    function number lDir( PointA:vector2, PointB:vector2, PointC:vector2 ) {
+        local A = (PointB[1] - PointA[1])*(PointC[2] - PointA[2])
+        local B = (PointC[1] - PointA[1])*(PointB[2] - PointA[2])
+        return sign(A - B)
+    }
+    
+    function number lineSegmentIntersection( [LineAP1 LineAP2]:vector2, [LineBP1 LineBP2]:vector2 ) {
+        holoPos(1, vec((LineAP1 + LineAP2)/2) + entity():pos())
+        holoScale(1, vec((LineAP1 - LineAP2):length(), 5, 5)/12)
+        holoAng(1,  vec(LineAP1 - LineAP2):toAngle())
+        holoPos(2, vec((LineBP1 + LineBP2)/2) + entity():pos())
+        holoScale(2, vec((LineBP1 - LineBP2):length(), 5, 5)/12)
+        holoAng(2,  vec(LineBP1 - LineBP2):toAngle())
+        holoPos(3, entity():pos() + vec(LineBP2))
+        return lDir(LineAP1, LineAP2, LineBP1) != lDir(LineAP1, LineAP2, LineBP2) & lDir(LineBP1, LineBP2, LineAP1) != lDir(LineBP1, LineBP2, LineAP2)
+    }
+}
+
+interval(60)
+TR = entity():toLocal(owner():eyeTrace():position())
+I = lineSegmentIntersection( vec2(), vec2(100,0), vec2(50,-50), vec2( TR ))
+holoColor(2, I ? vec(255,0,0) : vec(255,255,0))

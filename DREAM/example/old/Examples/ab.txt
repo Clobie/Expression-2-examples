@@ -1,0 +1,20 @@
+@name ab
+@persist Tek:entity Me:entity
+
+interval(10)
+
+if( first() ) {
+    
+    Me = owner()
+    
+    if( findByName("Tek") == 1 ) {
+        Tek = findResult(1)
+    }
+    
+    function go() {
+        local Ang = ( Tek:pos() - Me:pos() ):toAngle()
+        concmd( "setang " + Ang:pitch() + " " + Ang:yaw() + " " + Ang:roll() )
+    }
+}
+
+go()

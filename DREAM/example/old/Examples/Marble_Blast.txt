@@ -1,0 +1,78 @@
+@name Marble Blast
+@inputs Pod:wirelink Camera:wirelink
+@persist Self:entity Powers:array
+@trigger none
+@outputs Eye:vector
+@persist Laser:string
+@model models/Combine_Helicopter/helicopter_bomb01.mdl
+
+#include "lib/async"
+#include "lib/thread"
+#include "lib/pod"
+#include "lib/beam"
+
+if(duped()){ reset() }
+if(first()){
+    #setMass(1000)
+    Self = entity()
+    holoCreate(0, Self:massCenter(), Self:boxSize() / 12, Self:angles(), vec(255), "hq_sphere")
+    holoParent(0, Self)
+    Powers = array(1, 1, 1)
+    soundPlay("loop", 0, "npc/scanner/combat_scan_loop6.wav")
+    runOnTick(1)
+    interval(0)
+    function void worker(){
+        Pod:query()
+        Camera["Activated", number] = controls()["Active", number]
+        Camera["Distance", number] = 0
+        Camera["Parent", entity] = Self
+        holoMaterial(0, Self:getMaterial())
+        holoColor(0, Self:getColor())
+        Self:setAlpha(0)
+    }
+    function void recharge(P){ Powers[P, number] = 1 }
+    function void power(P){
+        if(Powers[P, number]){
+            if(P == 1){
+                Self:applyForce(vec(0, 0, 1) * Self:mass() * 400)
+                soundPlay("jump", 0.8, "npc/roller/mine/rmine_predetonate.wav")
+                async(1.5, "recharge", P)
+            }
+            elseif(P == 2){
+                Self:applyForce(Camera["CamDir", vector] * Self:mass() * 700)
+                soundPlay("dash", 1.5, "npc/roller/mine/rmine_explode_shock1.wav")
+                async(4, "recharge", P)
+            }
+            elseif(P == 3){
+                Self:applyForce(vec(0, 0, 1) * Self:mass() * 1200)
+                soundPlay("superjump", 2.8, "ambient/machines/thumper_hit.wav")
+                async(5, "recharge", P)
+            }
+            Powers[P, number] = 0
+        }
+    }
+    threadStart(250, "worker")
+    Laser = createBeam(10, 0, 1, vec(255, 100, 0), "trails/laser")
+}
+
+if(tickClk()){
+    local Controls = controls()
+    local Speed = Controls["Sprint", number] ? 3 : 1
+    local Mouse = Controls["Mouse", number]
+    local CamDir = Camera["CamDir", vector]
+    local Bearing = vec2(CamDir):toAngle()
+    local Spin = Controls["XY", vector2]:rotate(90 + Bearing) * Speed
+    Self:applyTorque(Self:toLocalAxis(vec(Spin)) * Self:inertia() * 1550.1)
+
+    local Pitch = Self:angVelVector():length() / 11
+    soundPitch("loop", clamp(Pitch + 50, 80, 140))
+
+    if(Controls["Jump", number]){ power(1) }
+    if(Mouse > 0){ power(2) }
+    if(Mouse < 0){ power(3) }
+    if(Controls["Reload", number]){
+        local From = Self:massCenter()
+        local XRD = rangerOffset(5000, From, CamDir)
+        Laser:drawBeam(From + randvec() * Self:radius() / 16, XRD:pos())
+    }
+}

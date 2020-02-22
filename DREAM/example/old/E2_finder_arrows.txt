@@ -1,0 +1,109 @@
+@name e2
+@persist Arrow:array E2:array Timer
+
+if( first() || duped() ) {
+    function void async( T, F:string               ) { timer( format( "cb:%.0f:%s:null:%s", randint( 1e15 ), F, vonEncode( array( ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:angle      ) { timer( format( "cb:%.0f:%s:a:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:bone       ) { timer( format( "cb:%.0f:%s:b:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:complex    ) { timer( format( "cb:%.0f:%s:c:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:entity     ) { timer( format( "cb:%.0f:%s:e:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:matrix     ) { timer( format( "cb:%.0f:%s:m:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:number     ) { timer( format( "cb:%.0f:%s:n:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:quaternion ) { timer( format( "cb:%.0f:%s:q:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:array      ) { timer( format( "cb:%.0f:%s:r:%s",    randint( 1e15 ), F, vonEncode( X ) ), T * 1000 )        }
+    function void async( T, F:string, X:string     ) { timer( format( "cb:%.0f:%s:s:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:table      ) { timer( format( "cb:%.0f:%s:t:%s",    randint( 1e15 ), F, vonEncode( X ) ), T * 1000 ) }
+    function void async( T, F:string, X:vector     ) { timer( format( "cb:%.0f:%s:v:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:matrix2    ) { timer( format( "cb:%.0f:%s:xm2:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:matrix4    ) { timer( format( "cb:%.0f:%s:xm4:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:ranger     ) { timer( format( "cb:%.0f:%s:xrd:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:vector2    ) { timer( format( "cb:%.0f:%s:xv2:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:vector4    ) { timer( format( "cb:%.0f:%s:xv4:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:wirelink   ) { timer( format( "cb:%.0f:%s:xwl:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+}
+
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) {
+            case "null", F( ), break
+            case "a", F( R[ 1, angle ] ), break
+            case "b", F( R[ 1, bone ] ), break
+            case "c", F( R[ 1, complex ] ), break
+            case "e", F( R[ 1, entity ] ), break
+            case "m", F( R[ 1, matrix ] ), break
+            case "n", F( R[ 1, number ] ), break
+            case "q", F( R[ 1, quaternion ] ), break
+            case "r", F( R ), break
+            case "s", F( R[ 1, string ] ), break
+            case "t", F( vonDecodeTable( Match[ 3, string ] ) ), break
+            case "v", F( R[ 1, vector ] ), break
+            case "xm2", F( R[ 1, matrix2 ] ), break
+            case "xm4", F( R[ 1, matrix4 ] ), break
+            case "xrd", F( R[ 1, ranger ] ), break
+            case "xv2", F( R[ 1, vector2 ] ), break
+            case "xv4", F( R[ 1, vector4 ] ), break
+            case "xwl", F( R[ 1, wirelink ] ), break
+        }
+        exit()
+    }
+}
+
+
+interval(50)
+
+if( first() ) {
+    
+    function number uid() {
+        return randint(2e10)
+    }
+    
+    function number createArrow() {
+        local I_BASE = uid()
+        holoCreate( I_BASE )
+        holoModel( I_BASE, "models/holograms/pyramid.mdl" )
+        holoAng( I_BASE, ang(180,0,0) )
+        holoColor( I_BASE, vec(100,255,50) )
+        holoScale( I_BASE, vec(4) )
+        local I_SHAFT = I_BASE + 1
+        holoCreate( I_SHAFT )
+        holoModel( I_SHAFT, "models/holograms/cube.mdl" )
+        holoPos( I_SHAFT, holoEntity( I_BASE ):pos() + vec(0,0,84) )
+        holoAng( I_SHAFT, ang(0,45,90) )
+        holoColor( I_SHAFT, vec(100,255,50) )
+        holoScale( I_SHAFT, vec(1,10,1) )
+        holoParent( I_SHAFT, I_BASE )
+        return I_BASE
+    }
+    
+    function e2s() {
+        findByClass("*prop*")
+        findIncludePlayerProps( "civil" )
+        E2 = findToArray()
+        async( 0.1, "e2s" )
+    }
+    
+    e2s()
+    print( 10000/255 )
+}
+
+if( clk() ) {
+    
+    Timer++
+    
+    if( E2:count() > Arrow:count() ) { Arrow:pushNumber( createArrow() ) }
+    elseif( E2:count() == Arrow:count() ) {
+        for( I = 1, E2:count() ) {
+            holoPos( Arrow[I, number], E2[I, entity]:pos() + vec(0,0, 200 + (sin(Timer*4) * 25)) )
+            holoAng( Arrow[I, number], ang( 180, Timer,0) )
+            print( E2[ I, entity ]:name( ) )
+            #holoColor( Arrow[I, number], vec( E2[I, entity]:ops() / 39.2, 255 - E2[I, entity]:ops() / 39.2, 0 ) )
+            #holoColor( Arrow[I, number] + 1, vec( E2[I, entity]:ops() / 39.2, 255 - E2[I, entity]:ops() / 39.2, 0 ) )
+        }
+    } else {
+        holoDelete( Arrow[Arrow:count(), number] )
+        Arrow:remove( Arrow:count() )
+    }
+}

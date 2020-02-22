@@ -1,0 +1,44 @@
+@name Player Finder
+@persist Toggle:number Player:array Me:entity
+
+interval(100)
+
+if(first())
+{
+    Toggle = 0
+    Me = owner()
+    local Player = players()
+    for(I = 1, Player:count())
+    {
+        holoCreate(I)
+        holoModel(I, "cube")
+        holoScale(I, vec(0.1, 0.1, 0.1))
+        holoEntity(I):setTrails(0.5, 0.5, 10, "trails/smoke", vec(255,0,0), 255)
+        #holoPos(I, Player[I, entity]:pos())
+        holoParent(I, Me)
+    }
+    timer("moveTarget", 250)
+}
+
+
+if( clk( "moveTarget" ) )
+{
+    print("Move target")
+    local P = players()
+    for(I = 1, P:count())
+    {
+        holoPos(I, P[I, entity]:pos())
+    }
+    timer("moveBack", 250)
+}
+
+if( clk( "moveBack" ) )
+{
+    local P = players()
+    print("Move back")
+    for(I = 1, P:count())
+    {
+        holoPos(I, Me:pos())
+    }
+    timer("moveTarget", 250)
+}

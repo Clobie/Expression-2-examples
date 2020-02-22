@@ -1,0 +1,30 @@
+@name Tek
+@persist [Caleb Tek]:entity A:number
+
+interval( 10 )
+
+if( first() )
+{
+    Caleb = owner()
+    Tek = findPlayerByName("Tek")
+    holoCreate(1)
+    holoModel(1, "models/sprops/cylinders/size_1/cylinder_1_5x480.mdl")
+    holoMaterial(1, "debug/debugdrawflat")
+    #holoMaterial(1, "models/effects/splodearc_sheet")
+    #holoColor(1, vec(255,0,255))
+    holoColor(1, teamColor(Tek:team()))
+    #holoAlpha(1, 150)
+    A = 0
+}
+elseif( clk() )
+{
+    A += 1
+    if( A >= 359 ) { A = 0 }
+    local VectorMid = (Caleb:pos() + Tek:pos()) / 2
+    holoPos( 1, VectorMid + vec(0,0,3) )
+    holoAng( 1, (Tek:pos()- Caleb:pos()):toAngle() + ang( 90,0,0 ) )
+    #holoScaleUnits( 1, vec(3 + sin(realtime()*25)*2, 3 + sin(realtime()*25)*2, Tek:pos():distance(Caleb:pos())) )
+    holoScaleUnits( 1, vec( 5, 5, Tek:pos():distance(Caleb:pos())) )
+    #holoColor(1, vec( 100 + (sin(realtime()*250)*20) ))
+    #holoAlpha(1, 100 + (sin(realtime()*500)*20))
+}

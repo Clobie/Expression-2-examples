@@ -1,0 +1,52 @@
+@name This isn't an E2, move along
+@persist [Me Chip Target]:entity
+@persist Player:array
+
+interval(25)
+
+if( first() )
+{
+    runOnChat(1)
+    Me = owner()
+    Chip = entity()
+    Target = Me
+    Player = players()
+    for(I = 1, Player:count())
+    {
+        holoCreate(I)
+        holoModel(I, "models/sprops/rectangles_thin/size_1/rect_3x480x1_5.mdl")
+        holoMaterial(I, "debug/debugdrawflat")
+        if(Player[I, entity] == Me) { holoAlpha(I, 0) } else { holoAlpha(I, 200) }
+        holoColor(I, vec(255,0,0))
+    }
+}
+elseif( clk() )
+{
+    for(I = 1, Player:count())
+    {
+        if(Player[I, entity] == Me) { continue }
+        local VectorMid = (Me:pos() + Player[I, entity]:pos()) / 2
+        holoPos( I, VectorMid )
+        holoAng( I, (Player[I, entity]:pos() - VectorMid):toAngle() )
+        holoScaleUnits( I, vec(Player[I, entity]:pos():distance(Me:pos()), 1, 1) )
+        holoColor( I, teamColor( Player[I, entity]:team() ) )
+    }
+}
+elseif( chatClk(Me) )
+{
+    local S = Me:lastSaid()
+    local Param = S:explode(" ")
+    local Command = Param[1, string]
+    
+    if( Command == "/t" )
+    {
+        hideChat(1)
+        Target = findPlayerByName( Param[2, string] )
+        print("Target: " + Target:name() )
+    }
+    elseif( Command == "/?" )
+    {
+        hideChat(1)
+        print( holoScaleUnits(1) )
+    }
+}

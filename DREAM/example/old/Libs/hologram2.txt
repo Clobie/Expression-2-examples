@@ -1,0 +1,106 @@
+@persist DATA:string
+
+##include "libs/vars"
+#include "libs/heap2"
+##include "libs/async"
+
+if( first() ) {
+    
+    function hcreatedefault() {
+        "position_local"
+        "position_world"
+        "color"
+        "scale"
+        "scaleunits"
+        "alpha"
+        "shading"
+        "parent"
+        "renderfx"
+        "shadow"
+        "skin"
+        "material"
+        "model"
+        "angle"
+        "active"
+    }
+    
+    # hcreate()             create a re-useable hologram like snek did with holotext
+    function hcreate() {
+        local T = table()
+        local H = new()
+        holoCreate( H:toNumber() )
+    }
+    hcreate()
+    
+    # hspawn()              spawn the re-useable (or default, if absent) hologram
+    function hspawn() {
+        
+    }
+    
+    # hdelete()             delete hologram
+    # hdelete()             delete set of holograms (selected?)
+    # hdeleteall()          delete all holograms
+    
+    # hpos(), hang(), etc   GET/SET
+    
+    # hobj()                GET hologram object at the "pretend" index - ALWAYS A STRING && USES A STRING
+    # hindex()              GET the "pretend" index from the hologram obj - ALWAYS A STRING && USES A STRING
+    # hcount()              simply get hologram count
+    
+    # hpushbuffer()         push hologram data to buffer
+    # hpullbuffer()         get hologram data from buffer
+    # hclearbuffer()        clear buffer
+    # hspawnbuffer()        spawn what is in the buffer
+    # hsavebuffer()         save what is in the buffer
+    # hloadbuffer()         load to buffer ( from file? idk, maybe delete this function and just use hpushbuffer() )
+    
+    # keyboard stuff...
+    
+    # XYZ mouse drag
+    # PYR mouse drag
+    
+    # RGB color selecter
+    
+    # MENU!!
+    # miniature-model display
+    # count display
+    # index display
+    # buffer display
+    # pos
+    # ang
+    # save current hologram data to the hcreate() default set
+    # remaining holograms
+    # MATERIAL LIST AND MOST USED MATERIAL SAVE MENU - ALLOW SAVING MATERIALS FOR RE-USE!!
+    
+    # XYZ indicator
+    
+    # vector and angle rounding
+    
+    # mirror XYZ around center
+    # mirror XYZ around other hologram
+    # mirror PYR
+    # copy XYZ of hologram
+    # copy PYR of hologram
+    # copy any attribute of other hologram
+    # parent multiple holos at once
+    # UNDO / REDO!!
+    # cloning other holograms AND sets of holograms
+    # saving / loading
+    # AUTOSAVE
+    # HOLOGRAM TEXT!
+    
+    # SPAWN AN ALPHA'D PROP AS AN ANCHOR? - MOVE HOLOGRAMS WITH PHYSGUN! - WHO KNOWS...
+    
+    # TURRET TESTING - MULTI-AXIS
+    # TRAJECTORY TESTING
+    
+    # SIMPLEST FILE OUTPUT EVER
+    
+    # ENTITY PARENTING
+    # ENTITY INTEGRATION
+    # ENTITY SPAWNING ( also saving, spawning inside output file, etc! )
+    # Basically I want to enable the use of regular props as well as holograms.
+    
+    # LIST of renderfx stuff
+    
+}

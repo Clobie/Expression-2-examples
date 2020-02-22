@@ -1,0 +1,125 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/29/2018 @ 1449
+# Holograms: 10
+# Notes: 
+# 1 -> base
+# 2 -> FL
+# 3 -> FR
+# 4 -> RL
+# 5 -> RR
+# --------------------------------------------- #
+@name mechbodtest
+@persist Hologram:table Body:entity HE:table Seat:entity
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(0,1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("","","","","","","","","","")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            holoParent(I, Hologram["parent", array][I, number])
+            HE[ I, entity ] = holoEntity( I )
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 ) } else {
+            Seat = seatSpawn( "models/nova/airboat_seat.mdl", holoEntity( 1 ):toWorld( vec( 0, 0, 0 ) ), holoEntity( 1 ):angles( ) - ang( 0, 90, 0 ), 0 )
+            Seat:parentTo( holoEntity( 1 ) )
+            Seat:setAlpha( 255 )
+            Seat:propFreeze( 0 )
+            #holoPos( 1, entity():pos() )
+            #holoParent( 1, entity() )
+            Body = holoEntity( 1 )
+            interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+    local Driver = Seat:driver()
+    
+    # Rangers for feet
+    local R = array(
+        ( Body:right( ) * -1 + Body:forward( ) ),
+        ( Body:right( ) * 1 + Body:forward( ) ),
+        ( Body:right( ) * -1 + Body:forward( ) * -1 ),
+        ( Body:right( ) * 1 + Body:forward( ) * -1 )
+    )
+    for( I = 1, 4 ) {
+        local XRD = rangerOffset( 50, Body:pos( ), R[ I, vector ]:normalized() )
+        if( !XRD:hit() ) {
+            XRD = rangerOffset( 50, XRD:position(), Body:up() * -1 )
+            if( !XRD:hit() ) {
+                XRD = rangerOffset( 50, XRD:position(), vec(0,0,-1) )
+            }
+        }
+        holoPos( I + 1, XRD:position() )
+    }
+    
+    # Body ang
+    local Ang = ang(
+        ( ( HE[2, entity]:pos( ) + HE[3, entity]:pos( ) ) / 2 - ( HE[4, entity]:pos( ) + HE[5, entity]:pos( ) ) / 2 ):toAngle( ):pitch( ),
+        0,
+        ( ( HE[3, entity]:pos( ) + HE[5, entity]:pos( ) ) / 2 - ( HE[2, entity]:pos( ) + HE[4, entity]:pos( ) ) / 2 ):toAngle( ):pitch( )
+    )
+    
+    # gotta fix this with quaternions
+    local Bearing = bearing(Body:pos(), Body:angles(), Driver:eyeTrace():position())
+    local Yaw =  Body:angles():yaw() - Bearing / 20
+    if( abs( Bearing ) < 20 ) { Yaw = Body:angles( ):yaw( ) }
+    #Ang:setYaw( Body:toLocal( ang(0,Yaw,0) ):yaw() )
+    Ang = Ang + ang(0,Yaw,0)
+    holoAng( 1, Ang )
+    
+    # Ranger for body
+    local XRD = rangerOffset( 300, Body:pos(), Body:up() * -1 )
+    holoPos( 6, XRD:position() )
+    if( XRD:hit() ) {
+        holoPos( 1, XRD:position() + ( Body:up() * 30 ) )
+    }
+    
+    local Controls = vec( 
+        Driver:keyForward( ) - Driver:keyBack( ), 
+        Driver:keyLeft( )    - Driver:keyRight( ), 
+        Driver:keyJump( )    - Driver:keyWalk( )
+    ):normalized( ):rotate( HE[ 1, entity ]:forward( ):toAngle( ) )
+    
+    holoPos( 1, ( HE[ 1, entity ]:pos() + Controls * 2 ) )
+    
+}
+
+
+
+
+

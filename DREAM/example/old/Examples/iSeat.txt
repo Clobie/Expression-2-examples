@@ -1,0 +1,570 @@
+@name iSeat
+@outputs [Seat Driver]:entity RTimer T1 T2 T3 T4 T5 Mode Mat1:string Pitch Roll SeatAng:angle SeatVecVel:vector Acceleration Nitro YawDot PitchDot M2 YawDotTemp 
+@outputs PitchDotTemp TrailMode FrontRanger:ranger NoDriverTimer SwitchTimer Autopilot LRanger:ranger RRanger:ranger
+
+runOnTick(1)
+runOnChat(1)
+
+
+Driver = Seat:driver()
+
+if(first()){
+    
+    Autopilot = 0
+    
+    
+    entity():setAlpha(0)
+   # Seat:setMass(50000)
+    #Mode=1
+    Mat1="models/props_canal/metalwall005b"
+    Nitro=1
+    
+    
+    Seat= entity():isWeldedTo()
+    Seat:setAlpha(255)
+    for(I=1,14){
+        holoCreate(I)
+        holoPos(I, entity():boxCenterW()+vec(0,0,80)) # delete later
+        #holoColor(I, randvec(40,255))
+        #holoDisableShading(I, 1)
+    }
+    
+    
+    # models/xqm/afterburner1.mdl
+    
+    # MOVING CORE
+    Core =holoEntity(1)
+    holoPos(1, Seat:toWorld(vec(0,30,14)))
+    holoAng(1, Seat:toWorld(ang(0,0,0)))
+    holoScaleUnits(1, vec(9))
+    #holoMaterial(1, "bull/various/subwoofer")
+    #holoModel(1, "models/xqm/afterburner1.mdl")
+    #holoColor(1, vec(0))
+    holoParent(1, Seat)
+    holoAlpha(1,0)
+    
+    #THRUSTER BASE - STATIC PART
+    holoPos(2, Seat:toWorld(vec(0,-21,14)))
+    holoAng(2, Seat:toWorld(ang(0,0,90)))
+    holoScaleUnits(2, vec(9))
+    #holoMaterial(2, "bull/various/subwoofer")
+    holoModel(2, "models/xqm/afterburner1.mdl")
+    #holoColor(2, vec(0))
+    holoParent(2, Seat)
+    holoClipEnabled(2,1,1)
+    holoClip(2,1,vec(0,0,-8.1),vec(0,0,-1),0)
+    
+    
+    ############### 
+    #holoAlpha(2, 0)
+    #holoAlpha(5, 0)
+    
+    #THRUSTER BASE2 - MOVING PART
+    holoPos(3, Seat:toWorld(vec(0,21,14)))
+    holoAng(3, Seat:toWorld(ang(0,0,90)))
+    holoScaleUnits(3, vec(9))
+    #holoMaterial(3, "bull/various/subwoofer")
+    holoModel(3, "models/xqm/afterburner1.mdl")
+    #holoColor(3, vec(0))
+    holoParent(3, Core)
+    holoClipEnabled(3,1,1)
+    holoClip(3,1,vec(0,0,-8.1),vec(0,0,1),0)
+    
+    # MOVING PART COVER
+    holoPos(4, Seat:toWorld(vec(-0.1,29,14)))
+    holoAng(4, Seat:toWorld(ang(0,0,90)))
+    holoScaleUnits(4, vec(16,16,0.4))
+    holoMaterial(4, "bull/various/subwoofer")
+    holoModel(4, "hq_cylinder")
+    #holoColor(4, vec(0))
+    holoParent(4, Core)
+    holoAlpha(4, 0)
+    
+    # STATIC PART COVER
+    holoPos(5, Seat:toWorld(vec(-0.1,-12.9,14)))
+    holoAng(5, Seat:toWorld(ang(0,0,90)))
+    holoScaleUnits(5, vec(15.9,15.9,0.4))
+    holoMaterial(5, "bull/various/subwoofer")
+    holoModel(5, "hq_cylinder")
+    #holoColor(5, vec(0))
+    holoParent(5, Seat)
+    holoAlpha(5, 0)
+    
+    # NEAR STATIC OCTAGON
+    holoPos(6, Seat:toWorld(vec(-0.3,56,13.3)))
+    holoAng(6, Seat:toWorld(ang(200,0,90)))
+    holoScaleUnits(6, vec(1.8,1.8,1))
+    #holoMaterial(6, Mat1)
+    holoModel(6, "models/props_wasteland/laundry_washer001a.mdl")
+    #holoColor(6, vec(0))
+    holoParent(6, Core)
+    
+    # NEAR STATIC OCTAGON-BASE
+    holoPos(7, Seat:toWorld(vec(0,59,14)))
+    holoAng(7, Seat:toWorld(ang(20,0,90)))
+    holoScaleUnits(7, vec(13.5,13.5,3))
+    holoMaterial(7, Mat1)
+    holoModel(7, "hq_cylinder")
+    #holoColor(7, vec(0))
+    holoParent(7, Core)
+    
+    # NEAR MOVING OCTAGON
+    holoPos(8, Seat:toWorld(vec(0.3,28,13.3)))
+    holoAng(8, Seat:toWorld(ang(-20,0,-90)))
+    holoScaleUnits(8, vec(1.8,1.8,1))
+    #holoMaterial(8, Mat1)
+    holoModel(8, "models/props_wasteland/laundry_washer001a.mdl")
+    #holoColor(8, vec(0))
+    holoParent(8, Core)
+    
+    # NEAR STATIC OCTAGON-BASE
+    holoPos(9, Seat:toWorld(vec(0,28,14)))
+    holoAng(9, Seat:toWorld(ang(20,0,90)))
+    holoScaleUnits(9, vec(13.5,13.5,3))
+    holoMaterial(9, Mat1)
+    holoModel(9, "hq_cylinder")
+    #holoColor(9, vec(0))
+    holoParent(9, Core)
+    
+    # WING 1
+    holoPos(10, Seat:toWorld(vec(30,-30,14.1)))
+    holoAng(10, Seat:toWorld(ang(0,90,0)))
+    holoScale(10, vec(0.8,0.8,1.0))
+    holoMaterial(10, Mat1)
+    holoModel(10, "models/xqm/jetwing2.mdl")
+    #holoColor(10, vec(0))
+    holoParent(10, Seat)
+    holoAlpha(10,0)
+    
+    # WING 2
+    holoPos(11, Seat:toWorld(vec(-30,-30,14.1)))
+    holoAng(11, Seat:toWorld(ang(180,-90,0)))
+    holoScale(11, vec(0.8,0.8,1.0))
+    holoMaterial(11, Mat1)
+    holoModel(11, "models/xqm/jetwing2.mdl")
+    #holoColor(11, vec(0))
+    holoParent(11, Seat)
+    holoAlpha(11,0)
+    
+    # MID BOX
+    holoPos(12, Seat:toWorld(vec(0,40,14)))
+    holoAng(12, Seat:toWorld(ang(0,0,0)))
+    holoScaleUnits(12, vec(3,30,6))
+    holoMaterial(12, "debug/debugdrawflat")
+    #holoModel(12, "models/xqm/jetwing2.mdl")
+    holoColor(12, vec(0))
+    holoParent(12, Core)
+    
+    # DECAL 1
+    holoPos(13, Seat:toWorld(vec(-0.2,44,17.8)))
+    holoAng(13, Seat:toWorld(ang(0,90,0)))
+    holoScale(13,vec(0.28,0.1,0.1))
+    #holoMaterial(13, Mat1)
+    holoModel(13, "models/props_wasteland/laundry_washer003.mdl")
+    #holoColor(13, vec(0))
+    holoParent(13, Core)
+    
+    # DECAL 2
+    holoPos(14, Seat:toWorld(vec(0.2,44,10.2)))
+    holoAng(14, Seat:toWorld(ang(0,90,180)))
+    holoScale(14,vec(0.28,0.1,0.1))
+    #holoMaterial(14, Mat1)
+    holoModel(14, "models/props_wasteland/laundry_washer003.mdl")
+    #holoColor(14, vec(0))
+    holoParent(14, Core)
+    
+    # MID BOX ENERGY 1
+    #holoPos(15, Seat:toWorld(vec(0,40,14)))
+    holoAng(15, Seat:toWorld(ang(0,0,0)))
+    holoScaleUnits(15, vec(4,30,6))
+    #holoMaterial(15, "models/props_combine/combine_fenceglow")
+    #holoModel(15, "models/xqm/jetwing2.mdl")
+    holoColor(15, vec(0))
+    holoParent(15, Core)
+    
+    
+    # ALPHAING
+    for(I=5,14){holoAlpha(I, 0)}
+    
+    
+    # SOUNDS
+    holoEntity(1):soundPlay(1, 0, "doors/doormove1.wav")
+    soundVolume(1, 0)
+    
+    holoEntity(8):soundPlay(8, 0, "thrusters/rocket01.wav")
+    soundVolume(8, 0)
+}
+
+if(Mode==1){
+    T1+=1
+    if(T1>80){Mode=2 
+        holoEntity(2):soundPlay(2, 0, "doors/doormove3.wav")
+        soundPitch(2, 150)}
+    holoAng(1, Seat:toWorld(ang(sin(T1)*368,0,0)))
+    soundVolume(1,1)
+    soundPitch(1, T1*12)
+    
+    #for(I=3,15){} 
+    
+    holoAng(5, Seat:toWorld(ang(sin(T1)*368,0,90)))
+       
+    holoClip(5,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(6,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(7,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(8,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(9,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(12,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(13,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(14,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(15,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    
+for(I=3,15){
+    
+    #if(I==10|I==11){continue}
+    holoClipEnabled(I,1,1)
+    holoAlpha(I,255)
+    }
+    holoAlpha(10, 0)
+    holoAlpha(11, 0)
+    holoClip(10,1,Seat:pos(),-Seat:right(),1)
+    holoClip(11,1,Seat:pos(),Seat:right(),1)
+    }
+if(Mode==2){
+    soundVolume(1,0)
+    
+    T2+=2
+    if(T2>160){Mode=3 
+        holoEntity(3):soundPlay(3, 0, "doors/doormove2.wav")
+        soundPitch(3, 200)
+        }
+    holoPos(10, Seat:toWorld(vec(30-sin(T2/2)*60,-30,14.1)))
+    holoPos(11, Seat:toWorld(vec(-30+sin(T2/2)*60,-30,14.1)))
+    
+    holoAlpha(10,255)
+    holoAlpha(11,255)
+    
+    
+    holoClipEnabled(10,1,1)
+    holoClip(10,1,Seat:pos(),-Seat:right(),1)
+    
+    holoClipEnabled(11,1,1)
+    holoClip(11,1,Seat:pos(),Seat:right(),1)
+    
+    }
+    
+if(Mode==3){
+    
+        for(I=5,20){holoClipEnabled(I, 0)}
+    
+    Mode=20 
+}
+    
+    holoPos(1, Seat:toWorld(vec(0,-4+sin(-12-T1)*38,14)))
+
+#############################################################
+# ACTIVATION VIA DRIVER
+if(Driver:isValid()){RTimer+=3}else{RTimer=0}
+if(!Mode & RTimer>80){Mode=1}
+
+# ACTIVATION VIA OWNER SEAT CLICK
+#if(owner():aimEntity()==Seat & owner():keyReload() & !Mode){Mode=1}
+
+
+
+# CONVERTING BACK IF IDLE
+if(!Driver & Mode==20 & Autopilot==0){NoDriverTimer++}else{NoDriverTimer=0}
+if(NoDriverTimer>100){
+    Mode=21 
+    NoDriverTimer=0
+    holoEntity(2):soundPlay(2, 0, "doors/doormove3.wav")
+    soundPitch(2, 255)
+    }
+
+# CONVERTING BACK VIA USE KEY
+#if(owner():keyUse()&Mode==20){
+#    Mode=21 
+#        holoEntity(2):soundPlay(2, 0, "doors/doormove3.wav")
+#        soundPitch(2, 255)
+#        }
+
+# ACTIVATION VIA OWNER KEYUSE
+# if(owner():keyUse()&!Mode){Mode=1}
+
+############# MODE 21 - TRANSFORMING BACK HIDING WINGS
+if(Mode==21){
+    holoEntity(3):removeTrails()
+    soundVolume(1,0)
+    
+    T2-=4
+    if(T2<=0){
+        Mode=22 
+        holoEntity(2):soundPlay(2, 0, "doors/doormove3.wav")
+        soundPitch(2, 155)
+        
+        
+        }
+        
+    
+        
+    holoPos(10, Seat:toWorld(vec(30-sin(T2/2)*60,-30,14.1)))
+    holoPos(11, Seat:toWorld(vec(-30+sin(T2/2)*60,-30,14.1)))
+    
+    holoAlpha(10,255)
+    holoAlpha(11,255)
+    
+    
+    holoClipEnabled(10,1,1)
+    holoClip(10,1,Seat:pos(),-Seat:right(),1)
+    
+    holoClipEnabled(11,1,1)
+    holoClip(11,1,Seat:pos(),Seat:right(),1)
+    
+    }
+    
+############# MODE 22 - ROLLING BACK
+if(Mode==22){
+    T1-=1
+    if(T1<=0){T1=0 SwitchTimer++}
+    #SwitchTimer++
+    if(SwitchTimer>10){
+        SwitchTimer=0
+    Mode=23 
+    holoEntity(1):soundPlay(1, 0, "doors/doormove1.wav")
+    soundVolume(1, 0)
+        }
+    holoAng(1, Seat:toWorld(ang(sin(T1)*368,0,0)))
+    
+    holoAng(5, Seat:toWorld(ang(sin(T1)*368,0,90)))
+    #for(I=3,15){} 
+       
+    holoClip(5,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(6,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(7,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(8,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(9,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(12,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(13,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(14,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+    holoClip(15,1, Seat:toWorld(vec(0,-12.9,14)), -Seat:forward(), 1)
+
+        
+for(I=3,15){
+    
+    if(I==10|I==11){continue}
+    holoClipEnabled(I,1,1)
+    #holoAlpha(I,255)
+    }
+    
+    
+    }
+
+if(Mode==23){
+    
+        
+for(I=4,15){
+    
+    #if(I==10|I==11){continue}
+    holoClipEnabled(I,1,0)
+    holoAlpha(I,0)
+    }
+    
+    Mode=0
+}
+
+############## MODE 20 - ACTIVATED, GO
+if(Mode==20 & Driver & !Autopilot){
+    
+    soundVolume(8, clamp(Acceleration/10000,0,1))
+    soundPitch(8, clamp((Acceleration*Nitro)/700, 0,255))
+
+#############################################################
+# RANGER ANTY-FLIP
+rangerFilter(Seat)
+FrontRanger = rangerOffset(60, Seat:toWorld(vec(0,0,10)), Seat:forward())
+if(Acceleration>4000 & FrontRanger:hit()){
+    Seat:applyForce((FrontRanger:pos()-Seat:pos())*(FrontRanger:distance()-60)*10)
+    }
+
+
+#############################################################
+# ACCELERATION
+if(Driver:keyForward() & Acceleration<20000){Acceleration+=250}
+if(Driver:keyBack() & Acceleration>0){Acceleration-=150}
+
+#if(Acceleration>10000 & Driver:keySprint() & Nitro<1.5){Nitro+=0.01}elseif(Nitro>1){Nitro-=0.1}
+Nitro=1
+#############################################################
+# FLIGHT
+
+if(Acceleration>5000){
+    
+    # RANGER WALL AVOID
+rangerFilter(Seat)
+LRanger=rangerOffset(clamp(40+Seat:velL():y()/3,40,200), vec(0,0,6)+Seat:pos(), Seat:forward()-Seat:right()/3)
+rangerFilter(Seat)
+RRanger=rangerOffset(clamp(40+Seat:velL():y()/3,40,200), vec(0,0,6)+Seat:pos(), Seat:forward()+Seat:right()/3)
+Seat:applyAngForce(ang(0,(RRanger:distance()-LRanger:distance())*4,0)*Seat:mass()*2)
+    
+    if(Acceleration>10000){TrailMode=1}else{TrailMode=0}
+    if(changed(TrailMode)&TrailMode==1){
+        holoEntity(3):setTrails(10,0,1,"trails/smoke",vec(255,255,255),255)}
+    if(changed(TrailMode)&TrailMode==0){
+    holoEntity(3):removeTrails()
+}
+    
+SeatAng = Seat:angles()
+Pitch = SeatAng:pitch()
+Yaw = SeatAng:yaw()
+Roll = SeatAng:roll()
+SeatVecVel = Seat:vel()
+
+
+YawDot=vec(Driver:eye():dot(Seat:right()),Driver:eye():dot(Seat:right()),0):y()
+PitchDot=vec(0,Driver:eye():dot(Seat:up()),Driver:eye():dot(Seat:up())):z()
+
+
+Seat:applyAngForce(ang(Roll+$Roll*25,0,-(Pitch+$Pitch*25))*Seat:mass())
+Seat:applyForce(-(SeatVecVel)*Seat:mass()/20)
+Seat:applyForce(vec(0,0,1*9.0131)*Seat:mass())
+
+Seat:applyForce(Seat:forward()*Seat:mass()*(Acceleration/60)*Nitro)
+Seat:applyForce(-(SeatVecVel)*Seat:mass()/25) # VEL NULLIFICATION
+
+##########
+PlaneAngVel = Seat:angVel()
+M2 = Driver:keyAttack2()
+if(M2==0){
+    Seat:applyAngForce(ang(-PitchDot*1.5,-YawDot,YawDot*8)*Seat:mass()*100)
+    YawDotTemp = YawDot
+    PitchDotTemp = PitchDot
+    
+}else{
+#Seat:applyAngForce(ang(-PitchDotTemp*1.5,-YawDotTemp,YawDotTemp*10)*Seat:mass())
+Seat:applyAngForce(ang(-PitchDotTemp*1.5,-YawDotTemp,YawDotTemp*4)*Seat:mass()*100)
+}
+
+Seat:applyAngForce(ang(PlaneAngVel:roll(),-PlaneAngVel:yaw(),-PlaneAngVel:pitch())*Seat:mass())
+Seat:applyAngForce(ang(Roll*1,0,-Pitch*10)*Seat:mass()*3)
+
+}
+}elseif(Autopilot==0){
+Acceleration=0
+soundVolume(8, 0)
+
+
+}
+
+
+
+
+
+
+# AUTOPILOT MODE ##########################################################################
+if(chatClk() & changed(lastSaidWhen()) & lastSpoke()==owner() & !Driver & owner():lastSaid()=="!come" & Mode==0 & Seat:pos():distance(owner():pos())>1000){
+    Mode=1
+    Autopilot=1
+}
+
+
+
+# FLIGHT
+if(Mode==20 & Autopilot){
+    
+    soundVolume(8, clamp(Acceleration/10000,0,1))
+    soundPitch(8, clamp((Acceleration*Nitro)/700, 0,255))
+
+#############################################################
+# RANGER ANTY-FLIP
+rangerFilter(Seat)
+FrontRanger = rangerOffset(60, Seat:toWorld(vec(0,0,10)), Seat:forward())
+if(Acceleration>4000 & FrontRanger:hit()){
+    Seat:applyForce((FrontRanger:pos()-Seat:pos())*(FrontRanger:distance()-60)*10)
+    }
+#print(4, FrontRanger:hitNormal():toString())
+#############################################################
+# ACCELERATION
+if(Seat:pos():distance(owner():pos())>1200 & Acceleration<20000){Acceleration+=250}elseif(Acceleration>2000){Acceleration-=1000}
+
+
+
+#if(Acceleration>10000 & Driver:keySprint() & Nitro<1.5){Nitro+=0.01}elseif(Nitro>1){Nitro-=0.1}
+Nitro=1
+#############################################################
+# FLIGHT
+
+if(Acceleration>5000){
+    
+    # RANGER WALL AVOID
+rangerFilter(Seat)
+LRanger=rangerOffset(clamp(40+Seat:velL():y()/3,40,200), vec(0,0,6)+Seat:pos(), Seat:forward()-Seat:right()/3)
+rangerFilter(Seat)
+RRanger=rangerOffset(clamp(40+Seat:velL():y()/3,40,200), vec(0,0,6)+Seat:pos(), Seat:forward()+Seat:right()/3)
+Seat:applyAngForce(ang(0,(RRanger:distance()-LRanger:distance())*4,0)*Seat:mass()*2)
+    
+    if(Acceleration>10000){TrailMode=1}else{TrailMode=0}
+    if(changed(TrailMode)&TrailMode==1){
+        holoEntity(3):setTrails(10,0,1,"trails/smoke",vec(255,255,255),255)}
+    if(changed(TrailMode)&TrailMode==0){
+    holoEntity(3):removeTrails()
+}
+    
+SeatAng = Seat:angles()
+Pitch = SeatAng:pitch()
+Yaw = SeatAng:yaw()
+Roll = SeatAng:roll()
+SeatVecVel = Seat:vel()
+
+
+YawDot=vec(-(Seat:pos()-(owner():pos()+vec(0,0,0))):normalized():dot(Seat:right()),-(Seat:pos()-(owner():pos()+vec(0,0,0))):normalized():dot(Seat:right()),0):y()*(2.5-(FrontRanger:hit()*2))
+PitchDot=vec(0,-(Seat:pos()-(owner():pos()+vec(0,0,0))):normalized():dot(Seat:up()),-(Seat:pos()-(owner():pos()+vec(0,0,0))):normalized():dot(Seat:up())):z()*(2.5-(FrontRanger:hit()*2))
+
+# CHANGING BACK TO MANUAL MODE
+if(Seat:pos():distance(owner():pos())<1000 & Autopilot==1){
+    
+    Acceleration=Acceleration/2
+    Seat:applyForce(-(SeatVecVel)*Seat:mass()/1.7)
+    Autopilot=0
+    
+    
+    }
+
+
+Seat:applyAngForce(ang(Roll+$Roll*25,0,-(Pitch+$Pitch*25))*Seat:mass())
+Seat:applyForce(-(SeatVecVel)*Seat:mass()/20)
+Seat:applyForce(vec(0,0,1*9.0131)*Seat:mass())
+
+Seat:applyForce(Seat:forward()*Seat:mass()*(Acceleration/60)*Nitro)
+Seat:applyForce(-(SeatVecVel)*Seat:mass()/25) # VEL NULLIFICATION
+
+##########
+PlaneAngVel = Seat:angVel()
+M2 = Driver:keyAttack2()
+if(M2==0){
+    Seat:applyAngForce(ang(-PitchDot*1.5,-YawDot,YawDot*8)*Seat:mass()*100)
+    YawDotTemp = YawDot
+    PitchDotTemp = PitchDot
+    
+}else{
+#Seat:applyAngForce(ang(-PitchDotTemp*1.5,-YawDotTemp,YawDotTemp*10)*Seat:mass())
+Seat:applyAngForce(ang(-PitchDotTemp*1.5,-YawDotTemp,YawDotTemp*4)*Seat:mass()*100)
+}
+
+Seat:applyAngForce(ang(PlaneAngVel:roll(),-PlaneAngVel:yaw(),-PlaneAngVel:pitch())*Seat:mass())
+Seat:applyAngForce(ang(Roll*1,0,-Pitch*10)*Seat:mass()*3)
+
+}
+}elseif(Autopilot==1){
+Acceleration=0
+soundVolume(8, 0)
+
+
+}
+    
+ 
+
+
+
+   
+
+
+#print(4, ops():toString())

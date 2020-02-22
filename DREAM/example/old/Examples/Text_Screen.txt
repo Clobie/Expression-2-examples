@@ -1,0 +1,39 @@
+@name Text Screen
+@model models/sprops/rectangles/size_2/rect_12x72x3.mdl
+@persist Holo:string Asdf
+
+#include "lib/holotext"
+#include "libs/async"
+
+if(first()){
+    
+    Asdf = 1
+    
+    entity():setColor(vec(63, 63, 255))
+    Holo = textCreate()
+    Holo:textParent(entity())
+    Holo:textColor(vec(255))
+    Holo:textAng(entity():toWorld(ang(0, 0, 90)))
+    Holo:textPos(entity():toWorld(vec(0, 0, 1.6)))
+    Holo:textContent("Tek likes big penis :D")
+    Holo:textScale(4)
+    runOnTick(1)
+    
+    function lulz() {
+        Holo:textColor( hsv2rgb(randint(360),1,1) )
+        async(0.01, "lulz")
+    }
+    
+    function lulz2() {
+        Asdf += 0.1
+        if( Asdf > 20 ) {
+            Asdf = 4
+        }
+        Holo:textScale(Asdf)
+        async(0.01, "lulz2")
+    }
+    lulz()
+    lulz2()
+}
+local C = hsv2rgb(curtime() * 45 % 360, 1, 1)
+

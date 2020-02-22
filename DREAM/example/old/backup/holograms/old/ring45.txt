@@ -1,0 +1,68 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/24/2018 @ 1944
+# Holograms: 9
+# Notes: 
+# --------------------------------------------- #
+@name ring45
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(-72.0308,-72.0308,60.3604),vec(-78.0345,-65.4787,60.3604),vec(-83.4445,-58.4284,60.3604),vec(-88.2194,-50.9334,60.3604),vec(-92.3228,-43.0508,60.3604),vec(-95.7235,-34.8405,60.3604),vec(-98.3959,-26.3651,60.3604),vec(-100.3193,-17.689,60.3604),vec(-101.4792,-8.8783,60.3604))
+    Hologram[ "angle", array ] = array(ang(69,45,0),ang(69,40,0),ang(69,35,0),ang(69,30,0),ang(69,25,0),ang(69,20,0),ang(69,15,0),ang(69,10,0),ang(69,5,0))
+    Hologram[ "scale", array ] = array(vec(0.2,0.2,0.9),vec(0.2,0.2,0.9),vec(0.2,0.2,0.9),vec(0.2,0.2,0.9),vec(0.2,0.2,0.9),vec(0.2,0.2,0.9),vec(0.2,0.2,0.9),vec(0.2,0.2,0.9),vec(0.2,0.2,0.9))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(0,0,0,0,0,0,0,0,0)
+    Hologram[ "note", array ] = array("","","","","","","","","")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else {
+            for( I = 1, Hologram[ "model", array ]:count( ) ) {holoParent(I, Hologram["parent", array][I, number]) }
+            interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

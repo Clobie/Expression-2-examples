@@ -1,0 +1,396 @@
+@name Go-Kart
+@inputs Wirelink:wirelink
+@outputs Throttle MPH Turn [Body Chip]:entity Angles:angle Brakes
+@persist Vector:vector Spawn Spin AltSpin Slide Skid Grip Front Rear Left Right Ranger
+@persist Active Steer Hold Pitch Yaw Roll Max Min Flood WPitch Speed Power Z [EngineStart EngineSound EngineStop]:string
+@persist Mass Ground WheelX WheelY WheelDown FWD RWD FWSteer RWSteer TyreSize TravelU TravelD StartHeight SteerRot
+
+if(dupefinished()|first()){Chip = entity(),Body=entity():isWeldedTo(),Spawn = 0}
+
+# -- CIPHER_ULTRA'S INSTANT CHASSIS -- #
+#Edited by Cyber Police
+
+# -- Guidelines -- #
+
+# 1. This E2 will work on most props, but I recommend flat squares or cubes such as: 
+#      * models/props_phx/construct/metal_plate1.mdl
+#      * models/hunter/plates/plate1x1.mdl
+#      * models/props_c17/FurnitureShelf001b.mdl
+
+# 2. Make sure any other constrained props (like a car body) all have a mass of '1' or less.
+#    If you need some to be heavier, do not make them weigh over 100.
+#    Try to balance any larger (10 ~ 100) weights equally over the chassis.  
+
+# 3. I also recommend parenting all props and using the 'Main' prop,
+#    (The one the chip is placed on) as the Parent.
+#    Parenting makes contraptions more stable and reduces lag.
+
+# 4. For advanced users: It is also best to leave some props unparented to
+#    create a collision box around the vehicle, such as bumpers.
+
+
+if(Spawn < 8){interval(100)
+
+
+# -- CUSTOMISATION -- #
+
+# -- Suspension Settings -- #
+
+    Ground = 17 # the height from the ground you want the chassis to be
+    TravelUp = 1 # the amount the wheels push up into the body
+    TravelDown = 1 # the amount the wheels hang down when in the air
+    
+    StartHeight = 4 # The start height of the suspension rangers...
+                     # (Only need to lower if the any bodywork, like wheel arches,
+                     # are very close to the top of the wheels.
+  
+# -- Wheel Settings -- #
+
+    WheelX=25.55 # the length of the wheelbase
+    WheelY=32 # the width of the wheelbase
+    WheelDown=0
+    
+    WheelSize = 1.2 # The size of the wheel middle
+    WheelWidth = 0.9 # The width of the wheel middle
+        
+    TyreSize = WheelSize *1 # The size of the tyres [Don't need to change]
+    TyreWidth = WheelWidth * 5 # The width of the tyres [Don't need to change]
+
+    WheelMaterial = "phoenix_storms/gear_top"
+    TyreMaterial = "phoenix_storms/car_tire"
+
+
+# -- Drivetrain Settings -- #
+
+    FWD = 0 # Front Wheel Drive: 1=YES / 0=NO
+    RWD = 1 # Rear Wheel Drive: 1=YES / 0=NO
+    FWSteer = 1  # Front Wheels Steer: 1=YES / 0=NO
+    RWSteer = 0 # Rear Wheels Steer: 1=YES / 0=NO
+    
+    Power = 13 # How much power the engine has: Limit[10 ~ 20]
+               # (Best not to change unless vehicle is very heavy)
+
+# -- Sound Settings -- #
+
+    EngineStart = "vehicles/v8/v8_start_loop1.wav"
+    EngineSound = "vehicles/v8/v8_firstgear_rev_loop1.wav" #"vehicles/v8/fourth_cruise_loop2.wav"
+    EngineStop = "vehicles/v8/v8_stop1.wav"
+
+
+
+# -- END of settings -- #
+
+
+
+
+# ----------------------------------------------------------------------------------------#
+
+
+# -- No need to change any of the following code -- #
+# -- Only advanced E2 users should change the following code! -- #
+
+
+# ----------------------------------------------------------------------------------------#
+
+
+
+
+    Mass = 2000
+    Body:setMass(Mass)
+    
+    TravelU = 0#TravelUp + TyreSize*2
+    TravelD = 0#TravelDown - TyreSize*2
+    
+    Spawn++
+    holoCreate(Spawn)
+                   
+    if(Spawn < 5){holoModel(Spawn,"cylinder") # Wheel middle
+        holoScale(Spawn,vec(WheelSize,WheelSize,WheelWidth))
+        holoAng(Spawn,Body:toWorld(ang(0,0,90)))
+         holoMaterial(Spawn,WheelMaterial)
+        holoColor(Spawn,vec(75,75,75))
+        holoParent(Spawn,Body)
+    }else{holoModel(Spawn,"hqtorus2") # Tyres
+        holoAng(Spawn,Body:toWorld(ang(0,0,90)))
+        holoScale(Spawn,vec(TyreSize,TyreSize,TyreWidth))
+        holoMaterial(Spawn, TyreMaterial)
+        holoParent(5,1)
+        holoParent(6,2)
+        holoParent(7,3)
+        holoParent(8,4)
+    }
+
+             
+}else{
+
+# -- Controls and Active Code -- #
+
+Active = Wirelink:number("Active")
+
+ if(Active){
+    
+    W = Wirelink:number("W")
+    A = Wirelink:number("A")
+    S = Wirelink:number("S")
+    D = Wirelink:number("D")
+    Space = Wirelink:number("Space")
+    M1 = Wirelink:number("Mouse1")
+    
+    Flood = Chip:isUnderWater()
+        
+if(Active & $Active & !Flood){Body:soundPlay(1,2,EngineStart),soundVolume(1,10)
+   Body:soundPlay(2,0,EngineSound),soundStop(5),soundStop(6)
+
+}elseif(Active & !Flood & $Flood){Body:soundPlay(1,2,EngineStart),soundVolume(1,10)
+   Body:soundPlay(2,0,EngineSound),soundStop(5),soundStop(6)
+}elseif(Flood & $Flood){Hold = 2,
+soundStop(1),soundStop(2),Body:soundPlay(5,5,"vehicles/jetski/jetski_off.wav"),Chip:soundPlay(6,5,"ambient/energy/newspark10.wav")
+}
+    
+}else{if($Active & !Flood){Body:soundPlay(5,0,EngineStop)}
+if(Speed > 200){Hold = 0.1}else{Hold = 1.8}}
+
+# -- END of Controls and Active Code -- #
+
+runOnTick(1)
+if(tickClk()){
+    
+#### Variables ###
+Up = Body:up()
+Side = Body:right()
+Forward = Body:forward()
+BPos = Body:pos()
+Angles = Body:angles()
+WPitch = abs(Angles:pitch())
+Vel = Body:velL()
+VelX = Vel:x()
+VelY = Vel:y()
+Speed = VelX * sign(VelX)
+if(Speed > 20){MPH = round(toUnit("mph",Speed))}else{MPH = 0}
+
+
+# -- The Suspension Code -- #
+    
+            rangerHitEntities(1) 
+            rangerFilter(players())
+            RangerFL = rangerOffset(1000,Body:toWorld(vec(WheelX,WheelY, StartHeight)),-Up)
+            FrontL = RangerFL:distance()
+                  
+            rangerHitEntities(1)
+            rangerFilter(players())
+            RangerFR = rangerOffset(1000,Body:toWorld(vec(WheelX,-WheelY, StartHeight)),-Up)
+            FrontR =  RangerFR:distance()
+                        
+            rangerHitEntities(1)
+            rangerFilter(players())
+            RangerRL = rangerOffset(1000,Body:toWorld(vec(-WheelX,WheelY, StartHeight)),-Up)
+            RearL =  RangerRL:distance()
+            
+            rangerHitEntities(1)
+            rangerFilter(players())
+            RangerRR = rangerOffset(1000,Body:toWorld(vec(-WheelX,-WheelY, StartHeight)),-Up)
+            RearR =  RangerRR:distance()            
+            
+            Front = (FrontL + FrontR)/2 # average of the the front rangers
+            Rear = (RearL + RearR)/2 # etc
+            Left = (FrontL + RearL)/2
+            Right = (FrontR + RearR)/2
+
+
+Ranger = min(FrontL,FrontR,RearL,RearR)  # smallest of the rangers
+
+  Pitch = ((Front-Rear))
+  Roll =  ((Right-Left))
+
+
+# -- Driving Code -- #
+# If you are an experienced E2 user and want to add your own driving/engine/handling code,
+# either change or delete the following code...
+    
+if(Active & !Flood){
+
+     GripZ =  Ground + StartHeight
+    Grip = (((FrontL < GripZ) + (FrontR < GripZ) + (RearL < GripZ) + (RearR < GripZ))-Slide)
+    
+    if(W|S){Sign = W-S}elseif(Speed > 10){Sign = 0}
+    
+if(Sign){
+   if(Sign != sign(VelX)){
+       if(Speed > 50){Brakes = 1, Throttle += Sign*6}
+        elseif(Throttle&sign(Throttle) > 100 & WPitch>20){Brakes = 0}
+    }else{Brakes = 0
+    if(Speed < 100 & Sign != sign(Throttle)){Throttle = 0}
+    }
+}else{Brakes = 0}
+    
+    #### Brakes on 
+    if(!Sign & Speed < 40){Brakes = 1, Hold = 1.8}
+    
+   elseif(Brakes == 1){if(Speed > 150 & WPitch<10){Hold = 0.04}
+                        elseif(Speed < 10 & WPitch>=10){Hold = 1.8}
+                        else{Hold = 0.08}
+                        
+                                                      
+                       
+    
+    #### Brakes off
+}else{if(Space){Hold = 0.008}else{Hold = 0}
+    if(Throttle * sign(Throttle) > Speed){Spin=angnorm(Spin+Throttle/(TyreSize*12))}
+    else{Spin=angnorm(Spin+VelX/(TyreSize*12))}
+    }
+  
+               Throttle = clamp(Throttle,Min,Max) 
+    if(!Space & Sign){
+            if(Sign == 1) {
+                Throttle+= clamp((Max - Throttle),0,6-Grip)
+            } 
+            elseif(Sign == -1) {
+                Throttle-= 2
+            }
+        }else{Throttle-=(inrange(Throttle,-1,1) ? Throttle : sign(Throttle)*3)}
+                      
+                     
+            Max = clamp((Speed*8)/(8+Grip),200*(1+Slide),1400)
+            if(VelX < 100){Min = clamp(Speed * -2,-400,-200)}
+            else{Min = 0}
+           
+       
+               
+## Steering
+ 
+if(A|D){Steer = (A-D)}
+else{Steer = 0}
+   
+            if(A|D){
+               
+               Turn = clamp(Turn+(Steer)*0.8,-40,40)
+                           
+                   
+                if((Steer) & sign(Turn) != (Steer)){
+                    Turn -= (inrange(Turn,-1,1) ? Turn : sign(Turn))*0.008*clamp(Speed,0,200)}
+                   
+                                 
+            }elseif(!inrange(Turn,-1,1)){Turn -= sign(Turn)*0.004*clamp(Speed,0,200)}
+            else{Turn = 0}
+ 
+        Slide = clamp(Slide + (Space+(Speed*Turn*sign(Turn)*0.000001) - Slide*0.00002 * (Speed > 400 ? Speed : 400)),0,1.56)
+ 
+ Yaw = Turn*(0.7/(WheelX/WheelY))*(Slide*0.2*((RWD-FWD)+Space)+1)*((Speed)<200 ? (VelX/200) : clamp(12000/VelX,-1,1))
+ 
+}else{Throttle=0,Yaw=0,Brakes = 0,Slide=0,soundStop(1),soundStop(2)}
+ 
+ 
+ 
+    soundPitch(2,abs(Throttle)*0.1+60) #0.1+60
+    soundVolume(2,abs(Throttle)*0.001+10)
+   
+                 
+   
+    if(Speed >= 1000){Top = Speed*Speed*0.000000001}else{Top = 0}
+   
+# -- END of Driving Code -- #
+   
+    if((Ranger-StartHeight) <Ground & WPitch < 85){
+       
+       
+            if(Brakes & Speed > 50){Skid =1}
+            elseif(Slide > 1.2){Skid = 1}
+            else{Skid = 0}
+                       
+  if(Skid & $Skid){Body:soundPlay(3,0,"vehicles/v8/skid_normalfriction.wav")}
+        elseif(!Skid & $Skid){soundStop(3)}
+ 
+ 
+ForceStable=((VelY * Side * (1.6 - Slide)) + (VelX * Forward * (-0.02 - (Hold+Top))))*Mass
+ 
+Torque = rotationVector(quat(ang(Pitch,Yaw,Roll)-(Body:angVel()/4)))
+Body:applyTorque((Torque * 50)*Body:inertia())
+ 
+    Vector =  Forward*Throttle*((3+Grip)-Slide)*Power
+    Z=(4000)*clamp((StartHeight+(Ground-5))-Ranger,0,StartHeight+(Ground-5))
+    ForceMain=Up*(Mass+Z)
+    ForceZ = Up*-Vel:z()*Mass/12
+   
+   
+     Body:applyForce((ForceMain+ForceZ+ForceStable+Vector))
+}else{Z=0,Body:applyForce(Up*(sign(Vel:z())==1 ? -Vel:z()*Mass/12 : 0)),Skid = 0,Slide=1.5,Spin=angnorm(Spin+Throttle/24),Body:applyAngForce(ang(0,0,0)-(Body:angVel()*1000))}
+ 
+       
+           
+# -- Wheel Animations -- #
+                           
+    WheelZ = StartHeight+2+TyreSize*6
+                               
+#    FLPos = Body:toWorld(vec(WheelX,WheelY,clamp(WheelZ - FrontL,0,0)+WheelDown))
+#    FRPos = Body:toWorld(vec(WheelX,-WheelY,clamp(WheelZ -FrontR,0,0)+WheelDown))
+#    RLPos = Body:toWorld(vec(-WheelX-13.9,WheelY+9,clamp(WheelZ - RearL,0,0)+WheelDown))
+#    RRPos = Body:toWorld(vec(-WheelX-13.9,-WheelY-9,clamp(WheelZ - RearR,0,0)+WheelDown))
+    FLPos = Body:toWorld(vec(WheelX,WheelY,clamp(WheelZ - FrontL,TravelD,TravelU)+WheelDown))
+    FRPos = Body:toWorld(vec(WheelX,-WheelY,clamp(WheelZ -FrontR,TravelD,TravelU)+WheelDown))
+    RLPos = Body:toWorld(vec(-WheelX-13.9,WheelY+9,clamp(WheelZ - RearL,TravelD,TravelU)+WheelDown))
+    RRPos = Body:toWorld(vec(-WheelX-13.9,-WheelY-9,clamp(WheelZ - RearR,TravelD,TravelU)+WheelDown))
+   
+    holoPos(1,FLPos)
+    holoPos(2,FRPos)
+    holoPos(3,RLPos)
+    holoPos(4,RRPos)
+   
+   
+    if(changed(Spin)|changed(Turn)){
+ 
+       
+        if(!FWD | (!RWD &!Space)){AltSpin = angnorm(AltSpin+VelX/(TyreSize*12))}
+       
+         holoAng(1,Body:toWorld(ang(FWD ? Spin : AltSpin,FWSteer * Turn,90)))
+         holoAng(2,Body:toWorld(ang(FWD ? Spin : AltSpin,FWSteer * Turn,90)))
+         holoAng(3,Body:toWorld(ang(RWD ? Spin : AltSpin,RWSteer * -Turn,90)))
+         holoAng(4,Body:toWorld(ang(RWD ? Spin : AltSpin,RWSteer * -Turn,90)))
+    }
+                       
+# -- END of Wheel Animations -- #
+   
+}#end tick
+ 
+ 
+}
+
+if(first()){
+    #steering wheel
+    holoCreate(1001)
+    holoModel(1001,"models/sprops/trans/stwheels/stwheel_7.mdl")
+    holoParent(1001,Body)
+    holoPos(1001,Body:toWorld(vec(7.5,0,26.5)))
+    
+    #Speedometer
+    holoCreate(1002)
+    holoModel(1002,"models/sprops/trans/misc/gauge_2.mdl")
+    holoParent(1002,Body)
+    holoPos(1002,Body:toWorld(vec(7.5,0,26.5)))
+    holoAng(1002,Body:toWorld(ang(-40,180,0)))
+    holoScale(1002,vec(0.8,0.8,0.8))
+    
+    holoCreate(1003)
+    holoModel(1003,"hq_cubinder")
+    holoParent(1003,1002)
+    holoPos(1003,holoEntity(1002):toWorld(vec(0,0,0)))
+    holoScale(1003,vec(0.1,0.1,0.12))
+    holoAlpha(1003,0)
+    
+    holoCreate(1004)
+    holoParent(1004,1003)
+    holoPos(1004,holoEntity(1003):toWorld(vec(0.6,0,1.3)))
+    holoAng(1004,holoEntity(1003):toWorld(ang(90,0,0)))
+    holoScale(1004,vec(0.2,0.01,0.01))
+    holoColor(1004,vec(255,0,0))
+}
+
+holoAng(1001,Body:toWorld(ang(-40,180,Turn*6)))
+holoAng(1003,holoEntity(1002):toWorld(ang(0,0,-(toUnit("mph", entity():vel():length()*1.75)-180))))
+# 3 degrees = 1 mph
+#holoAng(1003,holoEntity(1002):toWorld(ang(0,0,(-MPH/3)-180)))
+if(changed(M1)){
+if(M1){soundPlay("horn",1,"synth/12_5_pwm_440.wav")}else{soundStop("horn")}
+}
+if(dupefinished()){reset()}
+ 
+

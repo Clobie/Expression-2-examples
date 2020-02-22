@@ -1,0 +1,16 @@
+local N = 50
+for(X = 1, holoRemainingSpawns()){
+    local I = randint(1e9)
+    holoCreate(I,
+        randvec(-N, N) * 100,
+        vec(-N),
+        ang(randvec(0, 360)),
+        #vec(255)
+        vec4(255)
+    )
+    holoModel(I, "models/props_foliage/tree_springers_card_01.mdl")
+    #holoMaterial(I, "models/props_c17/fisheyelens")
+    #holoMaterial(I, "models/effects/portalrift_sheet")
+    #holoMaterial(I, "models/props_combine/combine_door01_glass")
+    holoMaterial(I, "models/vortigaunt/pupil")
+}

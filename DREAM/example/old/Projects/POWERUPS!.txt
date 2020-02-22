@@ -1,0 +1,272 @@
+@name Powers
+@model models/props_trainstation/trainstation_post001.mdl
+
+#include "DREAM/example/lib/variable"
+#include "DREAM/example/lib/heap"
+#include "DREAM/example/lib/async"
+
+interval( 25 )
+
+if( first() ) {
+    
+    runOnChat(1)
+    
+    entity():setMaterial( "debug/debugdrawflat" )
+    entity():setColor( vec() )
+    
+    "pickup":s( new() )
+    "announced":n( 0 )
+    "gamerunning":n( 0 )
+    "gamestarting":n( 0 )
+    "player":s( new() )
+    "power":s( 
+                new( 
+                    table(  
+                            "default" = table( "projectile" = "models/XQM/Rails/gumball_1.mdl", "speed" = 2000, "mass" = 1000,  "color" = vec(255) ),
+                            "rainbow" = table( "projectile" = "models/mechanics/wheels/wheel_spike_24.mdl", "speed" = 2500, "mass" = 2000,  "color" = vec(255) ),
+                            "hyper"   = table( "projectile" = "models/mechanics/wheels/wheel_spike_24.mdl", "speed" = 3000, "mass" = 3000, "color" = vec(255) ),
+                            "jumbo"   = table( "projectile" = "models/mechanics/wheels/wheel_spike_48.mdl", "speed" = 3500, "mass" = 4000, "color" = vec(255) )
+            )
+        )
+    )
+    
+    function notification( S:string ) { concmd( "ulx csay " + S ) }
+    #function entity:setHealth( N ) { concmd( "plmod " + This:id() + " hp " + N ) }
+    function entity:setSpeed( N ) { concmd( "plmod " + This:id() + " walk " + N ), concmd( "plmod " + This:id() + " sprint " + N*2 ) }
+    function entity:setJumpHeight( N ) { concmd( "plmod " + This:id() + " jump " + N ) }
+    function entity:setArmor( N ) { concmd( "plmod " + This:id() + " armor " + N ) }
+    function entity:playerSpawn( V:vector ) { concmd("emt " + This:id() + " " + V:toString() + " " + vec():toString() + " " + vec():toString() )}
+    
+    
+    
+    function spawnAllPlayers() {
+        local T = "player":s():get()
+        foreach( K, V:entity = players() ) {
+            if( T:exists(V:steamID()) && V:pos():distance( entity():pos() ) > 2000 ) { V:playerSpawn( entity():pos() + vec( random( -1500,1500 ) ):setZ(100) ) }
+        }
+    }
+    
+    function createArena() {
+        holoCreate( 0 )
+        holoModel( 0, "models/sprops/geometry/fring_144.mdl" )
+        holoScale( 0, vec(28) )
+        holoAng( 0, ang(0,0,90) )
+        holoMaterial( 0, "debug/debugdrawflat" )
+        holoAlpha( 0, 255 )
+        holoColor( 0, vec() )
+        holoPos( 0, entity():pos() - vec(0,0,37) )
+    }
+    
+    function roundStart() {
+        "gamerunning":n( 1 )
+        notification( "Round started" )
+        entity():setColor( vec(0,255,0) )
+        local T = "player":s():get()
+        foreach( K, V:entity = players() ) {
+            if( T:exists(V:steamID()) ) {
+                T[V:steamID(), table]["lost", number] = 0
+                V:setHealth( 2000 )
+                V:setArmor( 100 )
+                V:setJumpHeight( 200 )
+                V:setSpeed( 250 )
+            }
+        }
+    }
+    
+    function roundEnd() {
+        "gamestarting":n( 0 )
+        "gamerunning":n( 0 )
+        notification( "Round ended" )
+        entity():setColor( vec() )
+        local T = "player":s():get()
+    }
+    
+    function entity:destroyIndicator() {
+        local T = "player":s():get()
+        local I = T[This:steamID(), table]["indicator", number]
+        holoDelete( I )
+        holoDelete( I + 1 )
+    }
+    
+    function entity:createIndicator() {
+        local T = "player":s():get()
+        local I = randint(2e8)
+        local J = I + 1
+        T[This:steamID(), table]["indicator", number] = I
+        holoCreate( I )
+        holoScaleUnits( I, vec(1, 102, 12) )
+        holoPos( I, This:pos() + vec(0,0,150) )
+        holoColor( I, vec() )
+        holoCreate( J )
+        holoScaleUnits( J, vec(2, 100, 10) )
+        holoPos( J, This:pos() + vec(0,0,150) )
+        holoColor( J, vec(0,255,0) )
+        holoParent( J, I )
+    }
+    
+    function entity:updateIndicator() {
+        local T = "player":s():get()
+        local I = T[This:steamID(), table]["indicator", number]
+        holoPos( I, This:pos() + vec(0,0,100) )
+        holoAng( I, ang(0, realtime() * 20, 0) )
+        holoScaleUnits( I+1, vec(2, clamp(This:health()/20, 0, 100), 10) )
+        holoColor( I+1, vec( 255 - (clamp(This:health()/20, 0, 100) * 2.55), (clamp(This:health(), 0, 100) * 2.55), 0) )
+    }
+    
+    function table entity:getPower() {
+        local T = "power":s():get()
+        local P = "player":s():get()
+        return T[P[This:steamID(), table]["power", string], table]
+    }
+    
+    function entity:setPower( S:string ) {
+        local T = "power":s():get()
+        local P = "player":s():get()
+        P[This:steamID(), table]["power", string] = S
+    }
+    
+    function entity:disableFire() {
+        local T = "player":s():get()
+        T[This:steamID(), table]["canfire", number] = 0
+    }
+    
+    function entity:enableFire() {
+        local T = "player":s():get()
+        T[This:steamID(), table]["canfire", number] = 1
+    }
+    
+    function number entity:canFire() {
+        local T = "player":s():get()
+        return T[This:steamID(), table]["canfire", number]
+    }
+    
+    function entity:leave() {
+        This:destroyIndicator()
+        "player":s():get():remove( This:steamID() )
+    }
+    
+    function entity:join() {
+        local T = "player":s():get()
+        if( !T:exists( This:steamID() )  && (!This:name():find("\"") || !This:name():find(";") ) ) {
+            T[This:steamID(), table] = table(   "entity" = This,
+                                                "power" = "default",
+                                                "ammunition" = 5,
+                                                "canfire" = 1,
+                                                "lost" = 0
+            )
+            This:createIndicator()
+            #concmd( "\"ulx hp " + This:name() + " 1000\"" )
+            #concmd( "\"ulx ungod " + This:name() + "\"" )
+            concmd( "plmod hp " + This:id() + " 2000" )
+            concmd( "plmod ungod " + This:id() + " 2000" )
+            notification( This:name() + " has joined the match" )
+        }
+    }
+    
+    function entity:projectileDelete() {
+        This:setAlpha( 0 )
+        This:propFreeze( 1 )
+        async( 2, "propDelete", This )
+    }
+    
+    function entity:projectileCreate() {
+        if( holoCanCreate() && propCanCreate() ) {
+            local T = This:getPower()
+            local X = propSpawn( T["projectile", string],( This:shootPos() - vec(0,0,15) )+  ( This:eye() * 75 ), This:eyeAngles(), 0 )
+            X:setAlpha( 0 )
+            X:setMaterial( "debug/debugdrawflat" )
+            X:setColor( T["color", vector] )
+            X:setMass( T["mass", number] )
+            X:propGravity( 0 )
+            X:propFreeze( 0 )
+            X:applyForce( This:eye():toAngle():forward() * T["mass", number] * T["speed", number] )
+            X:applyAngForce( ang(0,0,1) * T["mass", number] * T["speed", number] )
+            X:setTrails( 100,100,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            This:disableFire()
+            async( 1, "enableFire", This )
+            async( 2, "projectileDelete", X )
+            
+            
+            local I = randint(2e8)
+            holoCreate(I)
+            holoCreate(I+1)
+            holoPos(I, X:pos() + (X:right() * 10))
+            holoPos(I+1, X:pos() + (X:right() * -10))
+            holoAlpha(I, 1)
+            holoAlpha(I+1, 1)
+            holoParent(I, X)
+            holoParent(I+1, X)
+            holoEntity(I):setTrails( 25,25,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            holoEntity(I+1):setTrails( 25,25,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            
+        }
+    }
+    
+    function main() {
+        local T = "player":s():get()
+        local X = 0
+        local E = noentity()
+        
+        foreach( K, V:entity = players() ) {
+            
+            if( T:exists( V:steamID() ) ) {
+                V:updateIndicator()
+                
+                if( V:aimEntity() == entity() && V:keyUse() && !"gamestarting":n() ) {
+                    async(5, "roundStart" )
+                    "gamestarting":n( 1 )
+                    notification( "Round starting in 5 seconds..." )
+                    spawnAllPlayers()
+                    return
+                }
+                
+                if( T[V:steamID(), table]["lost", number] == 0  && "gamerunning":n()) {
+                    if( V:canFire() && V:keyAttack1() ) { V:projectileCreate() }
+                    if( V:pos():distance( entity():pos() ) > 2000 || !V:isAlive() || V:inNoclip() ) {
+                        T[V:steamID(), table]["lost", number] = 1
+                        notification( V:name() + " lost" )
+                    } else {
+                        X++
+                        E = V
+                    }
+                    
+                    if( V:pos():distance( entity():pos() ) > 2000 ) {
+                        concmd("emt " + V:id() + " " + ( entity():pos() + vec( randint(-1800,1800) ):setZ( 0 ) ):toString() + " " + vec(0,0,0):toString() + " " + vec(0,0,0):toString() )
+                    }
+                }
+            }
+        }
+        
+        if( X == 0 && "gamerunning":n() ) {
+            roundEnd()
+            notification( "Round starting in 5 seconds..." )
+            async( 5, "roundStart" )
+        } elseif( T:count() > 1 && X == 1 ) {
+            roundEnd()
+            async( 3, "notification", "Winner:  " + E:name() )
+        }
+        
+        if( T:count() < 2 && "announced":n() ) {
+            "announced":n( 1 )
+            notification( "Waiting for more players..." )
+        }
+    }
+    
+    # Debug
+    createArena()
+    owner():join()
+}
+if( chatClk() ) {
+    local P = lastSpoke()
+    local S = P:lastSaid()
+    if( S == "!join" ) {
+        P:join()
+    }
+    elseif( S == "!leave" ) {
+        P:leave()
+    }
+}
+
+if( clk() ) {
+    main()
+}

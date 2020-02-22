@@ -1,0 +1,59 @@
+@name TouchBar
+if(first()){
+    #Marker
+    holoCreate(0,entity():pos(),vec(0.05,0.05,0.05),ang(0),vec(255,0,0),"hqsphere")
+    
+    #Background
+    holoCreate(1,entity():toWorld(vec(0,0,55)),vec(6,0.1,2),ang(),vec(0))
+    
+    #Sliders
+    holoCreate(2,entity():toWorld(vec(0,1,60)),vec(5,0.1,0.5),ang(),vec(255))
+    holoClip(2,vec(30,0,0),vec(1,0,0),0)
+    holoClipEnabled(2,1)
+    
+    holoCreate(3,entity():toWorld(vec(0,1,50)),vec(5,0.1,0.5),ang(),vec(255))
+    holoClip(3,vec(30,0,0),vec(1,0,0),0)
+    holoClipEnabled(3,1)
+    
+    runOnTick(1)
+}
+Ply=owner()
+#                                                                       Scale of the holo*12
+Pos=rayOBBoxIntersection(Ply:shootPos(),Ply:eye(),holoEntity(1):boxCenterW(),vec(6,0.1,2)*12,holoEntity(1):angles())
+if(Pos)
+{
+    #Set marker
+    holoPos(0,Pos)
+    
+    #Get the position relative to the holo
+    LPos=holoEntity(1):toLocal(Pos)  
+    
+    #Only do do stuff if you press E
+    if(Ply:keyUse())
+    {
+        
+        #Cursor in the top slider (going from +/-30 x and 2 to 8 z)
+        if(inrange(LPos:x(),-30,30)&inrange(LPos:z(),2,8))
+        {
+            
+            #Cut the slider at the position, (uses local coordinates too)
+            #                                 |                        ,-Cut direction      ,-Use local mode(better this way)
+            holoClip(2,  vec(holoEntity(2):toLocal(Pos):x(),0,0),   vec(1,0,0)             ,0)
+            
+            #               ,-shift by 30, since it starts at -30
+            #               |   ,-divide by maxium length of the bar
+            #               |   |    ,-multiply by maxium value
+            Value=(LPos:x()+30)/60 * 100
+        }
+        #Cursor in the bottom slider (going from +/-30 x and -2 to -8 z)
+        elseif(inrange(LPos:x(),-30,30)&inrange(LPos:z(),-8,-2)){
+            holoClip(3,vec(holoEntity(3):toLocal(Pos):x(),0,0),vec(1,0,0),0)
+            
+            #You could calculate a value here too
+        }
+    }
+}
+else{
+    #Reset marker
+    holoPos(0,entity():pos())
+}

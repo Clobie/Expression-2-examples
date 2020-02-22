@@ -1,0 +1,34 @@
+@name Smartsnap Autoaim
+@persist AimEntity:entity Target:entity Aiming
+
+if( first( ) ) {
+    runOnTick( 1 )
+    runOnChat( 1 )
+    propSpawnUndo( 0 )
+    runOnKeys( owner(), 1 )
+    AimEntity = propSpawn( "models/sprops/rectangles/size_1/rect_3x3x3.mdl", vec(), ang(), 1 )
+    noCollideAll( AimEntity, 1 )
+    Aiming = 0
+}
+
+if( Aiming ) {
+    AimEntity:setPos( Target:shootPos() + ( Target:shootPos() - owner():shootPos() ):normalized() * 100 )
+} else {
+    AimEntity:setPos( owner():shootPos() + owner():eye() * 20 )
+}
+
+if( keyClk( ) == owner( ) & keyClkPressed( ) == "e" ) {
+    if( keyClk( ):keyPressed( keyClkPressed( ) ) ) {
+        Aiming = 1
+    } else {
+        Aiming = 0
+    }
+}
+
+if( chatClk( ) & lastSpoke( ) == owner( ) ) {
+    local Param = owner( ):lastSaid( ):explode(" ")
+    if( Param[ 1, string ]:left( 1 ) == "/" ) {
+        hideChat( 1 )
+        if( Param[ 1, string ] == "/t" ) { Target = findPlayerByName( Param[ 2, string ] ), print( "Target: " + Target:name( ) ) }
+    }
+}

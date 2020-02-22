@@ -1,0 +1,77 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/20/2018 @ 1624
+# Holograms: 17
+# Notes: 
+# 5 -> text position start
+# 6 -> start ranger left
+# 7 -> too far ranger left
+# 8 -> start ranger right
+# 9 -> too far ranger right
+# 10 -> finish ranger left
+# 11 -> finish ranger right
+# 12 -> light
+# 13 -> light
+# 15 -> start button
+# 16 -> 60ft ranger left
+# 17 -> 60ft ranger right
+# --------------------------------------------- #
+@name track
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/sprops/trans/train/track_s06.mdl","models/sprops/trans/train/track_s06.mdl","models/hunter/blocks/cube8x8x8.mdl","models/hunter/blocks/cube8x8x8.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/props_trainstation/tracklight01.mdl","models/props_trainstation/tracklight01.mdl","models/holograms/rcube.mdl","models/holograms/cplane.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(0,-1199.9999,0),vec(0,-599.9999,0),vec(10148.1203,-599.9999,0),vec(300,-599.9999,154.1846),vec(0,0,20),vec(10,0,20),vec(0,-1199.9999,20),vec(10,-1199.9999,20),vec(10148.1203,0,20),vec(10148.1203,-1199.9999,20),vec(300,-595.9999,42),vec(300,-610.9999,42),vec(153,-599.9999,6),vec(300,-599.9999,101.3701),vec(959.9999,0,20),vec(959.9999,-1199.9999,20))
+    Hologram[ "angle", array ] = array(ang(0,180,-90),ang(0,180,90),ang(180,0,0),ang(180,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,180,0),ang(0,180,0),ang(0,180,0),ang(-90,0,0),ang(0,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(8.1466,0.8299,0.0741),vec(8.1466,0.8299,0.0741),vec(0.0526,3.1571,0.0026),vec(0.0526,3.1571,0.0026),vec(1,1,1),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.1,2,2),vec(0.1,2,2),vec(24,4,0.96),vec(2,2,2),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(30,30,30),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,0,0,0,0,0,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","debug/debugdrawflat","debug/debugdrawflat","","","","","","","","","","","","","")
+    Hologram[ "parent", array ] = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17)
+    Hologram[ "note", array ] = array("","","","","text position start","start ranger left","too far ranger left","start ranger right","too far ranger right","finish ranger left","finish ranger right","light","light","","start button","60ft ranger left","60ft ranger right")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next < Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else { for( I = 1, Hologram[ "model", array ]:count( ) ) { holoParent(I, Hologram["parent", array][I, number]) }, interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

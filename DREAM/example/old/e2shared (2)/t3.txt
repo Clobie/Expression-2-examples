@@ -1,0 +1,106 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/26/2018 @ 152
+# Holograms: 94
+# Notes: 
+# 6 -> leg_pivot_a
+# 7 -> leg_pivot_b
+# 8 -> leg_pivot_c
+# 9 -> leg_foot
+# 14 -> leg_pivot_a
+# 15 -> leg_pivot_b
+# 16 -> leg_pivot_c
+# 17 -> leg_foot
+# 22 -> leg_pivot_a
+# 23 -> leg_pivot_b
+# 24 -> leg_pivot_c
+# 25 -> leg_foot
+# 30 -> leg_pivot_a
+# 31 -> leg_pivot_b
+# 32 -> leg_pivot_c
+# 33 -> leg_foot
+# 38 -> leg_pivot_a
+# 39 -> leg_pivot_b
+# 40 -> leg_pivot_c
+# 41 -> leg_foot
+# 46 -> leg_pivot_a
+# 47 -> leg_pivot_b
+# 48 -> leg_pivot_c
+# 49 -> leg_foot
+# 54 -> leg_pivot_a
+# 55 -> leg_pivot_b
+# 56 -> leg_pivot_c
+# 57 -> leg_foot
+# 62 -> leg_pivot_a
+# 63 -> leg_pivot_b
+# 64 -> leg_pivot_c
+# 65 -> leg_foot
+# 71 -> anchor pyr 
+# 84 -> anchor
+# 85 -> left
+# 87 -> right
+# 89 -> bottom right
+# 91 -> bottom left
+# --------------------------------------------- #
+@name t3
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/cube.mdl","models/holograms/hq_tube_thin.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_cylinder.mdl","models/props_lab/tpplug.mdl","models/props_lab/tpplug.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/cube.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/sprops/misc/alphanum/alphanum_lessthan.mdl","models/sprops/misc/alphanum/alphanum_lessthan.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,72.5),vec(42,0,72.5),vec(-24.5,0,72.5),vec(-24.5,0,72.5),vec(-11,-17.4023,72.5),vec(-17.1006,-31.1055,72.5),vec(-17.1006,-31.1055,172.5),vec(-17.1006,-31.1055,272.5),vec(-17.1006,-31.1055,372.5),vec(-17.1006,-31.1055,72.5),vec(-17.1006,-31.1055,172.5),vec(-17.1006,-31.1055,272.5),vec(4.5,-22.5,72.5),vec(2.4121,-37.3535,72.5),vec(2.4121,-37.3535,172.5),vec(2.4121,-37.3535,272.5),vec(2.4121,-37.3535,372.5),vec(2.4121,-37.3535,72.5),vec(2.4121,-37.3535,172.5),vec(2.4121,-37.3535,272.5),vec(18.5,-23,72.5),vec(21.3623,-37.7246,72.5),vec(21.3623,-37.7246,172.5),vec(21.3623,-37.7246,272.5),vec(21.3623,-37.7246,372.5),vec(21.3623,-37.7246,72.5),vec(21.3623,-37.7246,172.5),vec(21.3623,-37.7246,272.5),vec(33.5,-18.5,72.5),vec(39.4814,-32.2559,72.5),vec(39.4814,-32.2559,172.5),vec(39.4814,-32.2559,272.5),vec(39.4814,-32.2559,372.5),vec(39.4814,-32.2559,72.5),vec(39.4814,-32.2559,172.5),vec(39.4814,-32.2559,272.5),vec(-11,17.3994,72.5),vec(-19.3877,29.835,72.5),vec(-19.3877,29.835,172.5),vec(-19.3877,29.835,272.5),vec(-19.3877,29.835,372.5),vec(-19.3877,29.835,72.5),vec(-19.3877,29.835,172.5),vec(-19.3877,29.835,272.5),vec(4.5,22.5,72.5),vec(2.4121,37.3535,72.5),vec(2.4121,37.3535,172.5),vec(2.4121,37.3535,272.5),vec(2.4121,37.3535,372.5),vec(2.4121,37.3535,72.5),vec(2.4121,37.3535,172.5),vec(2.4121,37.3535,272.5),vec(18.5,23,72.5),vec(21.3623,37.7246,72.5),vec(21.3623,37.7246,172.5),vec(21.3623,37.7246,272.5),vec(21.3623,37.7246,372.5),vec(21.3623,37.7246,72.5),vec(21.3623,37.7246,172.5),vec(21.3623,37.7246,272.5),vec(33.5,18.5,72.5),vec(39.4814,32.2559,72.5),vec(39.4814,32.2559,172.5),vec(39.4814,32.2559,272.5),vec(39.4814,32.2559,372.5),vec(39.4814,32.2559,72.5),vec(39.4814,32.2559,172.5),vec(39.4814,32.2559,272.5),vec(-65,0,116.5),vec(-65,0,152),vec(-65,0,157.5),vec(-65,0,157.5),vec(-41,0,157.5),vec(-43,0,157.5),vec(-47.5,0,157.5),vec(17,0,50),vec(-47,0,157.5),vec(-47,0,157.5),vec(-82.5,0,157.5),vec(-89.5,0,157.5),vec(-42.5,0,157),vec(-44.5,0,157.5),vec(-88.0977,0,157.5),vec(35.5,0,113.7031),vec(35.5,20,113.7031),vec(35.5801,20,113.666),vec(35.5,-20,113.7031),vec(35.5801,-20,113.666),vec(30.9746,-12.3999,103.9976),vec(31.0537,-12.3999,103.9604),vec(30.9746,12.4365,103.9976),vec(31.0537,12.4365,103.9604),vec(35.5,20,113.7031),vec(35.5,-20,113.7031))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(-90,0,0),ang(0,-24,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,-8,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,11,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,23.5,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,34,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,8,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,-11,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,-23.5,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(0,0,0),ang(0,-180,-180),ang(90,0,0),ang(90,0,0),ang(25,0,0),ang(-65,0,0),ang(-65,0,0),ang(-65,0,0),ang(-65,0,0),ang(-65,0,0),ang(-65,0,0),ang(-65,0,0),ang(-65,0,0),ang(0,90,25),ang(0,-90,-25))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(10,10,5),vec(8,8,6),vec(17,17,10),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,3),vec(1,1,1),vec(0.1,0.1,0.1),vec(1,1,4),vec(0.3,0.3,0.001),vec(0.4,0.4,0.4),vec(0.9,0.9,1),vec(0.7,0.7,1),vec(0.55,0.55,1),vec(0.5,0.5,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1.5,1.5,0.1),vec(3,3,4),vec(1,1,1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(0.5,0.01,0.5),vec(0.5,0.01,0.5))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,50,255,255,255,255,255,255,255,255,255,255,0,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","debug/debugdrawflat","debug/debugdrawflat")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,1,1,1,1,5,6,7,8,6,7,8,1,13,14,15,16,14,15,16,1,21,22,23,24,22,23,24,1,29,30,31,32,30,31,32,1,37,38,39,40,38,39,40,1,45,46,47,48,46,47,48,1,53,54,55,56,54,55,56,1,61,62,63,64,62,63,64,1,1,1,71,71,71,71,76,71,71,71,71,71,71,71,1,84,84,84,84,84,84,84,84,84,84)
+    Hologram[ "note", array ] = array("","","","","","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","","","","","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","","","","","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","","","","","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","","","","","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","","","","","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","","","","","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","","","","","leg_pivot_a","leg_pivot_b","leg_pivot_c","leg_foot","","","","","","anchor pyr ","","","","","","","","","","","","","anchor","left","","right","","bottom right","","bottom left","","","")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else {
+            for( I = 1, Hologram[ "model", array ]:count( ) ) {holoParent(I, Hologram["parent", array][I, number]) }
+            interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

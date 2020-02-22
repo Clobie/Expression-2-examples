@@ -1,0 +1,318 @@
+@name
+@inputs
+@outputs
+@persist [Legs Pos Ranger Gait Clk Dist Step Height Hit Hitnormal]:array
+@persist [E Pod]:entity
+@persist [Vel Rot Ang A1 Compensate]:vector
+@persist [LegCount GC Runtime Pos_comp Up_clamp Up_mul Interval Systime Rate H Leg_ground_hit_length Ranger_z_offset RangeDist Base_height]
+@persist [LR FB] Length1 Length2 Orientation
+@model models/hunter/blocks/cube025x025x025.mdl
+
+#runOnTick(1)
+if(first()){
+    E = entity()
+    E:propGravity(0)
+    E:setMass(50000)
+    #E:setAlpha(0)
+    #E:propNotSolid(1)
+
+    findByClass("prop_vehicle_prisoner_pod")
+    findInSphere(E:pos(),100)
+    Pod = findClosest(E:pos())
+    Pod:setPos(E:toWorld(vec(0,0,5)))
+    Pod:setAng(E:toWorld(ang(0,0,0)))
+    Pod:propGravity(0)
+
+    
+    timer("parent",100)
+    Parent = 0
+    
+    Length1 = 45
+    Length2 = 30
+    
+
+    Interval = 80 #Animation rate (inverse to Rate for better performance. EG: Interval: 50, Rate 10; Interval: 100, Rate:5)
+
+    LegCount = 4
+    Width = 20
+    Length = Width
+    Rate = 0.6
+    Compensate = vec(3)#vec(2)
+    Pos_comp = Length * 3 #3#Velocity compensation
+    Orientation = 180 / LegCount + 90
+    
+    Ranger_z_offset = 50
+    RangeDist = 200
+    Base_height = 45
+    Leg_ground_hit_length = 150
+
+    Up_mul = 2
+    Up_clamp = 30 #Leg cycle Z axis clamp
+    
+    for(I = 1, LegCount){
+        local Cos = cos((I / LegCount) * 360 + (Orientation)) * Width
+        local Sin = sin((I / LegCount) * 360 + (Orientation)) * Length
+        
+        Legs[I, entity] = holoCreate(I, E:toWorld(vec(Cos, Sin, 0)))
+        Pos[I, vector] = vec(Cos, Sin, 0)
+        Step[I, vector] = vec(Cos, Sin, 0)
+        holoScale(I, vec())
+        
+        #holoParent(I, E)
+    }
+#    #[
+    Gait = array(
+        0, 1,
+        2, 3,
+        1, 2,
+        3, 4
+    )
+#    ]#
+
+    
+    
+    GC = Gait:count()
+    
+    function void entity:iK(Index, Xn, Yn, Targ:entity){
+        Holo = (Index * 1000) + 1
+        if(first()){
+            for(I = Holo, Holo + 2){
+                holoCreate(I)
+               
+                holoPos(I, holoEntity(I - 1):toWorld(vec(0, Xn, 0)))
+                holoScale(I, vec(0.3, Xn / 6, 0.3))
+                holoColor(I,vec(115, 115, 115))
+                holoMaterial(I,"sprops/textures/gear_metal")
+               
+                if(I == Holo + 2){
+                    holoPos(I, holoEntity(I - 1):toWorld(vec(0, Yn, 0)))
+                } elseif (I > Holo){
+                    holoScale(I, vec(0.3, Yn / 6, 0.3))
+                }
+               
+                holoParent(I, I - 1)
+                               
+                holoClipEnabled(I, 1)
+                holoClip(I, vec(), vec(0, 1, 0), 0)
+            }
+            holoPos(Holo, This:pos())
+            holoParent(Holo, This)
+            
+            Knee = (Index * 2000)
+            for(KneeHolo = Knee, Knee){
+                holoCreate(KneeHolo)
+                holoModel(KneeHolo,"hq_sphere")
+                holoColor(KneeHolo, vec(115,115,115))
+                holoScale(KneeHolo,vec(0.4,0.4,0.4))
+                holoMaterial(KneeHolo,"sprops/textures/gear_metal")
+            }
+            Knee2 = (Index * 2000 + LegCount)
+            for(KneeHolo2 = Knee2, Knee2){
+                holoCreate(KneeHolo2)
+                holoModel(KneeHolo2,"hq_sphere")
+                holoColor(KneeHolo2, vec(115,115,115))
+                holoScale(KneeHolo2,vec(0.5,0.5,0.5))
+                holoMaterial(KneeHolo2,"sprops/textures/gear_metal")
+            }
+            
+            
+            holoPos(Knee, holoEntity(Holo+2):pos())
+            holoParent(Knee, Holo+2)
+            
+            holoPos(Knee2, holoEntity(Holo+1):pos())
+            holoParent(Knee2, Holo+1)
+            
+            holoModel(Holo,"hq_rcube")
+            holoModel(Holo+1,"hq_rcube")
+            holoModel(Holo+2,"hq_sphere")
+        }
+        
+       
+        Distancen = This:pos():distance(Targ:pos())
+        Elevv = This:elevation(Targ:pos())
+        Bearingg = This:bearing(Targ:pos())
+       
+        Be = De = Xn
+        Top = Yn
+       
+        Ae = max(Distancen, Top)
+        Ce = min(Distancen, Top)
+       
+        Calcu = ((Ae + Be - Ce + De) * (-Ae + Be + Ce + De) * (Ae - Be - Ce + De) * (Ae + Be - Ce - De)) / (4 * (Ae - Ce) ^ 2)
+        Calcu = sqrt(clamp(Calcu, 0, Calcu))
+       
+        Signz = (sign(Distancen - Xn) + 1) / 2
+       
+        if(Signz){
+            Arcs = asin(Calcu / Xn)
+        } else {
+            Arcs = acos(Calcu / Xn) + 90
+        }
+   
+        holoAng(Holo, This:toWorld(ang(0, -Bearingg - 90, Elevv + Arcs)))
+        holoAng(Holo + 1, holoEntity(Holo):toWorld(ang(0, 0, -Arcs)))
+        holoAng(Holo + 2, holoEntity(Holo + 1):toWorld(ang(0, 0, -Arcs)))
+    }
+     
+    Systime = Rate / LegCount
+    
+    rangerPersist(1)
+    Filter = E:getConstraints()
+    Filter:pushEntity(Pod)
+    rangerFilter(Filter)
+    
+    interval(Interval)  
+}
+
+if(Parent == 0){
+    interval(100)
+}
+if(clk("parent")){
+    stoptimer("parent")
+    Pod:parentTo(E)
+    interval(0)
+    Parent = 1
+    E:propFreeze(0)
+}
+
+if(clk() | first()){
+
+    Vel = E:velL():setZ(E:velL():z() / 10)
+    Rot = E:angVelVector()
+    
+    Driver = Pod:driver()
+    W = Driver:keyForward()
+    S = Driver:keyBack()
+    A = Driver:keyLeft()
+    D = Driver:keyRight()
+    M1 = Driver:keyAttack1()
+    M2 = Driver:keyAttack2()
+    Space = Driver:keyJump()
+    Shift = Pod:driver():keySprint()
+    Alt = Driver:keyWalk()
+    R = Driver:keyReload()
+    F = Driver:keyPressed("F")
+    T = Driver:keyPressed("T")
+    G = Driver:keyPressed("G")
+    
+    Systime += (Rate * (1 + Shift / 2))+ (abs(Rot:z() / 600))
+    if(!Alt){
+        Systime = Systime % (GC / 2)
+    }
+    Base_height = 40 + (R*20) - (F*20)
+                
+    for(I = 1, LegCount){        
+        local LG = ((I * 2) - 1) % GC ? ((I * 2) - 1) % GC  : GC
+        local HG = (I * 2) % GC ? (I * 2) % GC : GC
+        
+        local High = Gait[I * 2 % GC, number]
+        local Low = Gait[(I * 2 - 1) % GC, number]
+        
+        local HH = High % (GC / 2)
+        local LL = Low % (GC / 2)
+        
+        local Range = inrange(Systime, clamp(Low, 0, Low), High) | inrange(Systime, LL, LL * 2 - HH) | inrange(Systime, HH * 2 - LL, HH)
+        #print(Systime)
+        
+        local Sin = sin((I / LegCount) * 360 + (Orientation)) / 2
+        local Cos = cos((I / LegCount) * 360 + (Orientation)) / 2
+        
+        E:iK(I, Length1, Length2, Legs[I, entity])
+        
+        #print(4,(E:vel():length()):toString())
+
+        Ranger[I, ranger] = rangerOffset(RangeDist, E:toWorld(Pos[I, vector] + vec(0, 0, Ranger_z_offset) + clamp((Vel:setZ(0) / Compensate), -vec(Pos_comp), vec(Pos_comp))), vec(Cos, Sin, -1):rotate(E:toWorld(ang(0, 0, 0))))
+            
+        if(Ranger[I, ranger]:distance() >= Leg_ground_hit_length){
+            Ranger[I, ranger] = rangerOffset(RangeDist, E:toWorld(Pos[I, vector] * (10 / 2) + vec(0, 0, Ranger_z_offset)), vec(-Cos, -Sin, -1):rotate(E:toWorld(ang(0, 0, 0))))
+        }
+
+        
+        
+        if(!Legs[I, entity]){
+            Legs[I, entity] = holoCreate(I, Ranger[I, ranger]:pos(), vec())
+            holoParent(I, E)
+            #hint(Legs[I, entity]:toString(), 10)
+        }
+        
+        if(Ranger[I, ranger]:distance() <= Leg_ground_hit_length){
+            if(Clk[I, number] != Range){
+                Clk[I, number] = Range
+                if(Range){
+                    Step[I, vector] = Ranger[I, ranger]:position()
+                    Dist[I, number] = abs(holoEntity(I):pos():distance(Ranger[I, ranger]:position()))
+                    if(Ranger[I, ranger]:entity()){
+                        holoParent(I, Ranger[I, ranger]:entity())
+                    } else {
+                        holoUnparent(I)
+                    }
+                } else {
+                    if(Dist[I, number] > 10) {
+                        holoPos(I, Step[I, vector])
+                        holoEntity(I):soundPlay(100 + I, 0.368, "npc/stalker/stalker_footstep_left"+randint(1,2)+".wav")
+                        #soundPitch(100 + I, 120)
+                    }
+                    Hitnormal[I, vector] = Ranger[I, ranger]:hitNormal():rotate(ang(0, -E:angles():yaw() + 90, 0))
+                }
+            }
+            
+            if(Clk[I, number] & Dist[I, number] > 10){
+                local Di = clamp(Dist[I, number] * Up_mul, 0, Up_clamp) #Get step distance
+                local Dur =  Gait[HG, number] - Gait[LG, number] #Get duration of step
+                local Calc = 1 / Dur #Convert to dividend of 1 (for time)
+                local Seq = Systime % Dur #Find remainder (for step duration). Multiplied by Calc to ensure 0 to 1 sequencing.
+                #print(Seq)
+                local Mix = mix(mix(Step[I, vector], holoEntity(I):pos() + E:up() * Di*2.5, Seq), mix(holoEntity(I):pos() + E:up() * Di, holoEntity(I):pos(), Seq), Seq)
+                
+                holoPos(I, Mix)
+            }     
+        } else {
+            holoPos(I, Ranger[I, ranger]:position())
+            Step[I, vector] = Ranger[I, ranger]:position()
+        }
+        
+        Height[I, number] = Ranger[I, ranger]:distance()
+    } 
+    
+    LR = FB = 0
+    Angles = E:angles()
+    A1 = vec()
+    
+    for(I = 1, Step:count()){
+        A1 += holoEntity(I):pos()
+        
+        local Cos = cos((I / LegCount) * 360 + (Orientation))
+        local Sin = sin((I / LegCount) * 360 + (Orientation))
+        LR += Height[I, number] * Cos
+        FB += Height[I, number] * Sin
+    }    
+    A1 /= LegCount
+    
+
+        Ang = clamp(vec(-FB, LR, 0), -100, 100)
+
+    
+    local Ground = (Height:min() <= Leg_ground_hit_length)
+        
+    local H = (((A1 + (E:up() * Base_height) - E:pos()) * !Space * Ground) - vec(0, 0, 20 * !Ground))
+    local Res = (E:vel() * vec(0.8) * !Space * Ground * E:mass())
+    
+    local Move = ((E:right() * (W - S)) + (E:forward() * ((A - D)))) * (35 * (1 + Shift)) * Ground * E:mass() * 2
+    local Jump = E:up() * Space * 200 * Ground * E:mass()
+    
+    local Local = Pod:toLocal(Driver:eyeAngles()):yaw() - 90
+    local Turn = vec(0, 0, (M2 * (clamp(Local, -90, 90) * 0.05))) * 600 * Ground * E:inertia() * 2
+
+    local Pitch = vec((S-W)*Alt, 0, 0 )* 1000 * Ground * E:inertia() * 2
+    local Roll = vec(0, (D-A)*Alt, 0 )* 500 * Ground * E:inertia() * 2
+
+    if(Jump){
+        E:soundPlay(50, 1.5, "player/coop_motors/coop_bot_leg_motor_jump_06.wav")
+    }
+    
+    E:applyForce((H * E:mass() * vec(2, 2, 4)) - Res - Move + Jump)
+    
+    E:applyTorque((Ang * E:inertia() * (100 / (2 * 1.5))) - (E:angVelVector() * E:inertia() * (20 + (5))) + Pitch + Turn + Roll * (2))
+    
+}
+

@@ -1,0 +1,401 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/25/2018 @ 2146
+# Holograms: 68
+# Notes: 
+# --------------------------------------------- #
+@name mech8
+@persist Hologram:table [ Seat Driver Entity ]:entity
+@persist [ SPEED SHIFTSPEED LEGSPEED STEPDAMP STEPARCH LEGINCREMENT BODYHEIGHT CANJUMP STATE LaserIndex ]:number
+@persist [ RRR_P1 RRR_P2 RRR_P3 ]:vector RRR_STEP:number
+@persist [ RRC_P1 RRC_P2 RRC_P3 ]:vector RRC_STEP:number
+@persist [ FRC_P1 FRC_P2 FRC_P3 ]:vector FRC_STEP:number
+@persist [ FRF_P1 FRF_P2 FRF_P3 ]:vector FRF_STEP:number
+@persist [ RLR_P1 RLR_P2 RLR_P3 ]:vector RLR_STEP:number
+@persist [ RLC_P1 RLC_P2 RLC_P3 ]:vector RLC_STEP:number
+@persist [ FLC_P1 FLC_P2 FLC_P3 ]:vector FLC_STEP:number
+@persist [ FLF_P1 FLF_P2 FLF_P3 ]:vector FLF_STEP:number
+@persist [ BODYANG ]:angle
+#@model models/sprops/cuboids/height06/size_5/cube_30x30x6.mdl
+
+#exit()
+
+#if( dupefinished() ) { reset() }
+
+if( first( ) ) {
+    ##[
+    SPEED = 50
+    SHIFTSPEED = 25
+    LEGSPEED = 0.65
+    STEPDAMP = 2
+    STEPARCH = 2.5
+    LEGINCREMENT = 0.05
+    BODYHEIGHT = 50
+    #]#
+    #[
+    SPEED = 50
+    SHIFTSPEED = 25
+    LEGSPEED = 0.5
+    STEPDAMP = 4
+    STEPARCH = 2.5
+    LEGINCREMENT = 0.1
+    BODYHEIGHT = 20
+    ]#
+    STATE = 1
+    Entity = entity( )
+    Entity:setMass( 5000 )
+    propSpawnUndo( 0 )
+    
+    function number icos( A, B, C ) { return acos( ( A ^ 2 + B ^ 2 - C ^ 2 ) / ( 2 * A * B ) ) }
+    function void async( T, F:string               ) { timer( format( "cb:%.0f:%s:null:%s", randint( 1e15 ), F, vonEncode( array( ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:angle      ) { timer( format( "cb:%.0f:%s:a:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:bone       ) { timer( format( "cb:%.0f:%s:b:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:complex    ) { timer( format( "cb:%.0f:%s:c:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:entity     ) { timer( format( "cb:%.0f:%s:e:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:matrix     ) { timer( format( "cb:%.0f:%s:m:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:number     ) { timer( format( "cb:%.0f:%s:n:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:quaternion ) { timer( format( "cb:%.0f:%s:q:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:array      ) { timer( format( "cb:%.0f:%s:r:%s",    randint( 1e15 ), F, vonEncode( X ) ), T * 1000 )        }
+    function void async( T, F:string, X:string     ) { timer( format( "cb:%.0f:%s:s:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:table      ) { timer( format( "cb:%.0f:%s:t:%s",    randint( 1e15 ), F, vonEncode( X ) ), T * 1000 ) }
+    function void async( T, F:string, X:vector     ) { timer( format( "cb:%.0f:%s:v:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:matrix2    ) { timer( format( "cb:%.0f:%s:xm2:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:matrix4    ) { timer( format( "cb:%.0f:%s:xm4:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:ranger     ) { timer( format( "cb:%.0f:%s:xrd:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:vector2    ) { timer( format( "cb:%.0f:%s:xv2:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:vector4    ) { timer( format( "cb:%.0f:%s:xv4:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:wirelink   ) { timer( format( "cb:%.0f:%s:xwl:%s",  randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    
+    function entity:fire() {
+        local Width = 40
+        local Length = 0.075
+        local Space = 5
+        local Trail = "trails/laser"
+        if( holoRemainingSpawns( ) >= 4 && propCanCreate() ) {
+            local X = propSpawn( "models/props_phx/ball.mdl", This:pos(), This:angles( ), 0 )
+            X:setAlpha( 0 ), X:setMass( 1 ), X:propGravity( 0 ), X:propFreeze( 0 )
+            X:applyForce( This:forward() * 50000 * 5000 )
+            X:applyAngForce( ang(0,0,1) * 50000 * 30 )
+            local R = array( X:right( ) * Space, X:right( ) * -Space, X:up( ) * Space, X:up( ) * -Space )
+            for( I = 1, 4 ) { 
+                local J = randint( 2e8 )
+                holoCreate( J, X:pos( ) + R[I, vector] ):setTrails( Width, Width, Length, Trail, hsv2rgb( random( 360 ), 1, 1 ), 255 )
+                holoAlpha( J, 0 )
+                holoParent( J, X )
+            }
+            async( 2, "propBreak", X )
+        }
+    }
+    
+    function delayFire( Destination:vector ) {
+        holoPos( LaserIndex, Destination )
+        #local X = propSpawn( "models/props_phx/ball.mdl", Destination, 1 )
+        #X:propBreak( )
+        holoEntity( 71 ):soundPlay( 1, soundDuration( "weapons/fx/nearmiss/bulletltor12.wav" ), "weapons/fx/nearmiss/bulletltor12.wav" )
+    }
+    
+    function fireLaser( Origin:vector, Destination:vector, Intensity ) {
+        if( holoRemainingSpawns( ) >= Intensity ) {
+            LaserIndex = randint( 2e8 )
+            for( I = LaserIndex, LaserIndex + Intensity ) {
+                holoCreate( I, Origin )
+                holoAlpha( I, 0 )
+                holoParent( I, LaserIndex )
+                holoEntity( I ):setTrails( 7 + ( ( I - LaserIndex ) * 7 ), 7 + ( ( I - LaserIndex ) * 7 ), 0.5, "trails/plasma", vec( 73, 185, 96 ), 255 )
+            }
+            local X = propSpawn( "models/props_phx/misc/egg.mdl", Origin, ang(0), 0 )
+            X:setAlpha( 0 ), X:setMass( 1 ), X:propGravity( 0 ), X:propFreeze( 0 )
+            X:applyForce( ( Destination - Origin ):normalized( ) * X:mass( ) * 5000 )
+            #Destination = Destination + ( ( Destination - Origin ):normalized( ) * 10000 )
+            async( 0.1, "delayFire", Destination )
+            async( 1, "holoDelete", LaserIndex )
+        }
+    }
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/cube.mdl","models/holograms/hq_tube_thin.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_tube.mdl","models/holograms/hq_cylinder.mdl","models/props_lab/tpplug.mdl","models/props_lab/tpplug.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,72.5),vec(42,0,72.5),vec(-24.5,0,72.5),vec(-24.5,0,72.5),vec(-11,-17.4023,72.5),vec(-17.1006,-31.1055,72.5),vec(-17.1006,-31.1055,172.5),vec(-17.1006,-31.1055,272.5),vec(-17.1006,-31.1055,372.5),vec(-17.1006,-31.1055,72.5),vec(-17.1006,-31.1055,172.5),vec(-17.1006,-31.1055,272.5),vec(4.5,-22.5,72.5),vec(2.4121,-37.3535,72.5),vec(2.4121,-37.3535,172.5),vec(2.4121,-37.3535,272.5),vec(2.4121,-37.3535,372.5),vec(2.4121,-37.3535,72.5),vec(2.4121,-37.3535,172.5),vec(2.4121,-37.3535,272.5),vec(18.5,-23,72.5),vec(21.3623,-37.7246,72.5),vec(21.3623,-37.7246,172.5),vec(21.3623,-37.7246,272.5),vec(21.3623,-37.7246,372.5),vec(21.3623,-37.7246,72.5),vec(21.3623,-37.7246,172.5),vec(21.3623,-37.7246,272.5),vec(33.5,-18.5,72.5),vec(39.4814,-32.2559,72.5),vec(39.4814,-32.2559,172.5),vec(39.4814,-32.2559,272.5),vec(39.4814,-32.2559,372.5),vec(39.4814,-32.2559,72.5),vec(39.4814,-32.2559,172.5),vec(39.4814,-32.2559,272.5),vec(-11,17.3994,72.5),vec(-19.3877,29.835,72.5),vec(-19.3877,29.835,172.5),vec(-19.3877,29.835,272.5),vec(-19.3877,29.835,372.5),vec(-19.3877,29.835,72.5),vec(-19.3877,29.835,172.5),vec(-19.3877,29.835,272.5),vec(4.5,22.5,72.5),vec(2.4121,37.3535,72.5),vec(2.4121,37.3535,172.5),vec(2.4121,37.3535,272.5),vec(2.4121,37.3535,372.5),vec(2.4121,37.3535,72.5),vec(2.4121,37.3535,172.5),vec(2.4121,37.3535,272.5),vec(18.5,23,72.5),vec(21.3623,37.7246,72.5),vec(21.3623,37.7246,172.5),vec(21.3623,37.7246,272.5),vec(21.3623,37.7246,372.5),vec(21.3623,37.7246,72.5),vec(21.3623,37.7246,172.5),vec(21.3623,37.7246,272.5),vec(33.5,18.5,72.5),vec(39.4814,32.2559,72.5),vec(39.4814,32.2559,172.5),vec(39.4814,32.2559,272.5),vec(39.4814,32.2559,372.5),vec(39.4814,32.2559,72.5),vec(39.4814,32.2559,172.5),vec(39.4814,32.2559,272.5),vec(-65,0,116.5),vec(-65,0,152),vec(-65,0,157.5),vec(-65,0,157.5),vec(-41,0,157.5),vec(-43,0,157.5),vec(-47.5,0,157.5),vec(17,0,50),vec(-47,0,157.5),vec(-47,0,157.5),vec(-82.5,0,157.5),vec(-89.5,0,157.5),vec(-42.5,0,157),vec(-44.5,0,157.5),vec(-88.0981,0,157.5))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(-90,0,0),ang(0,-24,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,-8,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,11,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,23.5,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,34,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,8,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,-11,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,-23.5,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(0,0,0),ang(0,-180,-180),ang(90,0,0),ang(90,0,0))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(10,10,5),vec(8,8,6),vec(17,17,10),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,8.4),vec(3,3,3),vec(1,1,1),vec(0.1,0.1,0.1),vec(1,1,4),vec(0.3,0.3,0.001),vec(0.4,0.4,0.4),vec(0.9,0.9,1),vec(0.7,0.7,1),vec(0.55,0.55,1),vec(0.5,0.5,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1.5,1.5,0.1),vec(3,3,4))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,50,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    Hologram[ "parent", array ] = array(1,1,1,1,1,5,6,7,8,6,7,8,1,13,14,15,16,14,15,16,1,21,22,23,24,22,23,24,1,29,30,31,32,30,31,32,1,37,38,39,40,38,39,40,1,45,46,47,48,46,47,48,1,53,54,55,56,54,55,56,1,61,62,63,64,62,63,64,1,1,1,71,71,71,71,76,71,71,71,71,71,71,71)
+    
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                Entity:toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                Entity:toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            holoParent(I, Hologram["parent", array][I, number])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else {
+            rangerHitEntities( 1 )
+            hint( "Dream's Mech ready for use!", 7 )
+            Seat = seatSpawn( "models/nova/airboat_seat.mdl", holoEntity( 1 ):toWorld( vec( 0, 0, 30 ) ), Entity:angles( ) - ang( 0, 90, 0 ), 0 )
+            Seat:parentTo( holoEntity( 1 ) )
+            Seat:setAlpha( 255 )
+            Seat:propFreeze( 0 )
+            holoParent( 1, Entity )
+            holoPos( 1, Entity:pos( ) )
+            Entity:setPos( Entity:toWorld( vec( 0, 0, BODYHEIGHT ) ) )
+            Entity:propFreeze( 0 )
+            runOnTick( 1 )
+        }
+    } buffer( )
+    
+    function ik3a( A, B, C, LenA, LenB, LenC, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        local PosA = AEntity:pos( )
+        local LenC = min( PosA:distance( Destination ) - LenB, LenA + LenA )
+        local OffsetAngle = -icos( LenC, LenA, LenA ) + 90
+        holoAng( A, ( Destination - PosA ):toAngle( ) + ang( OffsetAngle, 0, 0 ) )
+        holoAng( B, AEntity:toWorld( ang( -asin( LenC / ( LenA + LenA ) ) + 90, 0, 0 ) ) )
+        holoAng( C, AEntity:toWorld( ang( sign( LenC ) * -icos( LenA, LenA, LenC ) + 180, 0, 0) ) )
+    }
+    
+    function entity:ik3c( A, B, C, LenA, LenB, LenC, Destination:vector ) {
+        local AEnt = holoEntity( A )
+        local BEnt = holoEntity( B )
+        local CEnt = holoEntity( C )
+        local Total = LenA - LenB + LenC
+        local Bearing = -bearing( AEnt:pos(), This:angles(), Destination )
+        local Angle = This:toLocalAxis( Destination - AEnt:pos( ) ):toAngle( ):setRoll( Bearing )
+        local Offset = Total - abs( min( AEnt:pos( ):distance( Destination ), Total ) )
+        local Quat = quat( Angle ) * qRotation( vec( 0, -Offset + 90, 0 ) )
+        holoAng( A, This:toWorld( slerp( quat( AEnt ), Quat, 1 ):toAngle() ) )
+        local Distance = min( BEnt:pos( ):distance( Destination), LenB + LenC )
+        local Axis = AEnt:toLocalAxis( BEnt:pos() - Destination )
+        local Atan = atan( -Axis:z(), Axis:x() ) + icos( LenC, LenB, Distance ) + 90
+        holoAng( B, BEnt:toWorld( ang( Atan, 0, 0) ) )
+        holoAng( C, BEnt:toWorld( ang( icos( Distance, LenB, LenC ),0 ,0 ) ) )
+        #holoAng( Foot, This:toWorld( ang( -90, 0, 0 ) ) )
+    }
+    
+    local TOffset = LEGSPEED / 8
+    
+    function rrr() {
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, 400 ) 
+        local XRD = rangerOffset( 500, Entity:toWorld( vec( -155, -145, 250 ) ), vec( 0, 0, -1 ) )
+        local XRD2 = rangerOffset( 500, XRD:position( ) + V / STEPDAMP + vec( 0, 0, 300 ), vec( 0, 0, -1 ) )
+        RRR_P1 = holoEntity( 9 ):pos( )
+        RRR_P3 = XRD2:position( )
+        RRR_P2 = ( RRR_P1 + RRR_P3 ) * 0.5 + vec( 0, 0, RRR_P1:distance( RRR_P3 ) / STEPARCH )
+        RRR_STEP = 0
+        async( LEGSPEED, "rrr" )
+    } async( TOffset * 0, "rrr" )
+    
+    function rrc() {
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, 400 ) 
+        local XRD = rangerOffset( 500, Entity:toWorld( vec( -50, -195, 250 ) ), vec( 0, 0, -1 ) )
+        local XRD2 = rangerOffset( 500, XRD:position( ) + V / STEPDAMP + vec( 0, 0, 300 ), vec( 0, 0, -1 ) )
+        RRC_P1 = holoEntity( 17 ):pos( )
+        RRC_P3 = XRD2:position( )
+        RRC_P2 = ( RRC_P1 + RRC_P3 ) * 0.5 + vec( 0, 0, RRC_P1:distance( RRC_P3 ) / STEPARCH )
+        RRC_STEP = 0
+        async( LEGSPEED, "rrc" )
+    } async( TOffset * 4, "rrc" )
+    
+    function frc() {
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, 400 ) 
+        local XRD = rangerOffset( 500, Entity:toWorld( vec( 50, -195, 250 ) ), vec( 0, 0, -1 ) )
+        local XRD2 = rangerOffset( 500, XRD:position( ) + V / STEPDAMP + vec( 0, 0, 300 ), vec( 0, 0, -1 ) )
+        FRC_P1 = holoEntity( 25 ):pos( )
+        FRC_P3 = XRD2:position( )
+        FRC_P2 = ( FRC_P1 + FRC_P3 ) * 0.5 + vec( 0, 0, FRC_P1:distance( FRC_P3 ) / STEPARCH )
+        FRC_STEP = 0
+        async( LEGSPEED, "frc" )
+    } async( TOffset * 2, "frc" )
+    
+    function frf() {
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, 400 ) 
+        local XRD = rangerOffset( 500, Entity:toWorld( vec( 155, -145, 250 ) ), vec( 0, 0, -1 ) )
+        local XRD2 = rangerOffset( 500, XRD:position( ) + V / STEPDAMP + vec( 0, 0, 300 ), vec( 0, 0, -1 ) )
+        FRF_P1 = holoEntity( 33 ):pos( )
+        FRF_P3 = XRD2:position( )
+        FRF_P2 = ( FRF_P1 + FRF_P3 ) * 0.5 + vec( 0, 0, FRF_P1:distance( FRF_P3 ) / STEPARCH )
+        FRF_STEP = 0
+        async( LEGSPEED, "frf" )
+    } async( TOffset * 6, "frf" )
+    
+    function rlr() {
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, 400 ) 
+        local XRD = rangerOffset( 500, Entity:toWorld( vec( -155, 145, 250 ) ), vec( 0, 0, -1 ) )
+        local XRD2 = rangerOffset( 500, XRD:position( ) + V / STEPDAMP + vec( 0, 0, 300 ), vec( 0, 0, -1 ) )
+        RLR_P1 = holoEntity( 41 ):pos( )
+        RLR_P3 = XRD2:position( )
+        RLR_P2 = ( RLR_P1 + RLR_P3 ) * 0.5 + vec( 0, 0, RLR_P1:distance( RLR_P3 ) / STEPARCH )
+        RLR_STEP = 0
+        async( LEGSPEED, "rlr" )
+    } async( TOffset * 4, "rlr" )
+    
+    function rlc() {
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, 400 ) 
+        local XRD = rangerOffset( 500, Entity:toWorld( vec( -50, 195, 250 ) ), vec( 0, 0, -1 ) )
+        local XRD2 = rangerOffset( 500, XRD:position( ) + V / STEPDAMP + vec( 0, 0, 300 ), vec( 0, 0, -1 ) )
+        RLC_P1 = holoEntity( 49 ):pos( )
+        RLC_P3 = XRD2:position( )
+        RLC_P2 = ( RLC_P1 + RLC_P3 ) * 0.5 + vec( 0, 0, RLC_P1:distance( RLC_P3 ) / STEPARCH )
+        RLC_STEP = XRD2:hit( ) ? 0 : 1
+        async( LEGSPEED, "rlc" )
+    } async( TOffset * 0, "rlc" )
+    
+    function flc() {
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, 400 ) 
+        local XRD = rangerOffset( 500, Entity:toWorld( vec( 50, 195, 250 ) ), vec( 0, 0, -1 ) )
+        local XRD2 = rangerOffset( 500, XRD:position( ) + V / STEPDAMP + vec( 0, 0, 300 ), vec( 0, 0, -1 ) )
+        FLC_P1 = holoEntity( 57 ):pos( )
+        FLC_P3 = XRD2:position( )
+        FLC_P2 = ( FLC_P1 + FLC_P3 ) * 0.5 + vec( 0, 0, FLC_P1:distance( FLC_P3 ) / STEPARCH )
+        FLC_STEP = XRD2:hit( ) ? 0 : 1
+        async( LEGSPEED, "flc" )
+    } async( TOffset * 6, "flc" )
+    
+    function flf() {
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, 400 ) 
+        local XRD = rangerOffset( 500, Entity:toWorld( vec( 155, 145, 250 ) ), vec( 0, 0, -1 ) )
+        local XRD2 = rangerOffset( 500, XRD:position( ) + V / STEPDAMP + vec( 0, 0, 300 ), vec( 0, 0, -1 ) )
+        FLF_P1 = holoEntity( 65 ):pos( )
+        FLF_P3 = XRD2:position( )
+        FLF_P2 = ( FLF_P1 + FLF_P3 ) * 0.5 + vec( 0, 0, FLF_P1:distance( FLF_P3 ) / STEPARCH )
+        FLF_STEP = 0
+        async( LEGSPEED, "flf" )
+    } async( TOffset * 2, "flf" )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( tickClk( ) ) {
+    Driver = Seat:driver( )
+    local BH = Driver:isValid() ? BODYHEIGHT : 5
+    local BodyEnt = holoEntity( 1 )
+    if( changed( Driver ) & Driver:isAlive() ) { runOnKeys( Driver, 1 ) }
+    local Inertia = shiftL(ang(Entity:inertia()))
+    local Aim = Driver:eyeTrace():position()
+    local Bearing = bearing(BodyEnt:pos(), BodyEnt:angles(), Aim)
+    local Yaw =  BodyEnt:angles():yaw() - Bearing / 20
+    local NSpeed = Seat:driver( ):keyPressed( "lshift" ) ? SPEED + SHIFTSPEED : SPEED
+    local V = ( Entity:mass( ) * -propGravity() * tickInterval( ) - ( Entity:vel() * Entity:mass() ) / 5 )
+    local RangerOrigin = Entity:toWorld( vec( 50, 0, -5 ) )
+    local Ranger = rangerOffset(BH + 200, RangerOrigin + ( Entity:vel( ):setZ( 0 ) / STEPDAMP / 2 ), vec(0, 0, -1) )
+    local Ranger2 = rangerOffset(BH + 35, Entity:toWorld( vec(0,0,-5) ), vec(0,0,-1) )
+    CANJUMP = Ranger2:hit()
+    
+    if( Ranger:position():distance( RangerOrigin ) < BH - 10 ) {
+        V += Entity:mass( ) * vec( 0, 0, 50 )
+    } elseif( !Ranger2:hit( ) ) {
+        V += Entity:mass( ) * vec( 0, 0, -50 )
+    }
+    
+    if( abs( Bearing ) < 20 ) { Yaw = BodyEnt:angles( ):yaw( ) }
+    local Controls = vec( Driver:keyForward( ) - Driver:keyBack( ), Driver:keyLeft( ) - Driver:keyRight( ), 0 ):normalized( ):rotate( BodyEnt:forward( ):setZ( 0 ):toAngle( ) )
+    Entity:applyAngForce((Entity:toLocal(ang(0, Yaw, 0))*300 - Entity:angVel()*30) * Inertia)
+    Entity:applyForce( V + ( Entity:mass( ) * Controls * NSpeed ) )
+    
+    RRR_STEP = clamp( RRR_STEP + LEGINCREMENT, 0, 1 )
+    local RRR_P4 = bezier( RRR_P1, RRR_P2, RRR_P3, RRR_STEP )
+    ik3a( 6, 7, 8, 100, 100, 100, RRR_P4 )
+    
+    RRC_STEP = clamp( RRC_STEP + LEGINCREMENT, 0, 1 )
+    local RRC_P4 = bezier( RRC_P1, RRC_P2, RRC_P3, RRC_STEP )
+    ik3a( 14, 15, 16, 100, 100, 100, RRC_P4 )
+    
+    FRC_STEP = clamp( FRC_STEP + LEGINCREMENT, 0, 1 )
+    local FRC_P4 = bezier( FRC_P1, FRC_P2, FRC_P3, FRC_STEP )
+    ik3a( 22, 23, 24, 100, 100, 100, FRC_P4 )
+    
+    FRF_STEP = clamp( FRF_STEP + LEGINCREMENT, 0, 1 )
+    local FRF_P4 = bezier( FRF_P1, FRF_P2, FRF_P3, FRF_STEP )
+    ik3a( 30, 31, 32, 100, 100, 100, FRF_P4 )
+    
+    RLR_STEP = clamp( RLR_STEP + LEGINCREMENT, 0, 1 )
+    local RLR_P4 = bezier( RLR_P1, RLR_P2, RLR_P3, RLR_STEP )
+    ik3a( 38, 39, 40, 100, 100, 100, RLR_P4 )
+    
+    RLC_STEP = clamp( RLC_STEP + LEGINCREMENT, 0, 1 )
+    local RLC_P4 = bezier( RLC_P1, RLC_P2, RLC_P3, RLC_STEP )
+    ik3a( 46, 47, 48, 100, 100, 100, RLC_P4 )
+    
+    FLC_STEP = clamp( FLC_STEP + LEGINCREMENT, 0, 1 )
+    local FLC_P4 = bezier( FLC_P1, FLC_P2, FLC_P3, FLC_STEP )
+    ik3a( 54, 55, 56, 100, 100, 100, FLC_P4 )
+    
+    FLF_STEP = clamp( FLF_STEP + LEGINCREMENT, 0, 1 )
+    local FLF_P4 = bezier( FLF_P1, FLF_P2, FLF_P3, FLF_STEP )
+    ik3a( 62, 63, 64, 100, 100, 100, FLF_P4 )
+    
+    
+    local BodyAng = ang(
+        ( ( FRF_P4 + FLF_P4 ) / 2 - ( RRR_P4 + RLR_P4 ) / 2 ):toAngle( ):pitch( ),
+        holoEntity( 1 ):angles( ):yaw( ),
+        ( ( RRC_P4 + FRC_P4 ) / 2 - ( FLC_P4 + RLC_P4 ) / 2 ):toAngle( ):pitch( )
+    )
+    holoAng( 1, BodyAng )
+    
+    
+    holoAng( 71, ( Driver:aimPos( ) - holoEntity( 71 ):pos( ) ):toAngle( ) )
+    
+}
+
+if( keyClk( ) ) {
+    local Player = keyClk()
+    if( Driver == Player ) {
+        local Key = keyClkPressed()
+        if( Key == "mouse_left" & Player:keyPressed( Key ) == 1 ) { 
+            fireLaser( holoEntity( 71 ):pos( ), Driver:aimPos( ), 5 )
+        } elseif( Key == "space" & Player:keyPressed( Key ) == 1 & CANJUMP ) {
+            #local V = Driver:eye( ):setZ( 2 ) / 2
+            Entity:applyForce( vec(0,0,1) * Entity:mass( ) * 7000 )
+        }
+    }
+}
+
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) {
+            case "null", F( ), break
+            case "a", F( R[ 1, angle ] ), break
+            case "b", F( R[ 1, bone ] ), break
+            case "c", F( R[ 1, complex ] ), break
+            case "e", F( R[ 1, entity ] ), break
+            case "m", F( R[ 1, matrix ] ), break
+            case "n", F( R[ 1, number ] ), break
+            case "q", F( R[ 1, quaternion ] ), break
+            case "r", F( R ), break
+            case "s", F( R[ 1, string ] ), break
+            case "t", F( vonDecodeTable( Match[ 3, string ] ) ), break
+            case "v", F( R[ 1, vector ] ), break
+            case "xm2", F( R[ 1, matrix2 ] ), break
+            case "xm4", F( R[ 1, matrix4 ] ), break
+            case "xrd", F( R[ 1, ranger ] ), break
+            case "xv2", F( R[ 1, vector2 ] ), break
+            case "xv4", F( R[ 1, vector4 ] ), break
+            case "xwl", F( R[ 1, wirelink ] ), break
+        }
+        exit()
+    }
+}
+
+
+

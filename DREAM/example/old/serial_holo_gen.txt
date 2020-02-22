@@ -1,0 +1,96 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/10/2018 @ 2251
+# Holograms: 46
+# Notes: 
+# --------------------------------------------- #
+@name quadcopter
+@inputs Pod:wirelink Camera:wirelink
+@persist E:entity Speed:number
+if(inputClk()){ reset() }
+if( first( ) ) {
+    Speed = 25
+    local Hologram = table()
+    Hologram["model", table] = table(
+        "models/holograms/cube.mdl" = array(1, 8, 9, 10, 11),
+        "models/hunter/blocks/cube025x025x025.mdl" = array(2, 3),
+        "models/hunter/tubes/tube2x2x025b.mdl" = array(4, 5, 6, 7),
+        "models/sprops/trans/air/prop_5b_s.mdl" = array(12, 13, 14, 15),
+        "models/sprops/trans/air/pcone_5b_s.mdl" = array(16, 17, 18, 19),
+        "models/holograms/hq_cylinder.mdl" = array(20, 21, 22, 23),
+        "models/sprops/trans/misc/shock_2.mdl" = array(24, 25, 26, 27),
+        "models/jaanus/wiretool/wiretool_controlchip.mdl" = array(28, 29),
+        "models/cheeze/wires/cpu.mdl" = array(30),
+        "models/cyborgmatt/capacitor_large.mdl" = array(31, 32, 33),
+        "models/cheeze/wires/wireless_card.mdl" = array(34),
+        "models/cheeze/wires/ram.mdl" = array(35, 36),
+        "models/cheeze/wires/mini_chip.mdl" = array(37, 38, 39),
+        "models/kobilica/transistor.mdl" = array(40, 41),
+        "models/jaanus/wiretool/wiretool_gate.mdl" = array(42),
+        "models/items/boxflares.mdl" = array(43, 44),
+        "models/holograms/hq_rcube.mdl" = array(45)
+    )
+    Hologram[ "position", array ] = array(vec(0,0,50),vec(0,0,50),vec(0,0,50),vec(0,-8.1982,50),vec(0,8.1982,50),vec(8.1968,0,50),vec(-8.1968,0,50),vec(0,-8.1982,50),vec(0,8.1982,50),vec(8.1968,0,50),vec(-8.1968,0,50),vec(0,-8.1982,50),vec(0,8.1982,50),vec(8.1968,0,50),vec(-8.1968,0,50),vec(0,-8.1982,50),vec(0,8.1982,50),vec(8.1968,0,50),vec(-8.1968,0,50),vec(0,-8.1982,49.3994),vec(0,8.1982,49.3994),vec(8.1968,0,49.3994),vec(-8.1968,0,49.3994),vec(0,0,48.5986),vec(0,0,48.5986),vec(0,0,48.5986),vec(0,0,48.5986),vec(1.9819,1.3604,50.2881),vec(1.9819,-1.3604,50.2881),vec(0.5605,-1.8604,50.2881),vec(0.9912,-0.8701,50.2881),vec(0.9912,-0.2695,50.2881),vec(0.9912,0.3311,50.2881),vec(-0.02,2.3135,51.1475),vec(0.4404,0.6416,50.2783),vec(0.1802,0.6416,50.2783),vec(-2.2422,-2.2314,50.2881),vec(-2.2422,-1.54,50.2881),vec(-2.2422,-0.8301,50.2881),vec(-2.1621,2.2725,50.5176),vec(1.0313,1.502,50.5176),vec(-1.4712,0.7422,50.2881),vec(-0.8408,-1.5605,50.3369),vec(-1.2412,-1.5605,50.3369),vec(0,0,50.8008))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,45,0),ang(0,-45,0),ang(0,45,0),ang(0,-135,0),ang(0,135,0),ang(0,-45,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(89.9999,0,0),ang(89.9999,0,0),ang(89.9999,0,0),ang(0,45,0),ang(0,45,0),ang(0,45,0),ang(0,45,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,90,0),ang(90,-180,0),ang(90,-90,0),ang(0,-180,0),ang(0,-180,0),ang(0,-180,0),ang(0,-180,0),ang(0,-180,0),ang(0,-179.9999,0),ang(0,-180,90),ang(0,-180,0),ang(0,-180,0),ang(0,-180,0),ang(0,-180,0),ang(0,-179.9999,0),ang(0,0,0),ang(0,0,0),ang(0,-180,0),ang(0,90,0),ang(0,90,0),ang(0,-180,-180))
+    Hologram[ "scale", array ] = array(vec(0.44,0.44,0.05),vec(1,0.04,0.04),vec(1,0.04,0.04),vec(0.125,0.125,0.05),vec(0.125,0.125,0.05),vec(0.125,0.125,0.05),vec(0.125,0.125,0.05),vec(0.03,0.03,0.03),vec(0.03,0.03,0.03),vec(0.03,0.03,0.03),vec(0.03,0.03,0.03),vec(0.28,0.28,0.28),vec(0.28,0.28,0.28),vec(0.28,0.28,0.28),vec(0.28,0.28,0.28),vec(0.25,0.25,0.25),vec(0.25,0.25,0.25),vec(0.25,0.25,0.25),vec(0.25,0.25,0.25),vec(0.075,0.075,0.15),vec(0.075,0.075,0.15),vec(0.075,0.075,0.15),vec(0.075,0.075,0.15),vec(0.48,0.48,0.48),vec(0.48,0.48,0.48),vec(0.48,0.48,0.48),vec(0.48,0.48,0.48),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.02,0.02,0.02),vec(0.02,0.02,0.02),vec(0.02,0.02,0.02),vec(0.3,0.3,0.3),vec(0.2,0.2,0.2),vec(0.2,0.2,0.2),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.3,0.3,0.3),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.3,0.3,0.3),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.475,0.475,0.2))
+    Hologram[ "color", array ] = array(vec(90,90,90),vec(255,255,255),vec(255,255,255),vec(90,90,90),vec(90,90,90),vec(90,90,90),vec(90,90,90),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,50)
+    Hologram[ "material", table ] = table("phoenix_storms/fender_white" = array(4, 5, 6, 7))
+    Hologram[ "parent", table] = table(16 = 12, 17 = 13, 18 = 14, 19 = 15)
+    
+    for(I = 1, 45){
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector], Hologram["alpha", array][I, number])
+        )
+        holoParent(I, 1)
+    }
+    foreach(Model:string, Holos:array = Hologram["model", table]){
+        foreach(Null, I:number = Holos){
+            holoModel(I, Model)
+        }
+    }
+    foreach(Material:string, Holos:array = Hologram[ "material", table ]){
+        foreach(Null, I:number = Holos){
+            holoMaterial(I, Material)
+        }
+    }
+    foreach(I:number, P:number = Hologram["parent", table]){
+        holoParent(I, P)
+    }
+    entity():setAlpha(0)
+    holoPos( 1, entity( ):pos( ))
+    holoParent( 1, entity( ) )
+    runOnTick(1)
+    Camera["FLIR", number] = 1
+    Camera["Parent", entity] = entity()
+    Camera["Distance", number] = 60
+    E = entity()
+    E:propGravity(0)
+    soundPlay("motor", 0, "vehicles/airboat/fan_blade_fullthrottle_loop1.wav")
+}
+if(tickClk()){
+    Camera["Activated", number] = Pod["Active", number]
+    for(I = 12, 15){
+        local A = curtime() * 720
+        holoAng(I , entity():toWorld(ang(90, A * -1 ^ I, 0)))
+    }
+    local WASD = vec(Pod["W", number] - Pod["S", number], Pod["A", number] - Pod["D", number], Pod["Space", number] - Pod["Alt", number])
+    local Q = quat(ang(E:vel():x(), 0, -E:vel():y()) / 20)
+    E:applyTorque(E:inertia() * (rotationVector(inv(quat(E)) * Q) * 5 - E:angVelVector()) * 20)
+    E:applyForce(E:mass() * ((WASD:rotate(0, Camera["CamAng", angle]:yaw(), 0):normalized() * vec(1, 1, 0.5) *  Speed) - E:vel() / 75))
+    soundPitch("motor", clamp(E:vel():length() / 15 + 90, 110, 160))
+}

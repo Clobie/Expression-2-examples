@@ -1,0 +1,119 @@
+
+@persist T_HEAP:table DEBUG_HALT:number
+
+if( first() || duped() || dupefinished() ) {
+    
+    DEBUG_HALT = 1
+    T_HEAP = table()
+    
+    # Discovery
+    function number string:heapExists() { if( T_HEAP:exists( This ) ) { return 1 }, return 0 }
+    function number heapExists( SV_NAME:string ) { if( T_HEAP:exists( SV_NAME ) ) { return 1 }, return 0 }
+    
+    # Pushing a new table
+    function string heapPush( ) {
+        local T_NULL = table( )
+        local S_UUID = T_NULL:id( ):sub(10):toNumber(16):toString()
+        T_HEAP[ S_UUID, table ] = T_NULL
+        return S_UUID
+    }
+    
+    function string table:heapPush( ) {
+        local S_UUID = This:id( ):sub(10):toNumber(16):toString()
+        T_HEAP[ S_UUID, table ] = This
+        return S_UUID
+    }
+    
+    function string heapPush( T_TABLE:table ) {
+        local S_UUID = T_TABLE:id( ):sub(10):toNumber(16):toString()
+        T_HEAP[ S_UUID, table ] = T_TABLE
+        return S_UUID
+    }
+    
+    # Pulling a table
+    function table string:heapPull() { if( This:heapExists() ) { return T_HEAP[This, table] } }
+    function table heapPull( SV_NAME:string ) { if( SV_NAME:heapExists() ) { return T_HEAP[SV_NAME, table] } }
+    
+    # Removing a table
+    function void string:heapRemove() { T_HEAP:remove( This ) }
+    function void heapRemove( SV_NAME:string ) { T_HEAP:remove( SV_NAME ) }
+    
+    
+    
+    # Pushing specific data to a table
+    function number     string:heapPushNumber( S_VNAME:string, VAR:number  )            { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, number ] = VAR }    
+    function string     string:heapPushString( S_VNAME:string, VAR:string  )            { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, string ] = VAR }
+    function angle      string:heapPushAngle( S_VNAME:string, VAR:angle  )              { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, angle ] = VAR }
+    function vector     string:heapPushVector( S_VNAME:string, VAR:vector  )            { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, vector ] = VAR }
+    function vector2    string:heapPushVector2( S_VNAME:string, VAR:vector2  )          { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, vector2 ] = VAR }
+    function vector4    string:heapPushVector4( S_VNAME:string, VAR:vector4  )          { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, vector4 ] = VAR }
+    function matrix2    string:heapPushMatrix2( S_VNAME:string, VAR:matrix2  )          { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, matrix2 ] = VAR }
+    function matrix4    string:heapPushMatrix4( S_VNAME:string, VAR:matrix4  )          { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, matrix4 ] = VAR }
+    function matrix     string:heapPushMatrix( S_VNAME:string, VAR:matrix  )            { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, matrix ] = VAR }
+    function quaternion string:heapPushQuaternion( S_VNAME:string, VAR:quaternion  )    { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, quaternion ] = VAR }
+    function wirelink   string:heapPushWirelink( S_VNAME:string, VAR:wirelink  )        { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, wirelink ] = VAR }
+    function ranger     string:heapPushRanger( S_VNAME:string, VAR:ranger  )            { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, ranger ] = VAR }
+    function bone       string:heapPushBone( S_VNAME:string, VAR:bone  )                { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, bone ] = VAR }
+    function complex    string:heapPushComplex( S_VNAME:string, VAR:complex  )          { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, complex ] = VAR }
+    function entity     string:heapPushEntity( S_VNAME:string, VAR:entity )             { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, entity ] = VAR }
+    function array      string:heapPushArray( S_VNAME:string, VAR:array )               { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, array ] = VAR }
+    function table      string:heapPushTable( S_VNAME:string, VAR:table )               { local T_PULL = This:heapPull(), T_PULL[ S_VNAME, table ] = VAR }
+    
+    # Pulling specific data from a table
+    function array string:heapPullArray( S_VNAME:string )           { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, array ] } }
+    function table string:heapPullTable( S_VNAME:string )           { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, table ] } }
+    function number string:heapPullNumber( S_VNAME:string )         { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, number ] } }
+    function string string:heapPullString( S_VNAME:string )         { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, string ] } }
+    function angle string:heapPullAngle( S_VNAME:string )           { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, angle ] } }
+    function vector string:heapPullVector( S_VNAME:string )         { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, vector ] } }
+    function vector2 string:heapPullVector2( S_VNAME:string )       { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, vector2 ] } }
+    function vector4 string:heapPullVector4( S_VNAME:string )       { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, vector4 ] } }
+    function matrix2 string:heapPullMatrix2( S_VNAME:string )       { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, matrix2 ] } }
+    function matrix4 string:heapPullMatrix4( S_VNAME:string )       { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, matrix4 ] } }
+    function matrix string:heapPullMatrix( S_VNAME:string )         { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, matrix ] } }
+    function quaternion string:heapPullQuaternion( S_VNAME:string ) { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, quaternion ] } }
+    function wirelink string:heapPullWirelink( S_VNAME:string )     { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, wirelink ] } }
+    function ranger string:heapPullRanger( S_VNAME:string )         { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, ranger ] } }
+    function bone string:heapPullBone( S_VNAME:string )             { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, bone ] } }
+    function complex string:heapPullComplex( S_VNAME:string )       { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, complex ] } }
+    function entity string:heapPullEntity( S_VNAME:string )         { local T_PULL = This:heapPull(), if( T_PULL:exists( S_VNAME ) ) { return T_PULL[ S_VNAME, entity ] } }
+}
+
+
+#[
+Test = heapPush()
+Test:heapPushString( Test, Test:toNumber(36):toString(36) )
+print( "After pushing:" )
+printTable( T_HEAP )
+Test:heapRemove()
+print( "After removing:" )
+printTable( T_HEAP )
+]#
+
+
+#[
+##############################
+# Example 1: "heap"         #
+##############################
+# Create a new "pointer" to a table on the heap
+UniqueID_1 = heapPush()
+# Push a number to the table at index "id"
+UniqueID_1:heapPushNumber("id", 100)
+# Get the value at "id"
+print( UniqueID_1:heapPullNumber( "id" ) )
+    
+# Lets try it a different way
+UniqueID_2 = heapPush( table("id" = 200) )
+print( UniqueID_2:heapPullNumber( "id" ) )
+    
+# And another way
+Table = table("id" = 300)
+UniqueID_3 = Table:heapPush()
+print( UniqueID_3:heapPullNumber( "id" ) )
+    
+# And another way
+UniqueID_4 = heapPush()
+UniqueID_4:heapPushVector( "myVector", randvec() )
+Vector = UniqueID_4:heapPull()[ "myVector", vector ]
+print( Vector )
+]#

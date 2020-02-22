@@ -1,0 +1,31 @@
+@name lines
+@persist Timer:number Count:number Model:string HSV:number
+
+interval(25)
+
+if( first() )
+{
+    Timer = 0
+    HSV = 0
+    Count = 80
+    Model = "models/props_phx/huge/evildisc_corp.mdl"
+    for(I = 1, Count) {
+        holoCreate( I )
+        holoModel( I, Model )
+        holoScaleUnits( I, vec( 1000000,1000000,1000000 ) )
+        holoMaterial( I, "models/wireframe" )
+        holoPos( I, entity():pos() + vec(0,0,50) )
+        holoDisableShading( I, 1 )
+    }
+}
+elseif( clk() )
+{
+    Timer+=5
+    HSV += 0.5
+    if(HSV>=280) { HSV = 0 }
+    for(I = 1, Count)
+    {
+        holoAng( I, ang(Timer * ( ( I * 5 ) / Count ), Timer * ( ( I * 5 ) / Count ), 0) )
+        holoColor( I, hsv2rgb(HSV+I,1,1) )
+    }
+}

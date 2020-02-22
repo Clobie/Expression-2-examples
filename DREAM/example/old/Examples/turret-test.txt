@@ -1,0 +1,153 @@
+@name turret-test
+@inputs
+@outputs Fire
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter Loaded Spin Fire]:number [Origin]:vector [Me Chip Target]:entity
+@persist Gun:array AimMode:number
+
+interval(25)
+
+if( first() | dupefinished() )
+{
+    runOnChat(1)
+    Me = owner()
+    Chip = entity()
+    Origin = Chip:pos()
+    Loaded = 0
+    Spin = 0
+    Fire = 0
+    AimMode = 1
+    Target = owner()
+    HoloCounter = 0
+    HologramModel = array("models/holograms/octagon.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/octagon.mdl","models/holograms/octagon.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/rcube_thick.mdl","models/holograms/rcube_thick.mdl","models/holograms/cube.mdl","models/items/boxmrounds.mdl","models/items/boxmrounds.mdl","models/holograms/octagon.mdl","models/holograms/cube.mdl")
+    HologramPosition = array(vec(0,0,3),vec(-5.2588,-12.6909,8.9502),vec(5.2588,12.6909,8.9502),vec(5.2588,-12.6909,8.9502),vec(-5.2588,12.6909,8.9502),vec(-12.6904,5.2588,8.9502),vec(12.6904,-5.2588,8.9502),vec(-12.6904,-5.2588,8.9502),vec(12.6904,5.2588,8.9502),vec(0,0,10.2939),vec(0,0,16.4199),vec(-12,-18.4434,37.3066),vec(-10,-18.4434,39.3066),vec(-14,-18.4434,39.3066),vec(-12,-18.4434,41.3066),vec(-10.5,-18.4434,37.8066),vec(-10.5,-18.4434,40.8066),vec(-13.5,-18.4434,40.8066),vec(-13.5,-18.4434,37.8066),vec(-12,-3.2422,39.3066),vec(-12,-7.0459,39.3066),vec(-12,-31.9707,39.3066),vec(-12,-30.7695,39.3066),vec(-12,-29.5176,39.3066),vec(-12,0,39.3066),vec(12,-18.4434,37.3066),vec(14,-18.4434,39.3066),vec(10,-18.4434,39.3066),vec(12,-18.4434,41.3066),vec(13.5,-18.4434,37.8066),vec(13.5,-18.4434,40.8066),vec(10.5,-18.4434,40.8066),vec(10.5,-18.4434,37.8066),vec(12,-3.2422,39.3066),vec(12,-7.0459,39.3066),vec(12,-31.9707,39.3066),vec(12,-30.7695,39.3066),vec(12,-29.5176,39.3066),vec(12,0,39.3066),vec(0,0,27.3145),vec(0,0,39.3076),vec(0,0,39.3076),vec(12,0,39.3066),vec(-12,0,39.3066),vec(0,0,22.1231),vec(-10.9971,0,22.4258),vec(10.9971,0,22.4258),vec(0,0,13.299),vec(0,0,39.3076))
+    HologramAngle = array(ang(0,0,0),ang(0,-22.5,45),ang(0,-22.5,45),ang(0,22.5,45),ang(0,22.5,45),ang(0,-112.5,45),ang(0,-112.5,45),ang(0,-67.5,45),ang(0,-67.5,45),ang(0,0,0),ang(0,0,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(90,-90,0),ang(90,-90,0),ang(90,-90,0),ang(90,-90,0),ang(90,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(90,-90,0),ang(90,-90,0),ang(90,-90,0),ang(90,-90,0),ang(90,-90,0),ang(0,-90,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,-90,0))
+    HologramScale = array(vec(4,4,1),vec(0.95,1,1),vec(0.95,1,1),vec(0.95,1,1),vec(0.95,1,1),vec(0.95,1,1),vec(0.95,1,1),vec(0.95,1,1),vec(0.95,1,1),vec(2.47,2.47,1),vec(1.5,1.5,1),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(0.5,0.5,0.5),vec(0.5,0.5,0.05),vec(0.5,0.5,0.05),vec(0.5,0.5,0.05),vec(0.5,0.5,0.05),vec(0.1,0.1,0.1),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(5,0.4,0.4),vec(0.5,0.5,0.5),vec(0.5,0.5,0.05),vec(0.5,0.5,0.05),vec(0.5,0.5,0.05),vec(0.5,0.5,0.05),vec(0.1,0.1,0.1),vec(1,1,2),vec(1,1,1),vec(0.8,0.8,1.3),vec(0.8,0.9,0.8),vec(0.8,0.9,0.8),vec(3,1,0.05),vec(0.8,0.8,0.8),vec(0.8,0.8,0.8),vec(2,2,1),vec(0.1,0.1,0.1))
+    HologramColor = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(90,90,90),vec(90,90,90),vec(255,255,255),vec(255,255,255))
+    HologramAlpha = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    HologramMaterial = array("sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","","","","","","","","","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","","","","","","","","","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","","","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,1,1,1,1,1,1,1,1,1,1,25,25,25,25,25,25,25,25,25,25,25,25,25,49,39,39,39,39,39,39,39,39,39,39,39,39,39,49,11,11,49,42,42,11,11,11,1,11)
+    
+    # gmod_wire_turret
+    findByClass("gmod_wire_turret")
+    local A = findToArray()
+    local B = 1
+    for(I = 1, A:count())
+    {
+        if( A[I, entity]:owner() == Me & A[I, entity]:pos():distance(Chip:pos()) < 100 )
+        {
+            Gun[B, entity] = A[I, entity]
+            B++
+        }
+    }
+    print("Turrets found: " + Gun:count() )
+    if(Gun:count() == 2)
+    {
+        Gun[1, entity]:propFreeze(1)
+        Gun[1, entity]:setPos( Chip:pos() + vec(-11,-29.5,38.3) )
+        Gun[1, entity]:setAng( holoEntity(25):angles() - ang(0,90,0) )
+        Gun[1, entity]:setAlpha(0)
+        Gun[1, entity]:createWire(Chip, "Fire", "Fire")
+        Gun[2, entity]:propFreeze(1)
+        Gun[2, entity]:setPos( Chip:pos() + vec(13,-29.5,38.3) )
+        Gun[2, entity]:setAng( holoEntity(39):angles() - ang(0,90,0) )
+        Gun[2, entity]:setAlpha(0)
+        Gun[2, entity]:createWire(Chip, "Fire", "Fire")
+    }
+    
+    timer( "createHolos", 100 )
+}
+elseif( clk( "parentTurrets" ) )
+{
+    Gun[1, entity]:parentTo( holoEntity(49) )
+    Gun[2, entity]:parentTo( holoEntity(49) )
+    holoParent(1, Chip)
+    Loaded = 1
+}
+elseif( clk("createHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count() & holoCanCreate())
+    {
+        HoloCounter++
+        holoCreate( HoloCounter )
+        holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+        holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+        holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+        holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+        holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+        holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+        holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+        holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+    }
+    if(HoloCounter < HologramModel:count()) { timer("createHolos", 1) }
+    else { timer("parentHolos", 1) HoloCounter = 0 }
+}
+elseif( clk("parentHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count())
+    {
+        HoloCounter++
+        if(HologramParent[HoloCounter, number] > 0)
+        {
+            holoParent(HoloCounter, HologramParent[HoloCounter, number])
+        }
+    }
+    if(HoloCounter == HologramModel:count()) { timer( "parentTurrets", 10 ) }
+    else { timer("parentHolos", 1) }
+}
+elseif( clk() & Loaded == 1)
+{
+    if( Me:keyReload() & Target:health() > 0 ) 
+    { 
+        Spin += 23
+        Fire = 1
+    }
+    else
+    {
+        Fire = 0
+    }
+    
+    if(Spin >= 360) { Spin = 0 }
+    
+    local TargetV = Target:pos()
+    
+    if( AimMode == 1 )
+    {
+        AimV = (Target:pos() - holoEntity(49):pos()) + (Target:boxSize() * vec(0,0,0.7))
+    }
+    elseif( AimMode == 2 )
+    {
+        AimV = Me:aimPos() - holoEntity(49):pos()
+    }
+    
+    holoAng( 11, (AimV:toAngle() * ang(0,1,0)) + ang(0,90,0) )
+    holoAng( 49, (AimV:toAngle() * ang(1,1,0)) )
+    holoAng( 25, (AimV:toAngle() * ang(1,1,0)) - ang(0,0,Spin) )
+    holoAng( 39, (AimV:toAngle() * ang(1,1,0)) - ang(0,0,-Spin) )
+}
+elseif( chatClk() )
+{
+    P = lastSpoke()
+    S = P:lastSaid()
+    
+    Param = S:explode(" ")
+    Command = Param[1, string]
+    
+    if( P == Me & Command:left(1) == "/")
+    {
+        hideChat(1)
+        if          (Command == "/t")       { Target = findPlayerByName(Param[2, string]) }
+        elseif      (Command == "/m")       { AimMode = Param[2, string]:toNumber() }
+    }
+}
+
+
+
+
+
+
+
+
+
+

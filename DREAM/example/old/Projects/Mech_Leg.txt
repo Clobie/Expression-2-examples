@@ -1,0 +1,159 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/24/2018 @ 2148
+# Holograms: 3
+# Notes: 
+# --------------------------------------------- #
+@name Mech Limb
+@persist Hologram:table Limb:table Entity:entity
+@persist [ SPEED SHIFTSPEED LEGSPEED STEPDAMP STEPARCH LEGINCREMENT BODYHEIGHT MAXSTEPLENGTH ]:number
+
+if( first( ) ) {
+    
+    SPEED = 250
+    SHIFTSPEED = 125
+    LEGSPEED = 1
+    STEPDAMP = 1.5
+    MAXSTEPLENGTH = 400
+    STEPARCH = 2
+    LEGINCREMENT = 0.025
+    BODYHEIGHT = 50
+    
+    Limb = table()
+    Limb[ "limbs", array ] = array()
+    Entity = entity()
+    function void async( T, F:string ) { timer( format( "cb:%.0f:%s:null:%s", randint( 1e15 ), F, vonEncode( array( ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:entity ) { timer( format( "cb:%.0f:%s:e:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:string ) { timer( format( "cb:%.0f:%s:s:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function number icos( A, B, C ) {return acos( ( A ^ 2 + B ^ 2 - C ^ 2 ) / ( 2 * A * B ) )}
+    
+    function ik3aCreateLimb( Name:string, Offset:vector, JointA, JointB, JointC, Foot, LenA, LenB, StepOffset ) {
+        Limb[ Name, table ] = table()
+        Limb[ Name, table ][ "offset", vector ] = Offset
+        Limb[ Name, table ][ "joint_a", number ] = JointA
+        Limb[ Name, table ][ "joint_b", number ] = JointB
+        Limb[ Name, table ][ "joint_c", number ] = JointC
+        Limb[ Name, table ][ "foot", number ] = Foot
+        Limb[ Name, table ][ "hip_to_knee_len", number ] = LenA
+        Limb[ Name, table ][ "knee_to_knee_len", number ] = LenB
+        Limb[ Name, table ][ "p1", vector ] = vec( 0 )
+        Limb[ Name, table ][ "p2", vector ] = vec( 0 )
+        Limb[ Name, table ][ "p3", vector ] = vec( 0 )
+        Limb[ Name, table ][ "step", number ] = 0
+        Limb[ Name, table ][ "joint_a_ent", entity ] = holoEntity( JointA )
+        Limb[ Name, table ][ "foot_ent", entity ] = holoEntity( Foot )
+        Limb[ "limbs", array ]:pushString( Name )
+        async( StepOffset, "ik3aCalculateLimb", Name )
+    }
+    
+    function ik3aCalculateLimb( Key:string ) {
+        local L = Limb[ Key, table ]
+        local XRDLength = L[ "hip_to_knee_len", number ] * 2 + L[ "knee_to_knee_len", number ]
+        local V = Entity:vel( ):setZ( 0 ):normalized( ) * clamp( Entity:vel():length(), 0, MAXSTEPLENGTH )
+        local XRD = rangerOffset( XRDLength, Entity:toWorld( L[ "offset", vector ] ), vec(0,0,-1) )
+        local XRD2 = rangerOffset( XRDLength, XRD:position( ) + V / STEPDAMP + vec( 0, 0, BODYHEIGHT ), vec(0,0,-1) )
+        L[ "p1", vector ] = P1 = L[ "foot_ent", entity ]:pos( )
+        L[ "p3", vector ] = P3 = XRD2:position( )
+        L[ "p2", vector ] = ( P1 + P3 ) * 0.5 + vec( 0, 0, P1:distance( P3 ) / STEPARCH )
+        L[ "step", number ] = 0
+        async( LEGSPEED, "ik3aCalculateLimb", Key )
+    }
+    
+    function ik3aMoveLimb() {
+        local R = Limb[ "limbs", array ]
+        for( I = 1, R:count() ) {
+            local L = Limb[ R[ I, string ], table ]
+            local Step = clamp( L[ "step", number ] + LEGINCREMENT, 0, 1 )
+            local StepPoint = bezier( 
+                L[ "p1", vector ],
+                L[ "p2", vector ],
+                L[ "p3", vector ],
+                Step
+            )
+            L[ "step", number ] = Step
+            Limb[ R[ I, string ], table ] = L
+            local AEntity = L[ "joint_a_ent", entity ]
+            local PosA = AEntity:pos( )
+            local LenA = L[ "hip_to_knee_len", number ]
+            local LenB = L[ "knee_to_knee_len", number ]
+            local LenC = min( PosA:distance( StepPoint ) - LenB, LenA + LenA )
+            local OffsetAngle = -icos( LenC, LenA, LenA ) + 90
+            holoAng( L[ "joint_a", number ], ( StepPoint - PosA ):toAngle( ) + ang( OffsetAngle, 0, 0 ) )
+            holoAng( L[ "joint_b", number ], AEntity:toWorld( ang( -asin( LenC / ( LenA + LenA ) ) + 90, 0, 0 ) ) )
+            holoAng( L[ "joint_c", number ], AEntity:toWorld( ang( sign( LenC ) * -icos( LenA, LenA, LenC ) + 180, 0, 0) ) )
+        }
+    }
+    
+    # Model
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(0,0,50),vec(0,0,100),vec(0,0,150),vec(0,0,0),vec(0,0,50),vec(0,0,100),vec(0,0,150))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5))
+    Hologram[ "color", array ] = array(vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(0,255,255),vec(255,0,0),vec(0,255,0),vec(0,0,255),vec(0,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255)
+    Hologram[ "parent", array ] = array(0,1,2,3,0,5,6,7)
+    
+    # Model spawning
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoParent(I, Hologram["parent", array][I, number])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { 
+            timer( "buffer", 0.1 ) 
+        } else {
+            async( 0.2, "setup" )
+        }
+    }
+    
+    function setup() {
+        holoParent( 1, entity() )
+        holoParent( 5, entity() )
+        local StepOffset = LEGSPEED / 2
+        ik3aCreateLimb( "A", vec( 0, 75, 0 ), 1, 2, 3, 4, 50, 50, StepOffset * 0 )
+        ik3aCreateLimb( "B", vec( 0, -75, 0 ), 5, 6, 7, 8, 50, 50, StepOffset * 1 )
+        interval( 1 )
+    }
+    
+    buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( tickInterval( ) / 5 )
+    ik3aMoveLimb()
+}
+
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) { 
+            case "null", F( ), break
+            case "e", F( R[ 1, entity ] ), break
+            case "s", F( R[ 1, string ] ), break
+        }
+        exit()
+    }
+}

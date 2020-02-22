@@ -1,0 +1,159 @@
+
+@persist S_LETTER:string #X:string
+@model models/sprops/misc/origin.mdl
+#include "lib/heap"
+
+if( first() || dupefinished() ) {
+    
+    
+    # Setting up the lookup table
+    S_LETTER = new()
+    local T = S_LETTER:get()
+    for( I = 48, 57 ) { T[toChar(I), string] = "models/sprops/misc/alphanum/alphanum_" + toChar(I):lower() + ".mdl" }
+    for( I = 65, 90 ) { T[toChar(I), string] = "models/sprops/misc/alphanum/alphanum_" + toChar(I):lower() + ".mdl" }
+    for( I = 97, 122 ) { T[toChar(I), string] = "models/sprops/misc/alphanum/alphanum_l_" + toChar(I):lower() + ".mdl" }
+    T[".", string] = "models/sprops/misc/alphanum/alphanum_prd.mdl"
+    T["'", string] = "models/sprops/misc/alphanum/alphanum_apost.mdl"
+    T[":", string] = "models/sprops/misc/alphanum/alphanum_colon.mdl"
+    T["(", string] = "models/sprops/misc/alphanum/alphanum_lpar.mdl"
+    T[")", string] = "models/sprops/misc/alphanum/alphanum_rpar.mdl"
+    T["=", string] = "models/sprops/misc/alphanum/alphanum_equal.mdl"
+    T[",", string] = "models/sprops/misc/alphanum/alphanum_com.mdl"
+    T["/", string] = "models/sprops/misc/alphanum/alphanum_div.mdl"
+    T[";", string] = "models/sprops/misc/alphanum/alphanum_scolon.mdl"
+    T["[", string] = "models/sprops/misc/alphanum/alphanum_lbracket.mdl"
+    T["]", string] = "models/sprops/misc/alphanum/alphanum_rbracket.mdl"
+    T["-", string] = "models/sprops/misc/alphanum/alphanum_min.mdl"
+    T["<", string] = "models/sprops/misc/alphanum/alphanum_lessthan.mdl"
+    T[">", string] = "models/sprops/misc/alphanum/alphanum_greaterthan.mdl"
+    T["?", string] = "models/sprops/misc/alphanum/alphanum_qmark.mdl"
+    T["\"", string] = "models/sprops/misc/alphanum/alphanum_quote.mdl"
+    T["{", string] = "models/sprops/misc/alphanum/alphanum_lcbracket.mdl"
+    T["}", string] = "models/sprops/misc/alphanum/alphanum_rcbracket.mdl"
+    T["|", string] = "models/sprops/misc/alphanum/alphanum_bar.mdl"
+    T["_", string] = "models/sprops/misc/alphanum/alphanum_underscore.mdl"
+    T["+", string] = "models/sprops/misc/alphanum/alphanum_plu.mdl"
+    T["~", string] = "models/sprops/misc/alphanum/alphanum_tilde.mdl"
+    T["!", string] = "models/sprops/misc/alphanum/alphanum_xmark.mdl"
+    T["@", string] = "models/sprops/misc/alphanum/alphanum_atsign.mdl"
+    T["#", string] = "models/sprops/misc/alphanum/alphanum_pdsign.mdl"
+    T["$", string] = "models/sprops/misc/alphanum/alphanum_dlsign.mdl"
+    T["%", string] = "models/sprops/misc/alphanum/alphanum_pcnt.mdl"
+    T["^", string] = "models/sprops/misc/alphanum/alphanum_crt.mdl"
+    T["&", string] = "models/sprops/misc/alphanum/alphanum_and.mdl"
+    T["*", string] = "models/sprops/misc/alphanum/alphanum_ast.mdl"
+    
+    
+    function string htextCreate() {
+        local S = new()
+        local T = S:get()
+        T["color", vector] = vec(255)
+        T["scale", vector] = vec(1)
+        T["material", string] = "debug/debugdrawflat"
+        T["text", string] = ""
+        T["position", vector] = vec()
+        T["angle", angle] = ang()
+        T["parent", entity] = noentity()
+        return S
+    }
+    
+    function string:htextSetText( S:string ) {
+        local T = This:get()
+        local I = This:toNumber()
+        local STR = S_LETTER:get()
+        if( T["text", string]:length() < S:length() ) {
+            #
+        } elseif( T["text", string]:length() > S:length() ) {
+            for( J = S:length(), T["text", string]:length() ) {
+                holoDelete( J+I )
+            }
+        }
+        local Start = -( S:length() / 2 ) #+ ( T["scale", vector]:y() * 6 )
+        local Explode = S:explode( "" )
+        for( J = 0, S:length()-1 ) {
+            if( Explode[J+1, string] != " " ) {
+                if( !holoEntity(J+I):isValid() ) { holoCreate( J+I ) }
+                if( !STR:exists( Explode[J+1, string] ) ) { holoModel( J+I, STR["?", string] ) }
+                else { holoModel( J+I, STR[Explode[J+1, string], string] ) }
+            }
+            Start++
+        }
+        T["text", string] = S
+    }
+    
+    function string:htextSetColor( V:vector ) {
+        local T = This:get()
+        local I = This:toNumber()
+        T["color", vector] = V
+        for(J = 0, T["text", string]:length()-1 ) { holoColor( J+I, V ) }
+    }
+    
+    function string:htextSetMaterial( S:string ) {
+        local T = This:get()
+        local I = This:toNumber()
+        T["material", string] = S
+        for(J = 0, T["text", string]:length()-1 ) { holoMaterial( J+I, S ) }
+    }
+    
+    function string:htextSetScale( V:vector ) {
+        local T = This:get()
+        local I = This:toNumber()
+        T["scale", vector] = V
+        local Start = -( T["text", string]:length() / 2 ) + ( T["scale", vector]:y() * 6 )
+        for(J = 0, T["text", string]:length()-1 ) {
+            holoScale( J+I, V )
+            holoPos( J+I, T["position", vector] + (-(T["angle", angle] + ang(0,-90,0)):forward() * Start * vec(T["scale", vector]:x()) * 9) )
+            Start++
+        }
+    }
+    
+    function string:htextSetPosition( V:vector ) {
+        local T = This:get()
+        local I = This:toNumber()
+        local Start = -( T["text", string]:length() / 2 ) + ( T["scale", vector]:y() * 6 )
+        T["position", vector] = V
+        for(J = 0, T["text", string]:length()-1 ) {
+            holoPos( J+I, V + (-(T["angle", angle] + ang(0,-90,0)):forward() * Start * vec(T["scale", vector]:x()) * 9) )
+            Start++
+        }
+    }
+    
+    function string:htextSetAngle( A:angle ) {
+        local T = This:get()
+        local I = This:toNumber()
+        T["angle", angle] = ang( A:roll(), A:yaw(), -A:pitch() )
+        for(J = 0, T["text", string]:length()-1 ) { 
+            holoAng( J+I, T["angle", angle] + ang(0,-90,0) )
+        }
+        This:htextSetPosition( T["position", vector] )
+    }
+    
+    function string:htextSetParent( E:entity ) {
+        local T = This:get()
+        local I = This:toNumber()
+        T["parent", entity] = E
+        for(J = 0, T["text", string]:length()-1 ) { holoParent( J+I, E ) }
+    }
+    
+    #[
+    X = htextCreate()
+    X:htextSetText( "SWAGBIRD loves gays more" )
+    X:htextSetColor( vec(0,0,255) )
+    X:htextSetScale( vec(2) )
+    X:htextSetMaterial( "" )
+    X:htextSetPosition( entity():pos() + vec(0,0,250) )
+    X:htextSetAngle( (owner():pos() - entity():pos()):toAngle() )
+    X:htextSetParent( entity() )
+    runOnTick(1)
+    runOnChat(1)
+    ]#
+}
+
+#[
+if( tickClk() ) {
+    
+    #X:htextSetScale( vec( (sin(realtime()*200) + 2) / 5 ) * 40 )
+    X:htextSetAngle( ang( 0, realtime() * 50, 0 ) )
+    
+}
+]#

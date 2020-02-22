@@ -1,0 +1,40 @@
+@name xSnow
+@persist Index Index2 Range MaxSnowballs
+
+#include "libs/async"
+
+if( first() ) {
+    
+    Index = 0
+    Index2 = 0
+    Range = 150
+    MaxSnowballs = 200
+    function void createSnowball( ) {
+        
+        if( holoCanCreate() && Index < MaxSnowballs) {
+            Index++
+            holoCreate(Index)
+            holoModel(Index, "hq_sphere")
+            holoScaleUnits(Index, vec(random(1, 4)))
+            holoPos(Index, entity():pos() + vec(random(-Range,Range), random(-Range,Range), Range * 2))
+            async( 0.1, "createSnowball" )
+        }
+    }
+    
+    function void moveSnowballs( ) {
+        while( perf() ) {
+            Index2++
+            if( holoEntity(Index2):pos():z() > entity():pos():z() ) {
+                holoPos(Index2, holoEntity(Index2):toWorld(vec(0,0,-1)))
+            }
+            #if( holoEntity(Index2):pos():z() < entity():pos():z() - 10 ) {
+                #holoPos(Index2, entity():pos() + vec(random(-Range,Range), random(-Range,Range), Range * 2))
+            #}
+            if(Index2 > Index) { Index2 = 0 }
+        }
+        async(0.1, "moveSnowballs")
+    }
+    
+    createSnowball( )
+    moveSnowballs( )
+}

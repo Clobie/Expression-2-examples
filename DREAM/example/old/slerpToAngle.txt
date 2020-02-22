@@ -1,0 +1,50 @@
+@name 
+@inputs 
+@outputs 
+@persist Ang:table AngIndex
+@trigger 
+
+if( first() ) {
+    
+    Ang = table( ang( 0, 90, 0 ), ang( 90, 90, 0 ), ang( 45, 90, 0 ), ang( 45, 0, 0 ), ang( 90, -45, 0 ), ang( 45, -90, 0 ) )
+    AngIndex = 1
+    
+    function angle slerpToAngle( CurrentAng:angle, TargetAng:angle, Speed:number ) {
+        local Ang = acos( CurrentAng:forward():dot( TargetAng:forward() ) )
+        return Ang > Speed ? slerp( quat( CurrentAng ), quat( TargetAng ), Speed / Ang ):toAngle() : TargetAng
+    }
+    
+    holoCreate( 1 )
+    holoScaleUnits( 1, vec( 4, 4, 30 ) )
+    holoPos( 1, entity():pos() + vec( 0, 0, 15 ) )
+    holoModel( 1, "hq_cylinder" )
+    holoParent(1, entity() )
+    
+    holoCreate( 2 )
+    holoScaleUnits( 2, vec( 4 ) )
+    holoPos( 2, entity():pos() + vec( 0, 0, 30 ) )
+    holoModel( 2, "hq_sphere" )
+    holoParent( 2, entity() )
+    
+    holoCreate( 3 )
+    holoScaleUnits( 3, vec( 4, 4, 30 ) )
+    holoPos( 3, entity():pos() + vec( 0, 0, 45 ) )
+    holoModel( 3, "hq_cylinder" )
+    holoParent( 3, 2 )
+    
+    runOnTick( 1 )
+}
+
+if( tickClk() ) {
+    
+    CurrentAng = holoEntity( 2 ):angles()
+    
+    if( CurrentAng != Ang[AngIndex, angle] ) {
+        holoAng( 2, slerpToAngle( CurrentAng, Ang[AngIndex, angle], 0.25 ) )
+    } else {
+        AngIndex++
+        holoColor( 3, hsv2rgb( random(360), 1, 1 ) )    # Added to change color when new animation angle is set ( just to show when it changes )
+        if( AngIndex > Ang:count() ) { runOnTick( 0 ) }   # just added this to stop code after animation
+    }
+    
+}

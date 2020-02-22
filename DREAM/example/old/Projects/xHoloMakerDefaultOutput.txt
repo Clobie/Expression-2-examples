@@ -1,0 +1,77 @@
+@name xHoloMakerDefaultOutput
+@persist [Me Chip]:entity
+@persist [Loaded Arc]:number
+@persist [Hologram]:table
+@persist 
+@persist 
+@persist [IndexA IndexB]:number
+
+interval(33.33)
+
+if( first() )
+{
+    Me = owner()
+    Chip = entity()
+    Loaded = 0
+    IndexA = 0
+    IndexB = 0
+                                    
+    # ===== xHoloMaker ===== ONLY EDIT ARRAY VALUES ===== xHoloMaker ===== ANYTHING ELSE MAY BREAK PARSER ===== xHoloMaker =====
+    Hologram = table(
+                        "units" = 0,
+                        "local" = 1,
+                        1 = array("cube", vec(0,0,0), "world", ang(0), vec(1), vec(50), vec(255), 255, "", 0, 0),
+                        2 = array("sphere", vec(10,0,0), "world", ang(0), vec(1), vec(50), vec(255), 255, "", 0, 1),
+                        3 = array("cylinder", vec(0,10,0), "world", ang(0), vec(1), vec(50), vec(255), 255, "", 0, 1),
+                        4 = array("hq_cylinder", vec(random(-100,100),random(-100,100),random(10,100)), "world", ang(0), vec(1), vec(50), vec(255), 255, "", 0, 1),
+                        5 = array("cube", vec(10,10,0), "world", ang(0), vec(1), vec(50), vec(255), 255, "", 0, 1)
+                    )
+    # ===== xHoloMaker ===== ONLY EDIT ARRAY VALUES ===== xHoloMaker ===== ANYTHING ELSE MAY BREAK PARSER ===== xHoloMaker =====
+    
+    function hmCreateModel()
+    {
+        local Count = Hologram:count() - 2
+        while( holoCanCreate() && IndexA < Count )
+        {
+            IndexA++
+            holoCreate( IndexA )
+            holoModel( IndexA, Hologram[IndexA, array][1, string] )
+            if( Hologram["local", number] == 1 ) { holoPos( IndexA, Chip:pos() + Hologram[IndexA, array][2, vector] ) }
+            if( Hologram["local", number] == 0 ) { holoPos( IndexA, Hologram[IndexA, array][3, vector] ) }
+            holoAng( IndexA, Hologram[IndexA, array][4, angle] )
+            if( Hologram["units", number] == 0 ) { holoScale( IndexA, Hologram[IndexA, array][5, vector] ) }
+            if( Hologram["units", number] == 1 ) { holoScaleUnits( IndexA, Hologram[IndexA, array][6, vector] ) }
+            holoColor( IndexA, Hologram[IndexA, array][7, vector] )
+            holoAlpha( IndexA, Hologram[IndexA, array][8, number] )
+            holoMaterial( IndexA, Hologram[IndexA, array][9, string] )
+            holoSkin( IndexA, Hologram[IndexA, array][10, number] )
+        }
+        
+        while( perf(90) && IndexB < Count && IndexA >= Count )
+        {
+            IndexB++
+            holoParent( IndexB, Hologram[IndexA, array][11, number] )
+        }
+        
+        if( IndexB == ( Hologram:count() - 2 ) ) { Loaded = 1 }
+        else { timer( "hmCreateModel", 1 ) }
+    }
+    timer( "initialization", 1 )
+}
+# ================================================================================
+# Initialization
+# ================================================================================
+if( clk("hmCreateModel" ) ) { hmCreateModel() }
+if( clk("initialization") )
+{
+    hmCreateModel()
+    holoParent(1, Chip)
+}
+
+# ================================================================================
+# Main
+# ================================================================================
+if( clk() && Loaded == 1 )
+{
+    
+}

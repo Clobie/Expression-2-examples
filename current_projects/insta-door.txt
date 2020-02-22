@@ -1,0 +1,43 @@
+@name insta-door
+@persist 
+
+if( first() ) {
+    
+    runOnKeys( owner(), 1 )
+    
+    function entity:instadoor() {
+        XRD = rangerOffset( 50000, This:shootPos(), ( This:aimPos() - This:shootPos() ):normalized() )
+        Normal = XRD:hitNormal()
+        P1 = This:aimPos()
+        XRD = rangerOffset( 50000, P1, Normal )
+        P2 = XRD:position()
+        Mid = ( P1 + P2 ) / 2
+        Width = P1:distance( P2 )
+        XRD = rangerOffset( 50000, Mid, vec( 0, 0, 1 ) )
+        P3 = XRD:position()
+        XRD = rangerOffset( 50000, Mid, vec( 0, 0, -1 ) )
+        P4 = XRD:position()
+        Mid = ( P3 + P4 ) / 2 + 1
+        Width = P1:distance( P2 )
+        Height = P3:distance( P4 )
+        
+        
+        holoCreate( 1, Mid )
+        holoModel( 1, "models/sprops/cuboids/height96/size_1/cube_96x96x96.mdl" )
+        holoMaterial( 1, "debug/debugdrawflat" )
+        holoColor( 1, vec( 0 ) )
+        holoScaleUnits( 1, vec( Width, 0.01, Height ) )
+        holoAng( 1, ( P2 - P1 ):toAngle() )
+    }
+    
+}
+
+
+if( keyClk( ) ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    local Down = Player:keyPressed( Key ) ? 1 : 0
+    if( Player == owner( ) & Down & Key == "mouse_left" ) {
+        Player:instadoor()
+    }
+}

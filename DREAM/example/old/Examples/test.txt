@@ -1,0 +1,65 @@
+@name 
+@inputs 
+@outputs 
+@persist Count:number Total:number ColorThing:number
+@persist AngVel:array
+@trigger 
+
+interval(100)
+
+if(first())
+{
+    Count = 0
+    Total = 20
+    I = 0
+}
+elseif( clk() )
+{
+    while(Count < Total & holoCanCreate() & perf())
+    {
+        Count++
+        AngVel[Count, angle] = ang(random(-1,1),random(-1,1),random(-1,1)) * 2
+        holoCreate(Count)
+        holoModel(Count, "hq_torus_thin")
+        holoPos(Count, entity():pos() + vec(0,0,40))
+        #holoPos(Count, entity():pos() + vec(0,Count,40))
+        #holoScale(Count, vec(0.3) * Count)
+        #holoScale(Count, vec(Count/4))
+        #holoScaleUnits(Count, vec(50,50,200))
+        holoScale(Count, vec(50))
+        #holoColor(Count, vec(Count,0,0))
+        #holoColor(Count, vec(120+(Count*2),32,226+(Count)))
+        holoColor(Count, vec( random(148,160), random(0,112), random(204,240)) )
+        #holoColor(Count, vec(random(0, 255),random(0, 255),random(0, 255)))
+        #holoAng(Count, ang( random(0, 360),random(0, 360),random(0, 360)))
+        #holoAng(Count, ang(Count,Count,0))
+        #holoAlpha(Count, 10)
+        holoMaterial(Count, "models/wireframe")
+        #holoMaterial(Count, "debug/debugdrawflat")
+        
+        if(Count == Total)
+        {
+            #holoCreate(Count+1)
+            #holoModel(Count+1, "hq_sphere")
+            #holoAlpha(Count+1, 50)
+            #holoScale(Count+1, vec(0.3) * (Count))
+            #holoScaleUnits(Count+1, vec(100,100,100))
+            #holoPos(Count+1, entity():pos() + vec(0,0,30))
+        }
+    }
+    
+    if(Count == Total)
+    {
+        for(I = 1, Total)
+        {
+            #holoColor(I, vec(random(0, 255),random(0, 255),random(0, 255)))
+            #holoColor(I, hsv2rgb((realtime()*10) + I, 1, 1))
+            #holoAng(I, holoEntity(I):toWorld( ang(cos(realtime()*50)*5+I,sin(realtime()*50)*5+I,0) ))
+            #holoAng(I, holoEntity(I):toWorld( AngVel[I, angle] ))
+            holoAng(I, holoEntity(I):toWorld( ang(I*0.1,0,0) ) )
+            #holoAng(I, holoEntity(I):toWorld(ang(I*0.5,0,0)))
+            holoPos(I, holoEntity(I):pos() + vec(sin((realtime()+(I/Total))*200)*15,cos((realtime()+(I/Total))*200)*15,0))
+            holoScale(I, vec( 4+sin(realtime()*50)*4,4+sin(realtime()*50)*4,4+sin(realtime()*50)*4 ))
+        }
+    }
+}

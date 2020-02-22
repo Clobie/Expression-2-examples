@@ -1,0 +1,53 @@
+@name wubs
+@model models/sprops/geometry/sphere_42.mdl
+
+#include "lib/async"
+#include "lib/variable"
+
+if( first() ) {
+    
+    "count":n( 200 )
+    
+    entity():setMass( 50000 )
+    
+    "target":e( findPlayerByName( "Caleb" ) )
+    
+    function buffer( N ) {
+        if( !"started":n() ) { "bufferindex":n( 0 ), "started":n( 1 ) }
+        while( holoCanCreate() && perf() && "bufferindex":n() < N ) {
+            "bufferindex":n( "bufferindex":n() + 1 )
+            holoCreate( "bufferindex":n() )
+            #holoModel( "bufferindex":n(), "models/sprops/geometry/fring_144.mdl" )
+            holoModel( "bufferindex":n(), "hq_sphere" )
+            holoMaterial( "bufferindex":n(), "debug/debugdrawflat" )
+            holoColor( "bufferindex":n(), hsv2rgb( 360 * ( "bufferindex":n() / N ), 1, 1 ) )
+            #holoScaleUnits( "bufferindex":n(), vec( 50 + ( ( "bufferindex":n() * 0.025 ) ^ 4 ) ):setY(1) )
+            holoScaleUnits( "bufferindex":n(), vec( 48 + ( ( "bufferindex":n() * 0.01 ) ^ 4 ) ) )
+        }
+        if( "bufferindex":n() < N ) { async(1, "buffer", N ) }
+        else { "started":n( 0 ), interval( 10 ) , holoParent( 1, entity() ) }
+    }
+    
+    buffer( "count":n() )
+    
+}
+
+if( clk() ) {
+    
+    interval( 25 )
+    holoPos( 1, "target":e():pos() )
+    local E = holoEntity( 1 )
+    local VLast = E:pos()
+    #local ALast = E:angles()
+    
+    for( I = 2, "count":n() ) {
+        local V = VLast
+        #local A = ALast
+        E = holoEntity( I )
+        VLast = E:pos()
+        #ALast = E:angles()
+        holoPos( I, V )
+        #holoAng( I, A )
+    }
+    
+}

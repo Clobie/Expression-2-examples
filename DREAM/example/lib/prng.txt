@@ -1,0 +1,8 @@
+
+@persist I_SEED:number
+
+if( first() || dupefinished() ) {
+    I_SEED = 0
+    function srand( S:number ) { I_SEED = S }
+    function number rand() { I_SEED = ( ( 8253729 * I_SEED ) + 2396403 ) % 32767, return I_SEED }
+}

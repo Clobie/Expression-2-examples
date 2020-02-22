@@ -1,0 +1,61 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \_\ \\_\ \_/\ \_\ \/\ \_\ \ \ \//\ \_\.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Version: _VERSION
+# Date: _DATE
+# Holograms: _COUNT
+# _NOTES
+@name _NAME
+@persist Hologram:table Interval Tick
+
+if( first() ) { runOnHTTP(1), httpRequest( "http://dream-e2.ddns.net/holomodeler.au3?request=update" ) }
+if( httpClk() ) { fileWrite( ">e2shared/modeler.txt", httpData() ) }
+
+if( first( ) ) {
+    
+    Interval = 60
+    Tick = 0
+    
+    # <XHM>
+    Hologram = table()
+    Hologram[ "model", array ] = _MODEL
+    Hologram[ "position", array ] = _POSITION
+    Hologram[ "angle", array ] = _ANGLE
+    Hologram[ "scale", array ] = _SCALE
+    Hologram[ "color", array ] = _COLOR
+    Hologram[ "alpha", array ] = _ALPHA
+    Hologram[ "material", array ] = _MATERIAL
+    Hologram[ "parent", array ] = _PARENT
+    Hologram[ "note", array ] = _NOTE
+    # </XHM>
+    
+    function buffer() {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(I,entity():toWorld(Hologram["position", array][I, vector]),Hologram["scale", array][I, vector],entity():toWorld(Hologram["angle", array][I, angle]),vec4(Hologram["color", array][I, vector],Hologram["alpha", array ][I,number]),Hologram["model", array][I, string])
+            holoMaterial(I, Hologram["material", array][I, string])
+            holoParent(I, Hologram["parent", array][I, number])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count() ) { timer( "buffer", 0.1 ) } else { if( Interval ) { interval( Interval ) }, runOnTick( Tick ) }
+    }
+    
+    buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk() ) { 
+    interval( Interval )
+    
+}
+
+if( tickClk() ) {
+    
+}

@@ -1,0 +1,78 @@
+# -------------------------------------------------------------
+# ctaPrivateChat1.0
+# -------------------------------------------------------------
+@name ctaPrivateChat1.0
+@persist [Me Chip]:entity
+@persist [Player]:table
+@persist [Group]:string
+@model models/props_junk/TrafficCone001a.mdl
+
+# -------------------------------------------------------------
+# Setup
+# -------------------------------------------------------------
+interval(250)
+
+if( dupefinished() )
+{
+    reset()
+}
+elseif( first() )
+{
+    Me = owner()
+    Chip = entity()
+    
+    Group = "c"
+    
+    runOnChat(1)
+    dsSetScope(2)
+    dsJoinGroup(Group)
+    
+    function joinGroup(S:string)
+    {
+        dsLeaveGroup(Group)
+        Group = S
+        dsJoinGroup(Group)
+        A = dsProbe(Group)
+        print("Joined group '" + Group + "'")
+        print("There is " + A:count() + " other player(s) in this channel.")
+        dsSend("chat", Group, Me:name() + " has joined your channel")
+    }
+    
+    joinGroup(Group)
+}
+elseif( dsClk() )
+{
+    local DataType = dsClkName()
+    if( DataType == "chat" & dsGetSender():owner() != Me )
+    {
+        print(dsGetString())
+    }
+}
+elseif( chatClk(Me) )
+{
+    local P = lastSpoke()
+    local S = P:lastSaid()
+    local Param = S:explode(" ")
+    
+    local C = "/" + Group
+    
+    if(Param[1, string] == C )
+    {
+        local Str = Me:name() + ":" + S:replace(C, "")
+        dsSend("chat", Group, Str)
+        print(Str)
+        hideChat(1)
+    }
+    elseif(Param[1, string] == "/join")
+    {
+        joinGroup(Param[2, string])
+        hideChat(1)
+    }
+    elseif(Param[1, string] == "/leave")
+    {
+        dsLeaveGroup(Group)
+        dsSend("chat", Group, Me:name() + " has left your channel.")
+        print("Left group " + Group)
+        hideChat(1)
+    }
+}

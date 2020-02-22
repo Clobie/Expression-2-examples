@@ -1,0 +1,10 @@
+@persist T_HEAP:table
+
+if( first() || dupefinished() ) {
+    function string new() { local T_NULL = table( ), local S_UID = T_NULL:id( ):sub(10):toNumber(16):toString(), T_HEAP[ S_UID, table ] = T_NULL, return S_UID }
+    function string table:new( ) { local S_UID = This:id( ):sub(10):toNumber(16):toString(), T_HEAP[ S_UID, table ] = This, return S_UID }
+    function string new( TABLE:table ) { local S_UID = TABLE:id( ):sub(10):toNumber(16):toString(), T_HEAP[ S_UID, table ] = TABLE, return S_UID }
+    function table string:get() { return T_HEAP[This, table] }
+    function string:clear() { This:get():clear() }
+    function string:delete() { T_HEAP:remove( This ) }
+}

@@ -1,0 +1,89 @@
+@name Ramio
+@persist [RMap RActor RActorModel]:table
+@persist [Chip Me]:entity
+@persist [RSnapOffset]:number
+@persist [RGameCenter RSnapOffsetCenter RSnapPos]:vector
+@persist [RActorModelSelected]:string
+@persist 
+@persist 
+
+#include "lib/async"
+
+if( first() ) {
+    
+    runOnTick( 1 )
+    runOnChat(1)
+    
+    Chip = entity()
+    Me = owner()
+    RSnapOffset = 48#11.8125
+    RGameCenter = entity():pos() + vec( 0, 0, RSnapOffset / 2.05 )
+    RActorModelSelected = "8x8x8"
+
+    #for( I = 4, 13 ) { RActorModel[ "4x" + I + "x1", string ] = "models/sprops/cuboids/height06/size_4/cube_24x" + (6 * I) + "x6.mdl" }
+    #for( I = 3, 21 ) { RActorModel[ "4x" + I + "x4", string ] = "models/sprops/cuboids/height24/size_1/cube_24x" + (6 * I) + "x12.mdl" }
+    #for( I = 4, 21 ) { RActorModel[ "4x" + I + "x4", string ] = "models/sprops/cuboids/height24/size_1/cube_24x" + (6 * I) + "x24.mdl" }
+    for( I = 8, 21 ) { RActorModel[ "8x" + I + "x8", string ] = "models/sprops/cuboids/height48/size_1/cube_48x" + (6 * I) + "x48.mdl" }
+    
+    holoCreate( 0, Chip:pos(), vec( 1 ), ang( 0 ), vec( 255 ), RActorModel[ RActorModelSelected, string ] )
+    holoMaterial( 0, "models/wireframe" )
+    
+    function entity actorCreate() {
+        return propSpawn( RActorModel[ RActorModelSelected, string], 1 )
+    }
+    
+    function vector getSnappedPosition( Vec:vector ) {
+        local X = Vec:x() - ( Vec:x() % RSnapOffset < RSnapOffset / 2 ? Vec:x() % RSnapOffset : ( Vec:x() % RSnapOffset ) - RSnapOffset )
+        local Y = Vec:y() - ( Vec:y() % RSnapOffset < RSnapOffset / 2 ? Vec:y() % RSnapOffset : ( Vec:y() % RSnapOffset ) - RSnapOffset )
+        local Z = Vec:z() - ( Vec:z() % RSnapOffset < RSnapOffset / 2 ? Vec:z() % RSnapOffset : ( Vec:z() % RSnapOffset ) - RSnapOffset )
+        return vec( X, Y, Z )
+    }
+}
+
+RSnapPos = getSnappedPosition( RGameCenter - owner():aimPos() )
+holoPos( 0, RGameCenter - RSnapPos )
+
+if( changed( Me:keyUse() ) && Me:keyUse() ) {
+    actorCreate():setPos( RGameCenter - RSnapPos )
+}
+
+if( changed( Me:keyReload() ) && Me:keyReload() ) {
+    if( Me:aimEntity():owner() == Me ) {
+        Me:aimEntity():propDelete()
+    }
+}
+
+if( chatClk() ) {
+    local P = lastSpoke()
+    local S = P:lastSaid()
+    
+    Param = S:explode(" ")
+    Command = Param[1, string]
+    
+    if( P == Me ) {
+        if(S:left(1) == "/") { hideChat(1) }
+        
+        if( Param:count() == 2 )
+        {
+            if( Command == "/mdl" ) {
+                if( RActorModel:exists( Param[2, string] ) ) {
+                    print( "Model set to " + Param[2, string] )
+                    RActorModelSelected = Param[2, string]
+                    RSnapOffset = ( Param[2, string]:left(1):toNumber() * 6 )
+                    print( RSnapOffset )
+                    holoModel( 0, RActorModel[ Param[2, string], string ] )
+                }
+            }
+        }        
+    }
+}
+
+
+
+
+
+
+
+
+
+

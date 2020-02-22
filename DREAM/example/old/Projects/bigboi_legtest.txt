@@ -1,0 +1,70 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 12/21/2019 @ 2233
+# Holograms: 5
+# World: [3298.3762207031,-2665.748046875,-7167.71875]
+# Notes: 
+########################################
+@name bigboi_legtest
+@persist Hologram:table
+
+exit()
+
+if( first() ) {
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/props_combine/combinethumper001a.mdl","models/props_combine/combinethumper001a.mdl","models/props_combine/combinethumper001a.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/props_combine/combine_intmonitor001.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(0,0,0),vec(0,0,1008),vec(0,0,2016),vec(0,0,3024),vec(0,0,0),vec(0,0,1008),vec(0,0,2016),vec(0,0,0),vec(0,78,600),vec(0,78,785.5),vec(0,78,600),vec(-0.0002,78,1408),vec(-0.0002,77.9999,1180.5),vec(0,78,1408),vec(0,78,1600),vec(0,78,1785.5),vec(0,78,1600),vec(-0.0002,78,2408),vec(-0.0002,77.9999,2180.5),vec(0,78,2408),vec(168,24,3012))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,180,0),ang(0,180,0),ang(0,180,0),ang(0,0,0),ang(-90,90,0),ang(0,-90,0),ang(90,0,0),ang(-90,90,0),ang(0,-90,0),ang(90,0,0),ang(-90,90,0),ang(0,-90,0),ang(90,0,0),ang(-90,90,0),ang(0,-90,0),ang(90,0,0),ang(-90,0,0))
+    Hologram[ "scale", array ] = array(vec(0.2016,0.2016,0.2016),vec(0.2016,0.2016,0.2016),vec(0.2016,0.2016,0.2016),vec(0.2016,0.2016,0.2016),vec(0.2016,0.2016,0.2016),vec(2.1739,1.5467,2.0073),vec(2.1739,1.5467,2.0073),vec(2.1739,1.5467,2.0073),vec(0.504,0.504,0.504),vec(4.5,1,1),vec(4.5833,4.5833,25),vec(8.3333,8.3333,5),vec(1,1,1),vec(3.3333,3.3333,37.9167),vec(8.3333,8.3333,5),vec(4.5,1,1),vec(4.5833,4.5833,25),vec(8.3333,8.3333,5),vec(1,1,1),vec(3.3333,3.3333,37.9167),vec(8.3333,8.3333,5),vec(8,5,6))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(250,250,250),vec(150,150,150),vec(255,255,255),vec(255,255,255),vec(150,150,150),vec(255,255,255),vec(250,250,250),vec(150,150,150),vec(255,255,255),vec(255,255,255),vec(150,150,150),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","sprops/trans/misc/ls_m1","models/props_combine/combinethumper002","phoenix_storms/fender_chrome","phoenix_storms/fender_chrome","models/props_combine/combinethumper002","","sprops/trans/misc/ls_m1","models/props_combine/combinethumper002","phoenix_storms/fender_chrome","phoenix_storms/fender_chrome","models/props_combine/combinethumper002","")
+    Hologram[ "parent", array ] = array(1,1,2,3,4,2,3,4,9,2,10,10,3,13,13,3,16,16,4,19,19,5)
+    Hologram[ "note", array ] = array("","","","","","","","","","hydraulic_bottom","","","hydraulic_top","","","hydraulic_bottom","","","hydraulic_top","","","")
+    
+    for( I = 1, Hologram[ "model", array ]:count() ) {
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector],
+            Hologram["alpha", array ][I,number]),
+            Hologram["model", array][I, string]
+        )
+        holoMaterial(I, Hologram["material", array][I, string])
+        holoParent(I, Hologram["parent", array][I, number])
+    }
+    
+    holoParent( 1, entity() )
+    
+    function entity:ik3c( A, B, C, D, LengthA, LengthB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        Distance = AEntity:pos():distance( Destination )
+        Ae = max( Distance, LengthB )
+        Be = LengthA
+        Ce = min( Distance, LengthB )
+        Calc = sqrt( ( (Ae + Be - Ce + Be) * (-Ae + Be + Ce + Be) * (Ae - Be - Ce + Be) * (Ae + Be - Ce - Be) ) / ( 4 * (Ae - Ce) ^ 2 ) )
+        local Arcs = ( sign( Distance - LengthA ) + 1 ) / 2 ? asin( Calc / LengthA ) : acos( Calc / LengthA ) + 90
+        local YawAxis = This:toLocalAxis( Destination - AEntity:pos() )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        holoAng( B, holoEntity( A ):toWorld( ang( 0, -AEntity:bearing( Destination ) - 90, AEntity:elevation( Destination ) + Arcs - 90 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( 0, 0, -Arcs ) ) )
+        holoAng( D, holoEntity( C ):toWorld( ang( 0, 0, -Arcs ) ) )
+    }
+    
+}
+
+interval( 60 )
+entity():ik3c( 1, 2, 3, 4, 1008, 1008, owner():aimPos() )
+
+HJA1 = ( holoEntity( 13 ):pos() - holoEntity( 10 ):pos() ):toAngle()
+HJA2 = ( holoEntity( 19 ):pos() - holoEntity( 16 ):pos() ):toAngle()
+
+
+holoAng( 10, HJA1 )
+holoAng( 13, HJA1 )
+holoAng( 16, HJA2 )
+holoAng( 19, HJA2 )
+holoAng( 5, holoEntity( 4 ):angles():setRoll( 180 ) )

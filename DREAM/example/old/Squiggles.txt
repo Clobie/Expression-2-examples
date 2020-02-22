@@ -1,0 +1,9 @@
+@name Squiggles
+@persist 
+
+if( dupefinished() ) { reset() }
+if( first() ) {
+    
+    
+    
+}

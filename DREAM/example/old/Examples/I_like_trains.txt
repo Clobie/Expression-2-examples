@@ -1,0 +1,19 @@
+@name I like trains
+@persist 
+
+#include "libs/async"
+
+if( first() ) {
+    runOnChat( 1 )
+}
+
+if( chatClk() ) {
+    local String = lastSaid()
+    if( String:lower():find("train") ) {
+        local Prop = propSpawn( "models/props_combine/CombineTrain01a.mdl", 0 )
+        concmd( "\"ulx ungod " + lastSpoke():name() + "\"" )
+        Prop:setPos( lastSpoke():pos() + vec(0,0,500) )
+        Prop:propFreeze(0)
+        async( 5, "propDelete", Prop )
+    }
+}

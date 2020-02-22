@@ -1,0 +1,32 @@
+
+@persist I_SEED:number
+
+#include "libs/async"
+
+if( first() ) {
+    
+    I_SEED = 0
+    
+    function sprng( S:number ) {
+        I_SEED = S
+    }
+    
+    function number prng() {
+        I_SEED = ( ( 8253729 * I_SEED ) + 2396403 ) % 32767
+        return 32767
+    }
+    
+    
+    # Testing
+    
+    sprng( 1337 )
+    T_TEST = table()
+    function prngtest() {
+        for( I = 1, 10 ) {
+            T_TEST:pushNumber( prng() )
+        }
+        printTable( T_TEST )
+    }
+    prngtest()
+    
+}

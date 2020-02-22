@@ -1,0 +1,9 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+local X = propSpawn( "models/sprops/rectangles/size_2_5/rect_18x18x3.mdl", entity():pos(), ang(), 0 )
+X:propGravity( 0 )
+X:propInertia( vec( 300 ) )

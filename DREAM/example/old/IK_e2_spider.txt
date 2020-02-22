@@ -1,0 +1,148 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5
+# Date: 11/17/2018 @ 842
+# Holograms: 
+# Notes: 
+# --------------------------------------------- #
+@name e2spider
+@persist FootPos:table Hologram:table
+@persist Foot:table
+@persist F Chip:entity Me:entity
+
+#include "lib/kinematics"
+
+if( first( ) ) {
+    
+    Me = owner()
+    Chip = entity()
+    F = 3
+    Hologram = table( )
+    Hologram[ "model", array ] = array("models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl")
+    Hologram[ "position", array ] = array(vec(3,3,0.5),vec(3,3,4.5),vec(3,3,2.5),vec(3,3,6.5),vec(3,3,8.5),vec(3,1,0.5),vec(3,1,4.5),vec(3,1,2.5),vec(3,1,6.5),vec(3,1,8.5),vec(3,-1,0.5),vec(3,-1,4.5),vec(3,-1,2.5),vec(3,-1,6.5),vec(3,-1,8.5),vec(3,-3,0.5),vec(3,-3,4.5),vec(3,-3,2.5),vec(3,-3,6.5),vec(3,-3,8.5),vec(-3,3,0.5),vec(-3,3,4.5),vec(-3,3,2.5),vec(-3,3,6.5),vec(-3,3,8.5),vec(-3,1,0.5),vec(-3,1,4.5),vec(-3,1,2.5),vec(-3,1,6.5),vec(-3,1,8.5),vec(-3,-1,0.5),vec(-3,-1,4.5),vec(-3,-1,2.5),vec(-3,-1,6.5),vec(-3,-1,8.5),vec(-3,-3,0.5),vec(-3,-3,4.5),vec(-3,-3,2.5),vec(-3,-3,6.5),vec(-3,-3,8.5))
+    Hologram[ "anlge", array ] = array(ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0),ang(360,0,0))
+    Hologram[ "scale", array ] = array(vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0417,0.0417,0.3333),vec(0.0417,0.0417,0.3333),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0417,0.0417,0.3333),vec(0.0417,0.0417,0.3333),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0417,0.0417,0.3333),vec(0.0417,0.0417,0.3333),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0417,0.0417,0.3333),vec(0.0417,0.0417,0.3333),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0417,0.0417,0.3333),vec(0.0417,0.0417,0.3333),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0417,0.0417,0.3333),vec(0.0417,0.0417,0.3333),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0417,0.0417,0.3333),vec(0.0417,0.0417,0.3333),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0833,0.0833,0.0833),vec(0.0417,0.0417,0.3333),vec(0.0417,0.0417,0.3333),vec(0.0833,0.0833,0.0833))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    Hologram[ "parent", array ] = array(0,1,1,2,2,6,6,6,7,7,11,11,11,12,12,16,16,16,17,17,21,21,21,22,22,26,26,26,27,27,31,31,31,32,32,36,36,36,37,37)
+    
+    runOnKeys( owner( ), 1 )
+    Chip:setPos( Chip:pos( ) + ( Chip:up( ) * 2 ) )
+    holoParent( 1, Chip )
+    holoParent( 6, Chip )
+    holoParent( 11, Chip )
+    holoParent( 16, Chip )
+    holoParent( 21, Chip )
+    holoParent( 26, Chip )
+    holoParent( 31, Chip )
+    holoParent( 36, Chip )
+    
+    function buffer() {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            holoParent(I, Hologram["parent", array][I, number])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 ) } else { 
+            runOnKeys( Me, 1 )
+            Chip:setPos( Chip:pos( ) + ( Chip:up( ) * 2 ) )
+            holoParent( 1, Chip )
+            holoParent( 6, Chip )
+            holoParent( 11, Chip )
+            holoParent( 16, Chip )
+            holoParent( 21, Chip )
+            holoParent( 26, Chip )
+            holoParent( 31, Chip )
+            holoParent( 36, Chip )
+            interval(10)
+        }
+    } buffer( )
+    
+    Foot = table( 1, 6, 11, 16, 21, 26, 31, 36 )
+    
+    function static( ) {
+        for( I = 1, 4 ) { FootPos[ I, vector ] = holoEntity( Foot[ I, number ] ):pos( ) + ( Chip:forward( ) * 5 ) + ( Chip:up( ) * -2 ) + ( Chip:right( ) * -5.5 ) + ( Chip:right( ) * I * 2.7 ) }
+        for( I = 5, 8 ) { FootPos[ I, vector ] = holoEntity( Foot[ I, number ] ):pos( ) + ( Chip:forward( ) * -5 ) + ( Chip:up( ) * -2 ) + ( Chip:right( ) * -5.5 ) + ( Chip:right( ) * ( I - 4 ) * 2.7 )}
+    }
+    
+    function move( X ) {
+        F--, F--, if( F == -1 ) { F = 4 }, if( F == 0 ) { F = 3 }
+        local P = holoEntity( Foot[ F, number ] ):pos( ) + ( Chip:forward( ) * ( 3 ) ) + ( Chip:up( ) * -2 ) + ( Chip:right( ) * 1 ) + ( Chip:right( ) * F * 1 )
+        if( P:distance( FootPos[ F, vector ] ) > 2 ) { FootPos[ F, vector ] = P }
+        local P = holoEntity( Foot[ F + 4, number ] ):pos( ) + ( Chip:forward( ) * ( -3 ) ) + ( Chip:up( ) * -2 ) + ( Chip:right( ) * 1 )  + ( Chip:right( ) * F * 1 )
+        if( P:distance( FootPos[ F + 4, vector ] ) > 2 ) { FootPos[ F + 4, vector ] = P }
+        entity( ):setPos( entity( ):pos( ) + ( entity( ):right( ) * X ) )
+    }
+    
+    function key( Player:entity, Key:string, Down:number ) {
+        if( Player == Me & Down == 0 ) {
+            if( Key == "pad_8" | Key == "pad_6" | Key == "pad_4" ) {
+                static( )
+            }
+        }
+    }
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+    
+    local M = 0
+    if( Me:keyPressed( "pad_8" ) ) { move( 4 ), M = 1 }
+    if( Me:keyPressed( "pad_4" ) ) { if( !M ) { move( 0 ) }, Chip:setAng( Chip:angles( ) + ang( 0, 10, 0 ) ) }
+    if( Me:keyPressed( "pad_6" ) ) { if( !M ) { move( 0 ) }, Chip:setAng( Chip:angles( ) + ang( 0, -10, 0 ) ) }
+    
+    ik2a( 1, 2, 4, 4,   FootPos[ 1, vector ] )
+    ik2a( 6, 7, 4, 4,   FootPos[ 2, vector ] )
+    ik2a( 11, 12, 4, 4, FootPos[ 3, vector ] )
+    ik2a( 16, 17, 4, 4, FootPos[ 4, vector ] )
+    ik2a( 21, 22, 4, 4, FootPos[ 5, vector ] )
+    ik2a( 26, 27, 4, 4, FootPos[ 6, vector ] )
+    ik2a( 31, 32, 4, 4, FootPos[ 7, vector ] )
+    ik2a( 36, 37, 4, 4, FootPos[ 8, vector ] )
+}
+
+if( keyClk( ) ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    if( Player == Me & Player:keyPressed( Key ) == 0 ) {
+        if( Key == "pad_8" | Key == "pad_6" | Key == "pad_4" ) {
+            static( )
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

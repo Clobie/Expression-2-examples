@@ -1,0 +1,25 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+#include "lib/variable"
+#include "lib/artillery"
+
+
+
+if( first() ) {
+    
+    runOnTick(1)
+    "gun":s( artilleryCreate() )
+    "gun":s():artillerySetOrigin( entity():pos() )
+    "gun":s():artillerySetPower( 75 )
+    "gun":s():artillerySetProjectileModel( "models/props_junk/watermelon01.mdl" )
+    "gun":s():artillerySetArc( TRAJECTORY_ARC_HIGH )
+}
+
+if( changed( owner():keyUse() ) && owner():keyUse() ) {
+    "gun":s():artillerySetTarget( owner():aimPos() )
+    "gun":s():artilleryFire()
+}

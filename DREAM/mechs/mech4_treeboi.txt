@@ -1,0 +1,319 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 12/24/2019 @ 320
+# Holograms: 65
+# World: [1629.22265625,-3009.5681152344,-14319.71875]
+# Notes: 
+# 6 -> front left
+# 21 -> front right
+# 36 -> rear left
+# 51 -> rear right
+########################################
+@name mech4_treeboi
+@persist Hologram:table [ Seat Driver Entity Body ]:entity
+@persist [ FR_P1 FR_P2 FR_P3 ]:vector FR_STEP:number FR_STEP_SOUND:number FR_XRD:ranger
+@persist [ FL_P1 FL_P2 FL_P3 ]:vector FL_STEP:number FL_STEP_SOUND:number FL_XRD:ranger
+@persist [ RR_P1 RR_P2 RR_P3 ]:vector RR_STEP:number RR_STEP_SOUND:number RR_XRD:ranger
+@persist [ RL_P1 RL_P2 RL_P3 ]:vector RL_STEP:number RL_STEP_SOUND:number RL_XRD:ranger
+@persist [ SPEED SHIFTSPEED LEGSPEED STEPDAMP STEPARCH LEGINCREMENT BODYHEIGHT MAX_OVERSTEP LEG_LEN TURN_SPEED ]:number
+@persist [ BODYANG ]:angle CanFire
+@model models/sprops/cuboids/height12/size_3/cube_36x36x12.mdl
+#exit()
+
+if( first( ) ) {
+    
+    SPEED = 50
+    SHIFTSPEED = 10
+    LEGSPEED = 1.5
+    STEPDAMP = 1
+    STEPARCH = 2
+    LEGINCREMENT = 0.035
+    MAX_OVERSTEP = 135
+    BODYHEIGHT = 70
+    TURN_SPEED = 20
+    LEG_LEN = 100
+    
+    CanFire = 1
+    
+    Body = entity()
+    Body:setMass( 50000 )
+    Body:propGravity( 0 )
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/props_foliage/stump01.mdl","models/props_foliage/hedgerow01_medium-bushy.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_foliage/ah_ash_tree_cluster1.mdl","models/props_foliage/ah_hawthorn_sm_static.mdl","models/props_foliage/ash02.mdl","models/props_foliage/ash01_skybox.mdl","models/props_foliage/ah_domestic_hedge128.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_foliage/ah_ash_tree_cluster1.mdl","models/props_foliage/ah_hawthorn_sm_static.mdl","models/props_foliage/ash02.mdl","models/props_foliage/ash01_skybox.mdl","models/props_foliage/ah_domestic_hedge128.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_foliage/ah_ash_tree_cluster1.mdl","models/props_foliage/ah_hawthorn_sm_static.mdl","models/props_foliage/ash02.mdl","models/props_foliage/ash01_skybox.mdl","models/props_foliage/ah_domestic_hedge128.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_docks/dock01_pole01a_128.mdl","models/props_foliage/ah_ash_tree_cluster1.mdl","models/props_foliage/ah_hawthorn_sm_static.mdl","models/props_foliage/ash02.mdl","models/props_foliage/ash01_skybox.mdl","models/props_foliage/ah_domestic_hedge128.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,70),vec(0,0,70),vec(0,0,70),vec(75,75,70),vec(75,75,70),vec(75,75,170),vec(75,75,270),vec(75,75,370),vec(75,75,120),vec(75,75,220),vec(75,75,320),vec(75,75,170),vec(75,75,270),vec(93,75,132),vec(75,75,214),vec(75,75,258),vec(75,75,214),vec(75,93,112),vec(75,-75,70),vec(75,-75,70),vec(75,-75,170),vec(75,-75,270),vec(75,-75,370),vec(75,-75,120),vec(75,-75,220),vec(75,-75,320),vec(75,-75,170),vec(75,-75,270),vec(93,-75,132),vec(75,-75,214),vec(75,-75,258),vec(75,-75,214),vec(75,-57,112),vec(-75,75,70),vec(-75,75,70),vec(-75,75,170),vec(-75,75,270),vec(-75,75,370),vec(-75,75,120),vec(-75,75,220),vec(-75,75,320),vec(-75,75,170),vec(-75,75,270),vec(-57,75,132),vec(-75,75,214),vec(-75,75,258),vec(-75,75,214),vec(-75,93,112),vec(-75,-75,70),vec(-75,-75,70),vec(-75,-75,170),vec(-75,-75,270),vec(-75,-75,370),vec(-75,-75,120),vec(-75,-75,220),vec(-75,-75,320),vec(-75,-75,170),vec(-75,-75,270),vec(-57,-75,132),vec(-75,-75,214),vec(-75,-75,258),vec(-75,-75,214),vec(-75,-57,112))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(18,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(18,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(18,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(18,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,90))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(4,4,4),vec(1.3,1.3,1.3),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0,0,0),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.1316),vec(1.0089,0.999,0.1316),vec(0.2,0.2,0.2),vec(0.2,0.2,0.2),vec(0.3,0.3,0.3),vec(3,3,3),vec(0.7,0.7,0.7),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0,0,0),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.1316),vec(1.0089,0.999,0.1316),vec(0.2,0.2,0.2),vec(0.2,0.2,0.2),vec(0.3,0.3,0.3),vec(3,3,3),vec(0.7,0.7,0.7),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0,0,0),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.1316),vec(1.0089,0.999,0.1316),vec(0.2,0.2,0.2),vec(0.2,0.2,0.2),vec(0.3,0.3,0.3),vec(3,3,3),vec(0.7,0.7,0.7),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0,0,0),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.774),vec(1.0089,0.999,0.1316),vec(1.0089,0.999,0.1316),vec(0.2,0.2,0.2),vec(0.2,0.2,0.2),vec(0.3,0.3,0.3),vec(3,3,3),vec(0.7,0.7,0.7))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    Hologram[ "parent", array ] = array(1,1,1,1,4,5,6,7,5,6,7,6,7,5,6,7,6,5,1,19,20,21,22,20,21,22,21,22,20,21,22,21,20,1,34,35,36,37,35,36,37,36,37,35,36,37,36,35,1,49,50,51,52,50,51,52,51,52,50,51,52,51,50)
+    Hologram[ "note", array ] = array("","","","front left","","","","","","","","","","","","","","","front left","","","","","","","","","","","","","","","rear left","","","","","","","","","","","","","","","rear right","","","","","","","","","","","","","","")
+    
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string] #:replace( "models/props_wasteland/cargo_container01.mdl", "models/monk.mdl" )
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            holoParent(I, Hologram["parent", array][I, number])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 ) } else {
+            rangerHitEntities( 1 )
+            rangerHitWater( 1 )
+            propSpawnUndo( 0 )
+            Seat = seatSpawn( "models/nova/airboat_seat.mdl", holoEntity( 1 ):toWorld( vec( 20,-20,190 ) ), Body:angles( ) - ang( 0, 90, 0 ), 0 )
+            Seat:parentTo( holoEntity( 1 ) )
+            #Seat:setAlpha( 0 )
+            Seat:propFreeze( 0 )
+            Seat2 = seatSpawn( "models/nova/airboat_seat.mdl", holoEntity( 1 ):toWorld( vec( 20,35,190 ) ), Body:angles( ) - ang( 0, 90, 0 ), 0 )
+            Seat2:parentTo( holoEntity( 1 ) )
+            #Seat2:setAlpha( 0 )
+            Seat2:propFreeze( 0 )
+            
+            holoParent( 1, Body )
+            holoPos( 1, Body:pos( ) )
+            Body:setPos( Body:toWorld( vec( 0, 0, BODYHEIGHT ) ) )
+            Body:propFreeze( 1 )
+            rangerFilter( Seat )
+            rangerFilter( Body )
+            rangerPersist( 1 )
+            runOnTick( 1 )
+        }
+    } buffer( )
+    
+    function entity:ik3c( A, B, C, D, LengthA, LengthB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        Distance = AEntity:pos():distance( Destination )
+        Ae = max( Distance, LengthB )
+        Be = LengthA
+        Ce = min( Distance, LengthB )
+        Calc = sqrt( ( (Ae + Be - Ce + Be) * (-Ae + Be + Ce + Be) * (Ae - Be - Ce + Be) * (Ae + Be - Ce - Be) ) / ( 4 * (Ae - Ce) ^ 2 ) )
+        local Arcs = ( sign( Distance - LengthA ) + 1 ) / 2 ? asin( Calc / LengthA ) : acos( Calc / LengthA ) + 90
+        local YawAxis = This:toLocalAxis( Destination - AEntity:pos() )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        holoAng( B, holoEntity( A ):toWorld( ang( 0, -AEntity:bearing( Destination ) - 90, AEntity:elevation( Destination ) + Arcs - 90 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( 0, 0, -Arcs ) ) )
+        holoAng( D, holoEntity( C ):toWorld( ang( 0, 0, -Arcs ) ) )
+    }
+    
+    function void async( T, F:string ) { 
+        timer( format( "cb:%.0f:%s:null:%s", randint( 1e15 ), F, vonEncode( array( ) ) ), T * 1000 ) 
+    }
+    
+    function void async( T, F:string, X:entity ) { 
+        timer( format( "cb:%.0f:%s:e:%s",    randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) 
+    }
+    
+    function fl() {
+        FL_P1 = holoEntity( 8 ):pos( )
+        FL_P3 = FL_XRD:position( )
+        FL_P2 = ( FL_P1 + FL_P3 ) * 0.5 + Body:up() * FL_P1:distance( FL_P3 ) / STEPARCH
+        FL_STEP = 0
+        if( FL_P1:distance( FL_P3 ) > 35 ) {
+            FL_STEP_SOUND = 0
+        }
+        async( LEGSPEED, "fl" )
+    }
+    
+    function fr() {
+        FR_P1 = holoEntity( 23 ):pos( )
+        FR_P3 = FR_XRD:position( )
+        FR_P2 = ( FR_P1 + FR_P3 ) * 0.5 + Body:up() * FR_P1:distance( FR_P3 ) / STEPARCH
+        FR_STEP = 0
+        if( FR_P1:distance( FR_P3 ) > 35 ) {
+            FR_STEP_SOUND = 0
+        }
+        async( LEGSPEED, "fr" )
+    }
+    
+    function rl() {
+        RL_P1 = holoEntity( 38 ):pos( )
+        RL_P3 = RL_XRD:position( )
+        RL_P2 = ( RL_P1 + RL_P3 ) * 0.5 + Body:up() * RL_P1:distance( RL_P3 ) / STEPARCH
+        RL_STEP = 0
+        if( RL_P1:distance( RL_P3 ) > 35 ) {
+            RL_STEP_SOUND = 0
+        }
+        async( LEGSPEED, "rl" )
+    }
+    
+    function rr() {
+        RR_P1 = holoEntity( 53 ):pos( )
+        RR_P3 = RR_XRD:position( )
+        RR_P2 = ( RR_P1 + RR_P3 ) * 0.5 + Body:up() * RR_P1:distance( RR_P3 ) / STEPARCH
+        RR_STEP = 0
+        if( RR_P1:distance( RR_P3 ) > 40 ) {
+            RR_STEP_SOUND = 0
+        }
+        async( LEGSPEED, "rr" )
+    }
+    
+    local TOffset = LEGSPEED / 4
+    async( TOffset * 0, "fr" ) # 0 2 1 3
+    async( TOffset * 2, "fl" )
+    async( TOffset * 3, "rr" )
+    async( TOffset * 1, "rl" )
+    
+    function entity:stepSound() {
+        I = round( random( 2, 4 ) )
+        if( I == 3 ) {
+            return
+        }
+        This:soundPlay( holoIndex( This ), soundDuration( "physics/wood/wood_strain" + I + ".wav" ), "physics/wood/wood_strain" + I + ".wav" )
+    }
+    
+    function resetShootiBoi() {
+        CanFire = 1
+    }
+}
+
+if( clk( "buffer" ) ) { 
+    buffer( )
+}
+
+if( tickClk( ) ) {
+    
+    # Controls
+    Driver = Seat:driver()
+    local Controls = Body:toWorldAxis( 
+        vec( 
+            Driver:keyForward( ) - Driver:keyBack( ), 
+            Driver:keyLeft( ) - Driver:keyRight( ), 
+            0
+        ) 
+    )
+    
+    Yaw = clamp( round( sin( Body:toLocal( Driver:eyeAngles() ):yaw() ), 3 ) * 2 * TURN_SPEED, -TURN_SPEED, TURN_SPEED )
+    if( abs(Yaw) < 10 || !Driver:isValid() ) {
+        Yaw = 0
+    }
+    
+    # Easy mount
+    if( !Driver:isValid() ) {
+        HEIGHT = 20
+    } else {
+        HEIGHT = BODYHEIGHT
+    }
+    
+    if( Driver:keyJump() ) {
+        HEIGHT = 125
+    } elseif( Driver:keyWalk() ) {
+        HEIGHT = 20
+    }
+    
+    # Rangers
+    local V = Body:toWorldAxis( Body:velL( ):normalized( ):setZ( 0 ) * clamp( Body:velL():length() / STEPDAMP, -MAX_OVERSTEP, MAX_OVERSTEP ) )
+    RR_XRD = rangerOffset( 250, Body:toWorld( vec( -90, -90, 75 ) ) + V, -Body:up() + -Body:forward() * 0.4 +  Body:right() * 0.4 )
+    if( !RR_XRD:hit() ) {
+        RR_XRD = rangerOffset( 250, Body:toWorld( vec( -125, -125, 75 ) ) + V, -Body:up() + Body:forward() * 0.25 + -Body:right() * 0.25 )
+    }
+    RL_XRD = rangerOffset( 250, Body:toWorld( vec( -90,  90, 75 ) ) + V, -Body:up() + -Body:forward() * 0.4 + -Body:right() * 0.4 )
+    if( !RL_XRD:hit() ) {
+        RL_XRD = rangerOffset( 250, Body:toWorld( vec( -125, 125, 75 ) ) + V, -Body:up() + Body:forward() * 0.25 + Body:right() * 0.25 )
+    }
+    FR_XRD = rangerOffset( 250, Body:toWorld( vec(  90, -90, 75 ) ) + V, -Body:up() +  Body:forward() * 0.4 +  Body:right() * 0.4 )
+    if( !FR_XRD:hit() ) {
+        FR_XRD = rangerOffset( 250, Body:toWorld( vec( 125, -125, 75 ) ) + V, -Body:up() + -Body:forward() * 0.25 + -Body:right() * 0.25 )
+    }
+    FL_XRD = rangerOffset( 250, Body:toWorld( vec(  90,  90, 75 ) ) + V, -Body:up() +  Body:forward() * 0.4 + -Body:right() * 0.4 )
+    if( !FL_XRD:hit() ) {
+        FL_XRD = rangerOffset( 250, Body:toWorld( vec( 125, 125, 75 ) ) + V, -Body:up() + -Body:forward() * 0.25 + Body:right() * 0.25 )
+    }
+    
+    
+    # Body angle
+    F = (FR_XRD:distance() + FL_XRD:distance()) / 2
+    B = (RR_XRD:distance() + RL_XRD:distance()) / 2
+    R = (FR_XRD:distance() + RR_XRD:distance()) / 2
+    L = (FL_XRD:distance() + RL_XRD:distance()) / 2
+    local Torque = vec( R - L, F - B, Yaw )
+    Body:applyTorque( ( Torque * Body:inertia() * 33.33 ) - ( Body:angVelVector() * Body:inertia() * 25 ) + Yaw * 2 )
+    
+    # Height
+    local Mid = ( holoEntity( 8 ):pos() + holoEntity( 53 ):pos() + holoEntity( 38 ):pos() + holoEntity( 23 ):pos() ) / 4
+    local Up = ( Body:pos() - Mid ):normalized() * ( HEIGHT + Body:toLocal(Mid):z() )
+    Body:applyForce( Body:mass( ) * Controls * SPEED + Body:mass( ) * tickInterval( ) - Body:mass( ) * Body:vel() / 2 + Body:mass( ) * Up * 2 )
+    
+    # Leg movement
+    STEP_POINT = vec()
+    
+    FR_STEP = clamp( FR_STEP + LEGINCREMENT, 0, 1 )
+    Body:ik3c( 19, 20, 21, 22, LEG_LEN, LEG_LEN, bezier( FR_P1, FR_P2, FR_P3, FR_STEP ) )
+    FL_STEP = clamp( FL_STEP + LEGINCREMENT, 0, 1 )
+    Body:ik3c( 4, 5, 6, 7, LEG_LEN, LEG_LEN, bezier( FL_P1, FL_P2, FL_P3, FL_STEP ) )
+    RR_STEP = clamp( RR_STEP + LEGINCREMENT, 0, 1 )
+    Body:ik3c( 49, 50, 51, 52, LEG_LEN, LEG_LEN, bezier( RR_P1, RR_P2, RR_P3, RR_STEP ) )
+    RL_STEP = clamp( RL_STEP + LEGINCREMENT, 0, 1 )
+    Body:ik3c( 34, 35, 36, 37, LEG_LEN, LEG_LEN, bezier( RL_P1, RL_P2, RL_P3, RL_STEP ) )
+    
+    # Step sounds & step dip movement
+    if( FR_STEP == 1 & FR_STEP_SOUND == 0 ) {
+        holoEntity( 23 ):stepSound()
+        Body:setPos( Body:pos() + Body:up() * -3 )
+        FR_STEP_SOUND = 1
+    }
+    if( FL_STEP == 1 & FL_STEP_SOUND == 0 ) {
+        holoEntity( 8 ):stepSound()
+        Body:setPos( Body:pos() + Body:up() * -3 )
+        FL_STEP_SOUND = 1
+    }
+    if( RR_STEP == 1 & RR_STEP_SOUND == 0 ) {
+        holoEntity( 53 ):stepSound()
+        Body:setPos( Body:pos() + Body:up() * -3 )
+        RR_STEP_SOUND = 1
+    }
+    if( RL_STEP == 1 & RL_STEP_SOUND == 0 ) {
+        holoEntity( 38 ):stepSound()
+        Body:setPos( Body:pos() + Body:up() * -3 )
+        RL_STEP_SOUND = 1
+    }
+    
+    if( Driver:keyAttack1() && CanFire == 1 ) {
+        CanFire = 0
+        local X = propSpawn( 
+            "models/props_foliage/driftwood_01a.mdl", 
+            Driver:shootPos() + Driver:eye() * 75, 
+            Driver:eyeAngles( ), 
+            0 
+        )
+        X:setAlpha( 255 )
+        X:setMass( 50000 )
+        #X:propGravity( 0 )
+        X:propFreeze( 0 )
+        X:applyForce( Driver:eye():toAngle():forward() * 50000 * 10000 )
+        async( 5, "propDelete", X )
+        async( 0.5, "resetShootiBoi" )
+    }
+        
+    
+}
+
+# async
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) {
+            case "null", F( ), break
+            case "e", F( R[ 1, entity ] ), break
+        }
+        exit()
+    }
+}
+
+
+
+
+
+
+

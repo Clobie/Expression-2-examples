@@ -1,0 +1,160 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/15/2018 @ 745
+# Holograms: 18
+# Notes: 
+# --------------------------------------------- #
+@name calculator
+@persist [ OPERATOR NUMBER_A NUMBER_B NUMBER_DISPLAY NUMBER_CURRENT ]:string [ RESET_ON_NEXT_BUTTON NUMBER DOMATH USED_EQUAL ]:number
+
+#include "lib/holomodel"
+#include "lib/dream"
+
+if( first( ) ) {
+    
+    LIB_HOLOMODEL_LOCAL = 1
+    Hologram[ "model", array ] = array("models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/holograms/plane.mdl","models/led.mdl")
+    Hologram[ "position", array ] = array(vec(0,-1.3516,52.6816),vec(-0.1,-9.0029,45.0244),vec(-0.1,-3.8989,45.0244),vec(-0.1,1.2007,45.0244),vec(-0.1,6.3003,45.0244),vec(-0.1,-9.0029,50.124),vec(-0.1,-9.0029,55.2236),vec(-0.1,-9.0029,60.3232),vec(-0.1,-3.8989,50.124),vec(-0.1,-3.8989,55.2236),vec(-0.1,-3.8989,60.3232),vec(-0.1,1.2007,50.124),vec(-0.1,1.2007,55.2236),vec(-0.1,1.2007,60.3232),vec(-0.1,6.3003,50.124),vec(-0.1,6.3003,55.2236),vec(-0.1,6.3003,60.3232),vec(-0.1,6.3003,45.0244))
+    Hologram[ "angle", array ] = array(ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(90,180,0),ang(-90,0,0))
+    Hologram[ "scale", array ] = array(vec(1.7167,1.7167,0.0833),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(0.4167,0.4167,0.4167),vec(1,1,0.1))
+    Hologram[ "color", array ] = array(vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","models/cheeze/buttons2/minus.mdl","models/cheeze/buttons2/equals.mdl","models/cheeze/buttons2/0.mdl","","models/cheeze/buttons2/plus.mdl","models/cheeze/buttons2/divide.mdl","models/cheeze/buttons2/multiply.mdl","models/cheeze/buttons2/3.mdl","models/cheeze/buttons2/6.mdl","models/cheeze/buttons2/9.mdl","models/cheeze/buttons2/2.mdl","models/cheeze/buttons2/5.mdl","models/cheeze/buttons2/8.mdl","models/cheeze/buttons2/1.mdl","models/cheeze/buttons2/4.mdl","models/cheeze/buttons2/7.mdl","debug/debugdrawflat")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("","","","","","","","","","","","","","","","","","")
+
+    function setMenuText( Text:string ) { 
+        #Text = "DEBUG\nNUMBER_A: " + NUMBER_A + "\n" + "NUMBER_B: " + NUMBER_B + "\n" + "OPERATOR: " + OPERATOR + "\nTOTAL: " + Text
+        #holoText( Text, holoEntity( 1 ):pos( ) + ( holoEntity( 1 ):forward( ) * -21.5 ), holoEntity( 1 ):angles( ) + ang( -90, -90, 0 ), 2, 0, vec( 255 ), vec( 0 ) )
+        holoText( Text, holoEntity( 1 ):pos( ) + ( holoEntity( 1 ):forward( ) * -11.5 ), holoEntity( 1 ):angles( ) + ang( -90, -90, 0 ), 2, 0, vec( 255 ), vec( 0 ) )
+    }
+    
+    function numberEnter( N:string ) {
+        
+        if( USED_EQUAL ) {
+            NUMBER = 1
+            NUMBER_A = ""
+            NUMBER_B = ""
+            OPERATOR = ""
+            NUMBER_CURRENT = ""
+            NUMBER_DISPLAY = ""
+            RESET_ON_NEXT_BUTTON = 0
+            USED_EQUAL = 0
+        }
+        
+        if( NUMBER == 1 & NUMBER_A:length( ) <= 10 ) {
+            if( NUMBER_A:find( "." ) & N == "." ) {
+                return
+            }
+            NUMBER_A = NUMBER_A + N
+            NUMBER_CURRENT = NUMBER_A
+            NUMBER_DISPLAY = NUMBER_CURRENT
+        }
+        if( NUMBER == 2 & NUMBER_B:length( ) <= 10 ) {
+            if( NUMBER_B:find( "." ) & N == "." ) {
+                return
+            }
+            if( RESET_ON_NEXT_BUTTON ) {
+                RESET_ON_NEXT_BUTTON = 0
+                NUMBER_B = ""
+            }
+            NUMBER_B = NUMBER_B + N
+            NUMBER_CURRENT = NUMBER_B
+            NUMBER_DISPLAY = NUMBER_CURRENT
+        }
+    }
+    
+    function equals( ) {
+        if( NUMBER == 1 ) {
+            return
+        }
+        switch( OPERATOR ) {
+            case "plus", NUMBER_A = ( NUMBER_A:toNumber( ) + NUMBER_B:toNumber( ) ):toString( ), break
+            case "minus", NUMBER_A = ( NUMBER_A:toNumber( ) - NUMBER_B:toNumber( ) ):toString( ), break
+            case "multiply", NUMBER_A = ( NUMBER_A:toNumber( ) * NUMBER_B:toNumber( ) ):toString( ), break
+            case "divide", NUMBER_A = ( NUMBER_A:toNumber( ) / NUMBER_B:toNumber( ) ):toString( ), break
+        }
+        NUMBER_CURRENT = NUMBER_A
+        RESET_ON_NEXT_BUTTON = 1
+        USED_EQUAL = 1
+    }
+    
+    function setOperator( Operator:string ) {
+        OPERATOR = Operator
+        if( NUMBER == 1 ) {
+            NUMBER = 2
+        } else {
+            if( RESET_ON_NEXT_BUTTON == 0 & USED_EQUAL == 1 ) {
+                equals( )
+            }
+            NUMBER_B = ""
+        }
+        RESET_ON_NEXT_BUTTON = 0
+        USED_EQUAL = 0
+    }
+    
+    function equal( Ply:entity ) { equals( ), setMenuText( NUMBER_CURRENT ) }
+    function plus( Ply:entity ) { setOperator( "plus" ), setMenuText( NUMBER_CURRENT ) }
+    function minus( Ply:entity ) { setOperator( "minus" ), setMenuText( NUMBER_CURRENT ) }
+    function divide( Ply:entity ) { setOperator( "divide" ), setMenuText( NUMBER_CURRENT ) }
+    function multiply( Ply:entity ) { setOperator( "multiply" ), setMenuText( NUMBER_CURRENT ) }
+    function decimal( Ply:entity ) { numberEnter( "." ), setMenuText( NUMBER_CURRENT ) }
+    function one( Ply:entity ) { numberEnter( "1" ), setMenuText( NUMBER_CURRENT ) }
+    function two( Ply:entity ) { numberEnter( "2" ), setMenuText( NUMBER_CURRENT ) }
+    function three( Ply:entity ) { numberEnter( "3" ), setMenuText( NUMBER_CURRENT ) }
+    function four( Ply:entity ) { numberEnter( "4" ), setMenuText( NUMBER_CURRENT ) }
+    function five( Ply:entity ) { numberEnter( "5" ), setMenuText( NUMBER_CURRENT ) }
+    function six( Ply:entity ) { numberEnter( "6" ), setMenuText( NUMBER_CURRENT ) }
+    function seven( Ply:entity ) { numberEnter( "7" ), setMenuText( NUMBER_CURRENT ) }
+    function eight( Ply:entity ) { numberEnter( "8" ), setMenuText( NUMBER_CURRENT ) }
+    function nine( Ply:entity ) { numberEnter( "9" ), setMenuText( NUMBER_CURRENT ) }
+    function zero( Ply:entity ) { numberEnter( "0" ), setMenuText( NUMBER_CURRENT ) }
+    
+    function setup( ) {
+        NUMBER = 1
+        NUMBER_A = ""
+        NUMBER_B = ""
+        OPERATOR = ""
+        RESET_ON_NEXT_BUTTON = 0
+        buttonCreate( 3, 0, "equal", "" )
+        buttonCreate( 2, 0, "minus", "" )
+        buttonCreate( 6, 0, "plus", "" )
+        buttonCreate( 7, 0, "divide", "" )
+        buttonCreate( 8, 0, "multiply", "" )
+        buttonCreate( 5, 0, "decimal", "" )
+        buttonCreate( 15, 0, "one", "" )
+        buttonCreate( 12, 0, "two", "" )
+        buttonCreate( 9, 0, "three", "" )
+        buttonCreate( 16, 0, "four", "" )
+        buttonCreate( 13, 0, "five", "" )
+        buttonCreate( 10, 0, "six", "" )
+        buttonCreate( 17, 0, "seven", "" )
+        buttonCreate( 14, 0, "eight", "" )
+        buttonCreate( 11, 0, "nine", "" )
+        buttonCreate( 4, 0, "zero", "" )
+        holoParent( 1, entity( ) )
+        holoPos( 1, entity( ):pos( ) + ( entity( ):up( ) ) + ( entity( ):forward( ) * -17 ) )
+        holoAng( 1, entity( ):angles( ) )
+        
+        local P = players( )
+        for( I = 1, P:count( ) ) {
+            runOnKeys( P[ I, entity ], 1 )
+        }
+    }
+    
+    function main( ) { }
+    function chat( Player:entity, Text:string ) { }
+    function key( Player:entity, Key:string, Down:number ) { }
+}
+

@@ -1,0 +1,53 @@
+@name pokeball
+@inputs
+@outputs
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter Loaded]:number [Origin]:vector [Me Chip]:entity
+@persist
+
+#include "lib/async"
+
+if( first() | dupefinished() )
+{
+    Me = owner()
+    Chip = entity()
+    Origin = Chip:pos()
+    Loaded = 0
+    HoloCounter = 0
+    
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    HologramModel = array("models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_tube_thick.mdl","models/holograms/hq_cylinder.mdl")
+    HologramPosition = array(vec(0.0001,0,35),vec(0.0001,0,35),vec(0.0001,0,35),vec(17.4171,0,35),vec(13.4131,0,35),vec(17.8121,0,35))
+    HologramAngle = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0))
+    HologramScale = array(vec(3,3,3),vec(-3.15,-3.15,-3.15),vec(3.01,3.01,0.2),vec(0.8,0.8,0.1),vec(0.7,0.7,0.7),vec(0.6,0.6,0.1))
+    HologramColor = array(vec(255,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255))
+    HologramAlpha = array(255,255,255,255,255,255)
+    HologramMaterial = array("","","","","","")
+    HologramSkin = array(0,0,0,0,0,0)
+    HologramParent = array(0,1,1,1,0,1)
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+
+    function modelParent() {
+        while( perf() ) { HoloCounter++, if(HologramParent[HoloCounter, number] > 0) { holoParent(HoloCounter, HologramParent[HoloCounter, number]) } }
+        if( HoloCounter < HologramModel:count() ) { async( 0.1, "modelParent" ) }
+        else { holoParent( 1, entity() ), runOnTick(1) }
+    }
+    
+    function modelSpawn( ) {
+        while( perf() && holoCanCreate() && HoloCounter < HologramModel:count()) {
+            HoloCounter++
+            holoCreate( HoloCounter )
+            holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+            holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+            holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+            holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+            holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+            holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+            holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+            holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+        }
+        if( HoloCounter < HologramModel:count() ) { async( 1, "modelSpawn" ) }
+        else { HoloCounter = 0, modelParent() }
+    }
+    modelSpawn()
+}

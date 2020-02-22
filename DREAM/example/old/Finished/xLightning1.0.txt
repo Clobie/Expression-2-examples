@@ -1,0 +1,77 @@
+@name lightning
+@persist [Me Chip]:entity
+@persist [Loaded Alpha]:number
+
+interval(25)
+
+if( first() | dupefinished() )
+{
+    Loaded = 0
+    Me = owner()
+    Chip = entity()
+    Loaded = 0
+    
+    function initializeLightning(HoloStart:number, TotalHolos:number)
+    {
+        for( I = HoloStart, HoloStart + TotalHolos ) 
+        {
+            holoCreate(I)
+            holoMaterial(I,"debug/debugdrawflat")
+            #holoMaterial(I,"shadertest/cubemapdemo")
+            holoDisableShading(I, 1)
+        }
+    }
+    
+    function fadeLightning(HoloStart:number, TotalHolos:number)
+    {
+        Alpha = Alpha / 1.33
+        for( I = HoloStart, HoloStart + TotalHolos ) 
+        {
+            holoAlpha( I, Alpha )
+        }
+    }
+    
+    
+    function fireLightning(Origin:vector, Target:vector, HoloStart:number, TotalHolos:number)
+    {
+        Alpha = 255
+        Position = table()
+        Dist = Me:aimPos():distance(Me:shootPos())
+        Seg = Dist / TotalHolos
+        Spazdist = ( Target:distance(Origin) / 100 )
+        Angle = (Target - Origin):toAngle()
+        
+        Position:pushVector( Origin )
+        for( I = 2, TotalHolos)
+        {
+            Randvec = (Angle:up() * random(-Spazdist,Spazdist)) + (Angle:right() * random(-Spazdist,Spazdist))
+            Position:pushVector( Origin + (Angle:forward() * (Seg * I)) + Randvec )
+        }
+        Position:pushVector( Target )
+        
+        for( J = 1, TotalHolos )
+        {
+            holoPos( HoloStart + J, ( Position[J, vector] + Position[J+1, vector] ) / 2 )
+            holoAng( HoloStart + J, ( Position[J, vector] - Position[J+1, vector] ):toAngle() )
+            holoScaleUnits( HoloStart + J, vec(Position[J, vector]:distance( Position[J+1, vector] ), 12, 12 ) )
+            holoAlpha( HoloStart + J, 255 )
+        }
+        
+        local X = propSpawn("models/props_phx/ball.mdl", 0)
+        X:setPos(Target)
+        X:propBreak()
+        timer("goaway",100)
+    }
+    
+    initializeLightning(6, 85)
+    Loaded = 1
+}
+if( clk() && Loaded == 1 ) 
+{ 
+    
+    if( Me:keyAttack2() && changed( Me:keyAttack2() ) ) 
+    { 
+        fireLightning(Me:shootPos(), Me:aimPos(), 6, 85) 
+    }
+    if( Alpha >= 0 ) { fadeLightning(6, 85) }
+}

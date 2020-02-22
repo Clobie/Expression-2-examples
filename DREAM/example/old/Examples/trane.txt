@@ -1,0 +1,55 @@
+@name trane
+@persist [Base]:entity
+@persist 
+@persist 
+@persist 
+
+interval(100)
+
+if( first() ) {
+    
+    holoCreate(1)
+    holoModel(1, "models/sprops/misc/origin.mdl")
+    holoScaleUnits(1, vec(5))
+    holoCreate(2)
+    holoModel(2, "models/sprops/misc/origin.mdl")
+    holoScaleUnits(2, vec(5))
+    holoCreate(3)
+    holoModel(3, "models/sprops/misc/origin.mdl")
+    holoScaleUnits(3, vec(3))
+    holoCreate(4)
+    holoModel(4, "models/sprops/misc/origin.mdl")
+    holoScaleUnits(4, vec(5))
+    holoCreate(5)
+    holoModel(5, "models/sprops/misc/origin.mdl")
+    holoScaleUnits(5, vec(5))
+    
+    Base = entity()
+    
+    function vector getForward() {
+        local Top = holoEntity(2)
+        local Side = holoEntity(4)
+        
+        return Top:forward()
+    }
+    
+    function setup() {
+        local RANGER_A = rangerOffset(Base:pos(), Base:pos() + ( Base:right() * 1000))
+        holoPos(2, RANGER_A:pos() + (holoEntity(2):up() * 5))
+        
+        local RANGER_B = rangerOffset(Base:pos(), Base:pos() + ( Base:right() * -1000))
+        holoPos(3, RANGER_B:pos() + (holoEntity(3):up() * 5))
+        
+        holoPos(4, RANGER_A:pos() + (holoEntity(2):up() * 10) + ( holoEntity(2):right() * 5 ))
+        holoPos(5, RANGER_B:pos() + (holoEntity(3):up() * 10) + ( holoEntity(2):right() * -5 ))
+        
+        local Middle = ( RANGER_A:pos() + RANGER_B:pos() ) / 2
+        holoPos(1, Middle)
+        
+        #Base:setPos( Middle )
+    }
+    
+    setup()
+    
+}
+holoPos(2, holoEntity(2):pos() + getForward())

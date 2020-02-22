@@ -1,0 +1,29 @@
+@name Target
+@persist Target:entity
+
+if(first() | dupefinished())
+{
+    runOnTick(1)
+    runOnChat(1)
+    holoCreate(1)
+}
+elseif( tickClk() )
+{
+    holoAng(1, holoEntity(1):angles() + ang(0, 1, 0))
+}
+elseif( chatClk() )
+{
+    P = lastSpoke()
+    S = P:lastSaid()
+    
+    if(P == owner())
+    {
+        if(S:left(3) == "/t ")
+        {
+            Target = findPlayerByName(S:sub(4))
+            holoModel(1, Target:model())
+            holoScale(1, vec(0.5, 0.5, 0.5))
+            hideChat(1)
+        }
+    }
+}

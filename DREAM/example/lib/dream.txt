@@ -1,0 +1,52 @@
+##################################################
+#  ____                                          #
+# /\  _ `.                                       #
+# \ \ \/\ \  _ __    __     __      ___ ___      #
+#  \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\    #
+#   \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \   #
+#    \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\  #
+#     \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/  #
+#                                                #
+##################################################
+# Made by Dream                                  #
+# Dream's library                                #
+##################################################
+@name lib/dream
+@persist Me:entity [ CLK_MAIN CLK_CHAT CLK_KEY CLK_SETUP ]:string CLK_INTERVAL:number
+
+#include "lib/async"
+#include "lib/holotext"
+#include "lib/keyboard"
+#include "lib/button"
+#include "lib/kinematics"
+#include "lib/entity"
+#include "lib/trajectory"
+
+if( first( ) ) {
+    Me = owner( )
+    CLK_INTERVAL = 60
+    CLK_MAIN = "main"
+    CLK_CHAT = "chat"
+    CLK_KEY = "key"
+    CLK_SETUP = "setup"
+    
+    #function setup( ) { }
+    #function key( Player:entity, Key:string, Down:number ) { }
+    #function chat( Player:entity, Text:string ) { }
+    #function main( ) { }
+    
+}
+
+#[
+if( clk( ) ) {
+    if( clk( ) ) { CLK_MAIN( ) }
+    if( chatClk( ) ) { CLK_CHAT( lastSpoke( ), lastSaid( ) ) }
+    if( keyClk( ) ) {
+        local Player = keyClk( )
+        local Key = keyClkPressed( )
+        CLK_KEY( Player, Key, Player:keyPressed( Key ) ? 1 : 0 )
+    }
+}
+
+interval( CLK_INTERVAL )
+]#

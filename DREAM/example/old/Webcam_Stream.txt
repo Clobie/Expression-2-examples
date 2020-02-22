@@ -1,0 +1,81 @@
+@name Webcam Stream
+@inputs DS:wirelink #Scale
+@inputs I_oc
+@outputs I
+@persist ResX ResY I Refresh Len Scr:entity
+@persist [ImgData Source]:string Scale Load
+@persist R:array
+
+if( ~DS ) { reset( ) }
+
+if( first() ) {
+    
+    runOnTick( 1 )
+    runOnHTTP( 1 )
+    
+    DS[1048574] = 1
+    DS[1048569] = 0
+    Scale = 128
+    Refresh = 1
+    Load = 0
+    
+    httpRequest("http://devtex.000webhostapp.com/imgtomem.php?scale="+Scale+"&url=http://devtex.000webhostapp.com/mjpegstream.php")
+}
+
+if( Refresh ) {
+    
+    if( httpCanRequest() ) {
+        Refresh = 1
+        httpRequest("http://devtex.000webhostapp.com/imgtomem.php?scale="+Scale+"&url=http://devtex.000webhostapp.com/mjpegstream.php")
+    }
+    
+} else {
+    if( Load ) {
+        while( !Refresh & perf( ) & I < Len ) {
+            
+            #[
+            DS[I-1] = rgb2digi(
+                toByte( ImgData:index( I * 3 - 1 ) ), 
+                toByte( ImgData:index( I * 3     ) ), 
+                toByte( ImgData:index( I * 3 + 1 ) ), 
+                0
+            )
+            ]#
+            
+            DS[I-1] = rgb2digi(
+                toByte( R[ I * 3 - 1, string ] ), 
+                toByte( R[ I * 3,     string ] ), 
+                toByte( R[ I * 3 + 1, string ] ), 
+                0
+            )
+            
+            I++
+        }
+        if( I >= Len ) {
+            Refresh = 1
+            Load = 0
+        }
+    }
+}
+
+if( httpClk() ) {
+    
+    Load = 1
+    Source = httpData()
+    
+    ResX = Source:sub( 1, Source:find(";") - 1 ):toNumber( )
+    ResY = Source:sub(    Source:find(";") + 1, Source:find( "|" ) - 1 ):toNumber( )
+    
+    ImgData = Source:sub( Source:find( "|" ) )
+    R = ImgData:explode( "" )
+    print( R:count( ) )
+    I = 1
+    Refresh = 0
+
+    DS[1048572] = ResY
+    DS[1048573] = ResX
+    DS[1048575] = 1
+    
+    Len = ImgData:length() / 3
+    
+}

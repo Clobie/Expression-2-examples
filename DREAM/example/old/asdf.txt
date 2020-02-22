@@ -1,0 +1,7 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+#entity():isWeldedTo():propInertia( vec(300000,300000,300000) )

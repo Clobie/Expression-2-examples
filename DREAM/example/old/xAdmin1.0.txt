@@ -1,0 +1,141 @@
+@name xAdmin
+@persist [HologramModel HologramPosition HologramAngle HologramScale HologramAlpha HologramMaterial HologramColor HologramParent]:array
+@persist [Loaded MenuIndexOffset MenuActive]:number
+@persist [Me Chip Target]:entity
+
+interval(25)
+
+if( first() | dupefinished() )
+{
+    Me = owner()
+    Menu = table()
+    Chip = entity()
+    Loaded = 0
+    MenuActive = 0
+    Target = entity(0)
+    
+    function vector getPlaneXZ(I:number) { return ( Me:shootPos() + ( holoEntity(I):forward():dot( holoEntity(I):pos() - Me:shootPos() ) / ( holoEntity(I):forward():dot( Me:eye() ) ) ) * Me:eye() ) }
+    
+    holoCreate(1)
+    holoScale(1, vec(0.1))
+    holoColor(1, vec(0,255,0))
+    
+    function createMenu()
+    {
+        MenuIndexOffset = 50000
+        
+        # Insert menu data here
+        HologramModel = array("models/holograms/cube.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/sprops/misc/alphanum/alphanum_g.mdl","models/sprops/misc/alphanum/alphanum_o.mdl","models/sprops/misc/alphanum/alphanum_t.mdl","models/sprops/misc/alphanum/alphanum_o.mdl","models/sprops/misc/alphanum/alphanum_j.mdl","models/sprops/misc/alphanum/alphanum_a.mdl","models/sprops/misc/alphanum/alphanum_i.mdl","models/sprops/misc/alphanum/alphanum_l.mdl","models/sprops/misc/alphanum/alphanum_s.mdl","models/sprops/misc/alphanum/alphanum_p.mdl","models/sprops/misc/alphanum/alphanum_e.mdl","models/sprops/misc/alphanum/alphanum_c.mdl","models/sprops/misc/alphanum/alphanum_b.mdl","models/sprops/misc/alphanum/alphanum_a.mdl","models/sprops/misc/alphanum/alphanum_n.mdl","models/sprops/misc/alphanum/alphanum_k.mdl","models/sprops/misc/alphanum/alphanum_i.mdl","models/sprops/misc/alphanum/alphanum_c.mdl","models/sprops/misc/alphanum/alphanum_k.mdl","models/sprops/misc/alphanum/alphanum_b.mdl","models/sprops/misc/alphanum/alphanum_r.mdl","models/sprops/misc/alphanum/alphanum_i.mdl","models/sprops/misc/alphanum/alphanum_n.mdl","models/sprops/misc/alphanum/alphanum_g.mdl","models/sprops/misc/alphanum/alphanum_s.mdl","models/sprops/misc/alphanum/alphanum_l.mdl","models/sprops/misc/alphanum/alphanum_a.mdl","models/sprops/misc/alphanum/alphanum_y.mdl","models/sprops/misc/alphanum/alphanum_u.mdl","models/sprops/misc/alphanum/alphanum_n.mdl","models/sprops/misc/alphanum/alphanum_j.mdl","models/sprops/misc/alphanum/alphanum_a.mdl","models/sprops/misc/alphanum/alphanum_i.mdl","models/sprops/misc/alphanum/alphanum_l.mdl")
+        HologramPosition = array(vec(0,0,50),vec(0,0,65),vec(0.088,0,65),vec(0,0,35),vec(0.088,0,35),vec(0,20,50),vec(0.088,20,50),vec(0,-20,50),vec(0.088,-20,50),vec(0,12.3999,60.7002),vec(0.088,12.3999,60.7002),vec(0,-12.4099,60.7002),vec(0.0879,-12.4099,60.7002),vec(0,-12.4001,39.291),vec(0.0879,-12.4001,39.291),vec(0,12.4363,39.291),vec(0.0879,12.4363,39.291),vec(0.088,2.3013,35),vec(0.088,0.6997,35),vec(0.088,-0.7017,35),vec(0.088,-2.103,35),vec(0,2.0995,65),vec(0,0.6998,65),vec(0,-0.6998,65),vec(0,-2.0995,65),vec(0.0879,14.5383,39.291),vec(0.0879,13.137,39.291),vec(0.0879,11.7356,39.291),vec(0.0879,10.3342,39.291),vec(0.0879,-11.1005,39.291),vec(0.0879,-12.4001,39.291),vec(0.0879,-13.7998,39.291),vec(0,-17.8979,50),vec(0,-19.2993,50),vec(0,-20.7007,50),vec(0,-22.4023,50),vec(0,22.7993,50),vec(0,21.1997,50),vec(0,20,50),vec(0,18.6003,50),vec(0,17.0007,50),vec(0,-10.3104,60.7002),vec(0,-11.7101,60.7002),vec(0,-13.1097,60.7002),vec(0,-14.5094,60.7002),vec(0,15.899,60.7002),vec(0,14.4994,60.7002),vec(0,13.0997,60.7002),vec(0,11.7001,60.7002),vec(0,10.3004,60.7002),vec(0,8.9008,60.7002))
+        HologramAngle = array(ang(0,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0))
+        HologramScale = array(vec(1,1,1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15),vec(0.15,0.15,0.15))
+        HologramColor = array(vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(0,255,0),vec(0,255,0))
+        HologramAlpha = array(0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+        HologramMaterial = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+        HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+        HologramParent = array(0,1,2,1,4,1,6,1,8,1,10,1,12,1,14,1,16,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+        # Insert menu data here
+        
+        for( I = 0, HologramModel:count()-1 )
+        {
+            holoCreate( I + MenuIndexOffset, Chip:pos() + HologramPosition[I+1, vector], HologramScale[I+1, vector], HologramAngle[I+1, angle], HologramColor[I+1, vector], HologramModel[I+1, string] )
+            holoMaterial( I + MenuIndexOffset, HologramMaterial[I+1, string] )
+            holoParent( I + MenuIndexOffset, HologramParent[I+1, number] + MenuIndexOffset - 1 )
+            holoDisableShading( I + MenuIndexOffset, 1 )
+        }
+        holoAlpha(MenuIndexOffset, 0)
+    }
+    
+    function number updateButtons()
+    {
+        local Vec = getPlaneXZ( MenuIndexOffset )
+        holoPos(1, Vec)
+        local Dist = 6
+        local ID = 0
+        local Button = array(1, 3, 5, 7, 9, 11, 13, 15)
+        for(I = 1, Button:count())
+        {
+            if( holoEntity( MenuIndexOffset + Button[I, number] ):pos():distance( Vec ) <= Dist ) { ID = MenuIndexOffset + Button[I, number] }
+            else { holoColor( MenuIndexOffset + Button[I, number], vec(255) ) }
+        }
+        if( ID > 0 ) 
+        { 
+            holoColor(ID, vec(120,230,255))
+            return ID - MenuIndexOffset
+        }
+        return 0
+    }
+    
+    function button(B:number)
+    {
+        if(B == 1 && Target:isPlayer() && Target:isAlive() ) { concmd("ulx jail \"" + Target:name() + "\"") }
+        elseif(B == 3 && Target:isPlayer() && Target:isAlive() ) { concmd("ulx goto \"" + Target:name() + "\"") }    # Bottom middle
+        elseif(B == 5 && Target:isPlayer() && Target:isAlive() ) { concmd("ulx bring \"" + Target:name() + "\"") }
+        elseif(B == 7 && Target:isPlayer() && Target:isAlive() ) { concmd("ulx kick \"" + Target:name() + "\"") }
+        elseif(B == 9 && Target:isPlayer() && Target:isAlive() ) { concmd("ulx unjail \"" + Target:name() + "\"") }
+        elseif(B == 11 && Target:isPlayer() && Target:isAlive() ) { concmd("ulx slay \"" + Target:name() + "\"") }
+        elseif(B == 13 && Target:isPlayer() && Target:isAlive() ) { concmd("ulx ban \"" + Target:name() + "\"") }
+        elseif(B == 15 && Target:isPlayer() && Target:isAlive() ) { concmd("ulx spectate \"" + Target:name() + "\"") }
+        print(B)
+    }
+    
+    function menu(Show:number)
+    {
+        Origin = owner():shootPos()
+        OriginDirVec = owner():eye()
+        MenuActive = Show
+        
+        if( Show == 0 ) 
+        {
+            local Btn = updateButtons()
+            if( Btn > 0 ) { button(Btn) }
+            holoPos(MenuIndexOffset, Chip:pos() - vec(0,0,10)) 
+            holoAng(MenuIndexOffset, ang(270,0,0))
+        }
+        elseif( Show == 1 )
+        {
+            if( Me:aimEntity():isPlayer() ) { Target = Me:aimEntity() }
+            else 
+            {
+                local D = 9999999
+                local P = players()
+                for(I=1, P:count())
+                {
+                    if( P[I, entity]:pos():distance( Me:aimPos() ) < D && P[I, entity] != Me )
+                    {
+                        D = P[I, entity]:pos():distance( Me:aimPos() )
+                        Target = P[I, entity]
+                    }
+                }
+            }
+            hint("Target: " + Target:name(), 7)
+            holoPos(MenuIndexOffset, Origin + (OriginDirVec:toAngle():forward() * 57.5))
+            holoAng(MenuIndexOffset, OriginDirVec:toAngle())
+        }
+    }
+    
+    timer("initialize", 10)
+}
+if( clk("initialize") )
+{
+    Chip:setPos( vec( round(Chip:pos():x(),0), round(Chip:pos():y(),0), round(Chip:pos():z(),0) ) )     # Not sure if working? to fix menu vector issues
+    createMenu()
+    Loaded = 1
+}
+
+if( clk() & Loaded == 1)
+{
+    if( MenuActive ) { updateButtons() }
+    if( Me:keyAttack2() && changed( Me:keyAttack2() ) ) { menu(1) }
+    elseif( !Me:keyAttack2() && changed( Me:keyAttack2() ) ) { menu(0) }
+}
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,141 @@
+@name Mini Turret
+@persist Entity:entity Me:entity Enemy:entity
+@persist EnemyPosition:vector
+@persist AimAngle:angle
+@persist Pitch Yaw Roll PlayerCount AntiSpamTimer
+@persist HoloCount MoveTimer ExplodeTimer ThrowTimer ThrowDelay
+@persist HoloEntityArray:array HoloPositionArray:array HoloDirectionalVectoryArray:array HoloStateArray:array HoloExplodeSize:array
+@persist MaxTotalHolos
+@persist KeyAttack1
+@outputs Fire
+# set up vars when chip is set
+if(first() | duped())
+{
+    runOnTick(1)
+    Entity = entity():isWeldedTo()
+    Entity:setMass(1000)
+    Me = owner()
+    PlayerCount = 0
+    AntiSpamTimer = realtime() + 0.25
+    Enemy = owner()
+    MaxTotalHolos = 15
+    HoloCount = 1
+    
+    ThrowTimer = realtime()
+    ThrowDelay = 0.25
+    
+    # Initialize
+    HoloEntityArray = array()
+    HoloPositionArray = array()
+    HoloDirectionalVectoryArray = array()
+    HoloStateArray = array()
+    HoloExplodeSize = array()
+    
+    for(I = 1, MaxTotalHolos)
+    {
+        HoloPositionArray[HoloCount, vector] = vec(0,0,0)
+        HoloDirectionalVectoryArray[HoloCount, vector] = vec(0,0,0)
+        HoloStateArray[HoloCount, number] = 0
+    }
+}
+
+# Find entities only if player count changed
+if(PlayerCount != players():count() | !Enemy:isAlive())
+{
+    PlayerCount = players():count()
+    findInSphere(Entity:pos(), 500000)
+    findIncludeClass("player")
+    findIncludeClass("npc")
+    Enemy = findClosest(Me:aimPos())
+}
+
+# Change targets when 'E' is pressed
+if(Me:keyUse() & AntiSpamTimer < realtime())
+{
+    AntiSpamTimer = realtime() + 0.25
+    Enemy = findClosest(Me:aimPos())
+    if(Enemy:name() == "")
+    {
+        print("NO_TARGET_FOUND - DEFAULTING TARGET TO SELF")
+        Enemy = owner()
+    }
+    else
+    {
+        print("Target set: " + Enemy:name())
+    }
+}
+
+# Aim at the enemies
+Pitch = Entity:elevation(Enemy:pos()+vec(0,0,35))
+Yaw = Entity:bearing(Enemy:pos()) * 4
+Roll = Entity:angles():roll()
+AimAngle = -ang(Pitch, Yaw, Roll)
+Entity:applyAngForce( (AimAngle*5 + $AimAngle*25) * (Entity:mass() / 3) + (-Entity:angVel() * (Entity:mass() / 5)))
+
+# When "attacking", toggle vars to start throwing a bomb
+KeyAttack1 = Me:keyAttack1()
+if( KeyAttack1 )
+{
+    Fire = 1
+    if(realtime() > ThrowTimer & holoCanCreate())
+    {
+        holoCreate( HoloCount, Me:pos() + vec(0,0,50), vec(0.1, 0.1, 0.1), Me:eyeAngles(), vec(255, 255, 255) )
+        holoModel( HoloCount, "hqsphere" )
+        #holoMaterial( HoloCount, "debug/env_cubemap_model")
+        ThrowTimer = realtime() + ThrowDelay
+        Dest = Entity:aimPos()
+        Src = Entity:pos()
+        DirectionalVector = Entity:eye() #(Dest - Src):normalized()
+        HoloPositionArray[HoloCount, vector] = Src
+        HoloDirectionalVectoryArray[HoloCount, vector] = DirectionalVector
+        HoloStateArray[HoloCount, number] = 1
+        HoloEntityArray[HoloCount, entity] = holoEntity( HoloCount )
+        HoloEntityArray[HoloCount, entity]:setTrails(2, 0.1, 10, "trails/smoke", vec(255, 0, 0), 255)
+        HoloCount++
+        if( HoloCount >= MaxTotalHolos )
+        {
+            HoloCount = 1
+        }
+    }
+}
+else
+{
+    Fire = 0
+}
+
+# Loop through bombs
+for(I = 1, MaxTotalHolos)
+{
+    if(HoloStateArray[I, number] == 0)
+    {
+        continue
+    }
+    
+    if(HoloStateArray[I, number] == 1)
+    {
+        ToVec = (Enemy:pos()+vec(0,0,35)) - HoloEntityArray[I, entity]:pos()
+        HoloPositionArray[I, vector] = HoloPositionArray[I, vector] + ToVec:normalized() * 25 #(5 + (Entity:pos():distance(Enemy:pos())/500))
+        #HoloPositionArray[I, vector] = HoloPositionArray[I, vector] + (HoloDirectionalVectoryArray[I, vector] * (1 + (Entity:pos():distance(Enemy:pos())/500)))
+        holoPos( I, HoloPositionArray[I, vector])
+        if(HoloEntityArray[I, entity]:pos():distance(Enemy:pos()) < 50)
+        {
+            HoloStateArray[I, number] = 2
+        }
+    }
+    elseif(HoloStateArray[I, number] == 2)
+    {
+        holoMaterial( I, "models/effects/splode_sheet" )
+        if( HoloExplodeSize[I, number] > 15 )
+        {
+            HoloStateArray[I, number] = 0
+            HoloExplodeSize[I, number] = 0
+            holoDelete( I )
+        }
+        else
+        {
+            HoloExplodeSize[I, number] = HoloExplodeSize[I, number] + 0.25
+            holoScale( I, vec(1, 1, 1) * HoloExplodeSize[I, number])
+        }
+    }
+}
+

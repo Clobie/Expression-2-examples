@@ -1,0 +1,11 @@
+@name table inception
+A = table( table( table( table( table( table( table( table( table( table( "u wot m8" = "lel") ) ) ) ) ) ) ) ) )
+print( A[1, table][1, table][1, table][1, table][1, table][1, table][1, table][1, table][1, table]["u wot m8", string] )
+
+function asdf()
+{
+    print("lel")
+}
+
+B = table("lel" = "asdf")
+B["lel", string]()

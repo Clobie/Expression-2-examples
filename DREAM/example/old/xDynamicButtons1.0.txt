@@ -1,0 +1,175 @@
+@name Dynamic Buttons
+@persist [Me Chip]:entity
+@persist [Button Character]:table
+@persist [Path Ext]:string
+@persist [Loaded MenuIndex DistanceFromCenter]:number
+@persist [ButtonSelectColor]:vector
+interval(25)
+
+if( first() )
+{
+    Me = owner()
+    Chip = entity()
+    Button = table()
+    Loaded = 0
+    MenuIndex = 0
+    
+    DistanceFromCenter = 10
+    ButtonSelectColor = vec(50,120,200)
+    
+    # Anchor ( moving this holo moves the menu )
+    holoCreate(1000000)
+    holoAlpha(1000000, 0)
+    
+    function button1() { print("1") }
+    function button2() { print("2") }
+    function button3() { print("3") }
+    function button4() { print("4") }
+    function button5() { print("5") }
+    function button6() { print("6") }
+    function button7() { print("7") }
+    function button8() { print("8") }
+    
+    
+    # TODO
+    # Color of letters
+    
+    
+    Character = table( "." = "prd", "," = "com", ":" = "colon", ";" = "scolon", "?" = "qmark", "!" = "xmark", "\"" = "quote", "~" = "tilde", 
+                    "<" = "lessthan", ">" = "greaterthan", "_" = "underscore", "@" = "atsign", "#" = "pdsign", "$" = "dlsign", "%" = "pcnt",
+                    "^" = "crt", "&" = "and", "`" = "apost", "(" = "lpar", ")" = "rpar", "[" = "lbracket", "]" = "rbracket", "{" = "lcbracket",
+                    "}" = "rcbracket", "|" = "bar", "+" = "plu", "-" = "min", "*" = "ast", "/" = "div", "=" = "equal", "'" = "apost", "a" = "1_a",
+                    "a" = "l_a", "b" = "l_b", "c" = "l_c", "d" = "l_d", "e" = "l_e", "f" = "l_f", "g" = "l_g", "h" = "l_h", "i" = "l_i", "j" = "l_j", "k" = "l_k", 
+                    "l" = "l_l", "m" = "l_m", "n" = "l_n", "o" = "l_o", "p" = "l_p", "q" = "l_q", "r" = "l_r", "s" = "l_s", "t" = "l_t", "u" = "l_u", "v" = "l_v", 
+                    "w" = "l_w", "x" = "l_x", "y" = "l_y", "z" = "l_z", "A" = "a", "B" = "b", "C" = "c", "D" = "d", "E" = "e", "F" = "f", "G" = "g", 
+                    "H" = "h", "I" = "i", "J" = "j", "K" = "k", "L" = "l", "M" = "m", "N" = "n", "O" = "o", "P" = "p", "Q" = "q", "R" = "r", "S" = "s", "T" = "t", 
+                    "U" = "u", "V" = "v", "W" = "w", "X" = "x", "Y" = "y", "Z" = "z", "0" = "0", "1" = "1", "2" = "2", "3" = "3", "4" = "4", "5" = "5", "6" = "6", 
+                    "7" = "7", "8" = "8", "9" = "9", " " = "space")
+        Path = "models/sprops/misc/alphanum/alphanum_"
+        Ext = ".mdl"
+    
+    function vector getPlaneXY(I:number) 
+    {
+        return ( Me:shootPos() + ( holoEntity(I):up():dot( holoEntity(I):pos() - Me:shootPos() ) / ( holoEntity(I):up():dot( Me:eye() ) ) ) * Me:eye() )
+    }
+    
+    function buttonCreate(Text:string, Function:string)
+    {    
+        local HologramCount = Text:length() + 2
+        if( holoRemainingSpawns() < HologramCount ) { return }
+        
+        Model = array( "cplane", "cplane" )
+        Scale = array( vec( 12 ), vec( 11.5 ) )
+        Color = array( vec( 0 ), vec( 255 ) )
+        Position = array( vec( 0 ), vec( 0, 0, 0.1) )
+        Angle = array( ang( 0 ), ang( 0 ) )
+        
+        Letter = Text:explode("")
+        Left = Letter:count() - 1
+        
+        for( I = 1, Letter:count() )
+        {
+            Model:pushString( Path + Character[Letter[I, string], string] + Ext )
+            Scale:pushVector( vec(2,0.1,2) )
+            Color:pushVector( vec(0, 255, 0) )
+            Position:pushVector( vec( 0, Left/1.7, 0.2 ) )
+            Left -= 2
+            Angle:pushAngle( ang( 0, 90, 90 ) )
+        }
+        
+        for( I = 1, HologramCount )
+        {
+            if( Model[I + MenuIndex, string]:find("space") ) { continue }
+            holoCreate( I + MenuIndex )
+            holoMaterial( I + MenuIndex, "debug/debugdrawflat" )
+            holoDisableShading( I + MenuIndex, 1 )
+            holoModel( I + MenuIndex, Model[I, string] )
+            holoScaleUnits( I + MenuIndex, Scale[I, vector] )
+            holoColor( I + MenuIndex, Color[I, vector] )
+            holoPos( I + MenuIndex, Chip:pos() + Position[I, vector] )
+            holoAng( I + MenuIndex, Angle[I, angle] )
+            holoParent( I + MenuIndex, MenuIndex + 1 )
+        }
+        holoParent( MenuIndex + 1, 1000000 )
+        
+        Button:pushArray( array( MenuIndex + 1, Function ) )
+        MenuIndex = MenuIndex + HologramCount
+    }
+    
+    function buttonSetup()
+    {
+        if( Button:count() > 1 )
+        {
+            local A = 360 / Button:count()
+            for( I = 1, Button:count() )
+            {
+                holoPos(Button[I, array][1, number], Chip:pos() + vec( cos( A * I ) * DistanceFromCenter, sin( A * I ) * DistanceFromCenter, 0 ) )
+            }
+        }
+    }
+    
+    function number isMouseOver()
+    {
+        local PlaneVector = getPlaneXY( 1000000 )
+        local Btn = 0
+        for(I = 1, Button:count())
+        {
+            if( PlaneVector:distance( holoEntity( Button[I, array][1, number] ):pos() ) <= 6 )
+            {
+                holoColor( Button[I, array][1, number]+1, ButtonSelectColor )
+                Btn = Button[I, array][1, number]
+            }
+            else
+            {
+                holoColor( Button[I, array][1, number]+1, vec(255) )
+            }
+        }
+        return Btn
+    }
+    
+    function isButtonPressed()
+    {
+        local A = isMouseOver()
+        if( A > 0 && changed( Me:keyUse() ) && Me:keyUse() )
+        {
+            #print( A )
+            Button[ A, array ][ 1, string ]( )
+        }
+    }
+    
+    function menu()
+    {
+        isButtonPressed()
+        if( changed( Me:keyAttack2() ) && Me:keyAttack2() )
+        {
+            Origin = owner():shootPos()
+            OriginDirVec = owner():eye()
+            holoPos(1000000, Origin + (OriginDirVec:toAngle():forward() * 57.5))
+            holoAng(1000000, OriginDirVec:toAngle() - ang(90,0,0))
+        }
+    }
+    
+    timer("setup", 100)
+}
+elseif( clk("setup") )
+{
+    # Add as many buttons as you need, just copy/paste
+    # Make sure holos are 80 or less by counting letters + 2
+    # Example "Button1" is 7 letters, + 2 for the button = 9 holograms for this button
+    # The 8 example buttons equal 72! :)
+    buttonCreate("<", "button1")
+    buttonCreate(">", "button2")
+    buttonCreate("Fire", "button3")
+    #buttonCreate("Btn4", "button4")
+    #buttonCreate("Btn5", "button5")
+    #buttonCreate("Btn6", "button6")
+    #buttonCreate("Btn7", "button7")
+    #buttonCreate("Btn8", "button8")
+    #buttonCreate("Btn9", "button8")
+    buttonSetup()
+    Loaded = 1
+}
+elseif( clk() && Loaded == 1 )
+{
+    menu()
+}

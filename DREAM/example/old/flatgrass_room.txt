@@ -1,0 +1,48 @@
+@name flatgrass_room
+
+#include "lib/variable"
+
+if( first() ) {
+    
+    "v1":v( vec( -416.35, 447.87, -12560.28 ) )
+    "v2":v( vec( -991.73, -447.65, -12767.72 ) )
+    "scale":v( -vec( 582.3, 906, 210.3 ) )
+    
+    holoCreate( 1 )
+    holoModel( 1, "models/sprops/cuboids/non_set/cube_42x42x42.mdl" )
+    holoPos( 1, ( "v1":v() + "v2":v() ) / 2 )
+    holoAng( 1, ang() )
+    holoScaleUnits( 1, "scale":v() )
+    #holoMaterial( 1, "debug/debugdrawflat" )
+    #holoColor( 1, vec() )
+    "whitelist":t( table() )
+    
+    function entity:roomWhitelist() {
+        local T = "whitelist":t()
+        T[This:steamID(), number] = 1
+    }
+    
+    owner():roomWhitelist()
+    findPlayerByName( "Tormod" ):roomWhitelist()
+    findPlayerByName( "Captain" ):roomWhitelist()
+    findPlayerByName( "Tek" ):roomWhitelist()
+    findPlayerByName( "Orzlar" ):roomWhitelist()
+    findPlayerByName( "crixab" ):roomWhitelist()
+    findPlayerByName( "Uru" ):roomWhitelist()
+    findPlayerByName( "Mag" ):roomWhitelist()
+}
+
+#interval( 10 )
+holoColor( 1, hsv2rgb( mod( realtime() * 5, 360 ), 1, 1 ) )
+
+##[
+interval( 250 )
+
+foreach( K, V:entity = players() ) {
+    if( inrange( V:pos(), "v2":v() - vec(0,0,75), "v1":v() ) && V:isAlive() ) {
+        if( !"whitelist":t():exists( V:steamID() ) && !V:isAdmin() ) {
+            #concmd( "ulx slay " + V:name() )
+        }
+    }
+}
+#]#

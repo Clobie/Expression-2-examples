@@ -1,0 +1,59 @@
+@name 
+
+A = array(  "models/cheeze/buttons2/0",
+            "models/cheeze/buttons2/1",
+            "models/cheeze/buttons2/2",
+            "models/cheeze/buttons2/3",
+            "models/cheeze/buttons2/4",
+            "models/cheeze/buttons2/5",
+            "models/cheeze/buttons2/6",
+            "models/cheeze/buttons2/7",
+            "models/cheeze/buttons2/8",
+            "models/cheeze/buttons2/9",
+            "models/cheeze/buttons2/aim",
+            "models/cheeze/buttons2/arm",
+            "models/cheeze/buttons2/clear",
+            "models/cheeze/buttons2/down",
+            "models/cheeze/buttons2/easy",
+            "models/cheeze/buttons2/enter",
+            "models/cheeze/buttons2/fire",
+            "models/cheeze/buttons2/go",
+            "models/cheeze/buttons2/left",
+            "models/cheeze/buttons2/minus",
+            "models/cheeze/buttons2/muffin",
+            "models/cheeze/buttons2/plus",
+            "models/cheeze/buttons2/reset",
+            "models/cheeze/buttons2/right",
+            "models/cheeze/buttons2/set",
+            "models/cheeze/buttons2/start",
+            "models/cheeze/buttons2/stop",
+            "models/cheeze/buttons2/toggle",
+            "models/cheeze/buttons2/up",
+            "models/cheeze/buttons2/activate",
+            "models/cheeze/buttons2/air",
+            "models/cheeze/buttons2/alert",
+            "models/cheeze/buttons2/cake",
+            "models/cheeze/buttons2/charge",
+            "models/cheeze/buttons2/clock",
+            "models/cheeze/buttons2/compile",
+            "models/cheeze/buttons2/coolant",
+            "models/cheeze/buttons2/deactivate",
+            "models/cheeze/buttons2/divide",
+            "models/cheeze/buttons2/energy",
+            "models/cheeze/buttons2/equals",
+            "models/cheeze/buttons2/multiply",
+            "models/cheeze/buttons2/overide",
+            "models/cheeze/buttons2/power",
+            "models/cheeze/buttons2/pwr_blue",
+            "models/cheeze/buttons2/pwr_green",
+            "models/cheeze/buttons2/pwr_red",
+            "models/cheeze/buttons2/test",
+            "models/props_junk/ravenholmsign_sheet" )
+            
+for( I = 1,  A:count() ) {
+    holoCreate( I )
+    holoMaterial( I, A[I, string] )
+    holoScaleUnits( I, vec(12,0.01,12) )
+    holoPos( I, entity():toWorld( vec( 13*(I), 0, 12 ) ) )
+    holoDisableShading( I, 1 )
+}

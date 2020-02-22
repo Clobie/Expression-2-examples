@@ -1,0 +1,9 @@
+@name UFO Soccer
+@persist [ Ball ]:entity
+@persist [ Player ]:entity
+
+#"X 15360, -15360  Y 15360, -15360  Z 15360, -12800"	
+
+if( first() ) {
+    
+}

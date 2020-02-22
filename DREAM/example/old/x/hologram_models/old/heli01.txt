@@ -1,0 +1,57 @@
+@name heli01
+@inputs
+@outputs
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [HoloCounter]:number [Origin]:vector [Me Chip]:entity
+@persist
+@trigger
+
+if( first() | dupefinished() )
+{
+    runOnTick(1)
+    Me = owner()
+    Chip = entity()
+    Origin = Chip:pos()
+    HoloCounter = 0
+    HologramModel = array("cube","cube","cube","cube","cube")
+    HologramPosition = array(vec(0,0,50),vec(0,-7.5,50),vec(0,0,54),vec(0,4.2999877929688,50),vec(0,0,55.000003814697))
+    HologramAngle = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    HologramScale = array(vec(0.5,0.7,0.5),vec(0.1,0.7,0.1),vec(0.1,0.1,0.2),vec(0.37,0.2,0.37),vec(1.5,0.1,0.01))
+    HologramColor = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    HologramAlpha = array(255,255,255,255,255)
+    HologramMaterial = array("","","","","")
+    HologramSkin = array("1","1","1","1","1")
+    HologramParent = array("0","0","0","0","0")
+    timer("createHolos", 1)
+}
+elseif( clk("createHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count() & holoCanCreate())
+    {
+        HoloCounter++
+        holoCreate( HoloCounter )
+        holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+        holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+        holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+        holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+        holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+        holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+        holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+        holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+    }
+    if(HoloCounter < HologramModel:count()) { timer("createHolos", 1) }
+    else { timer("parentHolos", 1) HoloCounter = 0 }
+}
+elseif( clk("parentHolos") )
+{
+    while(perf(90) & HoloCounter < HologramParent:count())
+    {
+        HoloCounter++
+        print("Parenting hologram at index: " + HoloCounter:toString())
+        if(HologramParent[HoloCounter, number] > 0)
+        {
+            holoParent(HoloCounter, HologramParent[HoloCounter, number])
+        }
+    }
+}
+

@@ -1,0 +1,29 @@
+@name btn
+@persist Btn:string Btn2:string
+
+#include "lib/button"
+
+if( first() ) {
+    
+    entity():setAlpha(0)
+    
+    foreach( K, V:entity = players() ) { runOnKeys( V, 1 ) }
+    
+    buttonBindEventDown( "testdown" )
+    function testdown( Ply:entity, Btn:string ) {
+        print( Btn + " turned on by " + Ply:name() )
+        concmd( "emt " + Ply:id() + " void void " + vec( random(-10000,10000), random(-10000,10000), random(1000,10000) ):toString() )
+    }
+    
+    Btn = buttonCreate()
+    Btn:buttonSetToggleable( 0 )
+    Btn:buttonSetMaterial( "models/cheeze/buttons2/go" )
+    Btn:buttonSetPosition( entity():pos() + vec(0,0,55) )
+    Btn:buttonSetAngle( ang(90,0,0) )
+    Btn:buttonParent( entity() )
+    Btn:buttonSetScaleUnits( vec(12) )
+}
+
+interval(10)
+
+#entity():setAng( ang(0, realtime() * 25, 0) )

@@ -1,0 +1,58 @@
+# --------------------------------------------------#
+# lib/trajectory                                    #
+# --------------------------------------------------#
+# ____                                              #
+#/\  _`\                                            #
+#\ \ \/\ \   _ __     __      __       ___ ___      #
+# \ \ \ \ \ /\`'__\ /'__`\  /'__`\   /' __` __`\    #
+#  \ \ \_\ \\ \ \/ /\  __/ /\ \_\.\_ /\ \/\ \/\ \   #
+#   \ \____/ \ \_\ \ \____\\ \__/.\_\\ \_\ \_\ \_\  #
+#    \/___/   \/_/  \/____/ \/__/\/_/ \/_/\/_/\/_/  #
+#                                                   #
+# --------------------------------------------------#
+@name lib/trajectory
+@persist Arc Power Target:entity
+#  Arc
+#  1 = high
+# -1 = low
+
+#ifndef async( number, string )
+    #include "_/dream/lib/async"
+#endif
+
+if( first() || duped() || dupefinished() ) {
+    
+    function angle trajectoryGetAngleOfAttack( Origin:vector, Target:vector, Arc:number, Power:number ) {
+        local MPSPower = fromUnit( "m/s", Power )
+        local Range = ( Target - Origin ):setZ( 0 ):length()
+        local Height = ( Target:z() - Origin:z() ) * Arc
+        if( Arc == -1 ) { Height = ( Origin:z() - Target:z() ) * Arc }
+        local Angle = atan( ( ( MPSPower ^ 2 ) + ( Arc * sqrt( ( MPSPower ^ 4) - gravity() * ( ( gravity() * ( Range ^ 2 ) ) + ( 2 * Height * ( MPSPower ^ 2 ) ) ) ) ) ) / ( gravity() * Range ) )
+        return ( Target - Origin ):toAngle():setPitch( -Angle )
+    }
+    
+    function number trajectoryGetTimeToHit( Origin:vector, Target:vector, Arc:number, Power:number ) {
+        local MPSPower = fromUnit( "m/s", Power )
+        local Range = ( Target - Origin ):setZ( 0 ):length()
+        local Height = ( Target:z() - Origin:z() ) * Arc
+        if( Arc == -1 ) { Height = ( Origin:z() - Target:z() ) * Arc }
+        local Angle = atan( ( ( MPSPower ^ 2 ) + ( Arc * sqrt( ( MPSPower ^ 4) - gravity() * ( ( gravity() * ( Range ^ 2 ) ) + ( 2 * Height * ( MPSPower ^ 2 ) ) ) ) ) ) / ( gravity() * Range ) )
+        local TimeToHit = ( ( MPSPower * sin( Angle ) ) + sqrt( ( MPSPower * sin( Angle ) ) ^ 2 + ( 2 * gravity() * Height ) ) ) / gravity()
+        return TimeToHit
+    }
+    
+    function entity bulletFire( Origin:vector, Target:vector, Arc:number, Power:number, Model:string, ExplodeOnHit:number ) {
+        local Angle = trajectoryGetAngleOfAttack( Origin, Target, Arc, Power )
+        local TimeToHit = trajectoryGetTimeToHit( Origin, Target, Arc, Power )
+        print( TimeToHit )
+        local Entity = propSpawn( Model, Origin, Angle, 0 )
+        Entity:propDrag( 0 )
+        Entity:propFreeze( 0 )
+        Entity:setMass( 50000 )
+        Entity:setAng( Angle )
+        Entity:applyForce( Entity:forward() * Entity:mass() * fromUnit( "m/s", Power ) )
+        async( TimeToHit + 0.2, "propBreak", Entity )
+        #async( TimeToHit + 1, "propDelete", Entity )
+        return Entity
+    }
+}

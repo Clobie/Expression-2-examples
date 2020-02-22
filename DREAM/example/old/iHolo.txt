@@ -1,0 +1,710 @@
+@name iHolo
+@model models/hunter/plates/plate1x1.mdl
+
+@outputs Master:entity CoreHolo:entity [Digit1 Digit2 Digit3]:entity HudCursor:vector MenuOn Use Reload SelectedMode HoloCreationCount CurrentHolo CENTER:vector MoveAxisCreated Shift
+@outputs WAxisLength WAxisAlpha MaxHolosPreSpawned LAxisAlpha LAxisThickness LAxisDefColor:vector OriginOffset HudCursorLocal:vector HelperHoloAlpha HelperHoloThickness LAxisHeight
+@outputs MoveHelperPrint MoveAxisMode
+
+if(first()){
+runOnTick(1)
+Master=findPlayerByName("Cal")
+#Master=owner()
+CurrentHolo=1
+
+##################################
+# SETTINGS
+
+    # WORLD CENTER POINT
+    CENTER = entity():toWorld(vec(0,0,120))
+    
+    # WORLD AXIS SETTINGS
+    WAxisLength=200
+    WAxisAlpha=150
+    
+    # LOCAL AXIS SETTINGS
+    LAxisAlpha=55
+    LAxisThickness=0.3
+    LAxisHeight=0.3
+    LAxisDefColor=vec(100)
+    
+    # MOVE HELPER HOLO SETTINGS
+    HelperHoloAlpha = 255
+    HelperHoloThickness=0.1
+    MoveHelperPrint=1           # PRINT INFO ABOUT POSITIONS DURING MOVEMENT
+    
+    
+    # HOLORAM PRE SPAWNING
+    MaxHolosPreSpawned = 60
+
+    # DEBUG
+    SelectedMode=1
+
+
+
+
+
+
+
+    # DONT TOUCH
+    HoloCreationCount=2
+
+
+
+holoCreate(1)
+holoPos(1, CENTER)
+holoAng(1, ang(0))
+
+for(I=201,262){holoCreate(I) 
+    #holoMaterial(I, "debug/debugdrawflat")
+    }
+
+    holoPos(201, entity():toWorld(vec(0,0,60)))
+    holoAng(201, entity():toWorld(ang(0,0,0)))
+    holoScaleUnits(201, vec(1))
+    holoParent(201, entity())
+
+    CoreHolo = holoEntity(201)
+    
+    ########################################### OUTLINES
+    
+    #TOP BUTTON OUTLINE
+    holoPos(202, CoreHolo:toWorld(vec(15,0,0)))
+    holoAng(202, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(202, "hq_cylinder")
+    holoScaleUnits(202, vec(10,10,0.3))
+    holoParent(202, CoreHolo)
+    
+    #DIGIT 1
+    holoPos(203, CoreHolo:toWorld(vec(-15,3.5,0)))
+    holoAng(203, CoreHolo:toWorld(ang(0,180,0)))
+    holoModel(203, "hq_rcube")
+    holoScaleUnits(203, vec(4.5,4.5,0.1))
+    holoParent(203, CoreHolo)
+    holoMaterial(203, "models/cheeze/buttons2/8")
+    Digit1=holoEntity(203)
+    
+    #LEFT BUTTON OUTLINE
+    holoPos(204, CoreHolo:toWorld(vec(0,15,0)))
+    holoAng(204, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(204, "hq_cylinder")
+    holoScaleUnits(204, vec(10,10,0.3))
+    holoParent(204, CoreHolo)
+    
+    #RIGHT BUTTON OUTLINE
+    holoPos(205, CoreHolo:toWorld(vec(0,-15,0)))
+    holoAng(205, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(205, "hq_cylinder")
+    holoScaleUnits(205, vec(10,10,0.3))
+    holoParent(205, CoreHolo)
+    
+    #TOP-LEFT BUTTON OUTLINE
+    holoPos(206, CoreHolo:toWorld(vec(10.7,10.7,0)))
+    holoAng(206, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(206, "hq_cylinder")
+    holoScaleUnits(206, vec(10,10,0.3))
+    holoParent(206, CoreHolo)
+    
+    #TOP-RIGHT BUTTON OUTLINE
+    holoPos(207, CoreHolo:toWorld(vec(10.7,-10.7,0)))
+    holoAng(207, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(207, "hq_cylinder")
+    holoScaleUnits(207, vec(10,10,0.3))
+    holoParent(207, CoreHolo)
+    
+    #BOTTOM-RIGHT BUTTON OUTLINE
+    holoPos(208, CoreHolo:toWorld(vec(-10.7,10.7,0)))
+    holoAng(208, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(208, "hq_cylinder")
+    holoScaleUnits(208, vec(10,10,0.3))
+    holoParent(208, CoreHolo)
+    
+    #BOTTOM LEFT OUTLINE
+    holoPos(209, CoreHolo:toWorld(vec(-10.7,-10.7,0)))
+    holoAng(209, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(209, "hq_cylinder")
+    holoScaleUnits(209, vec(10,10,0.3))
+    holoParent(209, CoreHolo)
+    
+    #COLORING OUTLINES
+    for(I=202,209){holoColor(I, vec(0,0,0))}
+    
+    ########################################### FILLS
+    
+    #TOP BUTTON FILL
+    holoPos(210, CoreHolo:toWorld(vec(15,0,0.2)))
+    holoAng(210, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(210, "hq_cylinder")
+    holoScaleUnits(210, vec(9,9,0.3))
+    holoParent(210, CoreHolo)
+    holoColor(210, vec(255))
+    
+    #DIGIT 2
+    holoPos(211, CoreHolo:toWorld(vec(-15,0,0)))
+    holoAng(211, CoreHolo:toWorld(ang(0,180,0)))
+    holoModel(211, "hq_rcube")
+    holoScaleUnits(211, vec(4.5,4.5,0.1))
+    holoParent(211, CoreHolo)
+    holoMaterial(211, "models/cheeze/buttons2/8")
+    Digit2=holoEntity(211)
+    
+    #RIGHT BUTTON FILL
+    holoPos(212, CoreHolo:toWorld(vec(0,15,0.2)))
+    holoAng(212, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(212, "hq_cylinder")
+    holoScaleUnits(212, vec(9,9,0.3))
+    holoParent(212, CoreHolo)
+    
+    #LEFT BUTTON FILL
+    holoPos(213, CoreHolo:toWorld(vec(0,-15,0.2)))
+    holoAng(213, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(213, "hq_cylinder")
+    holoScaleUnits(213, vec(9,9,0.3))
+    holoParent(213, CoreHolo)
+    
+    #TOP-RIGHT BUTTON FILL
+    holoPos(214, CoreHolo:toWorld(vec(10.7,10.7,0.2)))
+    holoAng(214, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(214, "hq_cylinder")
+    holoScaleUnits(214, vec(9,9,0.3))
+    holoParent(214, CoreHolo)
+    
+    #TOP-LEFT BUTTON FILL
+    holoPos(215, CoreHolo:toWorld(vec(10.7,-10.7,0.2)))
+    holoAng(215, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(215, "hq_cylinder")
+    holoScaleUnits(215, vec(9,9,0.3))
+    holoParent(215, CoreHolo)
+    
+    #BOTTOM-RIGHT BUTTON FILL
+    holoPos(216, CoreHolo:toWorld(vec(-10.7,10.7,0.2)))
+    holoAng(216, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(216, "hq_cylinder")
+    holoScaleUnits(216, vec(9,9,0.3))
+    holoParent(216, CoreHolo)
+    
+    #BOTTOM LEFT FILL
+    holoPos(217, CoreHolo:toWorld(vec(-10.7,-10.7,0.2)))
+    holoAng(217, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(217, "hq_cylinder")
+    holoScaleUnits(217, vec(9,9,0.3))
+    holoParent(217, CoreHolo)
+    
+    for(I=210,217){holoColor(I, vec(183,219,255))}
+    
+    ########################################### ICONS
+    
+    #MOVE ICON 1#
+    holoPos(218, CoreHolo:toWorld(vec(15,0,0.3)))
+    holoAng(218, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(218, "hq_cylinder")
+    holoScaleUnits(218, vec(1,5.5,0.3))
+    holoParent(218, CoreHolo)
+    holoColor(218, vec(0))
+    
+    #MOVE ICON 2#
+    holoPos(219, CoreHolo:toWorld(vec(15,0,0.3)))
+    holoAng(219, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(219, "hq_cylinder")
+    holoScaleUnits(219, vec(5.5,1,0.3))
+    holoParent(219, CoreHolo)
+    holoColor(219, vec(0))
+    
+    #MOVE ICON 3# - prism top
+    holoPos(220, CoreHolo:toWorld(vec(18,0,0.3)))
+    holoAng(220, CoreHolo:toWorld(ang(0,90,90)))
+    holoModel(220, "prism")
+    holoScaleUnits(220, vec(2.2,0.3,2))
+    holoParent(220, CoreHolo)
+    holoColor(220, vec(0))
+    
+    #MOVE ICON 3# - prism bottom
+    holoPos(221, CoreHolo:toWorld(vec(12,0,0.3)))
+    holoAng(221, CoreHolo:toWorld(ang(0,270,90)))
+    holoModel(221, "prism")
+    holoScaleUnits(221, vec(2.2,0.3,2))
+    holoParent(221, CoreHolo)
+    holoColor(221, vec(0))
+    
+    #MOVE ICON 4# - prism left
+    holoPos(222, CoreHolo:toWorld(vec(15,3,0.3)))
+    holoAng(222, CoreHolo:toWorld(ang(0,180,90)))
+    holoModel(222, "prism")
+    holoScaleUnits(222, vec(2.2,0.3,2))
+    holoParent(222, CoreHolo)
+    holoColor(222, vec(0))
+    
+    #MOVE ICON 5# - prism right
+    holoPos(223, CoreHolo:toWorld(vec(15,-3,0.3)))
+    holoAng(223, CoreHolo:toWorld(ang(0,0,90)))
+    holoModel(223, "prism")
+    holoScaleUnits(223, vec(2.2,0.3,2))
+    holoParent(223, CoreHolo)
+    holoColor(223, vec(0))
+    
+    ###########################################
+    
+    # ROTATE ICON 1# - ring
+    holoPos(224, CoreHolo:toWorld(vec(10.7,-10.7,0.3)))
+    holoAng(224, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(224, "hq_tube_thin")
+    holoScaleUnits(224, vec(7,7,0.3))
+    holoParent(224, CoreHolo)
+    holoColor(224, vec(0))
+    
+    # ROTATE ICON 2# - right prism outline
+    holoPos(225, CoreHolo:toWorld(vec(10.5,-13.95,0.35)))
+    holoAng(225, CoreHolo:toWorld(ang(0,270,90)))
+    holoModel(225, "prism")
+    holoScaleUnits(225, vec(1.5,0.3,1.5))
+    holoParent(225, CoreHolo)
+    holoColor(225, vec(183,219,255))
+    
+    # ROTATE ICON 3# - right prism fill
+    holoPos(226, CoreHolo:toWorld(vec(10.8,-13.95,0.38)))
+    holoAng(226, CoreHolo:toWorld(ang(0,270,90)))
+    holoModel(226, "prism")
+    holoScaleUnits(226, vec(1.5,0.3,1.6))
+    holoParent(226, CoreHolo)
+    holoColor(226, vec(0))
+    
+    # ROTATE ICON 4# - left prism outline
+    holoPos(227, CoreHolo:toWorld(vec(11.1,-7.5,0.35)))
+    holoAng(227, CoreHolo:toWorld(ang(0,90,90)))
+    holoModel(227, "prism")
+    holoScaleUnits(227, vec(1.5,0.3,1.5))
+    holoParent(227, CoreHolo)
+    holoColor(227, vec(183,219,255))
+    
+    # ROTATE ICON 5# - left prism fill
+    holoPos(228, CoreHolo:toWorld(vec(10.8,-7.5,0.38)))
+    holoAng(228, CoreHolo:toWorld(ang(0,90,90)))
+    holoModel(228, "prism")
+    holoScaleUnits(228, vec(1.5,0.3,1.6))
+    holoParent(228, CoreHolo)
+    holoColor(228, vec(0))
+    
+    ###########################################
+    
+    #SCALE ICON 1# - stube
+    holoPos(229, CoreHolo:toWorld(vec(10.7,10.7,0.3)))
+    holoAng(229, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(229, "hq_stube_thin")
+    holoScaleUnits(229, vec(6,6,0.3))
+    holoParent(229, CoreHolo)
+    holoColor(229, vec(0))
+    
+    #SCALE ICON 2# - cube
+    holoPos(230, CoreHolo:toWorld(vec(9.4,12,0.3)))
+    holoAng(230, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(230, "hq_stube_thin")
+    holoScaleUnits(230, vec(3,3,0.3))
+    holoParent(230, CoreHolo)
+    holoColor(230, vec(0))
+    
+    ###########################################
+    
+    #CLIP ICON 1# - stube
+    holoPos(231, CoreHolo:toWorld(vec(0,15,0.3)))
+    holoAng(231, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(231, "hq_stube_thin")
+    holoScaleUnits(231, vec(6,6,0.3))
+    holoParent(231, CoreHolo)
+    holoColor(231, vec(0))
+    
+    #CLIP ICON 2# - intersection
+    holoPos(232, CoreHolo:toWorld(vec(0,15,0.3)))
+    holoAng(232, CoreHolo:toWorld(ang(0,0,0)))
+    #holoModel(232, "hq_stube_thin")
+    holoScaleUnits(232, vec(8,0.5,0.3))
+    holoParent(232, CoreHolo)
+    holoColor(232, vec(0))
+    
+    ###########################################
+    
+    # VISIBILITY ICON 1# - circle
+    holoPos(233, CoreHolo:toWorld(vec(-10.7,10.7,0.3)))
+    holoAng(233, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(233, "hq_tube")
+    holoScaleUnits(233, vec(5,7,0.3))
+    holoParent(233, CoreHolo)
+    holoColor(233, vec(0))
+    
+    # VISIBILITY ICON 2# - pupil
+    holoPos(234, CoreHolo:toWorld(vec(-10.7,10.7,0.3)))
+    holoAng(234, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(234, "hq_cylinder")
+    holoScaleUnits(234, vec(2.5,2.5,0.3))
+    holoParent(234, CoreHolo)
+    holoColor(234, vec(0))
+    
+    ###########################################
+    
+    #NEXT HOLO ICON 1# - green
+    holoPos(235, CoreHolo:toWorld(vec(0,-15.5,0.3)))
+    holoAng(235, CoreHolo:toWorld(ang(0,0,90)))
+    holoModel(235, "prism")
+    holoScaleUnits(235, vec(5.5,0.3,5.5))
+    holoParent(235, CoreHolo)
+    holoColor(235, vec(0,140,0))
+    
+    #NEXT HOLO ICON 2# - fill
+    holoPos(236, CoreHolo:toWorld(vec(0,-14,0.4)))
+    holoAng(236, CoreHolo:toWorld(ang(0,0,90)))
+    holoModel(236, "prism")
+    holoScaleUnits(236, vec(4.8,0.3,4.8))
+    holoParent(236, CoreHolo)
+    holoColor(236, vec(183,219,255))
+    
+    ###########################################
+    
+    #PREV HOLO ICON 1# - red
+    holoPos(237, CoreHolo:toWorld(vec(-10.7,-10.2,0.3)))
+    holoAng(237, CoreHolo:toWorld(ang(0,180,90)))
+    holoModel(237, "prism")
+    holoScaleUnits(237, vec(5.5,0.3,5.5))
+    holoParent(237, CoreHolo)
+    holoColor(237, vec(217,0,0))
+    
+    #PREV HOLO ICON 2# - fill
+    holoPos(238, CoreHolo:toWorld(vec(-10.7,-11.7,0.4)))
+    holoAng(238, CoreHolo:toWorld(ang(0,180,90)))
+    holoModel(238, "prism")
+    holoScaleUnits(238, vec(4.8,0.3,4.8))
+    holoParent(238, CoreHolo)
+    holoColor(238, vec(183,219,255))
+    
+    #THIRD DIGIT
+    holoPos(239, CoreHolo:toWorld(vec(-15,-3.5,0)))
+    holoAng(239, CoreHolo:toWorld(ang(0,180,0)))
+    holoModel(239, "hq_rcube")
+    holoScaleUnits(239, vec(4.5,4.5,0.1))
+    holoParent(239, CoreHolo)
+    holoMaterial(239, "models/cheeze/buttons2/8")
+    Digit3=holoEntity(239)
+    
+    # Digit holos precoloring.
+    holoColor(203, vec(0,255,0))
+    holoColor(211, vec(0,255,0))
+    holoColor(239, vec(0,255,0))
+    
+    #SELECTOR
+    #holoPos(240, CoreHolo:toWorld(vec(15,0,0.3)))
+    holoPos(240, CoreHolo:toWorld(vec(0,0,0.3)))
+    
+    holoAng(240, CoreHolo:toWorld(ang(0,0,0)))
+    holoModel(240, "hq_tube_thin")
+    holoScaleUnits(240, vec(9,9,0.3))
+    holoParent(240, CoreHolo)
+    holoColor(240, vec(0,255,0))
+    
+    
+    # X WORLD AXIS
+    holoPos(241, CENTER)
+    holoModel(241, "hq_cylinder")
+    holoAng(241, ang(90,0,0))
+    holoScaleUnits(241, vec(0.3,0.3,WAxisLength))
+    holoColor(241, vec(255,0,0))
+    holoAlpha(241,WAxisAlpha)
+    
+    # X WORLD AXIS POINTER
+    holoPos(242, CENTER+vec(WAxisLength/2,0,0))
+    holoModel(242, "pyramid")
+    holoAng(242, ang(90,0,0))
+    holoScaleUnits(242, vec(1,1,3))
+    holoColor(242, vec(255,0,0))
+    holoAlpha(242,WAxisAlpha)
+    
+    # Y WORLD AXIS
+    holoPos(243, CENTER)
+    holoModel(243, "hq_cylinder")
+    holoAng(243, ang(0,0,90))
+    holoScaleUnits(243, vec(0.3,0.3,WAxisLength))
+    holoColor(243, vec(0,255,0))
+    holoAlpha(243,WAxisAlpha)
+
+    # Y WORLD AXIS POINTER
+    holoPos(244, CENTER+vec(0,WAxisLength/2,0))
+    holoModel(244, "pyramid")
+    holoAng(244, ang(0,0,-90))
+    holoScaleUnits(244, vec(1,1,3))
+    holoColor(244, vec(0,255,0))
+    holoAlpha(244,WAxisAlpha)
+
+    # Z WORLD AXIS
+    holoPos(245, CENTER)
+    holoModel(245, "hq_cylinder")
+    holoAng(245, ang(0,0,0))
+    holoScaleUnits(245, vec(0.3,0.3,WAxisLength))
+    holoColor(245, vec(0,0,255))
+    holoAlpha(245,WAxisAlpha)
+
+    # Z WORLD AXIS POINTER
+    holoPos(246, CENTER+vec(0,0,WAxisLength/2))
+    holoModel(246, "pyramid")
+    holoAng(246, ang(0,0,0))
+    holoScaleUnits(246, vec(1,1,3))
+    holoColor(246, vec(0,0,255))
+    holoAlpha(246,WAxisAlpha)
+
+
+}
+
+####
+
+    Use = Master:keyUse()
+    Reload = Master:keyReload()
+    Shift = Master:keySprint()
+
+
+
+if(changed(Master:keyAttack2()) & Master:keyAttack2()){
+holoPos(201, Master:shootPos()+((Master:aimPos()-Master:shootPos()):normalized()*40))
+holoAng(201, (Master:shootPos()-Master:aimPos()):toAngle()+ang(-90,0,180))
+
+for(I=201,240){holoAlpha(I, 255)}
+MenuOn=1
+BoomPos=Master:aimPos()
+
+holoAlpha(24, 255)
+
+# SETTING FREEZE LOOP HELPER BACK TO 0
+FreezeSection=0
+
+#SelectedMode=0
+}
+
+
+    if(changed(Master:keyAttack2()) & !Master:keyAttack2()){
+    for(I=201,240){holoAlpha(I, 0)}
+    MenuOn=0
+
+holoAlpha(24, 0)
+
+}
+
+if(MenuOn){
+    
+# POINT LINE INTERSECTION
+Holo = holoEntity(201)
+
+Origin = Master:shootPos()
+OriginDirVec = Master:eye()
+
+PlanePoint = Holo:pos() 
+Normal = Holo:up() 
+LinePoint1 = Origin 
+LinePoint2 = Origin+OriginDirVec 
+X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1))
+HudCursor = LinePoint1+X*(LinePoint2-LinePoint1)
+
+
+#SelectedMode=0
+if(changed(Use)&Use&HudCursor:distance(holoEntity(202):pos())<4.5){SelectedMode=1 holoPos(240, CoreHolo:toWorld(vec(15,0,0.3)))} # MOVE
+if(changed(Use)&Use&HudCursor:distance(holoEntity(206):pos())<4.5){SelectedMode=2 holoPos(240, CoreHolo:toWorld(vec(10.7,10.7,0.3)))} # SCALE
+if(changed(Use)&Use&HudCursor:distance(holoEntity(207):pos())<4.5){SelectedMode=3 holoPos(240, CoreHolo:toWorld(vec(10.7,-10.7,0.3)))} # ROTATE
+if(changed(Use)&Use&HudCursor:distance(holoEntity(204):pos())<4.5){SelectedMode=4 holoPos(240, CoreHolo:toWorld(vec(0,15,0.3)))} # CLIP
+}
+
+
+
+
+#################################################################################################################################################
+# HOLO CREATION
+if(HoloCreationCount<MaxHolosPreSpawned){
+    
+    #holoCreate(HoloCreationCount)
+    #holoAlpha(HoloCreationCount, 1)
+    #HoloCreationCount++
+    
+    }
+
+#################################################################################################################################################
+# MOVEMENT MODE
+
+if(SelectedMode==1){
+    
+    # CREATING AXIS 
+    if(!MoveAxisCreated){
+    # X AXIS
+    holoPos(247, holoEntity(CurrentHolo):pos())
+    holoAng(247, ang(0,0,0))
+    holoScaleUnits(247, vec(300,LAxisThickness,LAxisHeight))
+    holoColor(247, LAxisDefColor)
+    holoAlpha(247,LAxisAlpha)
+    
+    # Y AXIS
+    holoPos(248, holoEntity(CurrentHolo):pos())
+    holoAng(248, ang(0,0,0))
+    holoScaleUnits(248, vec(LAxisThickness,300,LAxisHeight))
+    holoColor(248, LAxisDefColor)
+    holoAlpha(248,LAxisAlpha)
+    
+    # Z AXIS
+    holoPos(249, holoEntity(CurrentHolo):pos())
+    holoAng(249, ang(0,0,0))
+    holoScaleUnits(249, vec(LAxisHeight,LAxisThickness,300))
+    holoColor(249, LAxisDefColor)
+    holoAlpha(249,LAxisAlpha)
+    
+    holoAlpha(250, 0)
+    
+    MoveAxisCreated=1
+    }
+    # ROTATING AXIS Z TO PLAYER SHOOTPOS
+    holoAng(249, ang(0,(Master:shootPos()-holoEntity(249):pos()):toAngle():yaw(),0))
+    
+# POINT LINE INTERSECTION THING ###################################################################
+
+# DETECTING WHICH AXIS IS BEING LOOKED AT , INITIATING SELECTION AND MOVEMENT
+if(!MoveAxisMode){
+for(I=247,249){
+Holo = holoEntity(I)
+
+Origin = Master:shootPos()
+OriginDirVec = Master:eye()
+    
+PlanePoint = Holo:pos() 
+if(I==249){Normal = Holo:forward()}else{Normal = Holo:up() }
+LinePoint1 = Origin 
+LinePoint2 = Origin+OriginDirVec 
+X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1))
+HudCursor = LinePoint1+X*(LinePoint2-LinePoint1)
+
+# X DETECTION
+if(I==247 & inrange(holoEntity(247):toLocal(HudCursor):y(),-2,2)){holoColor(247,vec(200,100,100)) }elseif(I==247){holoColor(247,LAxisDefColor)}
+if(I==247 & inrange(holoEntity(247):toLocal(HudCursor):y(),-2,2) & Use){
+    MoveAxisMode=1 
+    holoAlpha(250, HelperHoloAlpha) 
+    OriginOffset=holoEntity(247):toLocal(HudCursor):x()
+    holoModel(250, "hq_cylinder")
+    holoAng(250, ang(0,0,90))
+    holoScaleUnits(250, vec(HelperHoloThickness,HelperHoloThickness,300))
+    holoColor(250,vec(0))
+    }
+
+# Y DETECTION
+if(I==248 & inrange(holoEntity(248):toLocal(HudCursor):x(),-2,2)){holoColor(248,vec(100,200,100)) }elseif(I==248){holoColor(248,LAxisDefColor)}
+if(I==248 & inrange(holoEntity(248):toLocal(HudCursor):x(),-2,2) & Use){
+    MoveAxisMode=2
+    holoAlpha(250, HelperHoloAlpha) 
+    OriginOffset=holoEntity(248):toLocal(HudCursor):y()
+    holoModel(250, "hq_cylinder")
+    holoAng(250, ang(90,0,0))
+    holoScaleUnits(250, vec(HelperHoloThickness,HelperHoloThickness,300))
+    holoColor(250,vec(0))
+    }
+
+# Z DETECTION
+if(I==249 & inrange(holoEntity(249):toLocal(HudCursor):y(),-2,2)){holoColor(249,vec(100,100,200)) }elseif(I==249){holoColor(249,LAxisDefColor)}
+if(I==249 & inrange(holoEntity(249):toLocal(HudCursor):y(),-2,2) & Use){
+    MoveAxisMode=3
+    holoAlpha(250, HelperHoloAlpha) 
+    OriginOffset=holoEntity(249):toLocal(HudCursor):z()
+    holoModel(250, "hq_cylinder")
+    holoAng(250, ang(90,0,0))
+    holoScaleUnits(250, vec(HelperHoloThickness,HelperHoloThickness,300))
+    holoColor(250,vec(0))
+    
+    }
+
+}}
+
+# X MOVEMENT
+if(Use & MoveAxisMode==1){
+    
+    Holo = holoEntity(247)
+
+    Origin = Master:shootPos()
+    OriginDirVec = Master:eye()
+        
+    PlanePoint = Holo:pos() 
+    Normal = Holo:up()
+    LinePoint1 = Origin 
+    LinePoint2 = Origin+OriginDirVec 
+    X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1))
+    HudCursor = LinePoint1+X*(LinePoint2-LinePoint1)
+    HudCursorLocal=holoEntity(247):toLocal(HudCursor)
+    
+    # MOVING HOLOGRAM
+    holoPos(CurrentHolo, holoEntity(247):toWorld(vec(HudCursorLocal:x()-OriginOffset,0,0)))
+    if(MoveHelperPrint){
+        print(4, "Hologram "+CurrentHolo:toString()+" movement: \n"+"Moved X by: "+(HudCursorLocal:x()-OriginOffset):toString()+"\nCurrent local pos:\nX: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):x():toString()+"\nY: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):y():toString()+"\nZ: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):z():toString()) 
+        }
+    
+    #MOVING HELPER HOLOGRAM(black line)
+    holoPos(250, holoEntity(CurrentHolo):pos())
+    
+    }elseif(MoveAxisMode==1){
+        MoveAxisMode=0
+        MoveAxisCreated=0
+            }
+    
+# Y MOVEMENT
+if(Use & MoveAxisMode==2){
+    
+    Holo = holoEntity(248)
+
+    Origin = Master:shootPos()
+    OriginDirVec = Master:eye()
+        
+    PlanePoint = Holo:pos() 
+    Normal = Holo:up()
+    LinePoint1 = Origin 
+    LinePoint2 = Origin+OriginDirVec 
+    X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1))
+    HudCursor = LinePoint1+X*(LinePoint2-LinePoint1)
+    HudCursorLocal=holoEntity(248):toLocal(HudCursor)
+    
+    # MOVING HOLOGRAM
+    holoPos(CurrentHolo, holoEntity(248):toWorld(vec(0,HudCursorLocal:y()-OriginOffset,0)))
+    if(MoveHelperPrint){
+        print(4, "Hologram "+CurrentHolo:toString()+" movement: \n"+"Moved Y by: "+(HudCursorLocal:y()-OriginOffset):toString()+"\nCurrent local pos:\nX: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):x():toString()+"\nY: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):y():toString()+"\nZ: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):z():toString()) 
+        }
+    
+    #MOVING HELPER HOLOGRAM(black line)
+    holoPos(250, holoEntity(CurrentHolo):pos())
+    
+    }elseif(MoveAxisMode==2){
+        MoveAxisMode=0
+        MoveAxisCreated=0
+            }
+    
+# Z MOVEMENT
+if(Use & MoveAxisMode==3){
+    
+    Holo = holoEntity(249)
+
+    Origin = Master:shootPos()
+    OriginDirVec = Master:eye()
+        
+    PlanePoint = Holo:pos() 
+    Normal = Holo:forward()
+    LinePoint1 = Origin 
+    LinePoint2 = Origin+OriginDirVec 
+    X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1))
+    HudCursor = LinePoint1+X*(LinePoint2-LinePoint1)
+    HudCursorLocal=holoEntity(249):toLocal(HudCursor)
+    
+    # MOVING HOLOGRAM
+    holoPos(CurrentHolo, holoEntity(248):toWorld(vec(0,0,HudCursorLocal:z()-OriginOffset)))
+    if(MoveHelperPrint){
+        print(4, "Hologram "+CurrentHolo:toString()+" movement: \n"+"Moved Z by: "+(HudCursorLocal:z()-OriginOffset):toString()+"\nCurrent local pos:\nX: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):x():toString()+"\nY: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):y():toString()+"\nZ: "+holoEntity(245):toLocal(holoEntity(CurrentHolo):pos()):z():toString()) 
+        }
+    
+    #MOVING HELPER HOLOGRAM(black line)
+    holoPos(250, holoEntity(CurrentHolo):pos())
+    
+    }elseif(MoveAxisMode==3){
+        MoveAxisMode=0
+        MoveAxisCreated=0
+            }
+    }
+
+
+
+
+
+
+
+
+

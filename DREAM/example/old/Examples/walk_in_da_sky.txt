@@ -1,0 +1,38 @@
+@name walk in da sky
+@persist Platform:array StartZ Player:array I Loaded
+
+runOnTick(1)
+
+if(first())
+{
+    Player = players()
+    I = 0
+    Loaded = 0
+    StartZ = entity():pos():z() + 75
+    timer("setup", 100)
+}
+elseif( clk("setup") )
+{
+    while(propCanCreate() & I < Player:count())
+    {
+        I++
+        Platform[I, entity] = propSpawn("models/sprops/geometry/fdisc_36.mdl", 1)
+    }
+    
+    if(I < Player:count())
+    {
+        timer("setup", 100)
+    }
+    else
+    {
+        Loaded = 1
+        print("yay")
+    }
+}
+elseif( tickClk() & Loaded == 1 )
+{
+    for( J = 1, Player:count() )
+    {
+        Platform[I, entity]:setPos( (Player[I, entity]:pos() * vec(1,1,0)) + vec(0,0,StartZ) )
+    }
+}

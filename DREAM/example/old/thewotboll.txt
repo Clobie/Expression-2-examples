@@ -1,0 +1,12 @@
+@name thewotboll
+@persist 
+@persist 
+@persist 
+@persist 
+@persist 
+
+if( first() ) {
+    
+    holoCreate( 1, entity():pos() + vec( 0, 0, 15 ), vec(1), ang(), vec(255), "models/Combine_Helicopter/helicopter_bomb01.mdl" )
+    holoParent( 1, entity() )
+}

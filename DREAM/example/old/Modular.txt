@@ -1,0 +1,17 @@
+@name Modular
+@persist [Unit]:table
+
+if( first() ) {
+    
+    runOnTick(1)
+    
+    function string table:uid() {
+        return This:id():sub(10):toNumber(16):toString()
+    }
+    
+    
+    
+}
+
+Unit:uid()
+

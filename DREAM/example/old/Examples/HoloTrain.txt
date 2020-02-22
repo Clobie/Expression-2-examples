@@ -1,0 +1,96 @@
+@name RangerTrain
+@persist [Chip Me Seat]:entity
+@persist [Speed]:number
+@model models/props_phx/trains/trackslides_inner.mdl
+
+interval(5)
+
+if(first())
+{
+    runOnChat(1)
+    interval(5)
+    Chip = entity()
+    Me = owner()
+    Speed = 0
+    Chip:propFreeze(1)
+    #Chip:propNotSolid(1)
+    #Chip:setAng( Me:angles() )
+    #Chip:setPos( Chip:pos() + vec(0, 0, 5) )
+    
+    rangerPersist(1)
+    rangerHitEntities(0)
+    
+    holoCreate(1)
+    holoPos(1, Chip:pos() + (Chip:right() * 34) + (Chip:up() * 3))
+    holoScale(1, vec(0.1, 0.1, 0.1))
+    holoParent(1, Chip)
+    
+    holoCreate(2)
+    holoPos(2, Chip:pos()  + (Chip:right() * 541.5) + (Chip:up() * 10.2))
+    holoScale(2, vec(0.1, 0.1, 0.1))
+    holoParent(2, Chip)
+    
+    holoCreate(3)
+    holoScale(3, vec(0.7, 0.01, 0.7) )
+    
+    holoCreate(4)
+    holoScale(4, vec(0.7, 0.7, 0.01) )
+    
+    findByClass("prop_vehicle_prisoner_pod")
+    A = findToArray()
+    for(I = 1, A:count())
+    {
+        if(A[I, entity]:owner() == Me & A[I, entity]:pos():distance(Chip:pos()) < 100)
+        {
+            Seat = A[I, entity]
+            Seat:setPos( Chip:pos() + (Chip:up() * 50) + (Chip:forward() * -50) )
+            Seat:setAng( Chip:angles() - ang(0, 90, 0))
+            break
+        }
+    }
+    timer("wtf", 50)
+}
+elseif( clk("wtf") )
+{
+    Seat:parentTo(Chip)
+}
+elseif( clk() )
+{
+    RangerAStart = holoEntity(1):pos()
+    RangerBStart = holoEntity(2):pos()
+    
+    RangerA = rangerOffset(RangerAStart, RangerAStart + (Chip:right() * 50))
+    RangerB = rangerOffset(RangerBStart, RangerBStart  + (Chip:up() * -50))
+    
+    holoPos(3, RangerA:pos())
+    holoAng(3, Chip:angles())
+    holoPos(4, RangerB:pos())
+    holoAng(4, Chip:angles())
+    
+    Vec = Chip:pos()
+    RangerADistance = RangerAStart:distance(RangerA:pos())
+    RangerBDistance = RangerBStart:distance(RangerB:pos())
+    if(RangerA:hit())
+    {
+        Vec = Vec + (Chip:right() * (RangerADistance - 4.5))
+        if(RangerB:hit())
+        {
+            Vec = Vec + (Chip:up() * -(RangerBDistance - 3.7))
+            Chip:setPos(Vec + (RangerA:hitNormal():cross(RangerB:hitNormal())) * Speed)
+            Chip:setAng((RangerA:hitNormal():cross(RangerB:hitNormal())):toAngle() - ang(0,0,0))
+            Chip:setColor( vec(0, 255, 0) )
+        }
+        else { Chip:setColor( vec(255, 0, 0) ) }
+    }
+    else { Chip:setColor( vec(255, 0, 0) ) }
+}
+elseif( chatClk(owner()) )
+{
+    P = lastSpoke()
+    S = P:lastSaid()
+    if(S:left(7) == "/speed ")
+    {
+        Speed = S:sub(8):toNumber()
+        hideChat(1)
+    }
+}

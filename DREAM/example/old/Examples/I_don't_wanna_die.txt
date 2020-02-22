@@ -1,0 +1,39 @@
+@name UGH
+@persist Bolt:array Rpg:array Me:entity
+
+if( first() ) {
+    
+    runOnTick( 1 )
+    
+    Me = owner()
+    
+    function findProjectiles( ) {
+        if( findCanQuery() ) {
+            findByModel("models/crossbow_bolt.mdl")
+            Bolt = findToArray()
+            findByClass("rpg_missile")
+            Rpg = findToArray()
+        }
+        
+        if( Bolt:count() > 0 ) {
+            for( I = 1, Bolt:count() ) {
+                if( Me:pos():distance( Bolt[I, entity]:pos() ) <= 250 ) {
+                    Bolt[I, entity]:propDelete()
+                }
+            }
+        }
+        
+        if( Rpg:count() > 0 ) {
+            for( I = 1, Rpg:count() ) {
+                if( Me:pos():distance( Rpg[I, entity]:pos() ) <= 250 ) {
+                    Rpg[I, entity]:propDelete()
+                }
+            }
+        }
+        
+    }
+}
+
+if( tickClk() ) {
+    findProjectiles()
+}

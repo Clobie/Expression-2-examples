@@ -1,0 +1,28 @@
+##################################################
+#  ____                                          #
+# /\  _ `.                                       #
+# \ \ \/\ \  _ __    __     __      ___ ___      #
+#  \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\    #
+#   \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \   #
+#    \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\  #
+#     \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/  #
+#                                                #
+##################################################
+# Made by Dream                                  #
+#                                                #
+##################################################
+@name lib/trajectory
+@persist 
+
+if( first( ) ) {
+    
+    function array trajectoryAngle( Origin:vector, Target:vector, Arc:number, Power:number ) {
+        local Power = fromUnit( "m/s", Power )
+        local Range = ( Target - Origin ):setZ( 0 ):length()
+        local Height = Arc == -1 ? ( Origin:z() - Target:z() ) * Arc : ( Target:z() - Origin:z() ) * Arc
+        local Pitch = atan( ( ( Power ^ 2 ) + ( Arc * sqrt( ( Power ^ 4) - gravity() * ( ( gravity() * ( Range ^ 2 ) ) + ( 2 * Height * ( Power ^ 2 ) ) ) ) ) ) / ( gravity() * Range ) )
+        local Time = ( ( Power * sin( Pitch ) ) + sqrt( ( Power * sin( Pitch ) ) ^ 2 + ( 2 * gravity() * Height ) ) ) / gravity()
+        local Angle = ( Target - Origin ):toAngle( ):setPitch( Pitch )
+        return array( Angle, Time )
+    }
+}

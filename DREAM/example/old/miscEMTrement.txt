@@ -1,0 +1,11 @@
+@name miscEMTrement
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+#  emt entityid vector angle vector
+# EMT | TARGET id | TARGET DESTINATION | ANGLE UPON TELEPORTING | VELOCITY AFTER TELEPORT
+#concmd("emt "+owner():id()+" "+vec(0,0,0):toString()+" "+vec(0,0,0):toString()+" "+vec(0,0,0):toString())
+
+concmd("emt "+owner():id()+" "+vec(0,0,0):toString()+" "+vec(0,0,0):toString()+" "+vec(0,0,0):toString())

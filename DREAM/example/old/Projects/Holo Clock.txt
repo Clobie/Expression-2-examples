@@ -1,0 +1,89 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/4/2018 @ 1013
+# --------------------------------------------- #
+@name clock
+@persist 
+
+#include "lib/holomodel"
+#include "lib/dream"
+
+if( first( ) ) {
+
+    LIB_HOLOMODEL_LOCAL = 1
+    Hologram[ "model", array ] = array("models/props_trainstation/trainstation_clock001.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/sprops/triangles/right/size_0/rtri_3x3.mdl","models/holograms/hq_cylinder.mdl","models/sprops/triangles/right/size_0/rtri_3x3.mdl","models/holograms/hq_cylinder.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,50),vec(0,0,50),vec(0,0,50),vec(0,0,50),vec(0,-4.6279,53.4873),vec(0,-9.0205,56.7979),vec(0,6.3799,56.0537),vec(0,12.5449,61.9053),vec(0,7.7549,45.4326))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,53),ang(0,0,-46.5),ang(0,0,-120.5),ang(0,0,53),ang(82,90,0),ang(0,0,-46.5),ang(-1.5,-90,-180),ang(0,0,-120.5))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(0.05,0.05,1),vec(0.7,0.01,0.7),vec(0.05,0.05,1.5),vec(0.7,0.01,0.7),vec(0.03,0.03,1.5))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,0,0))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(0,1,1,1,2,2,3,3,4)
+    Hologram[ "note", array ] = array("","","","","","","","","")
+
+    function setup( ) { 
+        holoParent( 1, entity( ) )
+        holoAng( 1, entity( ):up( ):toAngle( ) )
+        holoPos( 1, entity( ):pos( ) + ( entity( ):up( ) * 3 ) )
+        holoTextHideBackground( )
+    }
+
+    function main( ) {
+        local H = time( "hour" ) - 5 # -5 for EST
+        local M = time( "min" )
+        local S = time( "sec" )
+        local ANG = holoEntity( 1 ):angles( ) + ang( 0, -90, 0 )
+        holoText( format( "%02d", H % 12 ) + ":" + format( "%02d", M ) + ":" + format( "%02d", S ), holoEntity( 1 ):toWorld( vec( 1.8, 0, 29 ) ), ANG, 2.5, 1, teamColor( owner( ):team( ) ), vec( 0 ) )
+        H = ( H / 12 * -360 ) + ( M / 60 * -30 )
+        M = ( M / 60 * -360 ) + ( S / 60 * -6 )
+        S = ( S / 60 * -360 )
+        holoAng( 2, holoEntity( 1 ):toWorld( ang( 0, 0, H ) ) )
+        holoAng( 3, holoEntity( 1 ):toWorld( ang( 0, 0, M ) ) )
+        holoAng( 4, holoEntity( 1 ):toWorld( ang( 0, 0, S ) ) )
+        holoTextParent( 1 )
+    }
+    
+    function chat( Player:entity, Text:string ) { }
+    function key( Player:entity, Key:string, Down:number ) { }
+}
+
+if( LIB_HOLOMODEL_LOADED ) {
+    interval( 60 )
+    if( clk( ) ) { main( ) }
+    if( chatClk( ) ) { chat( lastSpoke( ), lastSaid( ) ) }
+    if( keyClk( ) ) {
+        local Player = keyClk()
+        local Key = keyClkPressed()
+        local Down = Player:keyPressed( Key ) ? 1 : 0
+        key( Player, Key, Down )
+    }
+}
+interval( 250 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

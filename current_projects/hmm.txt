@@ -1,0 +1,29 @@
+@name hmm
+@inputs 
+@outputs 
+@persist Me:entity You:entity
+
+if( first() ) {
+    Me = owner()
+    You = findPlayerByName( "mr" )
+    runOnTick( 1 )
+}
+
+Me:plySetPos(
+    You:shootPos() + vec(
+        cos( realtime() * 2500 ) * 175,
+        sin( realtime() * 2500 ) * 175,
+        0
+    )
+)
+#[
+You:plySetPos(
+    Me:shootPos() + vec(
+        cos( realtime() * 2500 ) * 175,
+        sin( realtime() * 2500 ) * 175,
+        0
+    )
+)
+]#
+#You:plySetAng( ( Me:shootPos() - You:shootPos() ):toAngle() )
+Me:plySetAng( ( You:shootPos() - Me:shootPos() ):toAngle() )

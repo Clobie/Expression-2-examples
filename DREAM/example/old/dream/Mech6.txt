@@ -1,0 +1,227 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/24/2018 @ 2331
+# Holograms: 19
+# Notes: 
+# --------------------------------------------- #
+@name Mech6
+@persist Hologram:table
+@persist [ Speed ShiftSpeed LegSpeed StepDamp StepArch LegIncrement Height ]:number
+@persist [ Entity Seat Driver ]:entity
+@persist [ FL_P1 FL_P2 FL_P3 ]:vector [ FL_STEP ]:number
+@persist [ FR_P1 FR_P2 FR_P3 ]:vector [ FR_STEP ]:number
+@persist [ L_P1 L_P2 L_P3 ]:vector [ L_STEP ]:number
+@persist [ R_P1 R_P2 R_P3 ]:vector [ R_STEP ]:number
+@persist [ RL_P1 RL_P2 RL_P3 ]:vector [ RL_STEP ]:number
+@persist [ RR_P1 RR_P2 RR_P3 ]:vector [ RR_STEP ]:number
+@model models/sprops/rectangles/size_3_5/rect_30x30x3.mdl
+
+if( first( ) ) {
+    
+    Speed = 3 # speed
+    ShiftSpeed = 2 # speed added when holding shift
+    LegSpeed = 1 # lower = shorter duration between steps
+    StepArch = 5 # lower = higher step arch
+    StepDamp = 1.5 # lower = longer stride
+    LegIncrement = 0.033 # lower = slower step
+    Height = 25 # mech height off ground
+    Entity = entity( )
+    
+    function void async( T, F:string ) {
+        timer( format( "cb:%.0f:%s:null:%s", randint( 1e15 ), F, vonEncode( array( ) ) ), T * 1000 )
+    }
+    
+    function number icos( A, B, C ) {
+        return acos( ( A ^ 2 + B ^ 2 - C ^ 2 ) / ( 2 * A * B ) )
+    }
+    
+    function ik2a( A, B, LenA, LenB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        local PosA = AEntity:pos( )
+        local LenC = min( PosA:distance( Destination ), LenA + LenB )
+        holoAng( A, ( Destination - PosA ):toAngle( ) + ang( -icos( LenC, LenA, LenB ) + 90, 0, 0 ) )
+        holoAng( B, AEntity:toWorld( ang( -icos( LenB, LenA, LenC ) + 180, 0, 0 ) ) )
+    }
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/gibs/hgibs.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/props_vehicles/carparts_axel01a.mdl","models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,30),vec(30,-30,30),vec(30,-30,80),vec(30,-30,130),vec(30,30,30),vec(30,30,80),vec(30,30,130),vec(0,42,30),vec(0,42,80),vec(0,42,130),vec(0,-42,30),vec(0,-42,80),vec(0,-42,130),vec(-30,30,30),vec(-30,30,80),vec(-30,30,130),vec(-30,-30,30),vec(-30,-30,80),vec(-30,-30,130),vec(30,-31,57),vec(30,-30,105),vec(30,30,54.8936),vec(30,30,105),vec(0,42,55.5),vec(0,42,105),vec(0,-42,55.5),vec(0,-42,105),vec(-30,30,55.5),vec(-30,30,106),vec(-30,-30,55),vec(-30,-30,105),vec(0,0,0))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,90),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(11,11,11),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(1,1,1))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    Hologram[ "parent", array ] = array(1,1,2,3,1,5,6,1,8,9,1,11,12,1,14,15,1,17,18,2,3,5,6,8,9,11,12,14,15,17,18,0)
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            ) Hologram[ "next", number ] = I
+            holoParent(I, Hologram["parent", array][I, number])
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 ) } else {
+            Seat = seatSpawn( "models/nova/airboat_seat.mdl", Entity:pos( ), Entity:angles( ), 0 )
+            Seat:parentTo( Entity )
+            Seat:setAlpha( 0 )
+            Seat:propFreeze( 0 )
+            holoParent( 1, Entity )
+            holoPos( 1, Entity:pos( ) )
+            Entity:setPos( Entity:toWorld( vec( 0, 0, Height ) ) )
+            Entity:propFreeze( 0 )
+            runOnTick( 1 )
+        }
+    } buffer( )
+    
+    local X = LegSpeed / 6
+    
+    function fl() {
+        local Ranger = rangerOffset( 150, Entity:toWorld( vec( 75, 75, 0 ) ), vec( 0, 0, -1 ) )
+        local Pos = holoEntity( 7 ):pos( )
+        local NewPos = Ranger:position( ) + Entity:vel( ) / StepDamp
+        FL_P1 = Pos
+        FL_P2 = ( Pos + NewPos ) * 0.5 + vec( 0, 0, Pos:distance( NewPos ) / StepDamp )
+        FL_P3 = NewPos
+        FL_STEP = 0
+        async( LegSpeed, "fl" )
+    } async( X * 1, "fl" )
+    
+    function fr() {
+        local Ranger = rangerOffset( 150, Entity:toWorld( vec( 75, -75, 0 ) ), vec( 0, 0, -1 ) )
+        local Pos = holoEntity( 4 ):pos( )
+        local NewPos = Ranger:position( ) + Entity:vel( ) / StepDamp
+        FR_P1 = Pos
+        FR_P2 = ( Pos + NewPos ) / 2 + vec( 0, 0, Pos:distance( NewPos ) / StepDamp )
+        FR_P3 = NewPos
+        FR_STEP = 0
+        async( LegSpeed, "fr" )
+    } async( X * 2, "fr" )
+    
+    function l() {
+        local Ranger = rangerOffset( 150, Entity:toWorld( vec( 0, 95, 0 ) ), vec( 0, 0, -1 ) )
+        local Pos = holoEntity( 10 ):pos( )
+        local NewPos = Ranger:position( ) + Entity:vel( ) / StepDamp
+        L_P1 = Pos
+        L_P2 = ( Pos + NewPos ) / 2 + vec( 0, 0, Pos:distance( NewPos ) / StepDamp )
+        L_P3 = NewPos
+        L_STEP = 0
+        async( LegSpeed, "l" )
+    } async( X * 3, "l" )
+    
+    function r() {
+        local Ranger = rangerOffset( 150, Entity:toWorld( vec( 0, -95, 0 ) ), vec( 0, 0, -1 ) )
+        local Pos = holoEntity( 13 ):pos( )
+        local NewPos = Ranger:position( ) + Entity:vel( ) / StepDamp
+        R_P1 = Pos
+        R_P2 = ( Pos + NewPos ) / 2 + vec( 0, 0, Pos:distance( NewPos ) / StepDamp )
+        R_P3 = NewPos
+        R_STEP = 0
+        async( LegSpeed, "r" )
+    } async( X * 4, "r" )
+    
+    function rr() {
+        local Ranger = rangerOffset( 150, Entity:toWorld( vec( -75, -75, 0 ) ), vec( 0, 0, -1 ) )
+        local Pos = holoEntity( 19 ):pos( )
+        local NewPos = Ranger:position( ) + Entity:vel( ) / StepDamp
+        RR_P1 = Pos
+        RR_P2 = ( Pos + NewPos ) / 2 + vec( 0, 0, Pos:distance( NewPos ) / StepDamp )
+        RR_P3 = NewPos
+        RR_STEP = 0
+        async( LegSpeed, "rr" )
+    } async( X * 6, "rr" )
+    
+    function rl() {
+        local Ranger = rangerOffset( 150, Entity:toWorld( vec( -75, 75, 0 ) ), vec( 0, 0, -1 ) )
+        local Pos = holoEntity( 16 ):pos( )
+        local NewPos = Ranger:position( ) + Entity:vel( ) / StepDamp
+        RL_P1 = Pos
+        RL_P2 = ( Pos + NewPos ) / 2 + vec( 0, 0, Pos:distance( NewPos ) / StepDamp )
+        RL_P3 = NewPos
+        RL_STEP = 0
+        async( LegSpeed, "rl" )
+    } async( X * 5, "rl" )
+    
+    #rangerHitEntities(0)
+    rangerPersist(1)
+    
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( tickClk( ) ) {
+    
+    local Ranger = rangerOffset(Height + 7, Entity:pos(), vec(0, 0, -1))
+    
+    local V = ( Entity:mass( ) * -propGravity() * tickInterval( ) - ( Entity:vel() * Entity:mass() ) / 20 )
+    
+    if( !Ranger:hit( ) ) {
+        V = V + ( Entity:mass( ) * vec( 0, 0, -5 ) )
+    } elseif( Ranger:position( ):distance( Entity:pos( ) ) <= Height - 7 ) {
+        V = V + ( Entity:mass( ) * vec( 0, 0, 5 ) )
+    }
+    
+    Driver = Seat:driver( )
+    local NSpeed = Seat:driver( ):keyPressed( "lshift" ) ? Speed + ShiftSpeed : Speed
+    
+    local Controls = vec( 
+        Driver:keyForward( ) - Driver:keyBack( ), 
+        Driver:keyLeft( ) - Driver:keyRight( ), 
+        0
+    ):normalized( ):rotate( Entity:forward( ):setZ( 0 ):toAngle( ) )
+    
+    local V2 = vec( 0 )
+    if( !Driver:isPlayer( ) & owner( ):pos( ):distance( Entity:pos( ) ) > 250 ) {
+        V2 = ( owner( ):pos( ) - Entity:pos( ) ):normalized( ) * Speed
+    }
+    
+    local Inertia = shiftL(ang(Entity:inertia()))
+    local Aim = Driver:eyeTrace():position()
+    local Bearing = bearing(Entity:pos(), Entity:angles(), Aim)
+    local Yaw =  Entity:angles():yaw() - Bearing / 25
+    if( abs( Bearing ) < 15 ) { Yaw = Entity:angles( ):yaw( ) }
+
+    Entity:applyAngForce((Entity:toLocal(ang(0, Yaw, 0))*300 - Entity:angVel()*30) * Inertia)
+    Entity:applyForce( V + ( Entity:mass( ) * Controls * NSpeed ) + ( V2 * Entity:mass( ) ) )
+    
+    FL_STEP = clamp( FL_STEP + LegIncrement, 0, 1 )
+    ik2a( 5, 6, 50, 50, bezier( FL_P1, FL_P2, FL_P3, FL_STEP ) )
+    FR_STEP = clamp( FR_STEP + LegIncrement, 0, 1 )
+    ik2a( 2, 3, 50, 50, bezier( FR_P1, FR_P2, FR_P3, FR_STEP ) )
+    L_STEP = clamp( L_STEP + LegIncrement, 0, 1 )
+    ik2a( 8, 9, 50, 50, bezier( L_P1, L_P2, L_P3, L_STEP ) )
+    R_STEP = clamp( R_STEP + LegIncrement, 0, 1 )
+    ik2a( 11, 12, 50, 50, bezier( R_P1, R_P2, R_P3, R_STEP ) )
+    RL_STEP = clamp( RL_STEP + LegIncrement, 0, 1 )
+    ik2a( 14, 15, 50, 50, bezier( RL_P1, RL_P2, RL_P3, RL_STEP ) )
+    RR_STEP = clamp( RR_STEP + LegIncrement, 0, 1 )
+    ik2a( 17, 18, 50, 50, bezier( RR_P1, RR_P2, RR_P3, RR_STEP ) )
+}
+
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) { case "null", F( ), break }
+        exit()
+    }
+}
+
+
+
+

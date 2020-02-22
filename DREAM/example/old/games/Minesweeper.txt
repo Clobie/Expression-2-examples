@@ -1,0 +1,277 @@
+@name Minesweeper
+@persist MswGridWidth MswGridHeight MswGridScale MswGridSpacing
+@persist MswGrid:table MswDiscovered:table MswFloodBuffer:table MswRevealed
+@persist MswPlayer:entity
+@persist MswMines
+@persist 
+@persist MswCanClick MswFirstClick MswFirstClickNode
+@persist IndicatorGenerationIndex MswGridSpawnIndex MswGridSpawnY MswGridSpawnZ
+@persist MswTimeStarted
+@model models/sprops/cuboids/height06/size_1/cube_6x6x6.mdl
+
+#include "lib/async"
+
+if( first() ) {
+    
+    MswGrid = table()
+    MswDiscovered = table()
+    MswFloodBuffer = table()
+    MswPlayer = noentity()
+    MswRevealed = 0
+    MswTimeStarted = 0
+    MswCanClick = 0
+    MswFirstClick = 0
+    MswFirstClickNode = 0
+    
+    # Edit anything here
+    MswGridWidth = 15
+    MswGridHeight = 15
+    MswGridScale = 5
+    MswGridSpacing = 0.2
+    MswMines = 35
+    
+    function number mswSlotX( N ) { return mod( N, (MswGridWidth) ) == 0 ? (MswGridWidth) : mod( N, (MswGridWidth) ) }
+    function number mswSlotY( N ) { return mod( N / (MswGridWidth), (MswGridWidth) ) == 0 ? (MswGridWidth) : ceil( mod( N / (MswGridWidth), (MswGridWidth) ) ) }
+    function vector entity:getPlaneYZ(I:number) {  return ( This:shootPos() + ( holoEntity(I):forward():dot( holoEntity(I):pos() - This:shootPos() ) / ( holoEntity(I):forward():dot( This:eye() ) ) ) * This:eye() ) }
+    
+    function mswReset() {
+        MswRevealed = 0
+        MswFirstClick = 0
+        MswFirstClickNode = 0
+        IndicatorGenerationIndex = 0
+        MswGridSpawnIndex = 0
+        MswPlayerSelected = 0
+        MswGridSpawnY = 0
+        MswGridSpawnZ = 0
+        MswPlayer = noentity()
+        MswGrid:clear()
+        MswDiscovered:clear()
+        MswFloodBuffer:clear()
+        for( I = 1, MswGridWidth * MswGridHeight ) {
+            holoColor( I, vec(90) )
+            holoMaterial( I, "" )
+        }
+        foreach( K, V:entity = players() ) { runOnKeys( V, 1 ) }
+    }
+    
+    function mswWin() {
+        local Time = round(realtime() - MswTimeStarted, 3)
+        concmd( "say " + MswPlayer:name() + " beat minesweeper (" + MswGridWidth + "x" + MswGridHeight + " [" + MswMines + " mines] )" + " in " + Time + " seconds." )
+        entity():setColor( vec(255, 0, 0) )
+        foreach( K, V:entity = players() ) { runOnKeys( V, 0 ) }
+        for( I = 1, MswGridWidth * MswGridHeight ) {
+            if( MswGrid[ I, number ] == -1 ) {
+                holoColor( I, vec(255) )
+                holoMaterial( I, "models/cheeze/buttons2/clear" )
+            }
+        }
+        async( 1, "mswReset" )
+    }
+    
+    function mswLose() {
+        concmd( "say " + MswPlayer:name() + " lost :(" )
+        entity():setColor( vec(255, 0, 0) )
+        foreach( K, V:entity = players() ) { runOnKeys( V, 0 ) }
+        for( I = 1, MswGridWidth * MswGridHeight ) {
+            if( MswGrid[ I, number ] == -1 ) {
+                holoColor( I, vec(255) )
+                holoMaterial( I, "models/effects/splode_sheet" )
+            }
+        }
+        async( 1, "mswReset" )
+    }
+    
+    function number mswIsNeighbor( N1, N2 ) {
+        return holoEntity( N1 ):pos():distance( holoEntity( N2 ):pos() ) <= ( MswGridScale + MswGridSpacing ) * 1.5 ? 1 : 0
+    }
+    
+    function mswFlood() {
+        MswCanClick = 0
+        local A = array( 1, -1, MswGridWidth, -MswGridWidth, 1 + MswGridWidth, -1 + MswGridWidth, 1 - MswGridWidth, -1 - MswGridWidth )
+        while( perf() && MswFloodBuffer:count() > 0 ) {
+            local N = MswFloodBuffer[ MswFloodBuffer:count(), number ]
+            MswDiscovered[N, number] = 1
+            holoColor( N, vec(200) )
+            MswRevealed++
+            if( holoEntity( N ):getMaterial() == "models/cheeze/buttons2/clear" ) {
+                holoMaterial( N, "" )
+            }
+            MswFloodBuffer:pop()
+            
+            for( I = 1, 8 ) {
+                if( !MswDiscovered:exists( N + A[I, number] ) && mswIsNeighbor( N, N + A[I, number] ) ) {
+                    if( MswGrid[N + A[I, number], number] == 0 ) { 
+                        MswFloodBuffer:pushNumber( N + A[I, number] )
+                        MswDiscovered[N + A[I, number], number] = 1
+                    }
+                    elseif( MswGrid[N + A[I, number], number] > 0 ) {
+                        holoMaterial( N + A[I, number], "models/cheeze/buttons/chz_button0" + MswGrid[N + A[I, number], number] )
+                        holoColor( N + A[I, number], vec(200) )
+                        MswRevealed++
+                        if( holoEntity( N + A[I, number] ):getMaterial() == "models/cheeze/buttons2/clear" ) {
+                            holoMaterial( N + A[I, number], "" )
+                        }
+                        MswDiscovered[N + A[I, number], number] = 1
+                    }
+                }
+            }
+        }
+        if( MswFloodBuffer:count() > 0 ) { async( 0.1, "mswFlood" ), return }
+        if( MswRevealed >= ( MswGridWidth * MswGridHeight ) - MswMines ) { mswWin(), return }
+        MswCanClick = 1
+    }
+    
+    function mswSelectNode( Node ) {
+        if( MswGrid[ Node, number ] == 0 ) { if( !MswDiscovered:exists( Node ) ) { MswFloodBuffer:pushNumber( Node ), mswFlood() } }
+        elseif( MswGrid[ Node, number ] > 0 ) { 
+            holoMaterial( Node, "models/cheeze/buttons/chz_button0" + MswGrid[ Node, number ] )
+            holoColor( Node, vec(200) )
+            if( !MswDiscovered:exists( Node ) ) {
+                MswDiscovered[Node, number] = 1
+                MswRevealed++
+            }
+        }
+        elseif( MswGrid[ Node, number ] == -1 ) { MswCanClick = 0, mswLose() }
+        if( MswRevealed >= ( MswGridWidth * MswGridHeight ) - MswMines ) { MswCanClick = 0, mswWin(), return }
+    }
+    
+    function mswFlagNode( ) {
+        local PlaneVector = MswPlayer:getPlaneYZ( 1 )
+        for( I = 1, MswGridWidth * MswGridHeight ) {
+            local NodeVec = holoEntity( I ):pos()
+            if( inrange( PlaneVector, NodeVec - vec(MswGridScale / 2), NodeVec + vec(MswGridScale / 2) ) ) {
+                local Ent = holoEntity( I )
+                if( Ent:getMaterial() != "models/cheeze/buttons2/clear" && Ent:getColor() != vec(200) ) {
+                    holoMaterial( I, "models/cheeze/buttons2/clear" )
+                    holoColor( I, vec(200) )
+                } elseif( Ent:getMaterial() == "models/cheeze/buttons2/clear" && Ent:getColor() == vec(200) ) {
+                    holoMaterial( I, "" )
+                    holoColor( I, vec(90) )
+                }
+                return
+            }
+        }
+    }
+    
+    function mswGenerateIndicators() {
+        if( !IndicatorGenerationIndex ) { IndicatorGenerationIndex = 0 }
+        
+        while( perf() && IndicatorGenerationIndex < MswGridWidth * MswGridHeight ) {
+            IndicatorGenerationIndex++
+            local I = IndicatorGenerationIndex
+            if( MswGrid[ I, number ] >= 0 ) {
+                if( MswGrid[ I - 1, number ] == -1  && mswIsNeighbor( I, I - 1 )  ) { MswGrid[ I, number ] = MswGrid[ I, number ] + 1 } # Left
+                if( MswGrid[ I + 1, number ] == -1  && mswIsNeighbor( I, I + 1 )  ) { MswGrid[ I, number ] = MswGrid[ I, number ] + 1 } # Right
+                if( MswGrid[ I + MswGridWidth, number ] == -1  && mswIsNeighbor( I, I + MswGridWidth ) ) { MswGrid[ I, number ] = MswGrid[ I, number ] + 1 } # Top
+                if( MswGrid[ I - MswGridWidth, number ] == -1  && mswIsNeighbor( I, I - MswGridWidth )  ) { MswGrid[ I, number ] = MswGrid[ I, number ] + 1 } # Bottom
+                if( MswGrid[ I + MswGridWidth + 1, number ] == -1 && mswIsNeighbor( I, I + MswGridWidth + 1 ) ) { MswGrid[ I, number ] = MswGrid[ I, number ] + 1 } # Bottom right
+                if( MswGrid[ I + MswGridWidth - 1, number ] == -1 && mswIsNeighbor( I, I + MswGridWidth - 1 ) ) { MswGrid[ I, number ] = MswGrid[ I, number ] + 1 } # Bottom left
+                if( MswGrid[ I - MswGridWidth + 1, number ] == -1 && mswIsNeighbor( I, I - MswGridWidth + 1 ) ) { MswGrid[ I, number ] = MswGrid[ I, number ] + 1 } # Top right
+                if( MswGrid[ I - MswGridWidth - 1, number ] == -1 && mswIsNeighbor( I, I - MswGridWidth - 1 ) ) { MswGrid[ I, number ] = MswGrid[ I, number ] + 1 } # Top left
+            }
+        }
+        if( IndicatorGenerationIndex < MswGridWidth * MswGridHeight ) { async( 0.05, "mswGenerateIndicators" ), return }
+        if( MswFirstClick ) {
+            MswFirstClick = 0
+            mswSelectNode( MswFirstClickNode )
+        }
+    }
+    
+    function mswGenerateMines() {
+        local M = table()
+        for( I = 1, MswMines ) {
+            local Rand = randint( 1, MswGridWidth * MswGridHeight )
+            while( M:exists( Rand:toString() ) || holoEntity( Rand ):pos():distance( holoEntity( MswFirstClickNode ):pos() ) < ( MswGridScale + MswGridSpacing ) * 2 ) { Rand = randint( 1, MswGridWidth * MswGridHeight ) }
+            M[ Rand:toString(), number ] = Rand
+            MswGrid[ Rand, number ] = -1
+        }
+        mswGenerateIndicators()
+    }
+    
+    function mswSpawnBackdrop() {
+        if( !holoCanCreate() ) { async( 1, "mswSpawnBackdrop" ) }
+        local IID = randint( 2e8 )
+        holoCreate( IID )
+        holoModel( IID, "models/sprops/rectangles/size_10/rect_480x480x3.mdl" )
+        holoAng( IID, ang( 90, 0, 0 ) )
+        holoMaterial( IID, "debug/debugdrawflat" )
+        holoScaleUnits( IID, -( vec( ( MswGridScale * MswGridWidth ) + ( ( MswGridWidth - 1 ) * MswGridSpacing ) ) + vec(MswGridSpacing * 10) ):setZ( MswGridSpacing * 5 ) )
+        holoPos( IID, ( ( holoEntity( 1 ):pos() + holoEntity( MswGridWidth * MswGridHeight ):pos() ) / 2 ) )
+        holoColor( IID, vec() )
+        holoParent( IID, entity() )
+        foreach( K, V:entity = players() ) { runOnKeys( V, 1 ) }
+    }
+    
+    function mswSpawnGrid() {
+        if( !MswGridSpawnIndex ) { 
+            MswGridSpawnIndex = 0
+            MswGridSpawnY = 0
+            MswGridSpawnZ = 1
+        }
+        Left = ( ( MswGridScale * MswGridWidth ) + ( ( MswGridWidth - 1 ) * MswGridSpacing ) ) / 2
+        while( holoCanCreate() && MswGridSpawnIndex < MswGridWidth * MswGridHeight ) {
+            MswGridSpawnIndex++
+            MswGrid[ MswGridSpawnIndex, number ] = 0
+            if( MswGridSpawnY < MswGridWidth ) { MswGridSpawnY++ } else { MswGridSpawnY = 1, MswGridSpawnZ++ }
+            
+            holoCreate( MswGridSpawnIndex )
+            holoScaleUnits( MswGridSpawnIndex, vec( MswGridScale ):setX( 0.01 ) )
+            holoPos( MswGridSpawnIndex, entity():pos() + vec( 0, -Left + (MswGridSpawnY - 0.5) * ( MswGridScale + MswGridSpacing ), 10 + ( ( MswGridSpawnZ - 1 ) * ( MswGridScale + MswGridSpacing ) ) ) )
+            holoParent( MswGridSpawnIndex, entity() )
+            holoColor( MswGridSpawnIndex, vec(90) )
+            holoDisableShading( MswGridSpawnIndex, 1 )
+        }
+        if( MswGridSpawnIndex < MswGridWidth * MswGridHeight ) { async( 1, "mswSpawnGrid" ), return }
+        mswSpawnBackdrop()
+    }
+    
+    function mswClickNode() {
+        local PlaneVector = MswPlayer:getPlaneYZ( 1 )
+        for( I = 1, MswGridWidth * MswGridHeight ) {
+            local NodeVec = holoEntity( I ):pos()
+            if( inrange( PlaneVector, NodeVec - vec(MswGridScale / 2), NodeVec + vec(MswGridScale / 2) ) ) {
+                if( MswFirstClick ) { 
+                    MswFirstClickNode = I
+                    mswGenerateMines()
+                }
+                else {
+                    if( holoEntity( I ):getMaterial() != "models/cheeze/buttons2/clear" ) { mswSelectNode( I ) }
+                }
+                return
+            }
+        }
+    }
+    
+    mswSpawnGrid()
+    runOnTick( 1 )
+}
+
+if( tickClk() ) {
+    if( changed(MswPlayer:keyUse()) && MswPlayer:keyUse() && perf(20) && MswCanClick ) {
+        if( MswFirstClick ) { MswCanClick = 0 }
+        mswClickNode()
+    } elseif( changed(MswPlayer:keyReload()) && MswPlayer:keyReload() && perf(20) && MswCanClick ) {
+        mswFlagNode()
+    }
+}
+
+if( keyClk() ) {
+    if( MswPlayer == noentity() ) {
+        local Player = keyClk()
+        local Key = keyClkPressed()
+        if( Player:keyPressed( "e" ) ) {
+            local PlaneVector = Player:getPlaneYZ( 1 )
+            local MidVector = ( holoEntity( 1 ):pos() + holoEntity( MswGridWidth * MswGridHeight ):pos() ) / 2
+            local HalfDist = ( vec( ( MswGridScale * MswGridWidth ) + ( ( MswGridWidth - 1 ) * MswGridSpacing ) ) + vec(MswGridSpacing * 2) ) / 2
+            if( inrange( PlaneVector, MidVector - HalfDist, MidVector + HalfDist ) ) {
+                MswPlayer = Player
+                MswCanClick = 1
+                MswFirstClick = 1
+                MswTimeStarted = realtime()
+                entity():setColor( vec(0, 255, 0) )
+                concmd( "say Minesweeper player: " + Player:name() )
+            }
+        }
+    }
+}
+

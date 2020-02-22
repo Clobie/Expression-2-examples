@@ -1,0 +1,183 @@
+
+@persist T_BUTTON:table T_BUTTON_FUNCTION:table
+
+#include "lib/heap"
+#include "lib/async"
+#include "lib/keyboard"
+#include "lib/hologramtext"
+
+if( first() || dupefinished() ) {
+    
+    T_BUTTON_FUNCTION = table()
+    T_BUTTON = table()
+    
+    function string buttonCreate() {
+        local S_BTN = new()
+        local T = S_BTN:get()
+        T["button_scale", vector] = vec(1)
+        T["button_color_on", vector] = vec(255)
+        T["button_color_off", vector] = vec(50)
+        T["button_outline_color_on", vector] = vec()
+        T["button_outline_color_off", vector] = vec()
+        T["button_material_on", string] = ""
+        T["button_material_off", string] = ""
+        T["button_material_outline_on", string] = ""
+        T["button_material_outline_off", string] = ""
+        T["button_value_on", number] = 1
+        T["button_value_off", number] = 0
+        T["button_state", number] = 0
+        T["button_toggle", number] = 0
+        T["button_duration", number] = 0.1
+        T["whitelist", table] = table()
+        local I = S_BTN:toNumber()
+        holoCreate( I, entity():pos(), (T["button_scale", vector]):setZ(0.01), ang(), T["button_color_off", vector], "cube" )
+        holoCreate( I+1, entity():pos(), (vec(1.11025) * T["button_scale", vector]):setZ(0.01), ang(), T["button_outline_color_off", vector], "hq_stube_thin" )
+        holoDisableShading( I, 1 )
+        holoDisableShading( I + 1, 1 )
+        holoParent( I+1, I )
+        T_BUTTON[S_BTN, number] = S_BTN:toNumber()
+        return S_BTN
+    }
+    
+    function vector entity:getPlaneXY(I:number) {  local B = holoEntity(I), return ( This:shootPos() + ( B:up():dot( B:pos() - This:shootPos() ) / ( B:up():dot( This:eye() ) ) ) * This:eye() ) }
+    
+    function buttoncallback_bind( F:string ) { T_BUTTON_FUNCTION:pushString( F ) }
+    function buttoncallback_unbind( F:string ) { T_BUTTON_FUNCTION:remove( F ) }
+    
+    function string:buttonDelete() { T_BUTTON:remove( This ), holoDelete( This:toNumber() ), holoDelete( This:toNumber() + 1 ) }
+    function string:buttonSetToggleable( N ) { local T = This:get(), T["button_toggle", number] = N }
+    function string:buttonSetToggleDuration( N ) { local T = This:get(), T["button_duration", number] = N }
+    function string:buttonWhitelist( E:entity ) { local T = This:get(), E:keysListen(1), T["whitelist", table][E:steamID(), number] = 1 }
+    function string:buttonWhitelistAll() { foreach( K, V:entity = players() ) { This:buttonWhitelist( V ) } }
+    function string:buttonBlacklist( E:entity ) { local T = This:get(), T["whitelist", table][E:steamID(), number] = 0 }
+    function string:buttonSetPosition( V:vector ) { holoPos( This:toNumber(), V ) }
+    function string:buttonSetAngle( A:angle ) { holoAng( This:toNumber(), A ) }
+    function string:buttonColorOn( V:vector ) { local T = This:get(), T["button_color_on", vector] = V, if( T["button_state", number] ) { holoColor( This:toNumber(), V ) } }
+    function string:buttonColorOff( V:vector ) { local T = This:get(), T["button_color_off", vector] = V, if( !T["button_state", number] ) { holoColor( This:toNumber(), V ) } }
+    function string:buttonColorOutlineOn( V:vector ) { local T = This:get(), T["button_outline_color_on", vector] = V, if( T["button_state", number] ) { holoColor( This:toNumber() + 1, V ) } }
+    function string:buttonColorOutlineOff( V:vector ) { local T = This:get(), T["button_outline_color_off", vector] = V, if( !T["button_state", number] ) { holoColor( This:toNumber() + 1, V ) } }
+    function string:buttonSetMaterialOn( S:string ) { local T = This:get(), T["button_material_on", string] = S, if( T["button_state", number] ) { holoMaterial( This:toNumber(), S ) } }
+    function string:buttonSetMaterialOff( S:string ) { local T = This:get(), T["button_material_off", string] = S, if( !T["button_state", number] ) { holoMaterial( This:toNumber(), S ) } }
+    function string:buttonSetOutlineMaterialOn( S:string ) { local T = This:get(), T["button_material_outline_on", string] = S, if( T["button_state", number] ) { holoMaterial( This:toNumber() + 1, S ) } }
+    function string:buttonSetOutlineMaterialOff( S:string ) { local T = This:get(), T["button_material_outline_off", string] = S, if( !T["button_state", number] ) { holoMaterial( This:toNumber() + 1, S ) } }
+    function string:buttonValueOn( N ) { local T = This:get(), T["button_value_on", number] = N }
+    function string:buttonValueOff( N ) { local T = This:get(), T["button_value_off", number] = N }
+    function number string:buttonValue() { local T = This:get(), return T["button_state", number] == 1 ? T["button_value_on", number] : T["button_value_off", number] }
+    
+    function string:buttonSetScale( V:vector ) {
+        local T = This:get()
+        T["button_scale", vector] = V
+        holoScale( This:toNumber(), (T["button_scale", vector]):setZ(0.01) )
+        holoScale( This:toNumber() + 1, (vec(1.11025) * T["button_scale", vector]):setZ(0.01) )
+    }
+    
+    function vector string:buttonGetScale() {
+        local T = This:get()
+        return T["button_scale", vector]
+    }
+    
+    function string:buttonTurnOn( P:entity ) {
+        local T = This:get()
+        local H = This:toNumber()
+        holoColor( H, T["button_color_on", vector] )
+        holoColor( H+1, T["button_outline_color_on", vector] )
+        holoMaterial( H, T["button_material_on", string] )
+        holoMaterial( H+1, T["button_material_outline_on", string] )
+        T["button_state", number] = 1
+        for(I = 1, T_BUTTON_FUNCTION:count() ) {
+            T_BUTTON_FUNCTION[I, string]( P, This )
+        }
+    }
+    
+    function string:buttonTurnOffNOENTITY() {
+        local T = This:get()
+        local H = This:toNumber()
+        holoColor( H, T["button_color_off", vector] )
+        holoColor( H+1, T["button_outline_color_off", vector] )
+        holoMaterial( H, T["button_material_off", string] )
+        holoMaterial( H+1, T["button_material_outline_off", string] )
+        T["button_state", number] = 0
+    }
+    
+    function string:buttonTurnOff( P:entity ) {
+        local T = This:get()
+        local H = This:toNumber()
+        holoColor( H, T["button_color_off", vector] )
+        holoColor( H+1, T["button_outline_color_off", vector] )
+        holoMaterial( H, T["button_material_off", string] )
+        holoMaterial( H+1, T["button_material_outline_off", string] )
+        T["button_state", number] = 0
+    }
+    
+    function string:buttonToggle( P:entity ) {
+        local T = This:get()
+        if( !T["whitelist", table][P:steamID(), number] ) { return }
+        if( !T["button_state", number] ) { This:buttonTurnOn( P ) }
+        elseif( T["button_state", number] ) { This:buttonTurnOff( P ) }
+        if( !T["button_toggle", number] ) { async( T["button_duration", number], "buttonTurnOffNOENTITY", This ), return }
+    }
+    
+    
+    # Keyboard stuff
+    function keydown_btn_callback( P:entity, K:string ) {
+        if( K == "e" ) {
+            foreach( K, V:number = T_BUTTON ) {
+                local V1 = P:getPlaneXY( V )
+                local V2 = holoEntity( V ):pos()
+                if( inrange( V1, V2 - (V:toString():buttonGetScale() * 6), V2 + (V:toString():buttonGetScale() * 6) ) )  { K:buttonToggle( P ) }
+            }
+        }
+    }
+    bindcallback_keydown( "keydown_btn_callback" )
+}
+
+#[
+#######################################################################
+# lib/button example
+#######################################################################
+@persist Button:string
+
+if( first() ) {
+    
+    Button = buttonCreate()
+    Button:buttonSetToggleable( 0 )
+    Button:buttonSetToggleDuration( 0.1 )
+    Button:buttonSetPosition( entity():pos() )
+    Button:buttonSetAngle( ang() )
+    Button:buttonWhitelist( owner() )
+    Button:buttonWhitelistAll()
+    Button:buttonBlacklist( owner() )
+    Button:buttonColorOn( vec(255) )
+    Button:buttonColorOff( vec(50) )
+    Button:buttonColorOutlineOn( vec() )
+    Button:buttonColorOutlineOff( vec() )
+    Button:buttonSetMaterialOn( "" )
+    Button:buttonSetMaterialOff( "" )
+    Button:buttonSetOutlineMaterialOn( "" )
+    Button:buttonSetOutlineMaterialOff( "" )
+    Button:buttonValueOn( 1 )
+    Button:buttonValueOff( 0 )
+    local Value = Button:buttonValue()
+    buttoncallback_bind( "event_button" )
+    #buttoncallback_unbind( "event_button" )
+    
+    function event_button( Ply:entity, Btn:string ) {
+        #print( Ply:name() + " pressed button id: " + Btn )
+    }
+    
+}
+]#
+
+
+
+
+
+
+
+
+
+
+
+
+
+

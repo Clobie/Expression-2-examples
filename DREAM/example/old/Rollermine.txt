@@ -1,0 +1,34 @@
+@name Rollermine
+@inputs W S A D Shift Space Mouse1 CamDir:vector
+@outputs Parent:entity
+@persist Self:entity Cooldown
+@model models/props/cs_office/Snowman_face.mdl
+
+if(duped()){ reset() }
+if(first()){
+    Self = entity()
+    Parent = Self
+    runOnTick(1)
+    soundPlay("roll", 0, "npc/roller/mine/rmine_moveslow_loop1.wav")
+    soundPitch("roll", 0)
+}
+if(tickClk()){
+    local Angle = vec2(CamDir):toAngle()
+    local V = vec(vec2(D - A, W - S):normalized():rotate(Angle), 0)
+    local T = Self:toLocalAxis(V) * Self:inertia() * 1550.5 * (Shift ? 3 : 1)
+    Self:applyTorque(T)
+    local Speed = Self:angVelVector():length()
+    soundPitch("roll", Speed / 15)
+    Cooldown = max(Cooldown - tickInterval(), 0)
+    if(Space && !Cooldown){
+        Cooldown += 1
+        soundPlay("jump", 0.25, "npc/roller/mine/rmine_blip3.wav")
+        Self:applyForce(vec(0, 0, 300) * Self:mass())
+    }
+    if(Mouse1 && !Cooldown){
+        Cooldown += 5
+        soundPlay("dash", 1.5, "npc/roller/mine/rmine_explode_shock1.wav")
+        Self:applyForce(CamDir * Self:mass() * 1000)
+    }
+}
+

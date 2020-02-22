@@ -1,0 +1,243 @@
+@name 
+@inputs 
+@outputs Temp TPos:vector PYRRotation Shading
+@persist 
+@trigger 
+
+#[
+ MOVEMENT AND ROTATION EXAMPLE:
+
+ PRESS USE KEY TO DRAG HOLOGRAM ON X AXIS
+ PRESS RELOAD TO ROTATE
+
+     HELLO CAL !
+     Okay so a little reminder of features that are to be in the holo editor
+    
+    - MOVEMENT TOOL DRAG
+        Instead of just positioning hologram on player mouse, or settings stuff manually using chat/other methods
+        you will be able to click anywhere and drag your mouse from there. Thanks to that you will be able to preciselly
+        move hologram even if you cale them to absurd sizes.
+        
+    - X Y Z SELECTION
+        You will be able to select which vector or angle you are edditing directly from the menu.
+        When selecting for example X and Y you will be able to drag holgoram around on these 2 vectors.
+        When selecting 3 vectors at same time you will move hologram as if it was parented to your shootPos()
+        ...That will require little math, but im sure you will nail it ^^
+        
+    - ROTATION DRAG
+        Just like with movement rotation will be based on dragging and not on just clicking and getting angle instantly,
+        thanks to that method you will get best precision when rotating. Additionally you could make it so if you press Shift
+        it rotates 2 or 3 times as slow for maximum precision.
+        
+    - P Y R SELECTION
+        Selecting one angle allows you to rotate on that specific wheel you see on the axis. Selecting two.. I guess nothing since
+        I dont see practical use of using 2 angles...  it's up to you. 3 angles however allow you to rotate hologram directly from where you are looking.
+        Not sure how to do it within a code, either parent a hologram and unparent on release of the key or do some math. IF you want to see how
+        "all angles rotation" works set variable below to 1 to see that looking-at-you circle ;)
+]#
+        PYRRotation = 3
+#[
+        Axis itself should(at least in my opinion) be rotated along with the hologram, as you need "global" position only when using
+        move tool.
+        
+    - SCALING DRAG
+        Okay so this this allows you to drag, but it will contain two "modes" of scaling. First one will be uniform scaling, so just
+        normal scaling by the vectors you selected. Second one however will additionally move hologram in the direction you are dragging.
+        I'm not sure how this method of scaling is called, but its more of expanding. You will be able to select one of these methods(you choose which)
+        by pressing corresponding button(preferably Shift)
+        
+    - AXIS INDICATED DRAG SCALING
+        Axis is 2 parted, instead of 3 RGB lines you got 6, this is so you see to which direction you will drag your hologram with expanding scale
+        method. When looking for example at right side of X vector(when editing it) it will brighten up or scale up a little to indicate that is the
+        direction your hologram will resize to.
+        
+        Axis just like with angles should be angled along with hologram since you resize by local coordinates and not global
+        
+    - INACTIVE AXIS SHADING
+        That is matter of dispute of what will look nice, and it's up to you to add it, change ir not add at all.
+        Okay so you can select each vector and each angle right, but should one see "disabled" vectors angles ?
+        In my opinion angles that are not in use should be disabled. And since you will be actually using only one ring
+        either for one of the angles or for all angles(rotation from eye) that is not actually a problem at all
+        Axis however is other topic... should axis lines alpha(0) ? or maybe change color to darker one so player
+        knows its not in use. I think lines should remain, but their color should drop compared to used ones.
+        Cheeck variable below to see effects and decide for yourself
+]#
+
+    Shading = 0   
+    # 0 = disabled 
+    # 1 = grey shade
+    # 2 = darker color
+
+#[
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+]#
+
+runOnTick(1)
+Size1=0.3
+
+
+if(first()){
+for(I=1,20){
+    
+    holoCreate(I)
+    holoDisableShading(I,1)
+    holoParent(I, holoEntity(1))
+    holoPos(I, vec(0,0,0))
+    }
+    
+    holoPos(1, entity():toWorld(vec(0,0,50)))
+    holoScaleUnits(1, vec(Size1))
+    
+    holoPos(2, holoEntity(1):toWorld(vec(40,0,0)))
+    holoScaleUnits(2, vec(80,Size1,Size1))
+    holoColor(2, vec(200,0,0))
+    
+    holoPos(3, holoEntity(1):toWorld(vec(-40,0,0)))
+    holoScaleUnits(3, vec(80,Size1,Size1))
+    holoColor(3, vec(200,0,0))
+    
+    holoPos(4, holoEntity(1):toWorld(vec(0,40,0)))
+    holoScaleUnits(4, vec(Size1,80,Size1))
+    holoColor(4, vec(0,200,0))
+ 
+    holoPos(5, holoEntity(1):toWorld(vec(0,-40,0)))
+    holoScaleUnits(5, vec(Size1,80,Size1))
+    holoColor(5, vec(0,200,0))
+    
+    holoPos(6, holoEntity(1):toWorld(vec(0,0,40)))
+    holoScaleUnits(6, vec(Size1,Size1,80))
+    holoColor(6, vec(0,0,200))
+   
+    holoPos(7, holoEntity(1):toWorld(vec(0,0,-40)))
+    holoScaleUnits(7, vec(Size1,Size1,80))
+    holoColor(7, vec(0,0,200))
+
+    holoScaleUnits(8, vec(4))
+    holoColor(8, vec(255,0,255))
+
+    holoPos(9, holoEntity(1):toWorld(vec(0,0,0)))
+    holoScaleUnits(9, vec(40,40,Size1))
+    holoModel(9, "hq_tube_thin")
+    holoColor(9, vec(0,0,200))
+
+
+    holoPos(10, holoEntity(1):toWorld(vec(0,0,0)))
+    holoScaleUnits(10, vec(40,40,Size1))
+    holoModel(10, "hq_tube_thin")
+    holoColor(10, vec(200,0,0))
+    holoAng(10,ang(90,0,0))
+    holoAlpha(11, 0)
+    
+    holoPos(11, holoEntity(1):toWorld(vec(0,0,0)))
+    holoScaleUnits(11, vec(40,40,Size1))
+    holoModel(11, "hq_tube_thin")
+    holoColor(11, vec(0,90,0))
+    holoAng(11,ang(0,0,90))
+    holoAlpha(9, 0)
+    
+    
+    holoPos(12, holoEntity(1):toWorld(vec(0,0,0)))
+    holoScaleUnits(12, vec(40,40,Size1))
+    holoModel(12, "hq_tube_thin")
+    holoAlpha(12,0)
+    
+    holoPos(13, holoEntity(1):pos())
+    holoModel(13, "models/props_c17/FurnitureWashingmachine001a.mdl")
+    holoScale(13, vec(0.5))
+}
+
+if(Shading==1 & first()){
+    holoColor(4, vec(40))
+    holoColor(5, vec(40))
+    holoColor(6, vec(40))
+    holoColor(7, vec(40))  
+}
+
+if(Shading==2 & first()){
+    holoColor(2, vec(255,0,0))
+    holoColor(3, vec(255,0,0))
+    
+    holoColor(4, vec(0,70,0))
+    holoColor(5, vec(0,70,0))
+    holoColor(6, vec(0,0,70))
+    holoColor(7, vec(0,0,70))  
+}
+
+if(PYRRotation&first()){
+    holoAlpha(9, 0)
+    holoAlpha(10, 0)
+    holoAlpha(11, 0)
+    holoAlpha(12,255)
+    
+    
+    
+    
+    }
+
+Holo = holoEntity(1)
+
+Origin = owner():shootPos()
+OriginDirVec = owner():eye()
+
+#How does line-plane intersection work?
+PlanePoint = Holo:pos() #Get a point in the plane
+Normal = Holo:up() #Get the normal (a vector perpendicular to the surface) of the plane
+LinePoint1 = Origin #Get a point on the line
+LinePoint2 = Origin+OriginDirVec #Get a point on the line "after" point 1#
+X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1)) #Not really sure how, but it returns how many times the distance from point 1 to point 2 you need to go from point 1 to reach the intersection
+Vec = LinePoint1+X*(LinePoint2-LinePoint1) #Get the intersections position using f(X) = LinePoint1+X*(LinePoint2-LinePoint1)
+
+holoPos(8, Vec)
+holoAng(8, holoEntity(1):angles())
+
+
+if(PYRRotation){
+    holoAng(12, (holoEntity(1):pos()-owner():shootPos()):toAngle()+ang(90,0,0))
+    
+    
+    
+    
+    }
+if(owner():keyReload()){holoAng(1,holoEntity(1):angles()+ang(0.1,0,0))}
+
+if(!owner():keyUse())
+{
+    Temp = holoEntity(1):toLocal(Vec):x() 
+    TPos=holoEntity(13):pos()
+}
+else
+{
+    Temp2=holoEntity(1):toLocal(Vec):x()
+    holoPos(13, TPos+vec(Temp2-Temp,0,0))
+}
+
+
+#print(4, holoEntity(1):toLocal(Vec):x():toString())
+

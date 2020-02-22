@@ -1,0 +1,16 @@
+@name ChatR
+@persist ChatR:array
+
+#include "lib/holotext"
+
+if( first( ) ) {
+    runOnChat( 1 )
+    holoParent( Lib_Holotext_RootIndex, entity( ) )
+    function chatR( Text:string ) { for( I = 1, 4 ) { ChatR[ I, string ] = ChatR[ I + 1, string ] }, ChatR[ 5, string ] = Text:left( 40 ) }
+    for( I = 1, 5 ) { ChatR[ I, string ] = " \n"  }
+}
+
+if( chatClk( ) & lastSpoke( ) ) {
+    chatR( teamName( lastSpoke( ):team() ) + ": " + lastSaid( ):left( 20 ) + "\n" )
+    holoText( ChatR:concat( "" ), entity( ):pos( ) + (entity():up() * 3 ), entity():up():toAngle() + ang(0,-90,0), 6, 0, teamColor( owner( ):team( ) ), vec( 0 ) )
+}

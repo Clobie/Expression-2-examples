@@ -1,0 +1,103 @@
+@name Ranger Train 2
+@persist [CL CL2 Steps StepSize Loaded]:number
+@persist [Me Train]:entity
+@persist [Angle]:angle
+@persist [Vector]:vector
+@model models/props_phx/trains/trackslides_inner.mdl
+
+if( first() )
+{
+    Me = owner()
+    Train = entity()
+    
+    Train:propFreeze(1)
+    #Train:setPos( Train:toWorld( vec(0,0,7) ) )
+    Train:setAng( ang(0,0,0) )
+    
+    Steps = 100
+    StepSize = 1
+    CL = 0
+    CL2 = 0
+    Loaded = 0
+    
+    Center = Train:pos() + vec(0,0,10)
+    Vector = Train:pos()
+    
+    
+    holoCreate(500)
+    holoScale(500, vec(0.1))
+    holoColor(500, vec(255,0,0))
+    
+    holoCreate(501)
+    holoScale(501, vec(0.1))
+    holoColor(501, vec(255,0,0))
+    
+    holoCreate(502)
+    holoScale(502, vec(0.1))
+    holoColor(502, vec(255,0,0))
+    holoPos(502, Center + vec(0,-37.5,-6))
+    holoParent(502, Train)
+    
+    timer("createHolos",500)
+}
+elseif( clk("createHolos") )
+{
+    while(perf(5) & CL2 < Steps & holoCanCreate())
+    {
+        CL2++
+        holoCreate( CL2 )
+        holoScale( CL2, vec(0.05,0.05,1) )
+        holoAng( CL2, ang(0,0,0) )
+        holoPos( CL2, holoEntity(502):toWorld( holoEntity(502):forward() * -StepSize) )
+        #holoEntity(CL2):setTrails(3, 3, 2, "trails/smoke", vec(255, 0, 0), 255)
+    }
+    if( CL2 < Steps ) { timer("createHolos",1) }
+    else
+    {
+        Loaded = 1
+        interval(5)
+    }
+}
+elseif( clk() )
+{
+    interval(1)
+    if( CL >= Steps ) 
+    { 
+        CL = 0
+        holoPos(1, holoEntity(502):pos())
+    }
+    CL++
+    
+    local Holo = holoEntity(CL)
+    
+    local RangerA = rangerOffset(Holo:pos(), Holo:toWorld( Holo:right() * 15000 ))
+    local RangerB = rangerOffset(Holo:pos(), Holo:toWorld( Holo:up() * -15000 ))
+    
+    holoPos(500, RangerA:pos())
+    holoPos(501, RangerB:pos())
+    
+    local Ang = (RangerA:hitNormal():cross(RangerB:hitNormal())):toAngle()
+    holoAng( CL, Ang )
+    
+    local Pos = (RangerA:hitNormal():cross(RangerB:hitNormal())) * -StepSize
+    Pos = Pos + (Holo:right() * (Holo:pos():distance(RangerA:pos()) - 3.5))
+    
+    if( CL < Steps )
+    {
+        holoPos( CL+1, Holo:pos() + Pos )
+        
+        if( CL + 1 == Steps )
+        {
+            local Vec = holoEntity(CL):pos() + (holoEntity(CL):right() * -39) + (holoEntity(CL):up() * -3.5)
+            #Train:setPos( holoEntity(CL):pos() + (holoEntity(CL):right() * -39) + (holoEntity(CL):up() * -3.5))
+            Train:setAng( Ang )
+            local RangerA = rangerOffset(Train:pos(), Train:toWorld( Train:right() * 15000 ))
+            local RangerB = rangerOffset(Train:pos(), Train:toWorld( Train:up() * -15000 ))
+            local RangerADistance = Train:pos():distance(RangerA:pos())
+            local RangerBDistance = Train:pos():distance(RangerB:pos())
+            Vec = Vec + (Train:right() * (RangerADistance - 37.5))
+            Vec = Vec + (Train:up() * -(RangerBDistance - 3.7))
+            Train:setPos(Vec + (RangerA:hitNormal():cross(RangerB:hitNormal())))
+        }
+    }
+}

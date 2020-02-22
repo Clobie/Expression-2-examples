@@ -1,0 +1,14 @@
+@name ermahgerdterner
+
+#include "lib/variable"
+
+if( first() ) {
+    
+    for( I = 1, 80 ) {
+        holoCreate( I )
+        holoScaleUnits( I, vec(1) )
+        holoPos( I, entity():pos() + vec(0,0,I) )
+        holoColor( I, hsv2rgb( 360 * ( I / 80 ), 1, 1 ) )
+    }
+    
+}

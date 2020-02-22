@@ -1,0 +1,104 @@
+@name teasties
+@persist Entity:entity
+@trigger 
+
+if( first() ) {
+    Entity = entity()
+    
+    
+    LegCount = 8
+    
+    Width = 20 #20
+    Length = Width
+    
+    for(I = 1, LegCount){
+        local Cos = cos((I / LegCount) * 360 + (180 / LegCount + 90)) * Width
+        local Sin = sin((I / LegCount) * 360 + (180 / LegCount + 90)) * Length
+        
+        holoCreate(I, Entity:toWorld(vec(Cos, Sin, 0)))
+        vec(Cos, Sin, 0)
+        vec(Cos, Sin, 0)
+        #holoScale(I, vec())
+        
+        #holoParent(I, E)
+        
+        for(I = Holo, Holo + 2){
+                holoCreate(I)
+                holoParent(I, I - 1)
+                holoScale(I, vec(Scale))
+                holoColor(I,vec(50, 50, 50))
+                #holoModel(I,"hq_sphere")
+                
+                if(I > Holo){
+                    holoClipEnabled(I, 1)
+                }
+            }
+
+            Knee = (Index * 2000)
+            for(KneeHolo = Knee, Knee){
+                holoCreate(KneeHolo)
+                holoScale(KneeHolo, vec(0.25, 0.25, 0.25))   
+                holoModel(KneeHolo, "hq_sphere")
+                holoColor(KneeHolo, vec(50, 50, 50))
+                
+            }
+            
+            holoPos(Knee, holoEntity(Holo+2):pos())
+            holoParent(Knee, Holo+2)
+
+            holoParent(Holo, This)
+            
+            holoPos(Holo, This:toWorld(Pos[Index, vector] / 5))
+            
+            holoClip(Holo + 1, vec(), vec(0, 0, -1), 0)
+            holoClip(Holo + 2, vec(), vec(0, 0, 1), 0)
+            holoScale(Holo + 1, shiftR(vec(0.25, L1 / 6, 0.25)))
+            holoScale(Holo + 2, shiftR(vec(0.25, L2 / 6, 0.25)))
+            
+            holoModel(Holo+1,"hq_cylinder")
+            holoModel(Holo+2,"hq_sphere")
+            
+            holoPos(Holo + 1, holoEntity(Holo):pos())
+            holoPos(Holo + 2, holoEntity(Holo + 1):toWorld(vec(0, 0, -L1)))
+        
+        
+    }
+}
+
+#[
+
+    LR = FB = 0
+    Angles = Entity:angles()
+    A1 = vec()
+    
+    for(I = 1, Step:count()){
+        A1 += holoEntity(I):pos()
+        
+        local Cos = cos((I / LegCount) * 360 + (180 / LegCount + 90))
+        local Sin = sin((I / LegCount) * 360 + (180 / LegCount + 90))
+        LR += Height[I, number] * Cos
+        FB += Height[I, number] * Sin
+    }    
+    A1 /=  LegCount
+    
+
+    Ang = clamp(vec(-FB, LR, 0), -100, 100)
+ 
+    local Ground = (Height:min() <= Leg_ground_hit_length)
+        
+    local H = (((A1 + (Entity:up() * Base_height) - Entity:pos()) * !Space * Ground) - vec(0, 0, 20 * !Ground))
+    local Res = (Entity:vel() * vec(0.9) * !Space * Ground * EntityE:mass())
+    
+    local Move = ((Entity:right() * (W - S)) + (Entity:forward() * ((A - D)))) * (30 * (1 + Shift)) * Ground * E:mass() * 2
+    local Jump = E:up() * Space * 200 * Ground * Entity:mass()
+    
+    local Turn = vec(0, 0, ((M1 - M2))) * 600 * Ground * Entity:inertia() * 2
+
+    if(Jump){
+        Entity:soundPlay(50, 1.5, "player/coop_motors/coop_bot_leg_motor_jump_06.wav")
+    }
+    
+    Entity:applyForce((Entity * Entity:mass() * vec(2, 2, 4)) - Res - Move + Jump)
+    
+    Entity:applyTorque((Ang * Entity:inertia() * (100 / (2 * 1.5))) - (Entity:angVelVector() * Entity:inertia() * (20 + (5)))  + Turn * (2))
+]#

@@ -1,0 +1,20 @@
+@name asdfaw4g
+@inputs 
+@outputs 
+@persist Tool:array P:array
+@trigger 
+
+if( first() ) {
+    runOnTick( 1 )
+    P = players()
+}
+
+for( I = 1, P:count() ) {
+    if( P[ I, entity ]:tool() != Tool[ I, string ] && P[ I, entity ]:tool() != "" ) {
+        Tool[ I, string ] = P[ I, entity ]:tool()
+        print( P[ I, entity ]:name() + " has tool: " + P[ I, entity ]:tool() )
+        if( Tool[ I, string ] == "weld" ) {
+            concmd( "say Hey " + P[ I, entity ]:name() + ", did you know parenting is better than weld?  Fun fact!" )
+        }
+    }
+}

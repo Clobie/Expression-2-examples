@@ -1,0 +1,47 @@
+@name Spring_old
+@inputs Pull
+@persist Ranger:ranger Damping Strength Length
+@model models/sprops/rectangles_thin/size_1_5/rect_6x6x1_5.mdl
+
+runOnTick(1)
+
+if(duped()|dupefinished()){reset()}
+E=entity()
+
+Strength=50
+Damping=0.6
+
+Length=2
+
+if(first()){
+    holoCreate(0)
+    holoParent(0,E)
+    holoCreate(1)
+    holoModel(1,"models/sprops/cylinders/size_2/cylinder_3x"+(round(Length)*6)+".mdl")
+    holoParent(1,0)
+    holoPos(1,holoEntity(0):toWorld(vec(0,0,-(round(Length)*3))))
+    holoAng(1,E:toWorld(ang()))
+    holoAlpha(0,0)
+    
+    #holoCreate(2)
+    holoParent(2,E)
+    holoAng(2,E:toWorld(ang()))
+    holoModel(2,"models/hunter/plates/plate025x075.mdl")
+}
+
+rangerFilter(E:isConstrainedTo():getConstraints())
+rangerFilter(E:isConstrainedTo())
+Ranger=rangerOffset((round(Length)*6)-(Pull*6),E:pos(),E:up())
+
+holoAng(0,E:angles())
+holoPos(0,Ranger:pos())
+holoPos(2,Ranger:pos())
+holoAlpha(1,E:getAlpha())
+
+if(Ranger:hit()&!E:isPlayerHolding()){
+    Ranger:entity():applyOffsetForce(E:up()*E:mass()*(((round(Length)*6)-(Pull*6))-Ranger:distance())*(Strength/10),Ranger:pos())
+    E:applyForce(-E:up()*E:mass()*((round(Length)*6)-(Pull*6)-Ranger:distance())*Strength)
+    E:applyForce(-E:vel()*E:mass()*Damping)
+    #Ranger:entity():applyForce(-Ranger:entity():vel()*Ranger:entity():mass()*Damping)
+    E:applyForce(Ranger:entity():vel()/Damping)
+}

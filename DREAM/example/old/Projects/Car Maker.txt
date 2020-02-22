@@ -1,0 +1,551 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5
+# Date: 12/4/2018 @ 1425
+# --------------------------------------------- #
+@name Car Maker
+@outputs [ THROTTLE CONSTANT DAMPING ACTIVE GEAR BRAKE ]:number
+@persist [ TURN_RATE TURN_ANGLE TURN KMH M1 M2 W S A D ACTIVE GEAR TEST_MODE ]:number [ CHIP DRIVER BODY SEAT ]:entity 
+@persist Wheel:array Me:entity
+@persist [ OffsetX OffsetY OffsetZ HoloIndexOffset WheelIndex AdjustValue ]:number
+@persist [ Bounding FrontLeft FrontRight RearLeft RearRight ]:vector
+@persist [ EditMode ]:number
+@model models/sprops/rectangles/size_2/rect_12x12x3.mdl
+
+#include "lib/button"
+#include "lib/holotext"
+#include "lib/async"
+#include "lib/holomodel"
+
+if( dupefinished( ) ) {
+    reset( )
+}
+
+if( first( ) ) {
+    
+    Me = owner()
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,50),vec(0,-4.0996,50),vec(0,4.0996,50),vec(0,0,54.2109),vec(0,0,45.7891),vec(0,9.2998,46.9121),vec(0,9.2998,52.9883),vec(0,-10,50),vec(0,4.2002,41.7324),vec(0,-4,41.5332))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0))
+    Hologram[ "scale", array ] = array(vec(0.1,0.1,0.1),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5),vec(0.5,0.5,0.5))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(175,175,175,175,175,175,175,175,175,175)
+    Hologram[ "material", array ] = array("debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("anchor","y+ right","y- left","x+ top","x- bottom","z- left"," bottom","z+ left"," top","create")
+    
+    Wheel = array(  "models/mechanics/wheels/bmw.mdl",
+                    "models/mechanics/wheels/bmwl.mdl",
+                    "models/mechanics/wheels/rim_1.mdl",
+                    "models/mechanics/wheels/tractor.mdl",
+                    "models/mechanics/wheels/tractors.mdl",
+                    "models/mechanics/wheels/wheel_2.mdl",
+                    "models/mechanics/wheels/wheel_2l.mdl",
+                    "models/mechanics/wheels/wheel_smooth_18r.mdl",
+                    "models/mechanics/wheels/wheel_rounded_36s.mdl",
+                    "models/mechanics/wheels/wheel_rounded_36.mdl",
+                    "models/mechanics/wheels/wheel_rounded_72.mdl",
+                    "models/mechanics/wheels/wheel_rugged_24.mdl",
+                    "models/mechanics/wheels/wheel_rugged_48.mdl",
+                    "models/mechanics/wheels/wheel_rugged_24w.mdl",
+                    "models/mechanics/wheels/wheel_rugged_48w.mdl",
+                    "models/mechanics/wheels/wheel_smooth_24.mdl",
+                    "models/mechanics/wheels/wheel_smooth_24f.mdl",
+                    "models/mechanics/wheels/wheel_smooth2.mdl",
+                    "models/mechanics/wheels/wheel_smooth_72w.mdl",
+                    "models/mechanics/wheels/wheel_smooth_72.mdl",
+                    "models/mechanics/wheels/wheel_smooth_96.mdl",
+                    "models/mechanics/wheels/wheel_spike_24.mdl",
+                    "models/mechanics/wheels/wheel_spike_48.mdl",
+                    "models/mechanics/wheels/wheel_extruded_48.mdl",
+                    "models/mechanics/wheels/wheel_race.mdl",
+                    "models/mechanics/wheels/wheel_speed_72.mdl",
+                    "models/nateswheel/nateswheel.mdl",
+                    "models/nateswheel/nateswheelwide.mdl",
+                    "models/props_phx/wheels/747wheel.mdl",
+                    "models/props_phx/smallwheel.mdl",
+                    "models/props_phx/chrome_tire.mdl",
+                    "models/props_phx/wheels/breakable_tire.mdl",
+                    "models/props_phx/normal_tire.mdl",
+                    "models/props_phx/wheels/drugster_front.mdl",
+                    "models/props_phx/wheels/drugster_back.mdl",
+                    "models/props_phx/wheels/magnetic_small_base.mdl",
+                    "models/props_phx/wheels/magnetic_med_base.mdl",
+                    "models/props_phx/wheels/magnetic_large_base.mdl",
+                    "models/props_phx/wheels/magnetic_small.mdl",
+                    "models/props_phx/wheels/magnetic_large.mdl",
+                    "models/props_phx/wheels/metal_wheel1.mdl",
+                    "models/props_phx/wheels/metal_wheel2.mdl",
+                    "models/props_phx/wheels/trucktire.mdl",
+                    "models/props_phx/wheels/trucktire2.mdl",
+                    "models/props_phx/wheels/wooden_wheel1.mdl",
+                    "models/props_phx/wheels/wooden_wheel2.mdl",
+                    "models/props_phx/wheels/monster_truck.mdl",
+                    "models/props_phx/wheels/moped_tire.mdl",
+                    "models/xeon133/offroad/off-road-20.mdl",
+                    "models/xeon133/offroad/off-road-30.mdl",
+                    "models/xeon133/offroad/off-road-40.mdl",
+                    "models/xeon133/offroad/off-road-50.mdl",
+                    "models/xeon133/offroad/off-road-60.mdl",
+                    "models/xeon133/offroad/off-road-70.mdl",
+                    "models/xeon133/offroad/off-road-80.mdl",
+                    "models/xeon133/racewheel/race-wheel-30.mdl",
+                    "models/xeon133/racewheel/race-wheel-35.mdl",
+                    "models/xeon133/racewheel/race-wheel-40.mdl",
+                    "models/xeon133/racewheel/race-wheel-45.mdl",
+                    "models/xeon133/racewheel/race-wheel-50.mdl",
+                    "models/xeon133/racewheel/race-wheel-55.mdl",
+                    "models/xeon133/racewheel/race-wheel-60.mdl",
+                    "models/xeon133/racewheel/race-wheel-65.mdl",
+                    "models/xeon133/racewheel/race-wheel-70.mdl",
+                    "models/xeon133/racewheel/race-wheel-75.mdl",
+                    "models/xeon133/racewheel/race-wheel-80.mdl",
+                    "models/xeon133/racewheel/race-wheel-30_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-35_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-40_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-45_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-50_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-55_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-60_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-65_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-70_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-75_s.mdl",
+                    "models/xeon133/racewheel/race-wheel-80_s.mdl",
+                    "models/xqm/airplanewheel1.mdl",
+                    "models/xqm/airplanewheel1medium.mdl",
+                    "models/xqm/airplanewheel1big.mdl",
+                    "models/xqm/airplanewheel1huge.mdl",
+                    "models/xqm/airplanewheel1large.mdl",
+                    "models/sprops/trans/train/single_24.mdl",
+                    "models/sprops/trans/train/single_36.mdl",
+                    "models/sprops/trans/train/single_48.mdl",
+                    "models/sprops/trans/train/single_72.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel15.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel20.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel25.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel30.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel35.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel40.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel45.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel50.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel55.mdl",
+                    "models/sprops/trans/wheel_a/t_wheel60.mdl",
+                    "models/sprops/trans/wheel_a/wheel15.mdl",
+                    "models/sprops/trans/wheel_a/wheel20.mdl",
+                    "models/sprops/trans/wheel_a/wheel25.mdl",
+                    "models/sprops/trans/wheel_a/wheel30.mdl",
+                    "models/sprops/trans/wheel_a/wheel35.mdl",
+                    "models/sprops/trans/wheel_a/wheel40.mdl",
+                    "models/sprops/trans/wheel_a/wheel45.mdl",
+                    "models/sprops/trans/wheel_a/wheel50.mdl",
+                    "models/sprops/trans/wheel_a/wheel55.mdl",
+                    "models/sprops/trans/wheel_a/wheel60.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel15.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel20.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel25.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel30.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel35.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel40.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel45.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel50.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel55.mdl",
+                    "models/sprops/trans/wheel_b/t_wheel60.mdl",
+                    "models/sprops/trans/wheel_b/wheel15.mdl",
+                    "models/sprops/trans/wheel_b/wheel20.mdl",
+                    "models/sprops/trans/wheel_b/wheel25.mdl",
+                    "models/sprops/trans/wheel_b/wheel30.mdl",
+                    "models/sprops/trans/wheel_b/wheel35.mdl",
+                    "models/sprops/trans/wheel_b/wheel40.mdl",
+                    "models/sprops/trans/wheel_b/wheel45.mdl",
+                    "models/sprops/trans/wheel_b/wheel50.mdl",
+                    "models/sprops/trans/wheel_b/wheel55.mdl",
+                    "models/sprops/trans/wheel_b/wheel60.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel15.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel20.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel25.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel30.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel35.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel40.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel45.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel50.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel55.mdl",
+                    "models/sprops/trans/wheel_c/t_wheel60.mdl",
+                    "models/sprops/trans/wheel_c/wheel15.mdl",
+                    "models/sprops/trans/wheel_c/wheel20.mdl",
+                    "models/sprops/trans/wheel_c/wheel25.mdl",
+                    "models/sprops/trans/wheel_c/wheel30.mdl",
+                    "models/sprops/trans/wheel_c/wheel35.mdl",
+                    "models/sprops/trans/wheel_c/wheel40.mdl",
+                    "models/sprops/trans/wheel_c/wheel45.mdl",
+                    "models/sprops/trans/wheel_c/wheel50.mdl",
+                    "models/sprops/trans/wheel_c/wheel55.mdl",
+                    "models/sprops/trans/wheel_c/wheel60.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel15.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel20.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel25.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel30.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel35.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel40.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel45.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel50.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel55.mdl",
+                    "models/sprops/trans/wheel_d/t_wheel60.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel15.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel20.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel25.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel30.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel35.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel40.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel45.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel50.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel55.mdl",
+                    "models/sprops/trans/wheel_e/t_wheel60.mdl",
+                    "models/sprops/trans/miscwheels/thin_moto15.mdl",
+                    "models/sprops/trans/miscwheels/thin_moto20.mdl",
+                    "models/sprops/trans/miscwheels/thin_moto25.mdl",
+                    "models/sprops/trans/miscwheels/thin_moto30.mdl",
+                    "models/sprops/trans/miscwheels/thick_moto15.mdl",
+                    "models/sprops/trans/miscwheels/thick_moto20.mdl",
+                    "models/sprops/trans/miscwheels/thick_moto25.mdl",
+                    "models/sprops/trans/miscwheels/thick_moto30.mdl",
+                    "models/sprops/trans/miscwheels/tank15.mdl",
+                    "models/sprops/trans/miscwheels/tank20.mdl",
+                    "models/sprops/trans/miscwheels/tank25.mdl",
+                    "models/sprops/trans/miscwheels/tank30.mdl",
+                    "models/props_vehicles/tire001a_tractor.mdl",
+                    "models/props_vehicles/tire001b_truck.mdl",
+                    "models/props_vehicles/tire001c_car.mdl",
+                    "models/props_vehicles/apc_tire001.mdl"
+    )
+                
+    TEST_MODE = 1
+    TURN_RATE = 20
+    CONSTANT = 50000
+    DAMPING = 700
+    runOnKeys( DRIVER, 1 )
+    CHIP = entity( )
+    noCollideAll( CHIP, 1 )
+    DRIVER = owner( )
+    GEAR = 1
+    ACTIVE = 0
+    TURN = 0
+    TURN_ANGLE = 0
+    BODY = CHIP:isWeldedTo( )
+    
+    #if( BODY:getConstraints( ):count( ) > 8 ) {
+        #EditMode = 0
+    #} else {
+        if( !BODY:isValid( ) ) {
+            BODY = propSpawn( "models/sprops/rectangles/size_4_5/rect_42x78x3.mdl", entity( ):pos( ), ang( 0, 90, 0 ), 1 )
+        }
+        BODY:setPos( BODY:pos( ) + vec( 0, 0, 50 ) )
+        BODY:propFreeze( 1 )
+        BODY:setAng( ang( 0, 90, 0 ) )
+        BODY:setMass( 500 )
+        BODY:setColor( vec( 0, 255, 255 ) )
+        BODY:constraintBreak( CHIP )
+        CHIP:setPos( CHIP:pos( ) + vec( 100, 100, 20 ) )
+        CHIP:propFreeze( 1 )
+        CHIP:setColor( vec( 0, 255, 255 ) )
+        buttonSetColors( vec( 0, 255, 0 ), vec( 0 ) )
+        AdjustValue = 0.5
+        HoloIndexOffset = randint( 2e10 )
+        WheelIndex = 1
+        Bounding = BODY:aabbSize( ) / 2
+        EditMode = 1
+        
+        SEAT = seatSpawn( "models/nova/airboat_seat.mdl", BODY:pos( ) + vec( 0, 0, 2 ), BODY:angles( ) + ang( 0, -90, 0 ), 0 )
+        async( 0.2, "moveSeat" )
+        function moveSeat( ) {
+            noCollideAll( SEAT, 1 )
+            SEAT:setColor( vec( 0, 255, 255 ) )
+            SEAT:setPos( BODY:pos( ) + vec( 0, 0, 2 ) )
+            SEAT:setAng( BODY:angles( ) + ang( 0, -90, 0 ) )
+            SEAT:propFreeze( 1 )
+            weld( SEAT, BODY )
+            SEAT:setAlpha( 100 )
+        }
+        
+        for( I = 1, 4 ) {
+            holoCreate( HoloIndexOffset + I )
+        }
+        
+        holoAng( HoloIndexOffset + 1, ang( -90, 0, 0 ) )
+        holoAng( HoloIndexOffset + 2, ang( 90, 0, 0 ) )
+        holoAng( HoloIndexOffset + 3, ang( -90, 0, 0 ) )
+        holoAng( HoloIndexOffset + 4, ang( 90, 0, 0 ) )
+        
+        FrontLeft = BODY:pos( ) + vec( -Bounding:y( ), Bounding:x( ), 50 )
+        FrontRight = BODY:pos( ) + vec( Bounding:y( ), Bounding:x( ), 50 )
+        RearLeft = BODY:pos( ) + vec( -Bounding:y( ), -Bounding:x( ), 50 )
+        RearRight = BODY:pos( ) + vec( Bounding:y( ), -Bounding:x( ), 50 )
+        
+        holoPos( HoloIndexOffset + 1, FrontLeft )
+        holoPos( HoloIndexOffset + 2, FrontRight )
+        holoPos( HoloIndexOffset + 3, RearLeft )
+        holoPos( HoloIndexOffset + 4, RearRight )
+        
+        runOnChat( 1 )
+        runOnKeys( owner( ), 1 )
+    #}
+    
+    function setMenuText( Text:string ) {
+        holoText( Text, holoEntity( 1 ):pos( ) + ( holoEntity( 1 ):up( ) * 10 ), holoEntity( 1 ):angles( ) + ang( 0, 90, 0 ), 1.5, 1, vec( 255 ), vec( 0 ) )
+    }
+    
+    function makeCar( Ply:entity ) {
+        local FL = propSpawn( Wheel[ WheelIndex, string ], holoEntity( HoloIndexOffset + 1 ):pos( ), holoEntity( HoloIndexOffset + 1 ):angles( ), 1 )
+        FL:makeSpherical( FL:aabbSize( ):x( ) / 2 )
+        rope( 1, FL, vec( 0 ), BODY, vec( Bounding:x( ), -Bounding:y( ), 0 ), 0, 1, "cable/cable", 1 )
+        rope( 2, FL, vec( 0 ), BODY, vec( 0, -Bounding:y( ), 0 ), 0, 1, "cable/cable", 1 )
+        hydraulic( 9, FL, vec( 0 ), BODY, BODY:toLocal( FL:pos( ) + vec( 0, 0, 0 ) ), 50000, 500, "cable/cable", 1, 0 )
+        noCollideAll( FL, 1 )
+        ballsocket( FL, vec( 0 ), CHIP, vec( -180, -0.1, -0.1 ), vec( 180, 0.1, 0.1 ), vec( 0 ), 1 )
+        ballsocket( CHIP, vec( 0 ), FL, vec( -180, 0.1, 0.1 ), vec( 180, -0.1, -0.1 ), vec( 0 ), 1 )
+        
+        local FR = propSpawn( Wheel[ WheelIndex, string ], holoEntity( HoloIndexOffset + 2 ):pos( ), holoEntity( HoloIndexOffset + 2 ):angles( ), 1 )
+        FR:makeSpherical( FR:aabbSize( ):x( ) / 2 )
+        rope( 3, FR, vec( 0 ), BODY, vec( Bounding:x( ), Bounding:y( ), 0 ), 0, 1, "cable/cable", 1 )
+        rope( 4, FR, vec( 0 ), BODY, vec( 0, Bounding:y( ), 0 ), 0, 1, "cable/cable", 1 )
+        hydraulic( 10, FR, vec( 0 ), BODY, BODY:toLocal( FR:pos( ) + vec( 0, 0, 0 ) ), 50000, 500, "cable/cable", 1, 1 )
+        noCollideAll( FR, 1 )
+        ballsocket( FR, vec( 0 ), CHIP, vec( -180, -0.1, -0.1 ), vec( 180, 0.1, 0.1 ), vec( 0 ), 1 )
+        ballsocket( CHIP, vec( 0 ), FR, vec( -180, 0.1, 0.1 ), vec( 180, -0.1, -0.1 ), vec( 0 ), 1 )
+        
+        local RL = propSpawn( Wheel[ WheelIndex, string ], holoEntity( HoloIndexOffset + 3 ):pos( ), holoEntity( HoloIndexOffset + 3 ):angles( ), 1 )
+        RL:makeSpherical( RL:aabbSize( ):x( ) / 2 )
+        rope( 5, RL, vec( 0 ), BODY, vec( -Bounding:x( ), -Bounding:y( ), 0 ), 0, 1, "cable/cable", 1 )
+        rope( 6, RL, vec( 0 ), BODY, vec( 0, -Bounding:y( ), 0 ), 0, 1, "cable/cable", 1 )
+        hydraulic( 11, RL, vec( 0 ), BODY, BODY:toLocal( RL:pos( ) + vec( 0, 0, 0 ) ), 50000, 500, "cable/cable", 1, 0 )
+        noCollideAll( RL, 1 )
+        ballsocket( RL, vec( 0 ), BODY, vec( -180, -0.1, -0.1 ), vec( 180, 0.1, 0.1 ), vec( 0 ), 1 )
+        ballsocket( BODY, vec( 0 ), RL, vec( -180, 0.1, 0.1 ), vec( 180, -0.1, -0.1 ), vec( 0 ), 1 )
+        
+        local RR = propSpawn( Wheel[ WheelIndex, string ], holoEntity( HoloIndexOffset + 4 ):pos( ), holoEntity( HoloIndexOffset + 4 ):angles( ), 1 )
+        RR:makeSpherical( RR:aabbSize( ):x( ) / 2 )
+        rope( 7, RR, vec( 0 ), BODY, vec( -Bounding:x( ), Bounding:y( ), 0 ), 0, 1, "cable/cable", 1 )
+        rope( 8, RR, vec( 0 ), BODY, vec( 0, Bounding:y( ), 0 ), 0, 1, "cable/cable", 1 )
+        hydraulic( 12, RR, vec( 0 ), BODY, BODY:toLocal( RR:pos( ) + vec( 0, 0, 0 ) ), 50000, 500, "cable/cable", 1, 0 )
+        noCollideAll( RR, 1 )
+        ballsocket( RR, vec( 0 ), BODY, vec( -180, -0.1, -0.1 ), vec( 180, 0.1, 0.1 ), vec( 0 ), 1 )
+        ballsocket( BODY, vec( 0 ), RR, vec( -180, 0.1, 0.1 ), vec( 180, -0.1, -0.1 ), vec( 0 ), 1 )
+        
+        noCollideAll( BODY, 1 )
+        
+        EditMode = 0
+        holoDeleteAll( )
+        
+        BODY:propFreeze( 0 )
+        FR:propFreeze( 0 )
+        FL:propFreeze( 0 )
+        RR:propFreeze( 0 )
+        RL:propFreeze( 0 )
+        SEAT:propFreeze( 0 )
+    }
+    
+    function modelMinus( Ply:entity ) { 
+        WheelIndex = clamp( WheelIndex - 1, 1, Wheel:count( ) )
+        for( I = 1, 4 ) {
+            holoModel( HoloIndexOffset + I, Wheel[ WheelIndex, string ] )
+        }
+        local R = Wheel[ WheelIndex, string ]:explode( "/" )
+        R[ R:count( ), string ]
+        setMenuText( R[ R:count( ), string ] )
+    }
+    
+    function modelPlus( Ply:entity ) {
+        WheelIndex = clamp( WheelIndex + 1, 1, Wheel:count( ) )
+        for( I = 1, 4 ) {
+            holoModel( HoloIndexOffset + I, Wheel[ WheelIndex, string ] )
+        }
+        local R = Wheel[ WheelIndex, string ]:explode( "/" )
+        R[ R:count( ), string ]
+        setMenuText( R[ R:count( ), string ] )
+    }
+    
+    function setup( ) {
+        runOnKeys( owner( ), 1 )
+        for( I = 2, 7 ) { buttonCreate( I, 0, "", "" ) }
+        buttonCreate( 8, 0, "makeCar", "" )
+        buttonCreate( 9, 0, "modelMinus", "" )
+        buttonCreate( 10, 0, "modelPlus", "" )
+    }
+
+    function main( ) {
+        if( EditMode == 1 ) {
+            if( buttonGetState( 7 ) ) {
+                FrontRight = FrontRight + vec( 0, 0, AdjustValue )
+                RearRight = RearRight + vec( 0, 0, AdjustValue )
+                FrontLeft = FrontLeft + vec( 0, 0, AdjustValue )
+                RearLeft = RearLeft + vec( 0, 0, AdjustValue )
+            }
+            if( buttonGetState( 6 ) ) {
+                FrontRight = FrontRight - vec( 0, 0, AdjustValue )
+                RearRight = RearRight - vec( 0, 0, AdjustValue )
+                FrontLeft = FrontLeft - vec( 0, 0, AdjustValue )
+                RearLeft = RearLeft - vec( 0, 0, AdjustValue )
+            }
+            if( buttonGetState( 3 ) ) {
+                FrontRight = FrontRight - vec( AdjustValue, 0, 0 )
+                RearRight = RearRight - vec( AdjustValue, 0, 0 )
+                FrontLeft = FrontLeft - vec( -AdjustValue, 0, 0 )
+                RearLeft = RearLeft - vec( -AdjustValue, 0, 0 )
+            }
+            if( buttonGetState( 2 ) ) {
+                FrontRight = FrontRight + vec( AdjustValue, 0, 0 )
+                RearRight = RearRight + vec( AdjustValue, 0, 0 )
+                FrontLeft = FrontLeft + vec( -AdjustValue, 0, 0 )
+                RearLeft = RearLeft + vec( -AdjustValue, 0, 0 )
+            }
+            if( buttonGetState( 5 ) ) {
+                FrontRight = FrontRight - vec( 0, AdjustValue, 0 )
+                RearRight = RearRight - vec( 0, -AdjustValue, 0 )
+                FrontLeft = FrontLeft - vec( 0, AdjustValue, 0 )
+                RearLeft = RearLeft - vec( 0, -AdjustValue, 0 )
+            }
+            if( buttonGetState( 4 ) ) {
+                FrontRight = FrontRight + vec( 0, AdjustValue, 0 )
+                RearRight = RearRight + vec( 0, -AdjustValue, 0 )
+                FrontLeft = FrontLeft + vec( 0, AdjustValue, 0 )
+                RearLeft = RearLeft + vec( 0, -AdjustValue, 0 )
+            }
+            
+            #if( BODY:model( ):find( "sprops" ) ) {
+                holoPos( HoloIndexOffset + 1, FrontLeft )
+                holoPos( HoloIndexOffset + 2, FrontRight )
+                holoPos( HoloIndexOffset + 3, RearLeft )
+                holoPos( HoloIndexOffset + 4, RearRight )
+            #} else {
+                #holoPos( HoloIndexOffset + 1, vec( FrontLeft:y( ), FrontLeft:x( ), FrontLeft:z( ) ) )
+                #holoPos( HoloIndexOffset + 2, vec( FrontRight:y( ), FrontRight:x( ), FrontRight:z( ) ) )
+                #holoPos( HoloIndexOffset + 3, vec( RearLeft:y( ), RearLeft:x( ), RearLeft:z( ) ) )
+                #holoPos( HoloIndexOffset + 4, vec( RearRight:y( ), RearRight:x( ), RearRight:z( ) ) )
+            #}
+            
+            CHIP:setAng( BODY:angles( ) + ang( 0, 90, 0 ) )
+            
+        } else {
+            if( SEAT:passenger( ):isValid( ) ) {
+                ACTIVE = 1
+                DRIVER = SEAT:passenger( )
+                runOnKeys( DRIVER, 1 )
+                
+                W = DRIVER:keyPressed( "w" )
+                S = DRIVER:keyPressed( "s" )
+                A = DRIVER:keyPressed( "a" )
+                D = DRIVER:keyPressed( "d" )
+                
+                if( S ) {
+                    GEAR = 6
+                }
+                
+                if( W & GEAR == 6 ) {
+                    GEAR = 1
+                }
+                
+                M1 = DRIVER:keyPressed( "mouse_left" )
+                M2 = DRIVER:keyPressed( "mouse_right" )
+                BRAKE = DRIVER:keyPressed( "space" )
+                
+                if( ( M1 & $M1 ) ) { GEAR = clamp( GEAR + 1, 1, 6 ), SEAT:printDriver( "Gear: " + GEAR ) }
+                if( ( M2 & $M2 ) ) { GEAR = clamp( GEAR - 1, 1, 6 ), SEAT:printDriver( "Gear: " + GEAR ) }
+                
+                THROTTLE = ( W + S ) * 100
+                
+                KMH = round( toUnit( "km/h", BODY:vel( ):length( ) ) )
+                TURN_ANGLE = KMH >= 40 ? 35 : 45
+                if( !CHIP:isPlayerHolding( ) ) {
+                    TURN += clamp( ( A - D ) * TURN_ANGLE - TURN, -TURN_RATE, TURN_RATE )
+                    CHIP:setAng( BODY:toWorld( ang( 0, TURN + 90, 0 ) ) )
+                }
+                
+                if( TEST_MODE ) {
+                    if( W ) {
+                        BODY:applyForce( ( BODY:forward( ) * BODY:mass( ) * 7 * GEAR ) )
+                    }
+                    if( S ) {
+                        BODY:applyForce( ( BODY:forward( ) * BODY:mass( ) * -7 * GEAR ) )
+                    }
+                    if( A ) {
+                        BODY:applyAngForce( ang( 0, 1, 0 ) * BODY:mass( ) * 20 )
+                    }
+                    if( D ) {
+                        BODY:applyAngForce( ang( 0, -1, 0 ) * BODY:mass( ) * 20 )
+                    }
+                }
+                    
+                
+                
+            } else {
+                ACTIVE = 0
+                CHIP:setAng( BODY:angles( ) + ang( 0, 90, 0 ) )
+            }
+        }
+        
+        if( !CHIP:isFrozen( ) ) {
+            CHIP:propFreeze( 1 )
+        } elseif( CHIP:isPlayerHolding( ) ) {
+            CHIP:propFreeze( 0 )
+        }
+    }
+    
+    function chat( Player:entity, Text:string ) {
+        if( Player == owner( ) & Text:left( 5 ) == "/adj "  & EditMode == 1 ) {
+            local R = Text:explode( " " )
+            AdjustValue = R[ 2, string ]:toNumber( )
+            setMenuText( "Adjust value: " + AdjustValue )
+        }
+    }
+    
+    function key( Player:entity, Key:string, Down:number ) {
+        if( Player == Me & Me:keyPressed( "lshift" ) & EditMode == 1 ) {
+            if( Key == "mouse_right" ) {
+                holoPos( 1, owner( ):shootPos( ) + ( owner( ):eye() * 65 ) )
+                holoAng( 1, owner( ):eyeAngles( ) )
+                holoTextPos( holoEntity( 1 ):pos( ) + ( holoEntity( 1 ):up( ) * 10 ) )
+                holoTextAng( holoEntity( 1 ):angles( ) + ang( 0, 90, 0 ) )
+            }
+        }
+    }
+}
+
+
+    interval( 60 )
+    if( clk( ) ) { main( ) }
+    if( chatClk( ) ) { chat( lastSpoke( ), lastSaid( ) ) }
+    if( keyClk( ) ) {
+        local Player = keyClk()
+        local Key = keyClkPressed()
+        local Down = Player:keyPressed( Key ) ? 1 : 0
+        key( Player, Key, Down )
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

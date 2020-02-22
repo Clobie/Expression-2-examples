@@ -1,0 +1,110 @@
+@name Template
+@inputs [EGP EGPL EGPR]:wirelink
+@outputs 
+@persist EGPIndex:number
+@persist 
+@persist 
+@persist 
+@persist 
+@persist 
+@persist 
+
+# -------------------------------------------------------------
+# Setup
+# -------------------------------------------------------------
+if(first() | dupefinished())
+{
+    #include "funcs.lib"
+    runOnTick(1)
+    runOnChat(1)
+    runOnKeys(owner(), 1)
+    
+    EGP = setupEgp(1):wirelink()
+    EGP:egpClear()
+    
+    EGPIndex = 1
+    EGP:egpDrawTopLeft(1)
+    EGP:egpBox(EGPIndex, vec2(0, 0), vec2(512, 512) )
+    EGP:egpColor(EGPIndex, vec(0, 0, 0) )
+    
+    EGPIndex++
+    EGP:egpDrawTopLeft(1)
+    EGP:egpRoundedBoxOutline(EGPIndex, vec2(254, 0), vec2(256, 512) )
+    EGP:egpColor(EGPIndex, vec(255, 255, 255) )
+    
+    EGPSelectBoxIndexStart = EGPIndex + 1
+    for(I = 1, 30)
+    {
+        EGPIndex++
+        EGP:egpDrawTopLeft(1)
+        EGP:egpRoundedBoxOutline(EGPIndex, vec2(0, 2 + ((I-1)*17)), vec2(254, 17) )
+        EGP:egpColor(EGPIndex, vec(255, 255, 255) )
+    }
+    
+    EGPSelectTextIndexStart = EGPIndex + 1
+    for(I = 1, 30)
+    {
+        EGPIndex++
+        EGP:egpDrawTopLeft(1)
+        EGP:egpText(EGPIndex, "", vec2(3, 2 + ((I-1)*17)) )
+        EGP:egpSize(EGPIndex, 16)
+        EGP:egpColor(EGPIndex, vec(255, 255, 255) )
+    }
+    
+    PA = sortByTeam(players())
+    for(I = 1, 30)
+    {
+        if(I <= PA:count())
+        {
+            EGP:egpSetText(I + EGPSelectTextIndexStart-1, teamName(PA[I, entity]:team()) + ": " + PA[I, entity]:name())
+            EGP:egpColor(I + EGPSelectTextIndexStart-1, teamColor(PA[I, entity]:team()) )
+        }
+        else
+        {
+            EGP:egpSetText(I + EGPSelectTextIndexStart-1, "")
+        }
+    }
+}
+
+# -------------------------------------------------------------
+# Tick event
+# -------------------------------------------------------------
+if( tickClk() )
+{
+    # Tick event
+}
+
+# -------------------------------------------------------------
+# Chat event
+# -------------------------------------------------------------
+if( chatClk() )
+{
+    # The player who triggered the chat event
+    P = lastSpoke()
+    
+    # What they said
+    S = P:lastSaid()
+}
+
+# -------------------------------------------------------------
+# Key event
+# -------------------------------------------------------------
+if( keyClk( Me ) )
+{
+    if(Me:keyPressed("r"))
+    {
+        # r was pressed
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+

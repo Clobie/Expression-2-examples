@@ -1,0 +1,35 @@
+##################################################
+#  ____                                          #
+# /\  _ `.                                       #
+# \ \ \/\ \  _ __    __     __      ___ ___      #
+#  \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\    #
+#   \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \   #
+#    \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\  #
+#     \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/  #
+#                                                #
+##################################################
+# Made by Dream                                  #
+#                                                #
+##################################################
+@name lib/keyboard
+@persist [ KEYBOARD_BIND_FUNCTION_DOWN KEYBOARD_BIND_FUNCTION_UP KEYBOARD_KEY ]:table
+
+if( first( ) ) {
+    function keyboardBindOnDown( KEY:string, FUNCTION:string ) { KEYBOARD_BIND_FUNCTION_DOWN[ KEY, string ] = FUNCTION }
+    function keyboardBindOnUp( KEY:string, FUNCTION:string ) { KEYBOARD_BIND_FUNCTION_UP[ KEY, string ] = FUNCTION }
+    function number keyboardGetKeyState( KEY:string ) { return KEYBOARD_KEY[ KEY, number ] }
+    # alternatively... local keyIsDown = KEYBOARD_KEY[ "key", number ]
+}
+
+if( keyClk() ) {
+    local KEY_CLK_PLAYER = keyClk()
+    local KEY_CLK_KEY = keyClkPressed()
+    local KEY_CLK_DOWN = KEY_CLK_PLAYER:keyPressed( KEY_CLK_KEY ) ? 1 : 0
+    if( KEY_CLK_DOWN ) {
+        if( KEYBOARD_BIND_FUNCTION_DOWN:exists( KEY_CLK_KEY ) ) { KEYBOARD_BIND_FUNCTION_DOWN[ KEY_CLK_KEY, string ]( ) }
+        KEYBOARD_KEY[ KEY_CLK_KEY, number ] = 1
+    } else {
+        if( KEYBOARD_BIND_FUNCTION_UP:exists( KEY_CLK_KEY ) ) { KEYBOARD_BIND_FUNCTION_UP[ KEY_CLK_KEY, string ]( ) }
+        KEYBOARD_KEY[ KEY_CLK_KEY, number ] = 0
+    }
+}

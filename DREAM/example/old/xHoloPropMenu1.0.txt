@@ -1,0 +1,101 @@
+@name test prop menu
+@persist PropModels:array Prop:array Loop:number Loop2:number Loop3:number
+@model models/sprops/misc/origin.mdl
+interval(25)
+
+if(first())
+{
+    propSpawnUndo( 0 )
+    runOnChat(1)
+    entity():setAlpha(0)
+    Loop = 0
+    Loop2 = 0
+    print("type /d to destroy everything! :)")
+    PropModels:pushString( "models/holograms/cone.mdl" )
+    PropModels:pushString( "models/holograms/hq_cone.mdl" )
+    PropModels:pushString( "models/holograms/cplane.mdl" )
+    PropModels:pushString( "models/holograms/cube.mdl" )
+    PropModels:pushString( "models/holograms/cylinder.mdl" )
+    PropModels:pushString( "models/holograms/hexagon.mdl" )
+    PropModels:pushString( "models/holograms/hq_cubinder.mdl" )
+    PropModels:pushString( "models/holograms/hq_cylinder.mdl" )
+    PropModels:pushString( "models/holograms/hq_dome.mdl" )
+    PropModels:pushString( "models/holograms/hq_hdome.mdl" )
+    PropModels:pushString( "models/holograms/hq_hdome_thick.mdl" )
+    PropModels:pushString( "models/holograms/hq_hdome_thin.mdl" )
+    PropModels:pushString( "models/holograms/hq_icosphere.mdl" )
+    PropModels:pushString( "models/holograms/hq_rcube.mdl" )
+    PropModels:pushString( "models/holograms/hq_rcube_thick.mdl" )
+    PropModels:pushString( "models/holograms/hq_rcube_thin.mdl" )
+    PropModels:pushString( "models/holograms/hq_rcylinder.mdl" )
+    PropModels:pushString( "models/holograms/hq_rcylinder_thick.mdl" )
+    PropModels:pushString( "models/holograms/hq_rcylinder_thin.mdl" )
+    PropModels:pushString( "models/holograms/hq_sphere.mdl" )
+    PropModels:pushString( "models/holograms/hq_stube.mdl" )
+    PropModels:pushString( "models/holograms/hq_stube_thick.mdl" )
+    PropModels:pushString( "models/holograms/hq_stube_thin.mdl" )
+    PropModels:pushString( "models/holograms/hq_torus.mdl" )
+    PropModels:pushString( "models/holograms/hq_torus_oldsize.mdl" )
+    PropModels:pushString( "models/holograms/hq_torus_thick.mdl" )
+    PropModels:pushString( "models/holograms/hq_torus_thin.mdl" )
+    PropModels:pushString( "models/holograms/hq_tube.mdl" )
+    PropModels:pushString( "models/holograms/hq_tube_thick.mdl" )
+    PropModels:pushString( "models/holograms/hq_tube_thin.mdl" )
+    PropModels:pushString( "models/holograms/icosphere.mdl" )
+    PropModels:pushString( "models/holograms/icosphere2.mdl" )
+    PropModels:pushString( "models/holograms/icosphere3.mdl" )
+    PropModels:pushString( "models/holograms/octagon.mdl" )
+    PropModels:pushString( "models/holograms/plane.mdl" )
+    PropModels:pushString( "models/holograms/prism.mdl" )
+    PropModels:pushString( "models/holograms/pyramid.mdl" )
+    PropModels:pushString( "models/holograms/rcube.mdl" )
+    PropModels:pushString( "models/holograms/rcube_thick.mdl" )
+    PropModels:pushString( "models/holograms/rcube_thin.mdl" )
+    PropModels:pushString( "models/holograms/rcylinder.mdl" )
+    PropModels:pushString( "models/holograms/rcylinder_thick.mdl" )
+    PropModels:pushString( "models/holograms/rcylinder_thin.mdl" )
+    PropModels:pushString( "models/holograms/right_prism.mdl" )
+    PropModels:pushString( "models/holograms/sphere.mdl" )
+    PropModels:pushString( "models/holograms/sphere2.mdl" )
+    PropModels:pushString( "models/holograms/sphere3.mdl" )
+    PropModels:pushString( "models/holograms/tetra.mdl" )
+    PropModels:pushString( "models/holograms/torus.mdl" )
+    PropModels:pushString( "models/holograms/torus2.mdl" )
+    PropModels:pushString( "models/holograms/torus3.mdl" )
+    PropModels:pushString( "models/jaanus/wiretool/wiretool_pixel_lrg.mdl" )
+    PropModels:pushString( "models/jaanus/wiretool/wiretool_pixel_med.mdl" )
+    PropModels:pushString( "models/jaanus/wiretool/wiretool_pixel_sml.mdl" )
+    
+    timer("spawn", 10)
+}
+elseif( clk("spawn") )
+{
+    while( perf(90) & propCanCreate() )
+    {
+        Loop++
+        Loop3++
+        Prop:pushEntity( propSpawn(PropModels[Loop, string], 1) )
+        Prop[Loop, entity]:setPos(entity():pos() + vec(10*Loop3,20*Loop2,15 * Loop3))
+        if(Loop3==5)
+        {
+            Loop2++
+            Loop3=0
+        }
+        
+    }
+    if(Loop < PropModels:count()) { timer("spawn", 10) }
+}
+elseif( chatClk() )
+{
+    P = lastSpoke()
+    S = P:lastSaid()
+    
+    Param = S:explode(" ")
+    Command = Param[1, string]
+    
+    if( P == owner() & Command:left(1) == "/")
+    {
+        hideChat(1)
+        if (Command == "/d") { for(I=1,Prop:count()){ Prop[I,entity]:propDelete() } entity():propDelete() }
+    }
+}

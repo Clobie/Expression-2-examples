@@ -1,0 +1,153 @@
+##################################################
+#  ____                                          #
+# /\  _ `.                                       #
+# \ \ \/\ \  _ __    __     __      ___ ___      #
+#  \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\    #
+#   \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \   #
+#    \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\  #
+#     \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/  #
+#                                                #
+##################################################
+# Made by Dream                                  #
+#                                                #
+##################################################
+@name lib/button
+@persist LIB_BUTTON_FUNCTIONDOWN:table
+@persist LIB_BUTTON_ONHOVER:table
+@persist LIB_BUTTON_ONHOVER_SHOW:number
+@persist LIB_BUTTON_FUNCTIONUP:table
+@persist LIB_BUTTON_TOGGLE:table
+@persist LIB_BUTTON_STATE:table
+@persist LIB_BUTTON_SCALE:table
+@persist LIB_BUTTON_COLOR_ON:vector
+@persist LIB_BUTTON_COLOR_OFF:vector
+@persist LIB_BUTTON_HOLD:number
+@persist LIB_BUTTON_LAST_PRESSED:number
+
+if( first( ) ) {
+    
+    runOnKeys( owner( ), 1 )
+    LIB_BUTTON_FUNCTION = table( )
+    LIB_BUTTON_TOGGLE = table( )
+    LIB_BUTTON_STATE = table( )
+    LIB_BUTTON_SCALE = table( )
+    LIB_BUTTON_COLOR_ON = vec( 0, 255, 0 )
+    LIB_BUTTON_COLOR_OFF = vec( 255 )
+    LIB_BUTTON_ONHOVER_SHOW = 1
+    LIB_BUTTON_LAST_PRESSED = 0
+    
+    function vector hologramGetPlaneUp( PLAYER:entity, INDEX:number ) {
+        local EYE_LOCATION = PLAYER:shootPos( )
+        local EYE_DIRECTION = PLAYER:eye( )
+        local HOLO_ENTITY = holoEntity( INDEX )
+        local HOLO_UP = HOLO_ENTITY:up( )
+        return ( EYE_LOCATION + ( HOLO_UP:dot( HOLO_ENTITY:pos( ) - EYE_LOCATION ) / ( HOLO_UP:dot( EYE_DIRECTION ) ) ) * EYE_DIRECTION )
+    }
+    
+    function buttonCreate( INDEX:number, TOGGLE:number, FUNCTION_DOWN:string, FUNCTION_UP:string ) {
+        local SCALE = holoScaleUnits( INDEX )
+        LIB_BUTTON_SCALE[ INDEX, number ] = ( SCALE:x( ) + SCALE:y( ) ) / 4
+        LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ] = FUNCTION_DOWN
+        LIB_BUTTON_FUNCTIONUP[ INDEX, string ] = FUNCTION_UP
+        LIB_BUTTON_TOGGLE[ INDEX, number ] = TOGGLE
+        LIB_BUTTON_STATE[ INDEX, number ] = 0
+        LIB_BUTTON_ONHOVER[ INDEX, number ] = 0
+    }
+    
+    function number buttonGetState( INDEX ) {
+        return LIB_BUTTON_STATE[ INDEX, number ]
+    }
+    
+    function buttonSetColors( On:vector, Off:vector ) {
+        LIB_BUTTON_COLOR_ON = On
+        LIB_BUTTON_COLOR_OFF = Off
+    }
+}
+if( LIB_BUTTON_ONHOVER_SHOW ) {
+    if( clk( ) & LIB_BUTTON_ONHOVER:count( ) <= 30 ) {
+        local KEY = LIB_BUTTON_FUNCTIONDOWN:keys( )
+        for( I = 1, KEY:count( ) ) {
+            local X = KEY[ I, number ]
+            if( LIB_BUTTON_STATE[ X, number ] == 1 ) {
+                holoColor( X, LIB_BUTTON_COLOR_ON )
+            } else {
+                holoColor( X, LIB_BUTTON_COLOR_OFF )
+            }
+            local Pointer = hologramGetPlaneUp( owner( ), X )
+            if( Pointer:distance( holoEntity( X ):pos( ) ) <= LIB_BUTTON_SCALE[ X, number ] ) {
+                if( LIB_BUTTON_STATE[ X, number ] == 1 ) {
+                    holoColor( X, vec( 0, 255, 127.5 ) )
+                } else {
+                    holoColor( X, vec( 0, 255, 255 ) )
+                }
+            }
+        }
+    }
+}
+
+if( keyClk() ) {
+    local PLAYER = keyClk()
+    local KEY_PRESSED = keyClkPressed()
+    local DOWN = PLAYER:keyPressed( KEY_PRESSED ) ? 1 : 0
+    
+    if( KEY_PRESSED == "e" | KEY_PRESSED == "mouse_right" ) {
+        local INDEX = -1
+        local KEY = LIB_BUTTON_FUNCTIONDOWN:keys( )
+        for( I = 1, KEY:count( ) ) {
+            local X = KEY[ I, number ]
+            local Pointer = hologramGetPlaneUp( PLAYER, X )
+            if( Pointer:distance( holoEntity( X ):pos( ) ) <= LIB_BUTTON_SCALE[ X, number ] ) {
+                INDEX = X
+            }
+        }
+        if( INDEX > 0 ) {
+            if( DOWN == 1 ) {
+                if( LIB_BUTTON_STATE[ INDEX, number ] == 0 ) {
+                    LIB_BUTTON_LAST_PRESSED = INDEX
+                    LIB_BUTTON_HOLD = INDEX
+                    LIB_BUTTON_STATE[ INDEX, number ] = 1
+                    holoColor( INDEX, LIB_BUTTON_COLOR_ON )
+                    soundPlay( randint( 2e8 ), soundDuration( "common/wpn_moveselect.wav" ), "common/wpn_moveselect.wav" )
+                    if( LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ] != "" ) {
+                        if( LIB_BUTTON_FUNCTIONDOWN:exists( INDEX ) ) {
+                            LIB_BUTTON_FUNCTIONDOWN[ INDEX, string ]( PLAYER )
+                        }
+                    }
+                } elseif( LIB_BUTTON_STATE[ INDEX, number ] == 1 & LIB_BUTTON_TOGGLE[ INDEX, number ] == 1 ) {
+                    LIB_BUTTON_STATE[ INDEX, number ] = 0
+                    holoColor( INDEX, LIB_BUTTON_COLOR_OFF )
+                    soundPlay( randint( 2e8 ), soundDuration( "common/wpn_denyselect.wav" ), "common/wpn_denyselect.wav" )
+                    if( LIB_BUTTON_FUNCTIONUP[ INDEX, string ] != "" ) {
+                        if( LIB_BUTTON_FUNCTIONUP:exists( INDEX ) ) {
+                            LIB_BUTTON_FUNCTIONUP[ INDEX, string ]( PLAYER )
+                        }
+                    }
+                }
+            } elseif( DOWN == 0 ) {
+                if( LIB_BUTTON_TOGGLE[ LIB_BUTTON_HOLD, number ] == 0 & LIB_BUTTON_HOLD > 0 & LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] == 1 ) {
+                    LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] = 0
+                    holoColor( LIB_BUTTON_HOLD, LIB_BUTTON_COLOR_OFF )
+                    #soundPlay( randint( 2e8 ), soundDuration( "common/wpn_denyselect.wav" ), "common/wpn_denyselect.wav" )
+                    if( LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ] != "" ) {
+                        if( LIB_BUTTON_FUNCTIONUP:exists( LIB_BUTTON_HOLD ) ) {
+                            LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ]( PLAYER )
+                        }
+                    }
+                    LIB_BUTTON_HOLD = 0
+                }
+            }
+        } else {
+            if( LIB_BUTTON_HOLD > 0 & LIB_BUTTON_TOGGLE[ LIB_BUTTON_HOLD, number ] == 0 ) {
+                LIB_BUTTON_STATE[ LIB_BUTTON_HOLD, number ] = 0
+                holoColor( LIB_BUTTON_HOLD, LIB_BUTTON_COLOR_OFF )
+                #soundPlay( randint( 2e8 ), soundDuration( "common/wpn_denyselect.wav" ), "common/wpn_denyselect.wav" )
+                if( LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ] != "" ) {
+                    if( LIB_BUTTON_FUNCTIONUP:exists( LIB_BUTTON_HOLD ) ) {
+                        LIB_BUTTON_FUNCTIONUP[ LIB_BUTTON_HOLD, string ]( PLAYER )
+                    }
+                }
+                LIB_BUTTON_HOLD = 0
+            }
+        }
+    }
+}

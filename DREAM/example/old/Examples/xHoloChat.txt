@@ -1,0 +1,102 @@
+# -------------------------------------------------------------
+# ctaHoloChat1.0
+# -------------------------------------------------------------
+@name ctaHoloChat1.0
+
+# -------------------------------------------------------------
+# Global Vars
+# -------------------------------------------------------------
+@persist [Me Chip]:entity
+@persist [Center Scale Color]:vector
+@persist [Character]:table
+@persist [Path Ext]:string
+@persist [Limit Ready Loop]:number
+
+# -------------------------------------------------------------
+# Setup
+# -------------------------------------------------------------
+if( dupefinished() ) 
+{ 
+    reset() 
+}
+elseif( first() )
+{
+    runOnChat(1)
+    
+    Me = owner()
+    Chip = entity()
+    Center = Chip:pos()
+    Scale = vec(1)
+    Color = vec(255)
+    Ready = 0
+    Loop = 0
+    Limit = 50
+    
+    Character = table( "." = "prd", "," = "com", ":" = "colon", ";" = "scolon", "?" = "qmark", "!" = "xmark", "\"" = "quote", "~" = "tilde", 
+                    "<" = "lessthan", ">" = "greaterthan", "_" = "underscore", "@" = "atsign", "#" = "pdsign", "$" = "dlsign", "%" = "pcnt",
+                    "^" = "crt", "&" = "and", "`" = "apost", "(" = "lpar", ")" = "rpar", "[" = "lbracket", "]" = "rbracket", "{" = "lcbracket",
+                    "}" = "rcbracket", "|" = "bar", "+" = "plu", "-" = "min", "*" = "ast", "/" = "div", "=" = "equal", "'" = "apost", "a" = "1_a",
+                    "a" = "l_a", "b" = "l_b", "c" = "l_c", "d" = "l_d", "e" = "l_e", "f" = "l_f", "g" = "l_g", "h" = "l_h", "i" = "l_i", "j" = "l_j", "k" = "l_k", 
+                    "l" = "l_l", "m" = "l_m", "n" = "l_n", "o" = "l_o", "p" = "l_p", "q" = "l_q", "r" = "l_r", "s" = "l_s", "t" = "l_t", "u" = "l_u", "v" = "l_v", 
+                    "w" = "l_w", "x" = "l_x", "y" = "l_y", "z" = "l_z", "A" = "a", "B" = "b", "C" = "c", "D" = "d", "E" = "e", "F" = "f", "G" = "g", 
+                    "H" = "h", "I" = "i", "J" = "j", "K" = "k", "L" = "l", "M" = "m", "N" = "n", "O" = "o", "P" = "p", "Q" = "q", "R" = "r", "S" = "s", "T" = "t", 
+                    "U" = "u", "V" = "v", "W" = "w", "X" = "x", "Y" = "y", "Z" = "z", "0" = "0", "1" = "1", "2" = "2", "3" = "3", "4" = "4", "5" = "5", "6" = "6", 
+                    "7" = "7", "8" = "8", "9" = "9", " " = "space")
+    Path = "models/sprops/misc/alphanum/alphanum_"
+    Ext = ".mdl"
+    
+    function makeCharacters(S:string)
+    {
+        if(S:length() <= Limit)
+        {
+            print("Writing")
+            local MessageArray = S:explode("")
+            for(I = 1, S:length())
+            {
+                holoModel(I, Character[MessageArray[I, string], string])
+            }
+        }
+        else
+        {
+            print("Chat message too long: " + S:length())
+        }
+    }
+    
+    timer("createHolos", 1)
+}
+elseif( chatClk() )
+{
+    if(Ready)
+    {
+        print("Chat")
+        local P = lastSpoke()
+        local S = P:lastSaid()
+        
+        Param = S:explode(" ")
+        Command = Param[1, string]
+        
+        if(P == owner())
+        {
+            makeCharacters(S)
+        }
+    }
+}
+elseif( clk("createHolos") )
+{
+    while(perf(90) & holoCanCreate() & Loop < Limit)
+    {
+        print(Loop)
+        holoCreate(Loop)
+        holoPos(Loop, (entity():pos() + vec(0,0,20)) + (holoEntity(Loop):boxSize() * vec(0,Loop,0)))
+        holoColor(Loop, vec(0))
+        holoAlpha(Loop, 50)
+        Loop++
+    }
+    
+    if( Loop < Limit ) { timer("createHolos", 1) }
+    else 
+    { 
+        Ready = 1 
+        print("Ready")
+    }
+}

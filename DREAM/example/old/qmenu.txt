@@ -1,0 +1,44 @@
+@name qmenu
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+if( first() ) {
+    runOnTick(1)
+    foreach( K, V:entity = players() ) {
+        runOnKeys( V, 1 )
+    }
+}
+
+if( keyClk() ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    local IsDown = Player:keyPressed( Key ) ? 1 : 0
+    
+    if( Key == "space" && IsDown && !Player:isOnGround() ) {
+        local Vel = Player:vel()
+        local Pos = Player:pos()
+        local Ang = Player:angles()
+        concmd( "emt " + Player:id() + " void void " + (Vel + vec(0,0,1000)):toString() )
+    }
+}
+
+#[
+foreach( K, V:entity = players() ) {
+    if( keyClk(V) ) {
+        local Key = keyClkPressed()
+        local Pressed = V:keyPressed( Key ) ? 1 : 0
+        if( Pressed ) {
+            print( V:name() + "+" + Key )
+        } else {
+            print( V:name() + "-" + Key )
+        }
+    }
+}
+]#
+
+#if( keyClk() ) {
+    #E = keyClk()
+    #print(E:name())
+#}

@@ -1,0 +1,21 @@
+@name Spider Mech Test
+@persist [ Entity Seat Driver ]:entity
+@persist LegA_Length LegB_Length
+if( first() ) {
+    
+    Entity = entity()
+    Entity:propGravity(0)
+    Entity:setMass(50000)
+    
+    LegA_Length = 75
+    LegB_Length = 75
+}
+
+
+
+if( clk() ) {
+    interval( 120 )
+    
+    
+    
+}

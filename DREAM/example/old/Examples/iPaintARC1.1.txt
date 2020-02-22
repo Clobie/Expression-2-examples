@@ -1,0 +1,1200 @@
+@name iPaintARC1.1
+@persist EGP:wirelink
+@persist Debug [E Master]:entity BGColor:vector UndoMode BrushSize DrawDistance Index Interval HoloIndex
+@persist Use KeyAttack2 Alt Reload Shift EGPCursor:vector2 ONS HoloAxis:entity [HudCursor HudCursorLocal]:vector
+@persist Holo:entity PlanePoint:vector Normal:vector LinePoint1:vector LinePoint2:vector X OriginPos:vector2 Color:vector
+@persist PenArray:array UndoIndex UndoArray:array Mode UndoR UndoG UndoB RedoR RedoG RedoB XVel YVel VelocityBrushSize
+@persist CloneMode E2:entity EGP2:wirelink LineBeingDrawn ArcadeMode SinTimer SubName:string ToolBarStyle Players:array Drawers:array TempDrawer:entity
+@persist TempPlayer:entity [D1 D2 D3 D4 D5 D6 D7 D8 D9]:entity Break DrawingMode DrawingModeTimer EGP2String:string DrawCounter 
+@persist OwnerLastSaid:string LastSaid:string LastSaidWhen OwnerLastSaidWhen D1LastSaid:string D1LastSaidWhen Answers:array RandomAnswer CurrentAnswer:string Reroll
+@outputs LastSaidLength LastSaidCorrect LastSaidArray:array CurrentAnswerArray:array CurrentCheck Winner:entity WinTimer AnswersPack:string MistakeMargin
+@persist ScoreBoardPlayers:array ScoreBoardScores:array SBSwitch TempScore SoundT 
+@model models/hunter/plates/plate.mdl
+
+
+interval(Interval)
+Interval=ops()/40
+#Master=owner()
+
+# MADE BY TEK(Pajro4)
+
+# HOLOGRAM CREATION
+if(first()){
+    
+    AnswersPack="cd;dj;no;tv;ace;add;alf;ant;ape;arm;art;ash;axe;bag;bat;bay;bed;bee;bff;bib;bow;box;bug;bum;bus;can;cap;car;cat;cow;cry;cup;cut;die;dig;dna;dog;ear;eat;eel;egg;end;eye;fan;fin;flu;fly;fog;fox;fur;gas;gem;gum;gun;gza;ham;hat;hop;hot;hug;hut;ice;ink;inn;jam;jar;jaw;jet;jlo;jug;keg;key;kfc;lab;lap;leg;lid;lin;lip;log;low;map;mat;moo;mop;mtv;mud;mug;net;nun;nut;oar;off;oil;owl;paw;pee;pen;pet;pie;pig;pin;pot;rag;rap;rat;red;rim;row;rug;rza;sad;saw;sea;sew;shy;sit;ski;sky;son;sun;tag;tea;tie;toe;tug;ufo;uno;usa;usb;van;vet;war;wax;wig;wow;zoo;abba;acdc;afro;ants;army;asia;baby;back;bait;bake;bald;ball;band;bank;bark;barn;bart;base;beak;bear;beef;beer;bell;belt;bike;bill;bird;blow;blue;boat;bomb;bone;book;boot;bowl;bulb;bull;burn;burp;butt;buzz;cage;cake;calf;cane;cape;card;cave;chef;chew;chin;city;clam;clap;claw;clay;club;coal;coat;coin;cold;comb;cone;cook;cork;corn;crab;crib;cuba;curl;cute;dart;dead;deaf;deck;deep;deer;desk;devo;dice;dirt;diva;dive;dock;doll;door;dots;dove;down;draw;drip;drum;duck;duel;dunk;east;echo;edge;elmo;evil;ewok;eyes;face;fall;fans;farm;fart;fear;feet;fern;fire;fish;fist;flag;flat;flea;fool;foot;fork;fort;foul;frat;frog;gale;gate;geek;germ;girl;glee;glue;goal;goat;gold;golf;grid;grin;hail;hair;halo;hand;hare;harp;head;hear;heat;heel;hill;hobo;home;hood;hook;hoop;horn;hose;hulk;hunt;hurt;idea;ikea;ipad;iron;jail;jaws;jayz;jazz;jeep;jump;katy;kick;kilt;king;kiss;kite;knee;knot;kobe;lady;lake;lamb;lamp;lava;lead;leaf;leak;left;lens;lick;lift;lime;limo;line;link;lion;lips;lisa;list;lock;long;loop;lost;love;luge;luke;lung;mail;mall;mars;mask;maze;meal;meat;melt;meow;milk;mint;moon;muse;nail;name;nash;navy;neck;nemo;nerd;nest;news;nike;noob;nose;oars;odor;open;oreo;oval;oven;page;palm;park;pass;path;pear;peas;pill;pink;pipe;plug;plum;poke;polo;pong;pony;pool;poop;poor;pork;posh;pray;prom;puke;pull;push;race;raft;rain;rake;ramp;rest;ribs;rice;ride;ring;risk;road;robe;rock;roll;roof;root;rope;rose;ruby;sack;sail;salt;sand;scar;seal;seat;seed;shaq;shin;ship;shoe;shot;sing;sink;sith;skin;skis;slam;slap;sled;slip;snog;snow;soap;sock;soda;sofa;soil;song;soup;spin;spit;stab;star;step;stop;surf;swag;swan;swim;taco;tail;tall;tank;tape;taxi;tent;thin;thug;time;tire;toad;toga;tomb;toms;tool;toys;tray;tree;tuba;tuna;tune;tusk;twig;tyra;uggs;ugly;vase;veil;vein;vent;vest;vice;vine;vote;walk;wall;wand;wart;wash;wasp;wave;weak;weed;week;weep;well;west;whip;wife;wimp;wind;wine;wing;wink;wire;wise;wolf;wood;wool;work;worm;xbox;xray;yarn;yawn;yeti;ymca;yoda;yoga;yoyo;zeus;zoom;acorn;adele;alarm;alien;align;alone;angel;anger;ankle;apple;apron;ariel;armor;arrow;attic;avril;awake;award;bacon;badge;bagel;beach;beans;beard;bench;bible;bingo;black;blade;blimp;blind;bling;blood;blush;bones;boots;booty;brain;bread;brick;bride;broom;brush;bunny;cabin;cable;caddy;camel;candy;canoe;cards;chain;chair;chalk;champ;chart;check;cheek;chess;chest;china;chips;cigar;class;cliff;climb;clock;cloud;clown;coach;comet;comic;conan;couch;court;cover;crack;crane;crash;crawl;crown;crush;crust;cupid;dance;death;delta;devil;disco;dizzy;donut;doors;drain;drake;dream;dress;drill;drink;drive;drums;drunk;dumbo;eagle;earth;effie;elbow;ellen;elton;elvis;empty;fairy;fangs;fence;ferry;fever;field;fight;first;flame;flash;flirt;flood;floor;floss;flour;flush;force;frame;frodo;frown;fruit;furby;gears;ghost;glass;globe;glove;golem;goofy;goose;grade;graph;grass;grave;gravy;green;grill;groom;gross;hairy;happy;heart;heidi;hippo;homer;honey;horse;hotel;house;icing;igloo;japan;jeans;jello;jelly;jenga;jeter;joker;jonas;judge;juice;kanye;kirby;knife;knock;koala;koopa;korea;laser;lasso;laugh;leash;lemon;liger;light;limbo;luigi;lunch;magic;mango;marge;mario;marry;medal;messy;meter;miami;miley;model;money;moose;motor;mouse;mouth;mummy;music;nicki;night;ninja;noose;north;novel;nurse;obama;ocean;onion;opera;oprah;orbit;organ;paint;panda;pants;paper;paris;patch;peace;peach;pearl;pedal;peeps;peeta;penny;pepsi;perez;petal;phone;piano;pilot;pinky;pizza;plane;plant;plate;pluto;poker;pouch;power;print;prism;prius;punch;puppy;purse;quack;queen;quiet;quilt;radar;radio;razor;rhino;rifle;river;roast;robot;rondo;round;ruler;salad;salsa;samba;santa;scale;scarf;screw;shade;shape;shark;sharp;shave;sheep;shelf;shell;shirt;shoes;shoot;shore;short;shrek;simon;skate;skirt;skull;skunk;sleep;slide;slimy;slope;small;smell;smile;smoke;smurf;snail;snake;snoop;snore;socks;sonic;sorry;south;spain;speak;spear;spine;spock;spoon;spray;squid;stage;stain;stamp;stare;steak;steal;steam;steep;stern;sting;stone;stool;stork;storm;stove;straw;stump;sugar;sunny;sushi;sweat;sweet;swing;sword;syrup;table;tacos;tango;taser;tears;teeth;thief;thigh;thong;thorn;throw;thumb;tiara;tiger;tiles;toast;tools;tooth;torch;tower;train;trash;troll;truck;trump;trunk;tummy;tupac;turbo;tweed;twins;twist;udder;under;union;unzip;usher;vader;vault;vegas;venom;venus;video;viola;virus;voice;vomit;wagon;waist;waldo;waste;watch;water;waves;weave;wedge;weird;whale;wheat;wheel;white;widow;winch;wires;witch;woman;worry;wound;wreck;wrist;xerox;yacht;yield;young;zebra;zelda;zumba;africa;airbag;amazon;anchor;arcade;armpit;arnold;artist;attack;avatar;baking;ballot;bamboo;banana;bandit;barber;barbie;barney;barrel;basket;batman;beavis;bestie;bieber;bikini;blonde;booger;border;bottle;bottom;bounce;bowser;bowtie;boxing;braces;brakes;brazil;breath;bridge;briefs;bubble;bucket;buckle;buddha;bullet;bumper;bungee;burger;butter;button;cactus;camera;canada;candle;cannon;carpet;carrot;casino;castle;celery;center;cereal;chanel;cheese;cherry;church;circle;circus;closet;cocoon;coffee;coffin;collar;cookie;corner;cowboy;crayon;cuddle;dallas;danger;desert;diaper;dinner;dishes;doctor;dollar;domino;donkey;dougie;dragon;drapes;drawer;duster;earwax;easter;eminem;engine;eraser;escape;eskimo;europe;eyelid;family;farmer;father;faucet;female;finger;flight;flower;folder;forest;france;fridge;friend;funnel;galaxy;gandhi;garage;garden;garlic;goalie;google;grammy;grapes;guitar;hammer;handle;hanger;harbor;hawaii;heaven;helmet;hiking;hiphop;hobbit;hockey;hoodie;horton;hotdog;hottub;hummer;hungry;hustle;icarly;icebox;icepop;icicle;insect;iphone;island;jacket;jaguar;jersey;jetski;jigsaw;jordan;juggle;jungle;kansas;karate;kidney;killer;kitten;knives;kraken;kungfu;ladder;laptop;lawyer;lebron;lemons;letter;lipton;liquid;lizard;locket;london;lotion;lumber;lyrics;magnet;makeup;marble;mariah;marine;medusa;meteor;mexico;middle;mirror;mohawk;monkey;mother;mozart;muffin;muscle;museum;nachos;napkin;nascar;needle;nickel;noodle;norway;number;omelet;omgpop;online;orange;outlet;pacman;paddle;paella;palace;parade;parrot;paulyd;pdiddy;peanut;pencil;pepper;person;pickle;picnic;pigeon;pillow;pimple;pirate;pistol;planet;pocket;poison;police;poodle;poster;potato;pounce;powder;pretty;prince;prison;puppet;pushup;puzzle;rabbit;raisin;rattle;record;reddit;reggae;ribbon;ripple;robber;rocket;runway;russia;saddle;safari;sailor;salami;saturn;school;scooby;scotty;scream;screen;seesaw;selena;shadow;sheets;shield;shorts;shovel;shower;shrimp;singer;sister;skater;skiing;skinny;skyrim;sleigh;smores;sneeze;sniper;snooki;snoopy;soccer;socket;spider;spiral;sponge;spring;sprite;square;stable;stairs;statue;stereo;stilts;stoner;stream;street;strike;string;stripe;subway;sudoku;summer;sundae;sunset;sweaty;sweden;swings;switch;swoosh;taiwan;target;tattoo;taylor;teabag;teacup;teapot;techno;teepee;tennis;tetris;throat;throne;ticket;tickle;tintin;tissue;toilet;tomato;tongue;tripod;trophy;tshirt;tumblr;tunnel;turkey;turtle;tuxedo;uranus;urchin;vacuum;valley;vanish;velcro;victim;viking;violin;visine;volume;voodoo;vortex;waffle;waiter;wakeup;wallet;walrus;warhol;wattle;waving;wedgie;weezer;wicked;widget;wiggle;wigwam;willow;window;winner;winter;wizard;wonder;wrench;wutang;xgames;yellow;yogurt;zigzag;zipper;zombie;zygote;airhead;airport;aladdin;allstar;america;android;animals;antenna;antlers;aquaman;archery;asterix;atlanta;avocado;bahamas;balance;balcony;ballers;balloon;bandaid;bandana;barcode;barkley;bathtub;battery;bayonet;bazooka;beatles;beckham;beehive;beyonce;bicycle;bigfoot;blanket;blender;blondie;bonfire;bonjovi;boombox;bowling;breakup;britney;broncos;brownie;bubbles;buffalo;bunkbed;burrito;butcher;cabinet;camping;captain;carmelo;carpool;carseat;carwash;cashier;catfish;cattail;caveman;ceiling;centaur;chicken;chimney;coconut;colbert;college;compass;concert;cookies;corndog;cowgirl;crowbar;crystal;cueball;cupcake;curtain;cyclops;dentist;diamond;dimples;diploma;disease;divorce;djdrama;dogfish;dogsled;dolphin;doormat;doritos;dracula;dreidel;dresser;dribble;drummer;drumset;dubstep;dustpan;earring;eclipse;eggroll;emerald;england;explode;eyeball;eyebrow;eyelash;factory;fanmail;feather;fencing;finland;firefly;firefox;fishing;florida;forward;frenemy;frisbee;funeral;gameboy;gandalf;gasmask;germany;giraffe;glasses;goddess;goggles;gorilla;grandma;grandpa;grenade;griffin;gymnast;haircut;hairdye;hairgel;hairtie;hambone;hammock;hamster;hamwich;handbag;handgun;hangman;hashtag;hawkeye;headset;holiday;holland;homerun;husband;iceberg;icecube;ireland;ironman;jamaica;javelin;jayleno;jewelry;journey;jukebox;jupiter;justice;katniss;ketchup;kitchen;kneecap;knuckle;kwanzaa;ladybug;lamprey;latrine;leather;leopard;library;lighter;lincoln;lobster;luggage;macbook;madonna;mailbox;mailman;mammoth;mansion;markers;martini;mascara;massage;melting;menorah;mercury;mermaid;metroid;milkman;minivan;missile;mittens;monster;morning;mustard;narwhal;neptune;newyork;nirvana;noodles;nostril;notepad;oaktree;oatmeal;octagon;octopus;origami;orlando;ostrich;outkast;padlock;painter;pajamas;pancake;parents;peaches;peacock;pegasus;penguin;perfume;petfood;petshop;phoenix;picasso;picture;pikachu;pinball;pitbull;pitcher;pitfall;plumber;plunger;poolboy;popcorn;popular;porsche;pretzel;puddles;pumpkin;pyramid;quarter;raccoon;racecar;raekwon;raiders;rainbow;rapture;reaping;rebound;recycle;redhead;referee;reptile;riddler;rihanna;ringpop;rooster;rowboat;rugrats;sandals;sandbox;sausage;science;scooter;scratch;seafood;seagull;seasick;seaweed;shakira;shampoo;sheriff;shoebox;shotgun;shuttle;sixpack;skydive;skyline;smoking;snorkel;snowman;soldier;speaker;spinach;stadium;stapler;stomach;sunburn;surfing;surgeon;sweater;tadpole;takeoff;teacher;tempest;tequila;texting;theater;thunder;timeout;tinafey;titanic;toaster;toenail;toolbox;tornado;torpedo;tractor;traffic;trapeze;tribute;trouble;trumpet;tuesday;tugboat;twinkie;twitter;twoface;ukulele;unibrow;unicorn;vaccine;vampire;vangogh;vikings;village;vitamin;volcano;warrior;wedding;weights;whiskey;whisper;whistle;whopper;windows;wingman;wingnut;witness;worship;writing;yahtzee;yankees;youtube;zipline;airplane;alphabet;angelina;aquarium;assassin;asteroid;atlantis;audience;autobots;avengers;backache;backbone;backflip;backpack;bagpipes;baguette;barbeque;barbwire;barefoot;barstool;baseball;birdcage;birthday;blizzard;bobdylan;bookcase;bookmark;bracelet;bradpitt;branches;broccoli;bromance;brucelee;building;bullseye;calendar;campfire;carnival;catapult;catwoman;cemetery;chainsaw;checkers;children;computer;crescent;crossbow;crutches;customer;daftpunk;dandruff;defender;dentures;dinosaur;director;doorbell;doorknob;doorstep;dumbbell;dynamite;earmuffs;eggplant;election;elephant;elevator;envelope;espresso;eyepatch;facebook;fastfood;festivus;fireball;firewall;firewood;firework;firstaid;flamingo;follower;football;forehead;forklift;fountain;fraction;freezing;frosting;gangster;gardener;garfield;geronimo;giftwrap;goalpost;goldfish;golfcart;golfclub;graduate;greenday;halfpipe;handball;handcuff;hanukkah;haymitch;headache;headband;hercules;highfive;homeless;homework;hongkong;hospital;hotsauce;hulahoop;iceskate;insomnia;ironchef;joystick;jumpball;jumprope;junkfood;kangaroo;katemoss;keyboard;keychain;kneepads;knitting;ladygaga;laughing;lavalamp;lemonade;lilduval;lilwayne;lionking;lipstick;lollipop;longjump;lovebird;ludacris;macarena;macaroni;magazine;magician;manicure;marriage;mattress;mchammer;meatball;meathead;medicine;minigolf;minotaur;monopoly;mosquito;mountain;multiply;munchkin;mushroom;musicbox;mustache;nailfile;necklace;nosehair;nosering;notebook;oilfield;olympics;omggirlz;ornament;overalls;overflow;overtime;pacifier;paintcan;painting;palmtree;pancakes;pantsuit;paperbag;papercut;partyhat;password;patriots;penguins;piechart;pinecone;pinetree;pingpong;pinwheel;polaroid;polkadot;ponytail;popsicle;portrait;poseidon;positive;postcard;pregnant;presents;pricetag;primrose;princess;railroad;raincoat;raindrop;reindeer;ringtone;roadkill;rockstar;sailboat;sandwich;sapphire;scissors;scorpion;scotland;scrabble;seahorse;seashell;seatbelt;shoelace;shoulder;sideburn;sidewalk;skeeball;skeleton;skittles;skrillex;slamdunk;sledding;slippers;smoothie;snakepit;sneakers;snowball;snowcone;sombrero;sorority;soulmate;soysauce;sparkles;splinter;squirrel;starfish;startrek;starwars;steelers;straight;strawman;stroller;students;suitcase;sunblock;sunshine;superman;survivor;sweettea;swimming;swimsuit;swingset;symphony;teardrop;teaspoon;tebowing;teenager;tentacle;thelorax;theonion;timebomb;timeline;timezone;tombrady;tomhanks;tortoise;towtruck;trapdoor;trashcan;triangle;tricycle;triplets;trombone;tropical;tweezers;twilight;umbrella;unicycle;uppercut;upstairs;vacation;vertical;vineyard;waitress;warcraft;wardrobe;waterbed;watergun;werewolf;whiskers;wildfire;windmill;wireless;workshop;worldcup;wormhole;wrestler;wrinkles;yardsale;yearbook;zeppelin"
+    
+    
+    entity():setMaterial("debug/debugdrawflat")
+    # POSITION OF THE TOOLBAR
+    ToolBarStyle=1
+    # 1 - bottom
+    # 2 - right side
+    
+    
+    
+    #ArcadeMode=1
+    
+    
+    
+    
+    SubName="Clone-Screen not selected"
+    Mode=7
+    Color=vec(0)
+    E = entity():isWeldedTo()
+    EGP=E:wirelink()
+    entity():isWeldedTo():setMaterial("phoenix_storms/black_chrome")
+    BGColor = vec(255,255,255)
+    UndoMode = 0
+    BrushSize=5
+    DrawDistance=10   # DO NOT DO LESS THAN 10, IT BUGS
+    Index=1 
+    EGP:egpClear()
+    #Master=findPlayerByName("Tek")
+    #Interval=1 
+    HoloIndex=1
+    EGP:egpBox(300, vec2(256,256), vec2(508,508)) # INDEX 300 IS RESERVED FOR BACKGROUND BOX
+    EGP:egpCircle(299, vec2(0,0), vec2(2,2))    # INDEX 299 IS RESERVED FOR CURSOR DOT
+    EGP:egpColor(299, vec(0,0,0))
+    EGP:egpParentToCursor(299)
+    
+    #EGP:egpMaterial(300, "pp/sharpen")
+    #EGP:egpMaterial(300, "vgui/button_central_adv_hover")
+    Num=10
+    
+    
+    
+    
+    
+    
+    for(I=1,39){
+        holoCreate(I)
+        holoParent(I, entity())
+        holoPos(I, entity():boxCenterW()+vec(0,0,80)) # delete later
+        #holoColor(I, randvec(40,255))
+        holoDisableShading(I, 1)
+    }
+    
+    # TOOLBAR AXIS
+    if(ToolBarStyle==1){
+    holoPos(1, E:toWorld(vec(E:boxSize():x()/2,0,0)))
+    holoAng(1, E:toWorld(ang(-15,0,0)))
+    holoColor(1, vec(255,0,0))
+    holoScaleUnits(1, vec(5,5,5))
+    holoAlpha(1, 0)
+    HoloAxis=holoEntity(1)
+    }
+    if(ToolBarStyle==2){
+    holoPos(1, E:toWorld(vec(0,E:boxSize():y()/2,0)))
+    holoAng(1, E:toWorld(ang(-15,90,0)))
+    holoColor(1, vec(255,0,0))
+    holoScaleUnits(1, vec(5,5,5))
+    holoAlpha(1, 0)
+    HoloAxis=holoEntity(1)
+    }
+    
+    # TOOLBAR HULL
+    holoScaleUnits(2, vec(10,94.9,3))
+    holoPos(2, HoloAxis:toWorld(vec(5,0,0)))
+    holoAng(2, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(2, "phoenix_storms/black_chrome")
+
+    # TOOLBAR SCREEN
+    holoScaleUnits(3, vec(8,92.9,3))
+    holoPos(3, HoloAxis:toWorld(vec(5,0,0.15)))
+    holoAng(3, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(3, "debug/debugdrawflat")
+    holoColor(3, vec(255))
+
+    # CLEAR BUTTON OUTLINE
+    holoScaleUnits(4, vec(7.5,7.5,3))
+    holoPos(4, HoloAxis:toWorld(vec(5,-42.3,0.2)))
+    holoAng(4, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(4, "debug/debugdrawflat")
+    holoColor(4, vec(0))
+
+    # CLEAR BUTTON FILL
+    if(ToolBarStyle==1){
+    holoScaleUnits(5, vec(6.5,6.5,3))
+    holoPos(5, HoloAxis:toWorld(vec(5,-42.3,0.25)))
+    holoAng(5, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(5, "models/cheeze/buttons/chz_button_clear")
+    holoColor(5, vec(255))
+}
+    if(ToolBarStyle==2){
+    holoScaleUnits(5, vec(6.5,6.5,3))
+    holoPos(5, HoloAxis:toWorld(vec(5,-42.3,0.25)))
+    holoAng(5, HoloAxis:toWorld(ang(0,-90,0)))
+    holoMaterial(5, "models/cheeze/buttons/chz_button_clear")
+    holoColor(5, vec(255))
+}
+
+    # COLOR BUTTON OUTLINE - BROWN
+    holoScaleUnits(6, vec(7.5,7.5,3))
+    holoPos(6, HoloAxis:toWorld(vec(5,42.3,0.2)))
+    holoAng(6, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(6, "debug/debugdrawflat")
+    holoColor(6, vec(0))
+
+    # COLOR BUTTON FILL - BROWN
+    holoScaleUnits(7, vec(7,7,3))
+    holoPos(7, HoloAxis:toWorld(vec(5,42.3,0.25)))
+    holoAng(7, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(7, "models/cheeze/buttons/chz_button_clear")
+    holoColor(7, vec(126,64,48))
+    
+    # COLOR BUTTON OUTLINE - ORANGE
+    holoScaleUnits(8, vec(7.5,7.5,3))
+    holoPos(8, HoloAxis:toWorld(vec(5,34.3,0.2)))
+    holoAng(8, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(8, "debug/debugdrawflat")
+    holoColor(8, vec(0))
+
+    # COLOR BUTTON FILL - ORANGE
+    holoScaleUnits(9, vec(7,7,3))
+    holoPos(9, HoloAxis:toWorld(vec(5,34.3,0.25)))
+    holoAng(9, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(9, "models/cheeze/buttons/chz_button_clear")
+    holoColor(9, vec(255,100,0))
+    
+    # COLOR BUTTON OUTLINE - PINK
+    holoScaleUnits(10, vec(7.5,7.5,3))
+    holoPos(10, HoloAxis:toWorld(vec(5,26.3,0.2)))
+    holoAng(10, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(10, "debug/debugdrawflat")
+    holoColor(10, vec(0))
+
+    # COLOR BUTTON FILL - PINK
+    holoScaleUnits(11, vec(7,7,3))
+    holoPos(11, HoloAxis:toWorld(vec(5,26.3,0.25)))
+    holoAng(11, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(11, "models/cheeze/buttons/chz_button_clear")
+    holoColor(11, vec(255,0,255))
+    
+    # COLOR BUTTON OUTLINE - BLUE
+    holoScaleUnits(12, vec(7.5,7.5,3))
+    holoPos(12, HoloAxis:toWorld(vec(5,18.3,0.2)))
+    holoAng(12, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(12, "debug/debugdrawflat")
+    holoColor(12, vec(0))
+
+    # COLOR BUTTON FILL - BLUE  
+    holoScaleUnits(13, vec(7,7,3))
+    holoPos(13, HoloAxis:toWorld(vec(5,18.3,0.25)))
+    holoAng(13, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(13, "models/cheeze/buttons/chz_button_clear")
+    holoColor(13, vec(0,0,255))
+    
+    # COLOR BUTTON OUTLINE - GREEN
+    holoScaleUnits(14, vec(7.5,7.5,3))
+    holoPos(14, HoloAxis:toWorld(vec(5,10.3,0.2)))
+    holoAng(14, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(14, "debug/debugdrawflat")
+    holoColor(14, vec(0))
+
+    # COLOR BUTTON FILL - GREEN  
+    holoScaleUnits(15, vec(7,7,3))
+    holoPos(15, HoloAxis:toWorld(vec(5,10.3,0.25)))
+    holoAng(15, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(15, "models/cheeze/buttons/chz_button_clear")
+    holoColor(15, vec(0,255,0))
+    
+    # COLOR BUTTON OUTLINE - GREEN
+    holoScaleUnits(16, vec(7.5,7.5,3))
+    holoPos(16, HoloAxis:toWorld(vec(5,2.3,0.2)))
+    holoAng(16, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(16, "debug/debugdrawflat")
+    holoColor(16, vec(0))
+
+    # COLOR BUTTON FILL - GREEN  
+    holoScaleUnits(17, vec(7,7,3))
+    holoPos(17, HoloAxis:toWorld(vec(5,2.3,0.25)))
+    holoAng(17, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(17, "models/cheeze/buttons/chz_button_clear")
+    holoColor(17, vec(255,255,0))
+    
+    # COLOR BUTTON OUTLINE - RED
+    holoScaleUnits(18, vec(7.5,7.5,3))
+    holoPos(18, HoloAxis:toWorld(vec(5,-5.7,0.2)))
+    holoAng(18, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(18, "debug/debugdrawflat")
+    holoColor(18, vec(0))
+
+    # COLOR BUTTON FILL - RED  
+    holoScaleUnits(19, vec(7,7,3))
+    holoPos(19, HoloAxis:toWorld(vec(5,-5.7,0.25)))
+    holoAng(19, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(19, "models/cheeze/buttons/chz_button_clear")
+    holoColor(19, vec(255,0,0))
+    
+     # COLOR BUTTON OUTLINE - BLACK
+    holoScaleUnits(20, vec(7.5,7.5,3))
+    holoPos(20, HoloAxis:toWorld(vec(5,-13.7,0.2)))
+    holoAng(20, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(20, "debug/debugdrawflat")
+    holoColor(20, vec(0))
+
+    # COLOR BUTTON OUTLINE 2 - BLACK  
+    holoScaleUnits(21, vec(7,7,3))
+    holoPos(21, HoloAxis:toWorld(vec(5,-13.7,0.25)))
+    holoAng(21, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(21, "models/cheeze/buttons/chz_button_clear")
+    holoColor(21, vec(255))
+    
+    # COLOR BUTTON OUTLINE 2 - BLACK  
+    holoScaleUnits(22, vec(6.5,6.5,3))
+    holoPos(22, HoloAxis:toWorld(vec(5,-13.7,0.30)))
+    holoAng(22, HoloAxis:toWorld(ang(0,0,0)))
+    #holoMaterial(22, "models/cheeze/buttons/chz_button_clear")
+    holoColor(22, vec(0))
+    
+    # UNDO BUTTON OUTLINE
+    holoScaleUnits(23, vec(7.5,6,3))
+    holoPos(23, HoloAxis:toWorld(vec(5,-31.5,0.2)))
+    holoAng(23, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(23, "debug/debugdrawflat")
+    holoColor(23, vec(0))
+    
+    # UNDO BUTTON FILL
+    holoScaleUnits(24, vec(6.5,5,3))
+    holoPos(24, HoloAxis:toWorld(vec(5,-31.5,0.25)))
+    holoAng(24, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(24, "debug/debugdrawflat")
+    holoColor(24, vec(255))
+    
+    if(ToolBarStyle==1){
+    # UNDO BUTTON ICON
+    holoScaleUnits(25, vec(6,3,4))
+    holoPos(25, HoloAxis:toWorld(vec(5,-31.5,0.30)))
+    holoAng(25, HoloAxis:toWorld(ang(0,0,90)))
+    holoMaterial(25, "debug/debugdrawflat")
+    holoModel(25, "prism")
+    holoColor(25, vec(0))
+}
+
+    if(ToolBarStyle==2){
+    # UNDO BUTTON ICON
+    holoScaleUnits(25, vec(3,3,4))
+    holoPos(25, HoloAxis:toWorld(vec(5,-31.5,0.30)))
+    holoAng(25, HoloAxis:toWorld(ang(0,-90,90)))
+    holoMaterial(25, "debug/debugdrawflat")
+    holoModel(25, "prism")
+    holoColor(25, vec(0))
+}
+    
+    # REDO BUTTON OUTLINE
+    holoScaleUnits(26, vec(7.5,6,3))
+    holoPos(26, HoloAxis:toWorld(vec(5,-25,0.20)))
+    holoAng(26, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(26, "debug/debugdrawflat")
+    holoColor(26, vec(0))
+    
+    # REDO BUTTON FILL
+    holoScaleUnits(27, vec(6.5,5,3))
+    holoPos(27, HoloAxis:toWorld(vec(5,-25,0.25)))
+    holoAng(27, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(27, "debug/debugdrawflat")
+    holoColor(27, vec(255))
+    
+    if(ToolBarStyle==1){
+    # REDO BUTTON ICON
+    holoScaleUnits(28, vec(6,3,4))
+    holoPos(28, HoloAxis:toWorld(vec(5,-25,0.30)))
+    holoAng(28, HoloAxis:toWorld(ang(0,0,-90)))
+    holoMaterial(28, "debug/debugdrawflat")
+    holoModel(28, "prism")
+    holoColor(28, vec(0))
+}
+
+    if(ToolBarStyle==2){
+    # REDO BUTTON ICON
+    holoScaleUnits(28, vec(3,3,4))
+    holoPos(28, HoloAxis:toWorld(vec(5,-25,0.30)))
+    holoAng(28, HoloAxis:toWorld(ang(0,-90,-90)))
+    holoMaterial(28, "debug/debugdrawflat")
+    holoModel(28, "prism")
+    holoColor(28, vec(0))
+}
+    
+    # COLOR SELECTION MARKER
+    holoScaleUnits(29, vec(6.5,6.5,3))
+    holoPos(29, HoloAxis:toWorld(vec(5,-13.7,0.35)))
+    holoAng(29, HoloAxis:toWorld(ang(0,0,0)))
+    holoMaterial(29, "debug/debugdrawflat")
+    holoModel(29, "hq_stube_thin")
+    holoColor(29, vec(60,180,60))
+    
+    # MASTER MARKER
+    holoScaleUnits(30, vec(10,10,13))
+    holoPos(30, HoloAxis:toWorld(vec(5,-13.7,0.35)))
+    holoAng(30, ang(180,0,0))
+    holoMaterial(30, "debug/debugdrawflat")
+    holoModel(30, "pyramid")
+    holoColor(30, vec(60,255,60))
+    
+    # D1-9 MARKERS
+    for(I=31,39){
+    holoScaleUnits(I, vec(15,15,15))
+    holoPos(I, entity():toWorld(vec(0,0,90)))
+    holoAng(I, ang(0,0,0))
+    holoMaterial(I, "models/cheeze/buttons2/"+(I-30))
+    holoModel(I, "hq_rcube")
+    holoColor(I, vec(0,255,0))
+    holoAlpha(I,0)
+}
+    
+    
+    
+Ready=1
+}
+
+
+
+# GLOBA.... NON IFFIRST VALUES... or whatever
+    if(!Master:keyAttack1()){Use=Master:keyUse()}else{Use=0}
+    KeyAttack2=Master:keyAttack2()
+    Alt=Master:keyWalk()
+    Reload=Master:keyReload()
+    Shift=Master:keySprint()
+    EGPCursor=EGP:egpCursor(Master)
+    if(inrange(EGPCursor, vec2(0,0), vec2(512,512)) &Index<295){ONS=1}else{ONS=0}
+
+# HUD CURSOR POSITION DETECTION
+# HudCursor iss cursor vec position
+Holo = holoEntity(1)
+
+Origin = Master:shootPos()
+OriginDirVec = Master:eye()
+
+#How does line-plane intersection work?
+PlanePoint = Holo:pos() #Get a point in the plane
+Normal = Holo:up() #Get the normal (a vector perpendicular to the surface) of the plane
+LinePoint1 = Origin #Get a point on the line
+LinePoint2 = Origin+OriginDirVec #Get a point on the line "after" point 1#
+X = (Normal:dot(PlanePoint-LinePoint1))/(Normal:dot(LinePoint2-LinePoint1)) #Not really sure how, but it returns how many times the distance from point 1 to point 2 you need to go from point 1 to reach the intersection
+HudCursor = LinePoint1+X*(LinePoint2-LinePoint1) #Get the intersections position using f(X) = LinePoint1+X*(LinePoint2-LinePoint1)
+HudCursorLocal=holoEntity(3):toLocal(HudCursor)
+# HUD CURSOR END//
+
+# VELOCITY CALCULATING
+    XVel = abs(EGP:egpCursor(Master):x())
+    YVel = abs(EGP:egpCursor(Master):y())
+    VelocityBrushSize=10-(abs($XVel)+abs($YVel))/4.5
+    if(VelocityBrushSize<=3){VelocityBrushSize=3}
+
+# PENCIL CODE
+if(Use&$Use){OriginPos=EGP:egpCursor(Master)}
+if(Use&ONS&Master){
+    
+    
+    
+    CurPos=EGP:egpCursor(Master)
+    if(OriginPos:distance(CurPos)>DrawDistance){
+        #REPLACE BRUSH SIZE AND MULTIPLIERS BY DrawDistance TO SET PERMANENT DRAW DISTANCE
+        
+        
+        # IPAINTER-COPIED SMOOTHED DRAWING, MASTER = OWNER
+        Plus=(((OriginPos+EGP:egpCursor(Master))/2)-EGP:egpCursor(Master))
+        EGP:egpLine(Index,OriginPos,EGP:egpCursor(Master)-Plus/5)
+        EGP:egpSize(Index, VelocityBrushSize*(BrushSize/5)) #REMOVE *BRUSHSIZE THING FOR 1.0 VELPEN
+        EGP:egpAlpha(Index, 255)    # NOTE: UNDO WILL FUCK UP IF YOU DONT ADD ALPHING HERE(since yoiu alpha these in undo)
+        EGP:egpColor(Index, Color)
+
+        EGP2:egpLine(Index,OriginPos,EGP:egpCursor(Master)-Plus/5)
+        EGP2:egpSize(Index, VelocityBrushSize*(BrushSize/5)) #REMOVE *BRUSHSIZE THING FOR 1.0 VELPEN
+        EGP2:egpAlpha(Index, 255)    # NOTE: UNDO WILL FUCK UP IF YOU DONT ADD ALPHING HERE(since yoiu alpha these in undo)
+        EGP2:egpColor(Index, Color)
+
+    
+    # PUSHING INDEXES INTO ARRAY
+    # AFTER USEKEY IS OFF ARRAY WILL BE COUNTED AND THAT NUMBER WILL BE ADDED TO SEPARATE ARRAY
+    PenArray:pushString(Index:toString())
+    
+    
+    OriginPos=CurPos
+    Index++
+    
+    # UNDO MODE
+    UndoMode=1
+    
+    for(I=UndoIndex+1,UndoArray:count()){UndoArray:remove(I)} # REMOVING ALL ENTRIES AHEAD OF CURRENT ONE IF PLAYER DREW AGAIN
+    #UndoIndex=0
+    }
+}
+
+# LINE DRAWING
+
+    # IF OWNER PRESSES KEY USE ONCE THEN SET OROGIN LOCATION TO OWNER EGP CURSOR LOCATION
+    if(Reload&$Reload&ONS){OriginPos=EGP:egpCursor(Master)}
+    
+    if(Reload&ONS){
+        LineBeingDrawn=1
+        EGP:egpLine(Index,OriginPos,EGP:egpCursor(Master))
+        EGP:egpSize(Index, BrushSize)
+        EGP:egpAlpha(Index, 255)    # NOTE: UNDO WILL FUCK UP IF YOU DONT ADD ALPHING HERE(since yoiu alpha these in undo)
+        EGP:egpColor(Index, Color)
+        
+        EGP2:egpLine(Index,OriginPos,EGP:egpCursor(Master))
+        EGP2:egpSize(Index, BrushSize)
+        EGP2:egpAlpha(Index, 255)    # NOTE: UNDO WILL FUCK UP IF YOU DONT ADD ALPHING HERE(since yoiu alpha these in undo)
+        EGP2:egpColor(Index, Color)
+        
+}
+    #deleted: &OriginPos:distance(EGP:egpCursor(Master))>6
+if(LineBeingDrawn==1&!Reload&ONS){
+    for(I=UndoIndex+1,UndoArray:count()){UndoArray:remove(I)}
+    UndoArray:pushString("1")
+    UndoMode=1
+    Index++ 
+    LineBeingDrawn=0
+}
+    
+
+    
+
+    
+    
+    
+    
+    # UNDO RECORDING, IT HAS TO BE OUTSIDE OF "USE MUST BE CLICKED" FOR OBVIOUS REASONS
+if(!Use&UndoMode==1|!Use&UndoMode==7){
+        
+        if(Mode==1|Mode==7){UndoArray:pushString(PenArray:count():toString())} # WRITE DOWN HOW MANY INDEXES WERE IN THAT ONE PEN STROKE
+        
+        UndoMode=0  # GO BACK TO "READY PEN" MODE
+        PenArray:clear()    # CLEAR PENARRAY, SINCE I HAVE AMOUNT OF INDEXES THAT WAS USED
+        UndoIndex++   # HOW MANY ACTIONS DID YOU MAKE
+    }
+
+# UNDOING
+    if(Master & Use&$Use & inrange(HudCursorLocal, vec(-4.2,-34.5,-10), vec(4.2,-28.7,10))){ 
+        for(I=Index-UndoArray[UndoIndex, string]:toNumber(),Index){   # FOR <LOOP> IS EQUAL TO CURRENT INDEX MINUS CURRENT UNDO WHISH IS DETERMINED BY UNDO INDEX, TO MAX OF CURRENT INDEX
+            EGP:egpAlpha(I, 0)  # ALPHA EGP'S TO 0
+            EGP2:egpAlpha(I, 0)  # ALPHA EGP'S TO 0
+            
+            }
+            UndoR=0
+            UndoG=255
+            UndoB=0
+            soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") 
+            soundPitch(3, 255)
+        
+        UndoIndex--   #   INDEX FOR UNDOS WHICH RECORDS HOW MANY "ACTIONS" YOU TOOK GOES BACK BY ONE
+        Index=Index-UndoArray[UndoIndex+1, string]:toNumber() #   INDEX IS NOW EQUAL INDEX MINUS NUMBER OF INDEXES YOU ALPHED, UNDO INDEX+1 FOR REASON BELOW
+              
+    }
+
+if(UndoIndex<=0){UndoIndex=0} # LIMIT INDEX TO 0, BECAUSE ITS 0 AND NOT 1 AS IT SHOULD I ADDED +1 ABOVE... MISTAKE BUT I DONT WANT TO BUTCHER THE CODE ANYMORE
+                              # [ THIS MAY BE OUTSIDE OF "MODES" AS ITS GLOBAL AFFECTING VALUE ] 
+
+
+# UNDO RELOAD
+if(Master & Use&$Use & inrange(HudCursorLocal, vec(-4.2,-28,-10), vec(4.2,-22,10))) {
+    
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") 
+    soundPitch(3, 255)
+    RedoR = 0
+    RedoG = 255
+    RedoB = 0
+    for(I=Index, -1+Index+UndoArray[UndoIndex+1, string]:toNumber()){   
+            EGP:egpAlpha(I, 255)  # ALPHA EGP'S TO 255
+            EGP2:egpAlpha(I, 255)  # ALPHA EGP'S TO 255
+            
+            }
+    UndoIndex++
+    Index=Index+UndoArray[UndoIndex, string]:toNumber()
+}else{holoColor(24, vec(255))}
+
+# LIMITING MAX INDEX TO MAX... INDEX     [ THIS MAY BE OUTSIDE OF "MODES" AS ITS GLOBAL AFFECTING VALUE ] 
+if(UndoIndex>=UndoArray:count()){UndoIndex=UndoArray:count()}
+    
+#PEN CODE ENDS HERE///
+
+# COLOR CHOOSING
+# BLACK
+if(inrange(HudCursorLocal,vec(-4.2,-17.3,-100),vec(4.2,-9.8,100))&Use&$Use){holoPos(29, HoloAxis:toWorld(vec(5,-13.7,0.35))) Color=vec(0) soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") soundPitch(3, 255)}
+# RED
+if(inrange(HudCursorLocal,vec(-4.2,-9.5,-100),vec(4.2,-1.7,100))&Use&$Use){holoPos(29, HoloAxis:toWorld(vec(5,-5.7,0.35))) Color=vec(255,0,0) soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") soundPitch(3, 255)}
+# YELLOW
+if(inrange(HudCursorLocal,vec(-4.2,-1.4,-100),vec(4.2,6.1,100))&Use&$Use){holoPos(29, HoloAxis:toWorld(vec(5,2.3,0.35))) Color=vec(255,255,0) soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") soundPitch(3, 255)}
+# GREEN
+if(inrange(HudCursorLocal,vec(-4.2,6.7,-100),vec(4.2,14,100))&Use&$Use){holoPos(29, HoloAxis:toWorld(vec(5,10.3,0.35))) Color=vec(0,255,0) soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") soundPitch(3, 255)}
+# BLUE
+if(inrange(HudCursorLocal,vec(-4.2,14.5,-100),vec(4.2,21.7,100))&Use&$Use){holoPos(29, HoloAxis:toWorld(vec(5,18.3,0.35))) Color=vec(0,0,255) soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") soundPitch(3, 255)}
+# PINK
+if(inrange(HudCursorLocal,vec(-4.2,22.7,-100),vec(4.2,30,100))&Use&$Use){holoPos(29, HoloAxis:toWorld(vec(5,26.3,0.35))) Color=vec(255,0,255) soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") soundPitch(3, 255)}
+# ORANGE
+if(inrange(HudCursorLocal,vec(-4.2,30.7,-100),vec(4.2,37.6,100))&Use&$Use){holoPos(29, HoloAxis:toWorld(vec(5,34.3,0.35))) Color=vec(255,100,0) soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") soundPitch(3, 255)}
+# BROWN
+if(inrange(HudCursorLocal,vec(-4.2,38.6,-100),vec(4.2,46,100))&Use&$Use){holoPos(29, HoloAxis:toWorld(vec(5,42.3,0.35))) Color=vec(126,64,48) soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") soundPitch(3, 255)}
+
+# CLEARING THE SCREEN - BUTTON
+if(inrange(HudCursorLocal,vec(-4.2,-46,-100),vec(4.2,-38.5,100))&Use&$Use){
+    soundPlay(3,soundDuration("buttons/lightswitch2.wav"),"buttons/lightswitch2.wav") 
+    soundPitch(3, 255)
+    UndoArray:clear()
+    PenArray:clear()
+    UndoMode = 0
+    UndoIndex = 0
+    Index=1 
+    EGP:egpClear()
+    EGP:egpBox(300, vec2(256,256), vec2(508,508)) # INDEX 300 IS RESERVED FOR BACKGROUND BOX
+    EGP:egpCircle(299, vec2(0,0), vec2(2,2))    # INDEX 299 IS RESERVED FOR CURSOR DOT
+    EGP:egpColor(299, vec(0,0,0))
+    EGP:egpParentToCursor(299)
+    ResetTimer=0
+    MaterialIndex=1
+    Lag=0
+    LineBeingDrawn=0
+    
+    EGP2:egpClear()
+    EGP2:egpBox(300, vec2(256,256), vec2(508,508)) # INDEX 300 IS RESERVED FOR BACKGROUND BOX
+    EGP2:egpParentToCursor(299)
+    
+    
+    }
+
+holoColor(24,vec(UndoR,UndoG,UndoB))
+holoColor(27,vec(RedoR,RedoG,RedoB))
+if(UndoR<255){UndoR+=10} 
+if(UndoG<255){UndoG+=10} 
+if(UndoB<255){UndoB+=10} 
+if(RedoR<255){RedoR+=10} 
+if(RedoG<255){RedoG+=10} 
+if(RedoB<255){RedoB+=10}
+
+# SELECTING CLONE EGP
+if(CloneMode==0 & owner():keyUse() & owner():aimEntity()==entity()){soundPlay(99,soundDuration("common/talk.wav"),"common/talk.wav") CloneMode=1 hint("Select another EGP now", 5) SubName="waiting for selection" entity():setColor(vec(255,255,80))}
+if(CloneMode==1 & owner():aimEntity():type()=="gmod_wire_egp" & owner():aimEntity()!=E & owner():keyUse()){
+    #soundPlay(33,soundDuration("common/talk.wav"),"common/talk.wav")
+    SubName="Arcade mode disabled"
+    E2=owner():aimEntity() 
+    EGP2=E2:wirelink()
+    EGP2:egpClear()
+    EGP2:egpBox(300, vec2(256,256), vec2(508,508)) # INDEX 300 IS RESERVED FOR BACKGROUND BOX
+    soundPlay(20,soundDuration("common/talk.wav"),"common/talk.wav")
+    
+    entity():setColor(vec(80,255,80))
+    
+    hint("CLONE EGP SELECTED !",5)
+    CloneMode=3
+    
+    }
+
+#print(4,E:type())
+
+if(ArcadeMode==0){
+
+    
+# SELECTING
+if(!Master){
+for(I=1,players():count()){
+    if(players()[I, entity]:aimEntity()==E & players()[I, entity]:pos():distance(E:pos())<250 & players()[I, entity]:keyUse()){
+        soundPlay(20,soundDuration("common/talk.wav"),"common/talk.wav")
+        Master=players()[I, entity]
+        
+        }
+    }
+}
+# OWNER CONTROL TAKEOVER
+if(owner():aimEntity()==E&owner():keyUse()&!owner():keyAttack1()){Master=owner()}
+
+
+# DESELECTING
+if(Master&Master:pos():distance(E:pos())>300){
+    Master=noentity() 
+    soundPlay(20,soundDuration("/buttons/button1.wav"),"/buttons/button1.wav")
+    soundPitch(20, 130)}
+}
+
+
+
+
+# INDEX/INFO DISPLAYING
+setName("iPaintARC \n Index: "+Index:toString()+"/295 \n"+SubName)
+
+# ARCADE MODE SWITCH
+if(CloneMode==3&ArcadeMode==0&owner():aimEntity()==entity() & owner():keyUse()){
+    soundPlay(20,soundDuration("common/talk.wav"),"common/talk.wav")
+    ArcadeMode=1 
+    for(I=31,39){holoAlpha(I,255)}
+    Master=noentity()
+    SubName="- DRAW WHATEVER -"
+    hint("werks", 1)
+    
+    entity():setColor(vec(40,80,255))
+}
+
+# INDICATOR
+SinTimer++
+if(Master){holoPos(30, Master:pos()+vec(0,0,90+sin(SinTimer*4)*4))}else{holoPos(30, E:pos()+vec(0,0,60+sin(SinTimer*2)*4))}
+
+
+# ARCADE MODE
+if(ArcadeMode){
+    
+    runOnChat(1)
+    
+# SELECTING DRAWERS
+if(DrawingMode<=1){
+    Players=players()
+    for(I=1,Players:count()){
+        Break=0
+        
+      if(Players[I,entity]:aimEntity()==E & Players[I,entity]:keyUse()){
+        if(Players[I,entity]!=D1&
+        Players[I,entity]!=D2&
+        Players[I,entity]!=D3&
+        Players[I,entity]!=D4&
+        Players[I,entity]!=D5&
+        Players[I,entity]!=D6&
+        Players[I,entity]!=D7&
+        Players[I,entity]!=D8&
+        Players[I,entity]!=D9){
+            #if(!D1&!Break){D1=Players[I,entity] Break=1 holoEntity(31):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            if(!D2&!Break){D2=Players[I,entity] Break=1 holoEntity(32):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            if(!D3&!Break){D3=Players[I,entity] Break=1 holoEntity(33):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            if(!D4&!Break){D4=Players[I,entity] Break=1 holoEntity(34):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            if(!D5&!Break){D5=Players[I,entity] Break=1 holoEntity(35):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            if(!D6&!Break){D6=Players[I,entity] Break=1 holoEntity(36):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            if(!D7&!Break){D7=Players[I,entity] Break=1 holoEntity(37):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            if(!D8&!Break){D8=Players[I,entity] Break=1 holoEntity(38):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            if(!D9&!Break){D9=Players[I,entity] Break=1 holoEntity(39):soundPlay(347,soundDuration("garrysmod/content_downloaded.wav"),"garrysmod/content_downloaded.wav")}
+            }
+        }
+      }
+}
+# DRAWING
+
+# ATTENTION TO DRAWING PERSON
+if(D1&DrawingMode==0){   
+    
+    if(DrawingModeTimer<5){
+    EGP:egpClear()
+    EGP:egpBox(300, vec2(256,256), vec2(508,508)) # INDEX 300 IS RESERVED FOR BACKGROUND BOX
+    EGP:egpCircle(299, vec2(0,0), vec2(2,2))    # INDEX 299 IS RESERVED FOR CURSOR DOT
+    EGP:egpColor(299, vec(0,0,0))
+    EGP:egpParentToCursor(299)
+}
+    DrawingModeTimer++
+    Use=0
+    EGP2String="Get ready to draw "+D1:name()+" !"
+    Master=noentity()
+    EGP2:egpText(297,EGP2String,vec2(256,256))
+    EGP2:egpAlign(297,1,1)
+    EGP2:egpColor(297, vec(0,0,0))
+    EGP2:egpSize(297, 30)
+    
+    EGP2:egpText(298,"Answer was "+CurrentAnswer,vec2(256,2296))
+    EGP2:egpAlign(298,1,1)
+    EGP2:egpColor(298, vec(0,0,0))
+    EGP2:egpSize(298, 25)
+    
+    EGP2:egpTextLayout(299,"",vec2(0,240),vec2(512,512))
+    
+    EGP:egpTextLayout(298,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(50,40),vec2(412,422))
+    EGP:egpFont(298, "Courier New")
+    EGP:egpSize(298, 30)
+    EGP:egpAlign(298, 1,1)
+    EGP:egpColor(298, vec(255))
+    
+    EGP:egpTextLayout(297,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(51,41),vec2(412,422))
+    EGP:egpFont(297, "Courier New")
+    EGP:egpSize(297, 30)
+    EGP:egpAlign(297, 1,1)
+    EGP:egpColor(297, vec(0))
+    
+    EGP:egpColor(300, vec(255,180,180))
+    CurrentAnswer=Answers[random(1,Answers:count()), string]:lower()
+    Reroll=1
+    }
+    
+# START OF THE ROUND
+if(DrawingMode!=5&DrawingModeTimer>100){
+    
+    
+    
+    if(!Master&D1!=owner()&D1){concmd("say !p \""+D1:name()+"\" the answer is \""+CurrentAnswer+"\"") }
+    if(!Master&D1==owner()){print(3,"The answer is \""+CurrentAnswer+"\"")}
+    
+    
+    Master=D1
+    EGP2String="Now drawing: "+D1:name()
+    timer("DrawingTimer",1000)
+    
+    EGP:egpColor(300, vec(255))
+    EGP2:egpTextLayout(299,"",vec2(0,240),vec2(512,512))
+    
+    
+    if(DrawingMode==1){
+    EGP2:egpBox(296, vec2(256,495), vec2(512,40))
+    EGP2:egpColor(296, vec(0))
+    EGP2:egpAlpha(296, 120)
+    
+    EGP2:egpText(297,EGP2String,vec2(10,487))
+    EGP2:egpAlign(297,0,1)
+    EGP2:egpColor(297, vec(0,0,0))
+    EGP2:egpSize(297, 14)
+}
+    EGP2:egpText(298,"Time left: "+(100-DrawCounter):toString()+"             Next drawing person: "+D2:name(),vec2(10,501))
+    EGP2:egpAlign(298,0,1)
+    EGP2:egpColor(298, vec(0))
+    EGP2:egpSize(298, 14)
+    DrawingMode=1
+    
+    EGP:egpTextLayout(298,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(9950,40),vec2(412,422))
+    EGP:egpFont(298, "Courier New")
+    EGP:egpSize(298, 30)
+    EGP:egpAlign(298, 1,1)
+    EGP:egpColor(298, vec(255))
+    
+    EGP:egpTextLayout(297,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(9951,41),vec2(412,422))
+    EGP:egpFont(297, "Courier New")
+    EGP:egpSize(297, 30)
+    EGP:egpAlign(297, 1,1)
+    EGP:egpColor(297, vec(0))
+    
+    if(clk("DrawingTimer")){DrawCounter++}
+    
+    }
+    
+    
+
+
+# NOBODY GUESSED THE ANSWER IN TIME LIMIT OR D1 LEFT THE SERVER
+if(DrawingMode!=5&DrawingMode==1&DrawCounter>100|DrawingMode==1&!D1){
+    
+    EGP:egpClear()
+    
+    
+    DrawingMode=2
+    DrawingModeTimer++
+    DrawCounter++
+    EGP2:egpClear()
+    EGP2String="Nobody guessed the answer !"
+    
+    EGP:egpBox(300, vec2(256,256), vec2(508,508)) # INDEX 300 IS RESERVED FOR BACKGROUND BOX
+    EGP:egpColor(300, vec(255,80,80))
+    
+    EGP2:egpBox(300, vec2(256,256), vec2(508,508))
+    EGP2:egpColor(300, vec(255))
+    
+    EGP2:egpText(297,EGP2String,vec2(256,116))
+    EGP2:egpAlign(297,1,1)
+    EGP2:egpColor(297, vec(0,0,0))
+    EGP2:egpSize(297, 30)
+    
+    EGP2:egpText(298,"Answer was "+CurrentAnswer,vec2(256,156))
+    EGP2:egpAlign(298,1,1)
+    EGP2:egpColor(298, vec(0,0,0))
+    EGP2:egpSize(298, 25)
+    
+    EGP:egpTextLayout(298,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(50,40),vec2(412,422))
+    EGP:egpFont(298, "Courier New")
+    EGP:egpSize(298, 30)
+    EGP:egpAlign(298, 1,1)
+    EGP:egpColor(298, vec(255))
+    
+    EGP:egpTextLayout(297,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(51,41),vec2(412,422))
+    EGP:egpFont(297, "Courier New")
+    EGP:egpSize(297, 30)
+    EGP:egpAlign(297, 1,1)
+    EGP:egpColor(297, vec(0))
+    
+    EGP2:egpTextLayout(299,ScoreBoardPlayers[1,entity]:name()+"     "+ScoreBoardScores[1,number]
+    +"\n"+ScoreBoardPlayers[2,entity]:name()+"     "+ScoreBoardScores[2,number]
+    +"\n"+ScoreBoardPlayers[3,entity]:name()+"     "+ScoreBoardScores[3,number]
+    +"\n"+ScoreBoardPlayers[4,entity]:name()+"     "+ScoreBoardScores[4,number]
+    +"\n"+ScoreBoardPlayers[5,entity]:name()+"     "+ScoreBoardScores[5,number]
+    +"\n"+ScoreBoardPlayers[6,entity]:name()+"     "+ScoreBoardScores[6,number]
+    +"\n"+ScoreBoardPlayers[7,entity]:name()+"     "+ScoreBoardScores[7,number]
+    +"\n"+ScoreBoardPlayers[8,entity]:name()+"     "+ScoreBoardScores[8,number]
+    +"\n"+ScoreBoardPlayers[9,entity]:name()+"     "+ScoreBoardScores[9,number]
+    +"\n"+ScoreBoardPlayers[10,entity]:name()+"     "+ScoreBoardScores[10,number],vec2(0,200),vec2(512,512))
+    EGP2:egpAlign(299,1,0)
+    EGP2:egpColor(299, vec(0))
+    EGP2:egpFont(299, "Courier New")
+    EGP2:egpSize(299,27)
+    EGP2:egpColor(299, vec(0))
+    
+    if(Winner&SoundT<1){
+    entity():soundPlay(643,0.5, "friends/message.wav")
+    SoundT++
+    soundPitch(643, 200)
+    }
+    
+    # DELETING CURRENT DRAWING GUY, RESETING DRAWING
+    if(DrawCounter>180){
+        DrawingMode=0
+        DrawingModeTimer=0
+        DrawCounter=0
+        D1=noentity()
+        Master=noentity()
+        Index=1
+        SoundT=0
+        }
+    
+    }
+
+# SWITCHING D's IF EMPTY
+if(!D1){
+    D1=D2 D2=noentity()
+    if(!D2){D2=D3 D3=noentity()
+        if(!D3){D3=D4 D4=noentity()
+            if(!D4){D4=D5 D5=noentity()
+                if(!D5){D5=D6 D6=noentity()
+                    if(!D6){D6=D7 D7=noentity()
+                        if(!D7){D7=D8 D8=noentity()
+                            if(!D8){D8=D9 D9=noentity()
+                                if(D9){}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+}
+# CODING MASTER 2014 YEAHHHHHHHHHH
+# YO DAWG I HEARD YOU LIKE IF STATEMENTS, SO I PUT IF IN YOUR IF... I PUT LIKE 8 IFS IN IF
+# SO YOU CAN STATE YOUR STATING STATEMENT WHILE YOU HOLD YOUR HEAD SAYING "WHO THE FUCK WROTE THIS SHIT"
+
+# DRAWER MARKER POSITIONING AND ALPHING
+holoPos(31, D1:pos()+vec(0,0,120))
+holoPos(32, D2:pos()+vec(0,0,120))
+holoPos(33, D3:pos()+vec(0,0,120))
+holoPos(34, D4:pos()+vec(0,0,120))
+holoPos(35, D5:pos()+vec(0,0,120))
+holoPos(36, D6:pos()+vec(0,0,120))
+holoPos(37, D7:pos()+vec(0,0,120))
+holoPos(38, D8:pos()+vec(0,0,120))
+holoPos(39, D9:pos()+vec(0,0,120))
+
+#OwnerLastSaid:string LastSaid LastSaidWhen
+
+
+# CHAT DRAWER REMOVING - SAY "!nope" TO REMOVE CURRENT DRAWER
+OwnerLastSaid=owner():lastSaid()
+OwnerLastSaidWhen=owner():lastSaidWhen()
+D1LastSaid=D1:lastSaid()
+D1LastSaidWhen=D1:lastSaidWhen()
+
+# OWNER D1 REMOVE
+if(OwnerLastSaid=="!nope" & $OwnerLastSaidWhen & D1!=owner()){
+        DrawingMode=0
+        DrawingModeTimer=0
+        DrawCounter=0
+        Master=noentity()
+        if(D2){D1=D2 D2=noentity()}else{D1=noentity()}
+        
+        D2=D3
+        D3=D4
+        D4=D5
+        D5=D6
+        D6=D7
+        D7=D8
+        D8=D9
+        D9=noentity()
+        
+        
+        EGP2:egpClear()
+        EGP2:egpBox(300, vec2(256,256), vec2(508,508))
+        EGP2:egpColor(300, vec(255))
+        holoEntity(5):soundPlay(20,soundDuration("/buttons/button1.wav"),"/buttons/button1.wav")
+        
+    EGP:egpTextLayout(298,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(50,40),vec2(412,422))
+    EGP:egpFont(298, "Courier New")
+    EGP:egpSize(298, 30)
+    EGP:egpAlign(298, 1,1)
+    EGP:egpColor(298, vec(255))
+    
+    EGP:egpTextLayout(297,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(51,41),vec2(412,422))
+    EGP:egpFont(297, "Courier New")
+    EGP:egpSize(297, 30)
+    EGP:egpAlign(297, 1,1)
+    EGP:egpColor(297, vec(0))
+    
+    }
+    
+# D1 FORFEIT CHAT COMMAND
+if(DrawingMode==1 & D1LastSaid=="!nope" & $D1LastSaidWhen){
+        DrawingMode=0
+        DrawingModeTimer=0
+        DrawCounter=0
+        Master=noentity()
+        EGP2:egpClear()
+        EGP2:egpBox(300, vec2(256,256), vec2(508,508))
+        EGP2:egpColor(300, vec(255))
+        
+         if(D2){D1=D2 D2=noentity()}else{D1=noentity()}
+        
+        D2=D3
+        D3=D4
+        D4=D5
+        D5=D6
+        D6=D7
+        D7=D8
+        D8=D9
+        D9=noentity()
+        
+        holoEntity(5):soundPlay(20,soundDuration("/buttons/button1.wav"),"/buttons/button1.wav")
+        
+    EGP:egpTextLayout(298,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(50,40),vec2(412,422))
+    EGP:egpFont(298, "Courier New")
+    EGP:egpSize(298, 30)
+    EGP:egpAlign(298, 1,1)
+    EGP:egpColor(298, vec(255))
+    
+    EGP:egpTextLayout(297,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(51,41),vec2(412,422))
+    EGP:egpFont(297, "Courier New")
+    EGP:egpSize(297, 30)
+    EGP:egpAlign(297, 1,1)
+    EGP:egpColor(297, vec(0))
+    }
+
+# RERROLING THE ANSWER
+if(DrawingMode==1 & D1LastSaid=="!reroll" & $D1LastSaidWhen & Reroll==1 & DrawCounter<=75){
+     
+    CurrentAnswer=Answers[random(1,Answers:count()), string]:lower()
+    timer("rerollmsg",1000)
+    Reroll=0
+}
+if(clk("rerollmsg")){
+    if(D1!=owner()&D1){concmd("say !p \""+D1:name()+"\" the answer is \""+CurrentAnswer+"\"") }
+    if(D1==owner()){print(3,"The answer is \""+CurrentAnswer+"\"")}
+}
+
+
+
+# GUESSING THE ANSWER
+LastSaid = lastSaid():lower()
+LastSaidWhen = lastSaidWhen()
+LastSaidLength = LastSaid:length()
+#LastSaidCorrect
+LastSaidArray = LastSaid:explode(""):concat(""):explode("")
+CurrentAnswerArray = CurrentAnswer:explode("")
+
+
+    # COMPARING ANSWERS WITH CHAT
+    #if(DrawingMode==1&LastSaidArray[CurrentCheck,string]==CurrentAnswerArray[CurrentCheck,string]){LastSaidCorrect++ CurrentCheck++}else{CurrentCheck++}    
+    #if(DrawingMode==1&CurrentCheck>CurrentAnswer:length()){LastSaidCorrect=0 CurrentCheck=0}
+        for(I=1,CurrentAnswerArray:count()){  # WORKING 1.0
+        if(DrawingMode==1&LastSaidArray[I,string]==CurrentAnswerArray[I,string]){LastSaidCorrect++ CurrentCheck++} # WORKING 1.0
+        if(DrawingMode==1&LastSaidArray[I,string]!=CurrentAnswerArray[I,string]){LastSaidCorrect-- CurrentCheck++} # WORKING 1.0
+        if(DrawingMode==1&CurrentCheck>CurrentAnswer:length()|$LastSaidWhen){LastSaidCorrect=0 CurrentCheck=0} # WORKING 1.0
+    } # WORKING 1.0
+    
+    # SEMI WORKING FAILSAFES
+    #if(DrawingMode==1&LastSaidArray[CurrentCheck,string]==CurrentAnswerArray[CurrentCheck,string]){LastSaidCorrect++ CurrentCheck++}else{CurrentCheck++}    
+    #if(DrawingMode==1&CurrentCheck>CurrentAnswer:length()){LastSaidCorrect=0 CurrentCheck=0}
+    #if(lastSpoke()!=D1&DrawingMode==1&CurrentAnswer:length()>2&LastSaidCorrect>=(CurrentAnswer:length()-2)){
+        
+        
+        
+    #if(lastSpoke()!=D1&DrawingMode==1&CurrentAnswer:length()>2&LastSaidCorrect>=(CurrentAnswer:length()-2)){
+        
+        MistakeMargin=floor(CurrentAnswer:length()-CurrentAnswer:length()/4)
+        
+        #ScoreBoardPlayers:pushEntity(D1) 
+        #ScoreBoardScores:pushNumber(1)
+        
+# ADDING SCORE
+        # LENGTH HAD -2                                        THIS ONE
+        if(lastSpoke()!=D1&DrawingMode==1&LastSaidCorrect>=(CurrentAnswer:length())&SBSwitch==0){
+
+
+            Winner=lastSpoke()
+            # FAILSAVES (2 UNDER THAT)
+            #ScoreBoardPlayers:pushEntity(D1) 
+            #ScoreBoardScores:pushNumber(1)
+            
+            for(I=0,ScoreBoardScores:count()){
+                
+                if(ScoreBoardPlayers:count()==0){
+                    ScoreBoardPlayers:pushEntity(Winner) 
+                    ScoreBoardScores:pushNumber(1)
+                    SBSwitch=1
+
+                }
+                
+                if(SBSwitch==0 & ScoreBoardPlayers[I,entity]==Winner){
+                    ScoreBoardScores[I,number]=ScoreBoardScores[I,number]+1
+                    SBSwitch=1
+
+                    }
+                
+                if(SBSwitch==0& I==ScoreBoardPlayers:count() & ScoreBoardPlayers[ScoreBoardPlayers:count(),entity]!=Winner){
+                    
+                    ScoreBoardPlayers:pushEntity(Winner) 
+                    ScoreBoardScores:pushNumber(1)
+                    
+                    SBSwitch=1
+                    }
+                
+                
+                
+                
+                
+                
+                
+            }
+            
+            
+            
+            
+            SBSwitch=1}
+        #lastSpoke()!=D1&
+        # LENGTH HAD -2                                        THIS ONE
+        if(lastSpoke()!=D1&DrawingMode==1&LastSaidCorrect>=(CurrentAnswer:length())){
+        #Winner=lastSpoke()
+        DrawingMode=5
+        
+        
+# SORTING
+        for(I=1,ScoreBoardScores:count()){
+            
+           # if(ScoreBoardPlayers[I,entity]==noentity()){ScoreBoardScores[I,number]=0}
+            
+        #TempScore TempPlayer:entity
+        if((ScoreBoardScores[I+1,number]+1)>(ScoreBoardScores[I,number]+1)){
+            
+            TempScore=ScoreBoardScores[I,number]
+            TempPlayer=ScoreBoardPlayers[I,entity]
+            
+            ScoreBoardScores[I,number]=ScoreBoardScores[I+1,number]
+            ScoreBoardPlayers[I,entity]=ScoreBoardPlayers[I+1,entity]
+            
+            ScoreBoardScores[I+1,number]=TempScore
+            ScoreBoardPlayers[I+1,entity]=TempPlayer
+            
+        }
+        
+        
+        
+        
+        
+        
+        
+    }
+    
+    if(Winner&SoundT<1){
+    entity():soundPlay(643,0.5, "friends/message.wav")
+    SoundT++
+    soundPitch(643, 200)
+    }
+           
+    EGP2:egpClear()
+    EGP2String=Winner:name()+" guessed the answer !"
+    
+    EGP:egpColor(300, vec(200,255,200))
+    
+    EGP2:egpBox(300, vec2(256,256), vec2(508,508))
+    EGP2:egpColor(300, vec(255))
+    
+    EGP2:egpText(297,EGP2String,vec2(256,116))
+    EGP2:egpAlign(297,1,1)
+    EGP2:egpColor(297, vec(0,0,0))
+    EGP2:egpSize(297, 30)
+    
+    EGP2:egpText(298,"Answer was "+CurrentAnswer,vec2(256,156))
+    EGP2:egpAlign(298,1,1)
+    EGP2:egpColor(298, vec(0,0,0))
+    EGP2:egpSize(298, 25)
+    
+    EGP:egpTextLayout(298,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(50,40),vec2(412,422))
+    EGP:egpFont(298, "Courier New")
+    EGP:egpSize(298, 30)
+    EGP:egpAlign(298, 1,1)
+    EGP:egpColor(298, vec(255))
+    
+    EGP:egpTextLayout(297,"WANT TO DRAW NEXT ?\n\n Click E on this screen to get added to the drawing queue !                  \n\n\n E - pencil           \n R - line             \n\n\nYou will get your answer via private message",vec2(51,41),vec2(412,422))
+    EGP:egpFont(297, "Courier New")
+    EGP:egpSize(297, 30)
+    EGP:egpAlign(297, 1,1)
+    EGP:egpColor(297, vec(0))
+    
+    EGP2:egpTextLayout(299,ScoreBoardPlayers[1,entity]:name()+"     "+ScoreBoardScores[1,number]
+    +"\n"+ScoreBoardPlayers[2,entity]:name()+"     "+ScoreBoardScores[2,number]
+    +"\n"+ScoreBoardPlayers[3,entity]:name()+"     "+ScoreBoardScores[3,number]
+    +"\n"+ScoreBoardPlayers[4,entity]:name()+"     "+ScoreBoardScores[4,number]
+    +"\n"+ScoreBoardPlayers[5,entity]:name()+"     "+ScoreBoardScores[5,number]
+    +"\n"+ScoreBoardPlayers[6,entity]:name()+"     "+ScoreBoardScores[6,number]
+    +"\n"+ScoreBoardPlayers[7,entity]:name()+"     "+ScoreBoardScores[7,number]
+    +"\n"+ScoreBoardPlayers[8,entity]:name()+"     "+ScoreBoardScores[8,number]
+    +"\n"+ScoreBoardPlayers[9,entity]:name()+"     "+ScoreBoardScores[9,number]
+    +"\n"+ScoreBoardPlayers[10,entity]:name()+"     "+ScoreBoardScores[10,number],vec2(0,200),vec2(512,512))
+    EGP2:egpAlign(299,1,0)
+    EGP2:egpColor(299, vec(0))
+    EGP2:egpFont(299, "Courier New")
+    EGP2:egpSize(299,27)
+    EGP2:egpColor(299, vec(0))
+    
+    
+    
+    
+    
+    
+    
+    #EGP2:egpTextLayout(299,"PLAYER 1 - BRAZILION POINTS\nPLAYER2 - I DUNNO LOL\nSTUFF",vec2(256,256),vec2(512,512))
+    
+    
+    
+        }
+if(DrawingMode==5){
+    WinTimer++
+    Master=noentity()
+    
+    # MAKE SORTING HERE
+    
+    
+    
+    
+    
+    if(WinTimer>150){
+        
+        SBSwitch=0
+        Master=noentity()
+        LastSaidCorrect=0
+        CurrentCheck=0
+        CurrentAnswer="37825t23g45yu2345yu23v5$^YES%^SEY&^"
+        CurrentAnswerArray:clear()
+        DrawingMode=0
+        DrawingModeTimer=0
+        DrawCounter=0
+        D1=noentity()
+        WinTimer=0
+        Winner=noentity()
+        Index=1
+        SoundT=0
+        #for(I=0,30){if(ScoreBoardPlayers[I,entity]:type()==""){ScoreBoardScores[I,number]=0}}
+    }
+
+
+}
+
+
+
+
+#print(4,ScoreBoardPlayers:count():toString())
+
+# PUT THESE FUCKERS IN IF FIRST
+
+# ORIGINAL ANSWER PACK
+#AnswersPack="rainbow;factory;apple;rollercoaster;church;saturn;speakers;bottle;bandage;hospital;cookie;juice;water;glass;window;pistol;"+
+"parachute;clock;river;pyramid;grass;knight;sword;shield;horse;castle;helmet;wrench;sentry;boots;pants;beard;eyes;shark;bread;butter;"+
+"machinegun;bomb;parrot;grenade;pirate;airplane;airport;seaport;microphone;screen;desk;mouse;keyboard;drawer;shelf;dekstop;atom;trash;jeep;"+
+"syringe;sniper;soldier;medic;spy;bow;arrow;explosive;pikachu;portal;mushroom;tree;orange;apple;banana;bullet;computer;minecraft;vampire;priest;heart;"+
+"lemon;monkey;hand;knife;crossbow;spear;goat;axe;camel;train;submarine;star;milk;egg;chicken;cloud;mountain;snowman;king;crown;queen;flag;"+
+"sombrero;chainsaw;treadmill;nose;map;skyrim;toolgun;shotgun;spoon;fork;candy;fan;elevator;stairs;fire;torch;pickaxe;bull;printer;goggles;chair;"+
+"wallet;microwave;teeth;tongue;giraffe;elephant;snake;bank;library;restaurant;"
+
+# PICTIONARY PACK
+#AnswersPack="cd;dj;no;tv;ace;add;alf;ant;ape;arm;art;ash;axe;bag;bat;bay;bed;bee;bff;bib;bow;box;bug;bum;bus;can;cap;car;cat;cow;cry;cup;cut;die;dig;dna;dog;ear;eat;eel;egg;end;eye;fan;fin;flu;fly;fog;fox;fur;gas;gem;gum;gun;gza;ham;hat;hop;hot;hug;hut;ice;ink;inn;jam;jar;jaw;jet;jlo;jug;keg;key;kfc;lab;lap;leg;lid;lin;lip;log;low;map;mat;moo;mop;mtv;mud;mug;net;nun;nut;oar;off;oil;owl;paw;pee;pen;pet;pie;pig;pin;pot;rag;rap;rat;red;rim;row;rug;rza;sad;saw;sea;sew;shy;sit;ski;sky;son;sun;tag;tea;tie;toe;tug;ufo;uno;usa;usb;van;vet;war;wax;wig;wow;zoo;abba;acdc;afro;ants;army;asia;baby;back;bait;bake;bald;ball;band;bank;bark;barn;bart;base;beak;bear;beef;beer;bell;belt;bike;bill;bird;blow;blue;boat;bomb;bone;book;boot;bowl;bulb;bull;burn;burp;butt;buzz;cage;cake;calf;cane;cape;card;cave;chef;chew;chin;city;clam;clap;claw;clay;club;coal;coat;coin;cold;comb;cone;cook;cork;corn;crab;crib;cuba;curl;cute;dart;dead;deaf;deck;deep;deer;desk;devo;dice;dirt;diva;dive;dock;doll;door;dots;dove;down;draw;drip;drum;duck;duel;dunk;east;echo;edge;elmo;evil;ewok;eyes;face;fall;fans;farm;fart;fear;feet;fern;fire;fish;fist;flag;flat;flea;fool;foot;fork;fort;foul;frat;frog;gale;gate;geek;germ;girl;glee;glue;goal;goat;gold;golf;grid;grin;hail;hair;halo;hand;hare;harp;head;hear;heat;heel;hill;hobo;home;hood;hook;hoop;horn;hose;hulk;hunt;hurt;idea;ikea;ipad;iron;jail;jaws;jayz;jazz;jeep;jump;katy;kick;kilt;king;kiss;kite;knee;knot;kobe;lady;lake;lamb;lamp;lava;lead;leaf;leak;left;lens;lick;lift;lime;limo;line;link;lion;lips;lisa;list;lock;long;loop;lost;love;luge;luke;lung;mail;mall;mars;mask;maze;meal;meat;melt;meow;milk;mint;moon;muse;nail;name;nash;navy;neck;nemo;nerd;nest;news;nike;noob;nose;oars;odor;open;oreo;oval;oven;page;palm;park;pass;path;pear;peas;pill;pink;pipe;plug;plum;poke;polo;pong;pony;pool;poop;poor;pork;posh;pray;prom;puke;pull;push;race;raft;rain;rake;ramp;rest;ribs;rice;ride;ring;risk;road;robe;rock;roll;roof;root;rope;rose;ruby;sack;sail;salt;sand;scar;seal;seat;seed;shaq;shin;ship;shoe;shot;sing;sink;sith;skin;skis;slam;slap;sled;slip;snog;snow;soap;sock;soda;sofa;soil;song;soup;spin;spit;stab;star;step;stop;surf;swag;swan;swim;taco;tail;tall;tank;tape;taxi;tent;thin;thug;time;tire;toad;toga;tomb;toms;tool;toys;tray;tree;tuba;tuna;tune;tusk;twig;tyra;uggs;ugly;vase;veil;vein;vent;vest;vice;vine;vote;walk;wall;wand;wart;wash;wasp;wave;weak;weed;week;weep;well;west;whip;wife;wimp;wind;wine;wing;wink;wire;wise;wolf;wood;wool;work;worm;xbox;xray;yarn;yawn;yeti;ymca;yoda;yoga;yoyo;zeus;zoom;acorn;adele;alarm;alien;align;alone;angel;anger;ankle;apple;apron;ariel;armor;arrow;attic;avril;awake;award;bacon;badge;bagel;beach;beans;beard;bench;bible;bingo;black;blade;blimp;blind;bling;blood;blush;bones;boots;booty;brain;bread;brick;bride;broom;brush;bunny;cabin;cable;caddy;camel;candy;canoe;cards;chain;chair;chalk;champ;chart;check;cheek;chess;chest;china;chips;cigar;class;cliff;climb;clock;cloud;clown;coach;comet;comic;conan;couch;court;cover;crack;crane;crash;crawl;crown;crush;crust;cupid;dance;death;delta;devil;disco;dizzy;donut;doors;drain;drake;dream;dress;drill;drink;drive;drums;drunk;dumbo;eagle;earth;effie;elbow;ellen;elton;elvis;empty;fairy;fangs;fence;ferry;fever;field;fight;first;flame;flash;flirt;flood;floor;floss;flour;flush;force;frame;frodo;frown;fruit;furby;gears;ghost;glass;globe;glove;golem;goofy;goose;grade;graph;grass;grave;gravy;green;grill;groom;gross;hairy;happy;heart;heidi;hippo;homer;honey;horse;hotel;house;icing;igloo;japan;jeans;jello;jelly;jenga;jeter;joker;jonas;judge;juice;kanye;kirby;knife;knock;koala;koopa;korea;laser;lasso;laugh;leash;lemon;liger;light;limbo;luigi;lunch;magic;mango;marge;mario;marry;medal;messy;meter;miami;miley;model;money;moose;motor;mouse;mouth;mummy;music;nicki;night;ninja;noose;north;novel;nurse;obama;ocean;onion;opera;oprah;orbit;organ;paint;panda;pants;paper;paris;patch;peace;peach;pearl;pedal;peeps;peeta;penny;pepsi;perez;petal;phone;piano;pilot;pinky;pizza;plane;plant;plate;pluto;poker;pouch;power;print;prism;prius;punch;puppy;purse;quack;queen;quiet;quilt;radar;radio;razor;rhino;rifle;river;roast;robot;rondo;round;ruler;salad;salsa;samba;santa;scale;scarf;screw;shade;shape;shark;sharp;shave;sheep;shelf;shell;shirt;shoes;shoot;shore;short;shrek;simon;skate;skirt;skull;skunk;sleep;slide;slimy;slope;small;smell;smile;smoke;smurf;snail;snake;snoop;snore;socks;sonic;sorry;south;spain;speak;spear;spine;spock;spoon;spray;squid;stage;stain;stamp;stare;steak;steal;steam;steep;stern;sting;stone;stool;stork;storm;stove;straw;stump;sugar;sunny;sushi;sweat;sweet;swing;sword;syrup;table;tacos;tango;taser;tears;teeth;thief;thigh;thong;thorn;throw;thumb;tiara;tiger;tiles;toast;tools;tooth;torch;tower;train;trash;troll;truck;trump;trunk;tummy;tupac;turbo;tweed;twins;twist;udder;under;union;unzip;usher;vader;vault;vegas;venom;venus;video;viola;virus;voice;vomit;wagon;waist;waldo;waste;watch;water;waves;weave;wedge;weird;whale;wheat;wheel;white;widow;winch;wires;witch;woman;worry;wound;wreck;wrist;xerox;yacht;yield;young;zebra;zelda;zumba;africa;airbag;amazon;anchor;arcade;armpit;arnold;artist;attack;avatar;baking;ballot;bamboo;banana;bandit;barber;barbie;barney;barrel;basket;batman;beavis;bestie;bieber;bikini;blonde;booger;border;bottle;bottom;bounce;bowser;bowtie;boxing;braces;brakes;brazil;breath;bridge;briefs;bubble;bucket;buckle;buddha;bullet;bumper;bungee;burger;butter;button;cactus;camera;canada;candle;cannon;carpet;carrot;casino;castle;celery;center;cereal;chanel;cheese;cherry;church;circle;circus;closet;cocoon;coffee;coffin;collar;cookie;corner;cowboy;crayon;cuddle;dallas;danger;desert;diaper;dinner;dishes;doctor;dollar;domino;donkey;dougie;dragon;drapes;drawer;duster;earwax;easter;eminem;engine;eraser;escape;eskimo;europe;eyelid;family;farmer;father;faucet;female;finger;flight;flower;folder;forest;france;fridge;friend;funnel;galaxy;gandhi;garage;garden;garlic;goalie;google;grammy;grapes;guitar;hammer;handle;hanger;harbor;hawaii;heaven;helmet;hiking;hiphop;hobbit;hockey;hoodie;horton;hotdog;hottub;hummer;hungry;hustle;icarly;icebox;icepop;icicle;insect;iphone;island;jacket;jaguar;jersey;jetski;jigsaw;jordan;juggle;jungle;kansas;karate;kidney;killer;kitten;knives;kraken;kungfu;ladder;laptop;lawyer;lebron;lemons;letter;lipton;liquid;lizard;locket;london;lotion;lumber;lyrics;magnet;makeup;marble;mariah;marine;medusa;meteor;mexico;middle;mirror;mohawk;monkey;mother;mozart;muffin;muscle;museum;nachos;napkin;nascar;needle;nickel;noodle;norway;number;omelet;omgpop;online;orange;outlet;pacman;paddle;paella;palace;parade;parrot;paulyd;pdiddy;peanut;pencil;pepper;person;pickle;picnic;pigeon;pillow;pimple;pirate;pistol;planet;pocket;poison;police;poodle;poster;potato;pounce;powder;pretty;prince;prison;puppet;pushup;puzzle;rabbit;raisin;rattle;record;reddit;reggae;ribbon;ripple;robber;rocket;runway;russia;saddle;safari;sailor;salami;saturn;school;scooby;scotty;scream;screen;seesaw;selena;shadow;sheets;shield;shorts;shovel;shower;shrimp;singer;sister;skater;skiing;skinny;skyrim;sleigh;smores;sneeze;sniper;snooki;snoopy;soccer;socket;spider;spiral;sponge;spring;sprite;square;stable;stairs;statue;stereo;stilts;stoner;stream;street;strike;string;stripe;subway;sudoku;summer;sundae;sunset;sweaty;sweden;swings;switch;swoosh;taiwan;target;tattoo;taylor;teabag;teacup;teapot;techno;teepee;tennis;tetris;throat;throne;ticket;tickle;tintin;tissue;toilet;tomato;tongue;tripod;trophy;tshirt;tumblr;tunnel;turkey;turtle;tuxedo;uranus;urchin;vacuum;valley;vanish;velcro;victim;viking;violin;visine;volume;voodoo;vortex;waffle;waiter;wakeup;wallet;walrus;warhol;wattle;waving;wedgie;weezer;wicked;widget;wiggle;wigwam;willow;window;winner;winter;wizard;wonder;wrench;wutang;xgames;yellow;yogurt;zigzag;zipper;zombie;zygote;airhead;airport;aladdin;allstar;america;android;animals;antenna;antlers;aquaman;archery;asterix;atlanta;avocado;bahamas;balance;balcony;ballers;balloon;bandaid;bandana;barcode;barkley;bathtub;battery;bayonet;bazooka;beatles;beckham;beehive;beyonce;bicycle;bigfoot;blanket;blender;blondie;bonfire;bonjovi;boombox;bowling;breakup;britney;broncos;brownie;bubbles;buffalo;bunkbed;burrito;butcher;cabinet;camping;captain;carmelo;carpool;carseat;carwash;cashier;catfish;cattail;caveman;ceiling;centaur;chicken;chimney;coconut;colbert;college;compass;concert;cookies;corndog;cowgirl;crowbar;crystal;cueball;cupcake;curtain;cyclops;dentist;diamond;dimples;diploma;disease;divorce;djdrama;dogfish;dogsled;dolphin;doormat;doritos;dracula;dreidel;dresser;dribble;drummer;drumset;dubstep;dustpan;earring;eclipse;eggroll;emerald;england;explode;eyeball;eyebrow;eyelash;factory;fanmail;feather;fencing;finland;firefly;firefox;fishing;florida;forward;frenemy;frisbee;funeral;gameboy;gandalf;gasmask;germany;giraffe;glasses;goddess;goggles;gorilla;grandma;grandpa;grenade;griffin;gymnast;haircut;hairdye;hairgel;hairtie;hambone;hammock;hamster;hamwich;handbag;handgun;hangman;hashtag;hawkeye;headset;holiday;holland;homerun;husband;iceberg;icecube;ireland;ironman;jamaica;javelin;jayleno;jewelry;journey;jukebox;jupiter;justice;katniss;ketchup;kitchen;kneecap;knuckle;kwanzaa;ladybug;lamprey;latrine;leather;leopard;library;lighter;lincoln;lobster;luggage;macbook;madonna;mailbox;mailman;mammoth;mansion;markers;martini;mascara;massage;melting;menorah;mercury;mermaid;metroid;milkman;minivan;missile;mittens;monster;morning;mustard;narwhal;neptune;newyork;nirvana;noodles;nostril;notepad;oaktree;oatmeal;octagon;octopus;origami;orlando;ostrich;outkast;padlock;painter;pajamas;pancake;parents;peaches;peacock;pegasus;penguin;perfume;petfood;petshop;phoenix;picasso;picture;pikachu;pinball;pitbull;pitcher;pitfall;plumber;plunger;poolboy;popcorn;popular;porsche;pretzel;puddles;pumpkin;pyramid;quarter;raccoon;racecar;raekwon;raiders;rainbow;rapture;reaping;rebound;recycle;redhead;referee;reptile;riddler;rihanna;ringpop;rooster;rowboat;rugrats;sandals;sandbox;sausage;science;scooter;scratch;seafood;seagull;seasick;seaweed;shakira;shampoo;sheriff;shoebox;shotgun;shuttle;sixpack;skydive;skyline;smoking;snorkel;snowman;soldier;speaker;spinach;stadium;stapler;stomach;sunburn;surfing;surgeon;sweater;tadpole;takeoff;teacher;tempest;tequila;texting;theater;thunder;timeout;tinafey;titanic;toaster;toenail;toolbox;tornado;torpedo;tractor;traffic;trapeze;tribute;trouble;trumpet;tuesday;tugboat;twinkie;twitter;twoface;ukulele;unibrow;unicorn;vaccine;vampire;vangogh;vikings;village;vitamin;volcano;warrior;wedding;weights;whiskey;whisper;whistle;whopper;windows;wingman;wingnut;witness;worship;writing;yahtzee;yankees;youtube;zipline;airplane;alphabet;angelina;aquarium;assassin;asteroid;atlantis;audience;autobots;avengers;backache;backbone;backflip;backpack;bagpipes;baguette;barbeque;barbwire;barefoot;barstool;baseball;birdcage;birthday;blizzard;bobdylan;bookcase;bookmark;bracelet;bradpitt;branches;broccoli;bromance;brucelee;building;bullseye;calendar;campfire;carnival;catapult;catwoman;cemetery;chainsaw;checkers;children;computer;crescent;crossbow;crutches;customer;daftpunk;dandruff;defender;dentures;dinosaur;director;doorbell;doorknob;doorstep;dumbbell;dynamite;earmuffs;eggplant;election;elephant;elevator;envelope;espresso;eyepatch;facebook;fastfood;festivus;fireball;firewall;firewood;firework;firstaid;flamingo;follower;football;forehead;forklift;fountain;fraction;freezing;frosting;gangster;gardener;garfield;geronimo;giftwrap;goalpost;goldfish;golfcart;golfclub;graduate;greenday;halfpipe;handball;handcuff;hanukkah;haymitch;headache;headband;hercules;highfive;homeless;homework;hongkong;hospital;hotsauce;hulahoop;iceskate;insomnia;ironchef;joystick;jumpball;jumprope;junkfood;kangaroo;katemoss;keyboard;keychain;kneepads;knitting;ladygaga;laughing;lavalamp;lemonade;lilduval;lilwayne;lionking;lipstick;lollipop;longjump;lovebird;ludacris;macarena;macaroni;magazine;magician;manicure;marriage;mattress;mchammer;meatball;meathead;medicine;minigolf;minotaur;monopoly;mosquito;mountain;multiply;munchkin;mushroom;musicbox;mustache;nailfile;necklace;nosehair;nosering;notebook;oilfield;olympics;omggirlz;ornament;overalls;overflow;overtime;pacifier;paintcan;painting;palmtree;pancakes;pantsuit;paperbag;papercut;partyhat;password;patriots;penguins;piechart;pinecone;pinetree;pingpong;pinwheel;polaroid;polkadot;ponytail;popsicle;portrait;poseidon;positive;postcard;pregnant;presents;pricetag;primrose;princess;railroad;raincoat;raindrop;reindeer;ringtone;roadkill;rockstar;sailboat;sandwich;sapphire;scissors;scorpion;scotland;scrabble;seahorse;seashell;seatbelt;shoelace;shoulder;sideburn;sidewalk;skeeball;skeleton;skittles;skrillex;slamdunk;sledding;slippers;smoothie;snakepit;sneakers;snowball;snowcone;sombrero;sorority;soulmate;soysauce;sparkles;splinter;squirrel;starfish;startrek;starwars;steelers;straight;strawman;stroller;students;suitcase;sunblock;sunshine;superman;survivor;sweettea;swimming;swimsuit;swingset;symphony;teardrop;teaspoon;tebowing;teenager;tentacle;thelorax;theonion;timebomb;timeline;timezone;tombrady;tomhanks;tortoise;towtruck;trapdoor;trashcan;triangle;tricycle;triplets;trombone;tropical;tweezers;twilight;umbrella;unicycle;uppercut;upstairs;vacation;vertical;vineyard;waitress;warcraft;wardrobe;waterbed;watergun;werewolf;whiskers;wildfire;windmill;wireless;workshop;worldcup;wormhole;wrestler;wrinkles;yardsale;yearbook;zeppelin"
+
+
+Answers=AnswersPack:explode(";")
+
+}
+#if(owner():name()!="Tek"){selfDestructAll()}
+
+#for(I=0,30){if(ScoreBoardPlayers[I,entity]:type()==""){ScoreBoardScores[I,number]=0}}
+#print(4, ScoreBoardScores[4,number]:toString())

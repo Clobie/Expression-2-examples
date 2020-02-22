@@ -1,0 +1,20 @@
+
+@persist 
+
+if( first() ) {
+    
+    function vector bezier3( T, [P1 P2 P3]:vector ) {
+        return P1 * ( 1 - T ) ^ 2 + P2 * 2 * T * ( 1 - T ) + P3 * T ^ 2
+    }
+    
+    function vector bezier4( T, [P1 P2 P3 P4]:vector ) {
+        return P1 * ( 1 - T ) ^ 3 + P2 * 3 * T * ( 1 - T ) ^ 2 + P3 * 3 * T ^ 2 * ( 1 - T ) + P4 * T ^ 3
+    }
+    
+    
+}
+
+for( I = 1, 80 ) {
+    holoCreate( I )
+    holoPos( I, bezier3( I/70, entity():pos() + vec(0,500,0), entity():pos() + vec(0,0,1000), entity():pos() + vec(0,-500,0) ) )
+}

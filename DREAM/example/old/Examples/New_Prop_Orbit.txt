@@ -1,0 +1,14 @@
+@name New Prop Orbit
+@persist Prop:array Star:entity
+
+if( first() )
+{
+    Star = entity()
+}
+elseif( clk() )
+{
+    for( I = 1, Prop:count() )
+    {
+        
+    }
+}

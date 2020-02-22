@@ -1,0 +1,32 @@
+@name 
+@inputs [E1 E2]:entity
+@outputs 
+@outputs Points:array
+@trigger 
+
+
+if(first()){
+    function matrix4 mix(N, [M1 M2]:matrix4){
+        return N * M1 + (1 - N) * M2
+    }
+    local R = 5
+    for(I = 1, clamp(holoRemainingSpawns(), 0, 150)){
+        local V = clamp(randvec() * 4, vec(-1), vec(1))
+        Points[I, vector] = V * R
+        holoCreate(I)
+        holoColor(I, (V / 2 + 0.5) * 255)
+    }
+    runOnTick(1)
+}
+
+local S1 = matrix4():setDiagonal(vec4(E1:boxSize() / 2, 1))
+local S2 = matrix4():setDiagonal(vec4(E2:boxSize() / 2, 1))
+local M1 = matrix4(E1)
+local M2 = matrix4(E2)
+local Q = sin(curtime() * 15) * 0.5 + 0.5
+
+local M = mix(Q, M1 * S1, M2 * S2)
+
+for(I = 1, Points:count()){
+    holoPos(I, (M * vec4(Points[I, vector], 1)):dehomogenized())
+}

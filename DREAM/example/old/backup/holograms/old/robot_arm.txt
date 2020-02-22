@@ -1,0 +1,71 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/20/2018 @ 1622
+# Holograms: 19
+# Notes: 
+# 2 -> yaw pivot +ang 180 90 0
+# 4 -> pivot A
+# 6 -> pivot B
+# 8 -> pivot C
+# 14 -> endpoint D
+# --------------------------------------------- #
+@name robot_arm
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/props_wasteland/laundry_basket001.mdl","models/props_wasteland/laundry_basket001.mdl","models/mechanics/robotics/xfoot.mdl","models/holograms/cube.mdl","models/mechanics/robotics/d3.mdl","models/holograms/cube.mdl","models/mechanics/robotics/d3.mdl","models/holograms/cube.mdl","models/mechanics/robotics/d2.mdl","models/mechanics/robotics/b1.mdl","models/mechanics/robotics/a1.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cone.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,18.3281),vec(0,0,34.3281),vec(0,0,62.8281),vec(0,0,70.9834),vec(0,0,136.8359),vec(0,0,202.2354),vec(0,0,267.46),vec(-0.0001,0,332.1523),vec(-0.0001,0,362.1035),vec(-0.0001,0,400.0762),vec(-0.0001,0,426.6455),vec(-0.0001,0,442.1455),vec(0,0,442.2695),vec(0,0,460),vec(0,0,70.9834),vec(0,0,202.2354),vec(-0.0001,0,332.1523),vec(-0.0001,0,391.582),vec(-0.0001,0,449.3174))
+    Hologram[ "angle", array ] = array(ang(0,-180,-180),ang(0,-180,-180),ang(0,0,0),ang(0,-90,0),ang(90,-90,0),ang(0,-90,0),ang(90,90,0),ang(0,-90,0),ang(90,-90,0),ang(90,90,0),ang(90,-90,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(0.8,0.8,0.8),vec(1,1,1),vec(0.2,0.2,0.2),vec(1,1,1),vec(0.2,0.2,0.2),vec(1,1,1),vec(0.2,0.2,0.2),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(0.15,0.15,3),vec(0.05,0.05,3),vec(0.1,0.1,0.1),vec(0.9,0.9,0.9),vec(0.9,0.9,0.9),vec(0.9,0.9,0.9),vec(0.9,0.9,0.9),vec(0.9,0.9,1.75))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,0,0),vec(255,0,0),vec(255,0,0),vec(50,50,50),vec(50,50,50),vec(50,50,50),vec(50,50,50),vec(255,0,0))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,0,0,50,255,255,255,255,50)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,1,2,2,4,4,6,6,8,9,10,11,12,8,4,6,8,9,11)
+    Hologram[ "note", array ] = array("","yaw pivot +ang 180 90 0","","pivot A","","pivot B","","pivot C","","","","","","endpoint D","","","","","")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next < Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else { for( I = 1, Hologram[ "model", array ]:count( ) ) { holoParent(I, Hologram["parent", array][I, number]) }, interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

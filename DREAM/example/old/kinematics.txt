@@ -1,0 +1,111 @@
+##################################################
+#  ____                                          #
+# /\  _ `.                                       #
+# \ \ \/\ \  _ __    __     __      ___ ___      #
+#  \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\    #
+#   \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \   #
+#    \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\  #
+#     \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/  #
+#                                                #
+##################################################
+@name kinematics example funcs
+
+if( first( ) ) {
+    
+    function number icos( A, B, C ) {
+        return acos( ( A ^ 2 + B ^ 2 - C ^ 2 ) / ( 2 * A * B ) )
+    }
+    
+    function ik2a( A, B, LenA, LenB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        local PosA = AEntity:pos( )
+        local LenC = min( PosA:distance( Destination ), LenA + LenB )
+        holoAng( A, ( Destination - PosA ):toAngle( ) + ang( -icos( LenC, LenA, LenB ) + 90, 0, 0 ) )
+        holoAng( B, AEntity:toWorld( ang( -icos( LenB, LenA, LenC ) + 180, 0, 0 ) ) )
+    }
+    
+    function ik2b( Entity:entity, A, B, C, LenA, LenB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        local PosA = AEntity:pos( )
+        local LenC = min( PosA:distance( Destination ), LenA + LenB )
+        local YawAxis = Entity:toLocalAxis( Destination - PosA )
+        holoAng( A, Entity:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        local PitchAxis = AEntity:toLocalAxis( Destination - PosA )
+        holoAng( B, AEntity:toWorld( ang( atan( PitchAxis:x( ), PitchAxis:z( ) )  - icos( LenC, LenA, LenB ), 0, 0 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( -icos( LenB, LenA, LenC ) + 180, 0, 0 ) ) )
+    }
+    
+    function ik3a( A, B, C, LenA, LenB, LenC, Destination:vector ) {
+        # Legs 1 and 3 must be the same length for this function
+        local AEntity = holoEntity( A )
+        local PosA = AEntity:pos( )
+        local LenC = min( PosA:distance( Destination ) - LenB, LenA + LenA )
+        local OffsetAngle = -icos( LenC, LenA, LenA ) + 90
+        holoAng( A, ( Destination - PosA ):toAngle( ) + ang( OffsetAngle, 0, 0 ) )
+        holoAng( B, AEntity:toWorld( ang( -asin( LenC / ( LenA + LenA ) ) + 90, 0, 0 ) ) )
+        holoAng( C, AEntity:toWorld( ang( sign( LenC ) * -icos( LenA, LenA, LenC ) + 180, 0, 0) ) )
+    }
+    
+    function ik3b( A, B, C, LenA, LenB, LenC, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        local BEntity = holoEntity( B )
+        local PosA = AEntity:pos( )
+        local LenD = min( PosA:distance( Destination ) - LenC, LenA + LenB )
+        holoAng( A, ( Destination - PosA ):toAngle( ) + ang( -icos( LenD, LenA, LenB ) + 90, 0, 0 ) )
+        LenD = min( PosA:distance( Destination ) - LenC, LenA + LenB )
+        holoAng( B, AEntity:toWorld( ang( -icos( LenB, LenA, LenD ) + 180, 0, 0 ) ) )
+        LenD = min( BEntity:pos():distance( Destination ), LenB + LenC )
+        holoAng( C, BEntity:toWorld( ang( icos( LenC, LenB, LenD ) + 180, 0, 0 ) ) )
+    }
+    
+    function entity:ik3c( A, B, C, Foot, LenA, LenB, LenC, Destination:vector ) {
+        local AEnt = holoEntity( A )
+        local BEnt = holoEntity( B )
+        local CEnt = holoEntity( C )
+        local Total = LenA - LenB + LenC
+        local Bearing = -bearing( AEnt:pos(), This:angles(), Destination )
+        local Angle = This:toLocalAxis( Destination - AEnt:pos( ) ):toAngle( ):setRoll( Bearing )
+        local Offset = Total - abs( min( AEnt:pos( ):distance( Destination ), Total ) )
+        local Quat = quat( Angle ) * qRotation( vec( 0, -Offset + 90, 0 ) )
+        holoAng( A, This:toWorld( slerp( quat( AEnt ), Quat, 1 ):toAngle() ) )
+        
+        local Distance = min( BEnt:pos( ):distance( Destination), LenB + LenC )
+        local Axis = AEnt:toLocalAxis( BEnt:pos() - Destination )
+        local Atan = atan( -Axis:z(), Axis:x() ) + icos( LenC, LenB, Distance ) + 90
+        holoAng( B, BEnt:toWorld( ang( Atan, 0, 0) ) )
+        
+        holoAng( C, BEnt:toWorld( ang( icos( Distance, LenB, LenC ),0 ,0 ) ) )
+        
+        holoAng( Foot, This:toWorld( ang( -90, 0, 0 ) ) )
+    }
+    
+    #[ 
+    
+    # some guy's retarded unformatted example that doesn't help anyone
+    
+    function ik([Hip Knee Ankle]:entity, FootPos:vector, FI,Body:entity,L1,L2,L3){
+            #-Hip
+              local      Total = L1-L2+L3
+               local Bearing = -bearing(Hip:pos(), Body:angles(), FootPos)
+                local   Angle = Body:toLocalAxis(FootPos - Hip:pos()):toAngle():setRoll(Bearing)
+               local    Offset = Total - abs(min(Hip:pos():distance(FootPos), Total))
+                local   Quat = quat(Angle) * qRotation(vec(0, -Offset + 75-15, 0))
+                holoAng(holoIndex(Hip), Body:toWorld(slerp(quat(Hip), Quat, 1):toAngle()))
+        
+            #-Second
+              local     Distance = min(Knee:pos():distance(FootPos), L2+L3)
+               local    Axis = Hip:toLocalAxis(Knee:pos() - FootPos)
+               local    Atan = atan(-Axis:z(), Axis:x()) + cosine(L3, L2, Distance) + 90
+                holoAng(holoIndex(Knee), Hip:toWorld(ang(Atan,0,0)))
+                
+            #-Third
+                holoAng(holoIndex(Ankle), Knee:toWorld(ang(cosine(Distance, L2, L3),0 ,0)))
+                
+            #-Foot
+                holoAng(FI, Body:toWorld(ang(-90,0,0)))
+                
+        }
+        ]#
+    
+    
+}

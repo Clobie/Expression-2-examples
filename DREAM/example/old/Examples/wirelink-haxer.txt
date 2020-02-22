@@ -1,0 +1,24 @@
+@name Heehe
+@outputs EGP:wirelink
+
+if( first() )
+{
+    findByClass("gmod_wire_egp_emitter")
+    A = findToArray()
+    print(A:count())
+    for(I = 1, A:count())
+    {
+        if(A[I, entity]:pos():distance(entity():pos()) < 100)
+        {
+            EGP = A[I, entity]:wirelink()
+            print("0")
+        }
+    }
+    EGP:egpClear()
+    EGP:egpDrawTopLeft(1)
+    
+    EGP:egpBox(299, vec2(0,0), vec2(512,512))
+    EGP:egpColor(299, vec(0,0,0))
+    EGP:egpText(300, "Crashty likes men", vec2(0, 0))
+    EGP:egpColor(300, vec(255,0,0) )
+}

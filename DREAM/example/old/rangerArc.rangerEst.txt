@@ -1,0 +1,29 @@
+if(first()){
+    function vector4 rangerArc([Origin Velocity]:vector){
+        local DT = 0.15
+        local X = Origin
+        local Hull = vec(12)
+        local V = Velocity
+        local T = 20
+        for(T_ = 0, T, DT){
+            local RD = rangerOffsetHull(X, X + V * DT, Hull)
+            if(RD:hit()){
+                X = RD:pos() + RD:hitNormal() * Hull:length()
+                T = T_ + RD:distance() / V:length()
+                break
+            }
+            else{
+                X += V * DT * 0.5
+                V = clamp(V + propGravity() * DT, 0, 4000)
+                X += V * DT * 0.5
+            }
+        }
+        return vec4(X, T)
+    }
+    function number rangeEst(Elevation, Speed, Height){
+        local A = -propGravity():z() / (cos(Elevation) * Speed  * 2) ^ 2
+        local B = tan(Elevation)
+        local D = B ^ 2 - 4 * A * Height
+        return (-sqrt(D) - B) / (2 * A)
+    }
+}

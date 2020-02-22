@@ -1,0 +1,44 @@
+@name throw 2
+@persist 
+
+if( first() ) {
+    
+    function entity:throw2() {
+        local Projectile = propSpawn( "models/props_phx/ball.mdl", This:pos( ) + This:eye( ) * 50, This:eyeAngles( ), 0 )
+        Projectile:setAlpha( 0 )
+        Projectile:setMass( 50000 )
+        Projectile:propGravity( 0 )
+        Projectile:propFreeze( 0 )
+        Projectile:applyForce( This:eye():toAngle():forward() * Projectile:mass() * 5000 )
+        Projectile:applyAngForce( ang( 0, 0, 1 ) * Projectile:mass() * 500 )
+        local K = 15
+        local J = randint( 2e8 )
+        
+        for( I = J, J + K ) {
+            H = holoCreate( I ), holoAlpha( I, 0 )
+            H:setTrails( 50, 50, 1, "trails/laser", hsv2rgb( ( ( I - J ) / K ) * 360, 1, 1 ), 255 )
+            holoParent( I, Projectile )
+            holoPos(
+                I,
+                Projectile:toWorld(
+                    vec(
+                        0,
+                        cos( ( ( I - J ) / K ) * 360 ) * 35,
+                        sin( ( ( I - J ) / K ) * 360 ) * 35 
+                    )
+                )
+            )
+        }
+    }
+    
+    runOnKeys( owner( ), 1 )
+}
+
+if( keyClk( ) ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    local Down = Player:keyPressed( Key ) ? 1 : 0
+    if( Player == owner( ) & Down & Key == "mouse_left" ) {
+        Player:throw2( )
+    }
+}

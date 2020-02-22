@@ -1,0 +1,50 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+if( first( ) ) {
+    
+    local XRD_right = rangerOffset( 100000, entity( ):pos( ), entity( ):right( ) )
+    local XRD_left = rangerOffset( 100000, entity( ):pos( ), -entity( ):right( ) )
+    local XRD_forward = rangerOffset( 100000, entity( ):pos( ), entity( ):forward( ) )
+    local XRD_back = rangerOffset( 100000, entity( ):pos( ), -entity( ):forward( ) )
+    local XRD_up = rangerOffset( 100000, entity( ):pos( ), entity( ):up( ) )
+    local XRD_down = rangerOffset( 100000, entity( ):pos( ), -entity( ):up( ) )
+
+    local Center = vec( ( XRD_forward:pos( ):x( ) + XRD_back:pos( ):x( ) ) / 2,
+                        ( XRD_left:pos( ):y( ) + XRD_right:pos( ):y( ) ) / 2,
+                        ( XRD_up:pos( ):z( ) + XRD_down:pos( ):z( ) ) / 2
+    )
+    
+    local Units = vec(  XRD_forward:pos( ):distance( XRD_back:pos( ) ),
+                        XRD_left:pos( ):distance( XRD_right:pos( ) ),
+                        XRD_up:pos( ):distance( XRD_down:pos( ) )
+    )
+    
+    function vector roundVector( V:vector, N:number ) {
+        return vec( round(V:x(), N), round(V:y(), N), round(V:z(), N) )
+    }
+    
+    holoCreate( 1, Center:setZ( XRD_down:pos( ):z( ) - 30 ) )
+    #holoAlpha( 1, 200 )
+    holoModel( 1, "models/props_phx/huge/evildisc_corp.mdl" )
+    holoMaterial( 1, "debug/debugdrawflat" )
+    #holoMaterial( 1, "debug/env_cubemap_model" )
+    #holoMaterial( 1, "models/props_lab/warp_sheet" )
+    #holoMaterial( 1, "models/shadertest/shader4" )
+    #holoMaterial( 1, "phoenix_storms/scrnspace" )
+    holoMaterial( 1, "models/screenspace" )
+    holoScaleUnits( 1, -Units )
+    holoColor( 1, vec( 0 ) )
+    holoAng( 1, ang( 180, 0, 0 ) )
+    
+    #concmd( "say \"X " + roundVector(XRD_forward:pos( ), 0 ):x() + ", " + roundVector(XRD_back:pos( ), 0 ):x() + "  Y " + roundVector(XRD_left:pos( ), 0 ):y() + ", " + roundVector(XRD_right:pos( ), 0 ):y() + "  Z " + roundVector(XRD_up:pos( ), 0 ):z() + ", " + roundVector(XRD_down:pos( ), 0 ):z() + "\"" )
+}
+
+interval( 30 )
+
+if( clk( ) ) {
+    holoColor( 1, hsv2rgb( ( realtime( ) * 50 % 360 ), 1, 1 ) / 3 )
+}

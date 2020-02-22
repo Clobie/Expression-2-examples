@@ -1,0 +1,43 @@
+# --------------------------------------------------#
+# lib/text                                          #
+# --------------------------------------------------#
+# ____                                              #
+#/\  _`\                                            #
+#\ \ \/\ \   _ __     __      __       ___ ___      #
+# \ \ \ \ \ /\`'__\ /'__`\  /'__`\   /' __` __`\    #
+#  \ \ \_\ \\ \ \/ /\  __/ /\ \_\.\_ /\ \/\ \/\ \   #
+#   \ \____/ \ \_\ \ \____\\ \__/.\_\\ \_\ \_\ \_\  #
+#    \/___/   \/_/  \/____/ \/__/\/_/ \/_/\/_/\/_/  #
+#                                                   #
+# --------------------------------------------------#
+@name lib/laser
+@persist LaserIndex
+
+#ifndef async( number, string )
+    #include "_/dream/lib/async"
+#endif
+
+if( first( ) ) {
+    
+    function delayFire( Destination:vector ) {
+        holoPos( LaserIndex, Destination )
+        #local X = propSpawn( "models/props_phx/misc/potato_launcher_explosive.mdl", Destination, 1 )
+        #X:propBreak( )
+        #entity( ):soundPlay( 1, soundDuration( "/ambient/explosions/citadel_end_explosion1.wav" ), "/ambient/explosions/citadel_end_explosion1.wav" )
+    }
+    
+    function fireLaser( Origin:vector, Destination:vector, Intensity ) {
+        if( holoRemainingSpawns( ) >= Intensity ) {
+            LaserIndex = randint( 2e8 )
+            for( I = LaserIndex, LaserIndex + Intensity ) {
+                holoCreate( I, Origin )
+                holoAlpha( I, 0 )
+                holoParent( I, LaserIndex )
+                holoEntity( I ):setTrails( 10 + ( ( I - LaserIndex ) * 10 ), 10 + ( ( I - LaserIndex ) * 10 ), 3 + ( ( I - LaserIndex ) / 6 ), "trails/laser", vec( 165, 255, 255 ), 255 )
+            }
+            Destination = Destination + ( ( Destination - Origin ):normalized( ) * 10000 )
+            async( 0.1, "delayFire", Destination )
+            async( 4, "holoDelete", LaserIndex )
+        }
+    }
+}

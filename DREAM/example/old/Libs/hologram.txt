@@ -1,0 +1,286 @@
+
+@persist S_DATA:string
+
+#include "libs/vars"
+#include "libs/heap"
+#include "libs/async"
+
+if( first() ) {
+    
+    runOnFile(1)
+    runOnList(1)
+    runOnChat(1)
+    
+    # INITIALIZATION AND JUNK
+    S_DATA = heapPush()                                # Holds variables
+    S_DATA:heapPushNumber( "mode", 0 )                 # Editor mode such as angle, position, etc
+    S_DATA:heapPushTable(  "hindex", table() )         # Holds index stuff
+    S_DATA:heapPushTable(  "hrecurseindex", table() )  # Holds more index stuff because I'm fucking lazy lol
+    S_DATA:heapPushNumber( "hsetindex", 0 )
+    S_DATA:heapPushTable(  "hset", table() )
+    S_DATA:heapPushNumber( "buffer_start", 1 )
+    S_DATA:heapPushNumber( "buffer_deg", 0 )
+    
+    # TODO:
+    #   hpushset() - read hologram data and update set
+    #   
+    
+    
+    
+    # ERROR
+    function void herror( S_ERROR:string ) {
+        error( S_ERROR )
+    }
+    
+    # INDEX
+    # EXAMPLE USAGE:
+    # 
+    # Lets say I'm messing with holo(1) - I'd do obj(1):hpos( vec )
+    # 
+    function number string:hrecurseindex() {
+        local T = S_DATA:heapPullTable( "hrecurseindex" )
+        return T[ This, number ]
+    }
+    # convert the useable numbered indexes back in to numbered string objects
+    function string obj( I_ID:number ) {
+        local T = S_DATA:heapPullTable( "hindex" )
+        return T[ I_ID, string ]
+    }
+    # gets total holograms spawned
+    function number hcount() {
+        local T = S_DATA:heapPullTable( "hindex" )
+        return T:count()
+    }
+    
+    # RESET
+    function void string:hreset() {
+        #holoReset(number index,string model,vector scale,vector color,string material)
+    }
+    
+    # SPAWN
+    function string hcreate(   POSITION_LOCAL:vector, POSITION_WORLD:vector, COLOR:vector, SCALE:vector, SCALEUNITS:vector, ALPHA:number, SHADING:number, 
+                        PARENT:number, RENDERFX:number, SHADOW:number, SKIN:number, MATERIAL:string, MODEL:string, ANGLE:angle, ACTIVE:number) {
+        if( !holoCanCreate() ) { return "null" }
+        local S_ID = heapPush( )
+        local TD = S_DATA:heapPullTable( "hindex" )
+        TD:pushString( S_ID )
+        local TR = S_DATA:heapPullTable( "hrecurseindex" )
+        TR[S_ID, number] = TD:count()
+        local I_ID = S_ID:toNumber()
+        local T = S_ID:heapPull()
+        
+        T["position_local", vector] = POSITION_LOCAL
+        T["position_world", vector] = POSITION_WORLD
+        T["color", vector] = COLOR
+        T["scale", vector] = SCALE
+        T["scaleunits", vector] = SCALEUNITS
+        T["alpha", number] = ALPHA
+        T["shading", number] = SHADING
+        T["parent", number] = PARENT
+        T["renderfx", number] = RENDERFX
+        T["shadow", number] = SHADOW
+        T["skin", number] = SKIN
+        T["material", string] = MATERIAL
+        T["model", string] = MODEL
+        T["angle", angle] = ANGLE
+        T["active", number] = ACTIVE
+        
+        if( ACTIVE ) {
+            holoCreate( I_ID, T["position_world", vector], T["scale", vector], T["angle", angle], T["color", vector], T["model", string])
+            holoAlpha( I_ID, T["alpha", number] )
+            holoDisableShading( I_ID, T["shading", number] )
+            holoParent( I_ID, T["parent", number] )
+            holoRenderFX( I_ID, T["renderfx", number] )
+            holoShadow( I_ID, T["shadow", number] )
+            holoSkin( I_ID, T["skin", number] )
+            holoMaterial( I_ID, T["material", string] )
+        }
+        
+        holoParent( S_ID:toNumber(), Chip )
+        
+        return S_ID
+    }
+    
+    function string hcreate() {
+        return hcreate( vec(), entity():pos(), vec(255), vec(1), vec(12), 255, 0, 0, 0, 0, 0, "debug/debugdrawflat", "cube", ang(), 1)
+    }
+    
+    # DELETE
+    function string:hdelete() {
+        local I_ID = This:toNumber()
+        
+        local I = S_DATA:heapPullTable( "hindex" )
+        local R = S_DATA:heapPullTable( "hrecurseindex" )
+        
+        local Index = R[I_ID:toString(), number]
+        
+        I:remove(Index)
+        R:remove(I_ID:toString())
+        
+        holoDelete(I_ID)
+        This:heapRemove()
+    }
+    function hdeleteall() {
+        local I = S_DATA:heapPullTable( "hindex" )
+        local R = S_DATA:heapPullTable( "hrecurseindex" )
+        I:clear()
+        R:clear()
+        holoDeleteAll()
+    }
+    
+    # GET
+    function vector string:hposw()                    { return This:heapPullVector( "position_world" ) }
+    function vector string:hposl()                    { return This:heapPullVector( "position_local" ) }
+    function angle  string:hang()                     { return This:heapPullAngle( "angle" ) }
+    function vector string:hcolor()                   { return This:heapPullVector( "color" ) }
+    function number string:halpha()                   { return This:heapPullNumber( "alpha") }
+    function number string:hshading()                 { return This:heapPullNumber( "shading" ) }
+    function string string:hmaterial()                { return This:heapPullString( "material" ) }
+    function string string:hmodel()                   { return This:heapPullString( "model" ) }
+    function number string:hparent()                  { return This:heapPullNumber( "parent" ) }
+    function number string:hrenderfx()                { return This:heapPullNumber( "renderfx" ) }
+    function vector string:hscale()                   { return This:heapPullVector( "scale" ) }
+    function vector string:hscaleunits()              { return This:heapPullVector( "scaleunits" ) }
+    function number string:hshadow()                  { return This:heapPullNumber( "shadow" ) }
+    function number string:hskin()                    { return This:heapPullNumber( "skin" ) }
+    
+    # SET - CHANGE ANGLE AND POSITION TO toWorld() STUFF!!
+    function vector string:hpos( V:vector ) {
+        This:heapPushVector( "position_world", V )
+        This:heapPushVector( "position_local", V - entity():pos() )
+        holoPos( This:toNumber(), V ) }
+    function angle  string:hang( A:angle )            { This:heapPushAngle( "angle", A ),                holoAng( This:toNumber(), A ) }
+    function vector string:hcolor( V:vector )         { This:heapPushVector( "color", V ),               holoColor( This:toNumber(), V ) }
+    function number string:halpha( N:number )         { This:heapPushNumber( "alpha", N ),               holoAlpha( This:toNumber(), N ) }
+    function number string:hshading( N:number )       { This:heapPushNumber( "shading", N ),             holoDisableShading( This:toNumber(), N ) }
+    function string string:hmaterial( S:string )      { This:heapPushString( "material", S ),            holoMaterial( This:toNumber(), S ) }
+    function string string:hmodel( S:string )         { This:heapPushString( "model", S ),               holoModel( This:toNumber(), S ) }
+    function number string:hparent( N:number )        { This:heapPushNumber( "parent", N ),              holoParent( This:toNumber(), N ) }
+    function number string:hrenderfx( N:number )      { This:heapPushNumber( "renderfx", N ),            holoRenderFX( This:toNumber(), N ) }
+    function vector string:hscale( V:vector )         { This:heapPushVector( "scale", V ),               holoScale( This:toNumber(), V ) }
+    function vector string:hscaleunits( V:vector )    { This:heapPushVector( "scaleunits", V ),          holoScaleUnits( This:toNumber(), V ) }
+    function number string:hshadow( N:number )        { This:heapPushNumber( "shadow", N ),              holoShadow( This:toNumber(), N ) }
+    function number string:hskin( N:number )          { This:heapPushNumber( "skin", N ),                holoSkin( This:toNumber(), N ) }
+    
+    # SPAWN BUFFER
+    function void hbuffer( N:number ) {
+        if( S_DATA:heapPullNumber( "buffer_start" ) ) {
+            S_DATA:heapPushNumber( "buffer_deg", 360 / N )
+            S_DATA:heapPushNumber( "buffer_start", 0 )
+        }
+        local D = S_DATA:heapPullNumber( "buffer_deg" )
+        while( N > 0 && holoCanCreate() && perf() ) {
+            local H = hcreate()
+            H:hpos( entity():pos() + vec( sin(D * N) * 75, cos(D * N) * 75, 0 ) )
+            H:hcolor( hsv2rgb( D * N, 1, 1 ) )
+            H:hang( (entity():pos() - H:hposw()):toAngle() )
+            N-- 
+        }
+        if( N > 0 ) {
+            async( 0.25, "hbuffer", N) 
+        } else {
+            print( "hbuffer finished" )
+            S_DATA:heapPushNumber( "buffer_start", 1 )
+        }
+    }
+    
+    # SPAWNING, SAVING, ETC - SETS! :D
+    function hclearset() {
+        local S = S_DATA:heapPullTable(  "hset" )
+        S:clear()
+        S_DATA:heapPushNumber( "hsetindex", 0 )
+        print( "hset: " + S:count() )
+    }
+    function table hgetset() {
+        return S_DATA:heapPullTable(  "hset" )
+    }
+    
+    function hpushset( T:table ) {
+        S_DATA:heapPushTable(  "hset", T )
+    }
+    function hpushset() {
+        local Index = S_DATA:heapPullNumber( "hsetindex" )
+        local IndexPool = S_DATA:heapPullTable( "hindex" )
+        local T = S_DATA:heapPullTable(  "hset" )
+        while( Index < IndexPool:count()  && perf() ) {
+            Index++
+            T:pushTable( IndexPool[Index, string]:heapPull() )
+            T[Index, table]["position_world", vector] = holoEntity( IndexPool[Index, string]:toNumber() ):pos()
+        }
+        if( Index == IndexPool:count() ) { print("All holograms (" + Index + ") pushed to set"), Index = 0 } else { async( 0.2, "hpushset" ) }
+        S_DATA:heapPushNumber( "hsetindex", Index )
+    }
+    
+    function hspawnset(  ) {
+        local Index = S_DATA:heapPullNumber( "hsetindex" )
+        local T_SET = S_DATA:heapPullTable(  "hset" )
+        
+        while( holoCanCreate() && perf() && T_SET:count() > 0 ) {
+            hcreate( T_SET[1, table]["position_local", vector],
+                     T_SET[1, table]["position_world", vector],
+                     T_SET[1, table]["color", vector],
+                     T_SET[1, table]["scale", vector],
+                     T_SET[1, table]["scaleunits", vector],
+                     T_SET[1, table]["alpha", number],
+                     T_SET[1, table]["shading", number],
+                     T_SET[1, table]["parent", number],
+                     T_SET[1, table]["renderfx", number],
+                     T_SET[1, table]["shadow", number],
+                     T_SET[1, table]["skin", number],
+                     T_SET[1, table]["material", string],
+                     T_SET[1, table]["model", string],
+                     T_SET[1, table]["angle", angle],
+                     T_SET[1, table]["active", number] )
+            T_SET:remove( 1 )
+        }
+        if( T_SET:count() > 0 ) { async( 0.25, "hspawnset" ) } else { hclearset() }
+    }
+    
+    function hloadset( S_FILENAME:string ) {
+        
+    }
+    
+    function hsaveset( S_FILENAME:string ) {
+        
+    }
+}
+
+if( fileClk() ) {
+    local S_DATA = fileRead()
+}
+
+if( fileListClk() ) {
+    local A_DATA = fileReadList()
+}
+
+#[ TESTING INDEX SHIT
+print( "New ID: " + hcreate() )
+print( "New ID: " + hcreate() )
+print( "New ID: " + hcreate() )
+print( "New ID: " + hcreate() )
+print( "New ID: " + hcreate() )
+printTable( S_DATA:heapPullTable( "hrecurseindex" ) )
+printTable( S_DATA:heapPullTable( "hindex" ) )
+H = hcreate()
+print( "New ID: " + H )
+print( "New ID: " + hcreate() )
+print( "New ID: " + hcreate() )
+print( "New ID: " + hcreate() )
+print( "New ID: " + hcreate() )
+print( "New ID: " + hcreate() )
+H:hdelete()
+print( "Deleted ID: " + H )
+printTable( S_DATA:heapPullTable( "hrecurseindex" ) )
+printTable( S_DATA:heapPullTable( "hindex" ) )
+]#
+
+# Testing
+#[
+if( chatClk( Me ) ) {
+    local Msg = Me:lastSaid()
+    if( Msg == "buffer" ) { hbuffer(50) }
+    if( Msg == "push" ) { hclearset(), hpushset() }
+    if( Msg == "spawn" ) { hspawnset(  ) }
+    if( Msg == "parent" ) {  }
+}
+]#

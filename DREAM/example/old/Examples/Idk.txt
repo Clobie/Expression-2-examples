@@ -1,0 +1,64 @@
+# -------------------------------------------------------------
+# Idk
+# -------------------------------------------------------------
+@name Idk
+@inputs 
+@outputs 
+
+# -------------------------------------------------------------
+# Persist
+# -------------------------------------------------------------
+@persist BlockData:table Block:table
+@persist WorldIndex:number Size:number
+@persist Chip:entity Me:entity
+
+
+# Block Data array
+#
+# index
+#
+# id
+# name
+# model
+# type (dirt, rock, wood, etc)
+# material
+# color
+# mining time
+
+if( first() )
+{
+    WorldIndex = 0
+    Size = 5
+    
+    function vector getRoundedPositionVector(V:vector, N:number)
+    {
+        return vec( V:x(), V:y(), V:z() )
+    }
+    
+    function number addBlock( ID:number, SubID:number, Name:string, Model:string, Material:string, Type:number, Color:vector )
+    {
+        BlockData:pushTable( table(ID, SubID, Name, Model, Material, Type, Color) )
+    }
+    
+    addBlock(1, 0, "dirt", "", "", 0, vec(255,255,255))
+    addBlock(2, 0, "stone", "", "", 1, vec(255,255,255))
+    
+    timer( "generateLevel", 100 )
+}
+elseif( clk("generateLevel") )
+{
+    while( WorldIndex < Size & propCanCreate() & perf(10) )
+    {
+        local R = random(1, BlockData:count())
+        local E = propSpawn( BlockData[R, table][4, string], 1 )
+        E:setMaterial( BlockData[R, table][5, string] )
+        E:setPos( Chip:pos() )
+    }
+    if( WorldIndex < Size ) { timer("generateLevel", 10 ) }
+    else { timer("main", 10) }
+}
+elseif( clk("main") )
+{
+    
+    timer("main", 25)
+}

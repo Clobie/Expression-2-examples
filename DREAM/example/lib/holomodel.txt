@@ -1,0 +1,90 @@
+##################################################
+#  ____                                          #
+# /\  _ `.                                       #
+# \ \ \/\ \  _ __    __     __      ___ ___      #
+#  \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\    #
+#   \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \   #
+#    \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\  #
+#     \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/  #
+#                                                #
+##################################################
+# Made by Dream                                  #
+#                                                #
+##################################################
+@name lib/holomodel
+@persist LIB_HOLOMODEL_SPAWN_CENTER:vector
+@persist LIB_HOLOMODEL_COUNTER:number 
+@persist LIB_HOLOMODEL_LOADED:number
+@persist LIB_HOLOMODEL_SETUP:string
+@persist LIB_HOLOMODEL_LOCAL:number
+@persist LIB_HOLOMODEL_UNITS:number
+@persist LIB_HOLOMODEL_CREATE:number
+@persist LIB_HOLOMODEL_PARENT:number
+@persist LIB_HOLOMODEL_PARENT_INDEX:number
+@persist Hologram:table HoloRoot:number
+
+if( first( ) ) {
+    
+    LIB_HOLOMODEL_SPAWN_CENTER = entity( ):isWeldedTo( ):isValid( ) ? entity( ):isWeldedTo( ):pos( ) : entity( ):pos( )
+    LIB_HOLOMODEL_COUNTER = 0
+    LIB_HOLOMODEL_LOADED = 0
+    LIB_HOLOMODEL_CREATE = 0
+    LIB_HOLOMODEL_PARENT = 0
+    LIB_HOLOMODEL_PARENT_INDEX = 0
+    LIB_HOLOMODEL_SETUP = "setup"
+    
+    function libHologramCreate( ) {
+        local COUNT = Hologram[ "model", array ]:count( )
+        if( COUNT > 0 ) {
+            while( perf( 25 ) & holoCanCreate( ) & LIB_HOLOMODEL_COUNTER < COUNT ) {
+                LIB_HOLOMODEL_COUNTER++
+                local POSITION = Hologram[ "position", array ][ LIB_HOLOMODEL_COUNTER, vector ] + LIB_HOLOMODEL_SPAWN_CENTER
+                holoCreate( LIB_HOLOMODEL_COUNTER,    
+                            POSITION, 
+                            Hologram[ "scale", array ][ LIB_HOLOMODEL_COUNTER, vector ], 
+                            Hologram[ "angle", array ][ LIB_HOLOMODEL_COUNTER, angle ], 
+                            Hologram[ "color", array ][ LIB_HOLOMODEL_COUNTER, vector ], 
+                            Hologram[ "model", array ][ LIB_HOLOMODEL_COUNTER, string ]
+                )
+                holoMaterial( LIB_HOLOMODEL_COUNTER, Hologram[ "material", array ][ LIB_HOLOMODEL_COUNTER, string ] )
+                holoSkin( LIB_HOLOMODEL_COUNTER, Hologram[ "skin", array ][ LIB_HOLOMODEL_COUNTER, number ] )
+                holoAlpha( LIB_HOLOMODEL_COUNTER, Hologram[ "alpha", array ][ LIB_HOLOMODEL_COUNTER, number ] )
+            }
+            if( LIB_HOLOMODEL_COUNTER == COUNT ) {
+                LIB_HOLOMODEL_CREATE = 0
+                LIB_HOLOMODEL_PARENT = 1
+            } else {
+                LIB_HOLOMODEL_CREATE = 1
+            }
+        } else {
+            LIB_HOLOMODEL_SETUP( )
+            LIB_HOLOMODEL_LOADED = 1
+        }
+    }
+    
+    function libHologramParent( ) {
+        while( perf( 90 ) & LIB_HOLOMODEL_PARENT_INDEX < LIB_HOLOMODEL_COUNTER ) {
+            LIB_HOLOMODEL_PARENT_INDEX++
+            if( Hologram[ "parent", array ][ LIB_HOLOMODEL_PARENT_INDEX, number ] > 0 ) {
+                holoParent( LIB_HOLOMODEL_PARENT_INDEX, Hologram[ "parent", array ][ LIB_HOLOMODEL_PARENT_INDEX, number ] )
+            }
+        }
+        if( LIB_HOLOMODEL_PARENT_INDEX < LIB_HOLOMODEL_COUNTER ) {
+            LIB_HOLOMODEL_PARENT = 1
+        } else {
+            LIB_HOLOMODEL_PARENT = 0
+            LIB_HOLOMODEL_SETUP( )
+            LIB_HOLOMODEL_LOADED = 1
+        }
+    }
+    
+    timer( "libHologramCreate", 100 )
+    
+}
+
+if( LIB_HOLOMODEL_CREATE ) { libHologramCreate( ) }
+if( LIB_HOLOMODEL_PARENT ) { libHologramParent( ) }
+if( clk( "libHologramCreate" ) ) {
+    libHologramCreate( )
+}
+interval( 60 )

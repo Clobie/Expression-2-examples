@@ -1,0 +1,210 @@
+@name tehZevo -- Spoderbot2
+@persist Legs Radius
+@outputs Position:vector Normal:vector
+@persist Contacts:array EntIDS:array Positions:array Normals:array
+@outputs TargetPos:vector Following MoveSpeed TurnSpeed JumpSpeed
+@inputs PC:wirelink EP:wirelink CC:wirelink
+@outputs W A S D Space Shift Stop
+@outputs Jumping
+@persist I StartI
+
+if(first() | (changed(duped()) & duped()))
+{
+    runOnTick(1)
+    
+    Legs = 8
+    Radius = 70
+    
+    Position = entity():pos()
+    Normal = vec(0, 0, 1)
+    
+    MoveSpeed = 20
+    TurnSpeed = 80
+    JumpSpeed = 400
+    
+    for(I = 1, Legs)
+    {
+        holoCreate(I, vec(), vec(), ang(), vec(255, 255, 255), "cube")
+        holoShadow(I, 1)
+    }
+    
+    Contacts = array():clone()
+    EntIDS = array():clone()
+    Positions = array():clone()
+    Normals = array():clone()
+    
+    I = 1
+    rangerPersist(1)
+    
+    entity():setMass(50000)
+}
+
+if(clk("stopjump"))
+{
+    Jumping = 0
+}
+
+if(tickClk())
+{
+    E = entity()
+    #Following = 1
+    #inputs n stuff
+    
+    W = PC["W", number]
+    A = PC["A", number]
+    S = PC["S", number]
+    D = PC["D", number]
+    Space = PC["Space", number]
+    Shift = PC["Shift", number]
+    
+    EP["Enable", number] = PC["Active", number]
+    #CC["Activated", number] = PC["Active", number]
+    #CC["Position", vector] = E:toWorld(vec(-40, 0, 20))
+    #CC["Angle", angle] = E:angles()
+    #CC["Distance", number] = 0
+    
+    Chair = PC["Entity", entity]
+    
+    rangerFilter(Chair)
+    rangerFilter(entity())
+    
+    MoveVec = vec(W - S, A - D, 0)
+    XRot = -EP["X", number]
+    YRot = -EP["Y", number]
+    
+    #end inputs n stuff
+    
+    if((W | S | A | D))
+    {
+        Contacts[randint(Contacts:count()), number] = 0
+    }
+    if(!Jumping & changed(Space) & Space)
+    {
+        for(I = 1, Contacts:count())
+        {
+            Contacts[I, number] = 0
+        }
+        
+        E:applyForce((E:up() + E:toWorldAxis(MoveVec)):normalized() * JumpSpeed * E:mass())
+        Jumping = 1
+        timer("stopjump", 250)
+    }
+    
+    
+    ContactCount = 0
+    NewPosition = vec()
+    NewNormal = vec()
+    
+    StartI = I
+    #for(I = 1, Legs)
+    while(perf())
+    {
+        if(!perf())
+        {
+            break
+        }
+        #if c is already a contact
+        if(Contacts[I, number])
+        {
+            RE = entity(EntIDS[I, number])
+            P = RE:id() == 0 ? Positions[I, vector] : RE:toWorld(Positions[I, vector])
+            
+            if(E:pos():distance(P) > Radius)
+            {
+                Contacts[I, number] = 0
+                
+                holoAlpha(I, 0)
+            }
+            else
+            {
+                R = rangerOffset(Radius, E:pos(), (P - E:pos()):normalized())
+                
+                if(!R:hit() | R:entity():id() != EntIDS[I, number])
+                {
+                    Contacts[I, number] = 0
+                    
+                    holoAlpha(I, 0)
+                }
+            }
+        }
+        #if c is not a contact anymore
+        if(!Contacts[I, number])
+        {
+            #R = rangerOffset(Radius + (Following ? Speed : 0), E:pos(), Following ? (randvec() + (TargetPos - E:pos():normalized())) / 2 : randvec())
+            #R = rangerOffset(Radius, E:pos(), Following ? (randvec() + (TargetPos - E:pos()):normalized()) / 2 : randvec())
+            R = rangerOffset(Radius, E:toWorld(MoveVec * MoveSpeed), randvec())
+            
+            if(R:hit())
+            {
+                RE = R:entity()
+                
+                Contacts[I, number] = 1
+                EntIDS[I, number] = RE:id()
+                
+                if(RE:id() == 0)
+                {
+                    Positions[I, vector] = R:pos()
+                    Normals[I, vector] = R:hitNormal()
+                }
+                else
+                {
+                    Positions[I, vector] = RE:toLocal(R:pos())
+                    Normals[I, vector] = RE:toLocalAxis(R:hitNormal())
+                }
+            }
+        }
+        #if c is now a contact
+        if(Contacts[I, number])
+        {
+            RE = entity(EntIDS[I, number])
+            
+            if(RE:id() == 0)
+            {
+                P = Positions[I, vector]
+                N = Normals[I, vector]
+            }
+            else
+            {
+                P = RE:toWorld(Positions[I, vector])
+                N = RE:toWorldAxis(Normals[I, vector])
+            }
+            
+            holoPos(I, (E:pos() + P) / 2)
+            holoScale(I, vec(E:pos():distance(P), 1, 1) / 12)
+            holoAng(I, (E:pos() - P):toAngle())
+            holoAlpha(I, 255)
+            
+            holoColor(I, hsv2rgb(E:toLocalAxis((E:pos() - P):normalized()):toAngle():yaw(), abs((E:pos() - P):normalized():dot(E:forward())), 1))
+            
+            ContactCount++
+            NewPosition += P
+            NewNormal += N
+        }
+        
+        I++
+        if(I > Legs)
+        {
+            I = 1
+        }
+        if(I == StartI)
+        {
+            break
+        }
+    }
+    
+    if(!Jumping & ContactCount)
+    {
+        Position = NewPosition / ContactCount
+        Normal = (NewNormal / ContactCount):normalized()
+        
+        E:applyForce((Position + Normal * Radius / sqrt(2) / 4 - E:pos() - E:vel() / 10 + E:toWorldAxis(MoveVec * MoveSpeed)) * E:mass() * 10)
+    }
+    
+    Lev = E:inertia():length()
+    E:applyOffsetForce((Normal - E:up()) * Lev * 1000, E:massCenter() + E:up())
+    E:applyOffsetForce(-(Normal - E:up()) * Lev * 1000, E:massCenter() - E:up())
+    E:applyTorque(vec(0, YRot, XRot) * Lev * TurnSpeed)
+        
+    E:applyAngForce(-E:angVel() * Lev * 5)
+}
+

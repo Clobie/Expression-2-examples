@@ -1,0 +1,18 @@
+@name 
+@persist [Me Chip]:entity
+
+interval(25)
+
+if( first() )
+{
+    Me = owner()
+    Chip = entity()
+    holoCreate(1)
+}
+elseif( clk() )
+{
+    local CurrentAngle = holoEntity(1):angles()
+    local TargetAngle = ( Me:pos() - Chip:pos() ):toAngle()
+    
+    holoAng( 1, slerp( quat(CurrentAngle), quat(TargetAngle), 0.05 ):toAngle() )
+}

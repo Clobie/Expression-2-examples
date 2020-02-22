@@ -1,0 +1,465 @@
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                                      __          ___                      #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                 /'\_/`\            /\ \        /\_ \                     #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___     /\      \    ___    \_\ \     __\//\ \      __   _ __     #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\   \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \   /'__`\/\`'__\   #
+#  \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \_\ \\_\ \_/\ \_\ \/\ \_\ \ \ \//\ \_\.\_/\ \/\ \/\ \   \ \ \_/\ \/\ \_\ \/\ \_\ \/\  __/ \_\ \_/\  __/\ \ \/    #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\ \____\\ \_\    #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___/\ \/_/ \/__/\/_/\/_/\/_/\/_/    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/\/____/ \/_/    #
+#                                                                                          /\____/                                                                                    #
+#                                                                                          \____/                                                                                     #
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+@name Hologram Modeler v6
+@persist [ EUser ERoot ]:entity [ VRoot ]:vector
+@persist [ RLoadedFileList ]:array
+@persist [ SLoadedFileData ]:string
+@persist [ THologram ]:table
+@persist [ NCreation NIndex NSpawned NNudge NNudgeOnce ]:number
+@persist [ SaveModel SavePosition SaveAngle SaveScale SaveUnits SaveColor SaveAlpha SaveMaterial SaveParent SaveSkin SaveNote]:string
+interval( 60 )
+
+#include "lib/async"
+#include "lib/holotext"
+#include "lib/button"
+
+if( first( ) ) {
+    
+    runOnChat( 1 )
+    runOnKeys( owner( ), 1 )
+    
+    EUser = owner( )
+    ERoot = entity( ):isWeldedTo( ):isValid( ) ? entity( ):isWeldedTo( ) : entity( )
+    VRoot = ERoot:pos( )
+    THologram = table( )
+    NCreation = 0
+    NSpawned = 0
+    NNudge = 1
+    NNudgeOnce = 1
+    
+    function saveFileData( Name:string ) {
+        local TD = date( )
+        local Data = ""
+        Data += "# ----------------------------------------------------------------------------------------------------------------------------- #\n"
+        Data += "# ____                                      __          __  __          ___                                                     #\n"
+        Data += "#/\\  _ `.                                  /\\ \\        /\\ \\/\\ \\        /\\_ \\                                                    #\n"
+        Data += "#\\ \\ \\/\\ \\  _ __    __     __      ___ ___ \\ \\/ ____   \\ \\ \\_\\ \\    ___\\//\\ \\     ___      __   _ __    __      ___ ___         #\n"
+        Data += "# \\ \\ \\ \\ \\/\\`'__\\/'__`\\ /'__`\\  /' __` __`\\\\/ /',__\\   \\ \\  _  \\  / __`\\\\ \\ \\   / __`\\  /'_ `\\/\\`'__\\/'__`\\  /' __` __`\\       #\n"
+        Data += "#  \\ \\ \\_\\ \\ \\ \\//\\  __//\\ \\ \\.\\_/\\ \\/\\ \\/\\ \\ /\\__, `\\   \\ \\ \\ \\ \\/\\ \\ \\ \\\\_\\ \\_/\\ \\ \\ \\/\\ \\ \\ \\ \\ \\//\\ \\ \\.\\_/\\ \\/\\ \\/\\ \\      #\n"
+        Data += "#   \\ \\____/\\ \\_\\\\ \\____\\ \\__/.\\_\\ \\_\\ \\_\\ \\_\\\\/\\____/    \\ \\_\\ \\_\\ \\____//\\____\\ \\____/\\ \\____ \\ \\_\\\\ \\__/.\\_\\ \\_\\ \\_\\ \\_\\     #\n"
+        Data += "#    \\/___/  \\/_/ \\/____/\\/__/\\/_/\\/_/\\/_/\\/_/ \\/___/      \\/_/\\/_/\\/___/ \\/____/\\/___/  \\/___ \\ \\/_/ \\/__/\\/_/\\/_/\\/_/\\/_/     #\n"
+        Data += "#                                                                                          /\\____/                              #\n"
+        Data += "#                                                                                          \\_/__/                               #\n"
+        Data += "# ----------------------------------------------------------------------------------------------------------------------------- #\n"
+        Data += "# Modeler Version: v6\n" format( "%02d", TD[ "hour", number ] )
+        Data += "# Date: " + format( "%02d", TD[ "month", number ] ) + "/" + format( "%02d", TD[ "day", number ] ) + "/" + TD[ "year", number ] + " @ " + format( "%02d", TD[ "hour", number ] ) + format( "%02d", TD[ "min", number ] ) + "\n"
+        Data += "# Notes: " + SaveNote:explode( "\",\"" ):concat( "\n" ) + "\n"
+        Data += "# --------------------------------------------- #\n"
+        Data += "@name " + Name + "\n"
+        Data += "@persist Hologram:table Entity:entity\n\n"
+        Data += "if( first( ) ) {\n"
+        Data += "    Hologram[ \"model\", array ] = array(" + SaveModel + ")\n"
+        Data += "    Hologram[ \"position\", array ] = array(" + SavePosition + ")\n"
+        Data += "    Hologram[ \"angle\", array ] = array(" + SaveAngle + ")\n"
+        Data += "    Hologram[ \"scale\", array ] = array(" + SaveScale + ")\n"
+        Data += "    Hologram[ \"color\", array ] = array(" + SaveColor + ")\n"
+        Data += "    Hologram[ \"alpha\", array ] = array(" + SaveAlpha + ")\n"
+        Data += "    Hologram[ \"material\", array ] = array(" + SaveMaterial + ")\n"
+        Data += "    Hologram[ \"parent\", array ] = array(" + SaveParent + ")\n"
+        Data += "    Hologram[ \"note\", array ] = array(" + SaveNote + ")\n\n"
+        Data += "    function buffer( ) {\n"
+        Data += "        local Next = Hologram[ \"next\", number ]\n"
+        Data += "        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ \"model\", array ]:count( ) - Next ) ) {\n"
+        Data += "            holoCreate(\n"
+        Data += "                I,\n"
+        Data += "                entity():toWorld(Hologram[\"position\", array][I, vector]),\n"
+        Data += "                Hologram[\"scale\", array][I, vector],\n"
+        Data += "                entity():toWorld(Hologram[\"angle\", array][I, angle]),\n"
+        Data += "                vec4(Hologram[\"color\", array][I, vector],\n"
+        Data += "                Hologram[\"alpha\", array ][I,number]),\n"
+        Data += "                Hologram[\"model\", array][I, string]\n"
+        Data += "            )\n"
+        Data += "            holoMaterial(I, Hologram[\"material\", array][I, string])\n"
+        Data += "            holoParent(I, Hologram[\"parent\", array][I, number])\n"
+        Data += "            Hologram[ \"next\", number ] = I\n"
+        Data += "        }\n"
+        Data += "        if( Next < Hologram[ \"model\", array ]:count( ) ) { timer( \"buffer\", 0.1 )\n"
+        Data += "        } else {\n"
+        Data += "            interval( 100 )\n"
+        Data += "            \n"
+        Data += "        }\n"
+        Data += "    } buffer( )\n"
+        Data += "}\n"
+        Data += "if( clk( \"buffer\" ) ) { buffer( ) } elseif( clk( ) ) {\n"
+        Data += "    interval( 60 )\n"
+        Data += "    \n"
+        Data += "}\n\n\n\n\n"
+        Data = Data:replace( ",)", ")" )
+        fileWrite( ">e2shared/" + Name + ".txt", Data )
+    }
+    
+    function printHolo( Text:string, Scale:number ) {
+        Lib_Holotext_DisplayOnlyToOwner = 0
+        holoText( Text, entity( ):pos( ) + vec( 150, 0, 50 ), ang( 0, 90, 0 ), Scale, 1, teamColor( owner( ):team( ) ), vec( 0 ) )
+        #holoTextHideBackground( )
+    }
+    
+    function printChat( Text:string ) {
+        print( Text )
+    }
+    
+    function printHint( Text:string ) {
+        hint( Text, 7 )
+    } printHint( "Welcome to Dream's Hologram Modeler v6\ntype /help for help." )
+    
+    function nudgeIncrease( ) {
+        if( NNudge < 0.1 ) {
+            NNudge = clamp( NNudge + 0.01, 0.01, 10 )
+        } elseif( NNudge < 0.5 ) {
+            NNudge = clamp( NNudge + 0.05, 0.01, 10 )
+        } elseif( NNudge < 1 ) {
+            NNudge = clamp( NNudge + 0.1, 0.01, 10 )
+        } elseif( NNudge < 5 ) {
+            NNudge = clamp( NNudge + 0.5, 0.01, 10 )
+        }
+    }
+    
+    function nudgeDecrease( ) {
+        if( NNudge < 0.1 ) {
+            NNudge = clamp( NNudge - 0.01, 0.01, 10 )
+        } elseif( NNudge < 0.5 ) {
+            NNudge = clamp( NNudge - 0.05, 0.01, 10 )
+        } elseif( NNudge < 1 ) {
+            NNudge = clamp( NNudge - 0.1, 0.01, 10 )
+        } elseif( NNudge < 5 ) {
+            NNudge = clamp( NNudge - 0.5, 0.01, 10 )
+        }
+    }
+    
+    function hologramSelectPrevious( ) {
+        NIndex--
+        while( NSpawned > 0 & !holoEntity( NIndex ):isValid( ) ) {
+            NIndex--
+            if( NIndex < 1 ) {
+                NIndex = THologram:count( )
+            }
+        }
+        print( "Selected Next Index: " + NIndex )
+    }
+    
+    function hologramSelectNext( ) {
+        NIndex++
+        while( NSpawned > 0 & !holoEntity( NIndex ):isValid( ) ) {
+            NIndex++
+            if( NIndex > THologram:count( ) ) {
+                NIndex = 1
+            }
+        }
+        print( "Selected Previous Index: " + NIndex )
+    }
+    
+    function hologramCreate( TTemplate:table ) {
+        if( !holoCanCreate( ) ) { return }
+        NCreation++
+        NSpawned++
+        NIndex = NCreation
+        local I = NCreation
+        TTemplate[ "index", number ] = I
+        THologram:pushTable( TTemplate )
+        holoCreate(
+            I,
+            entity( ):toWorld( TTemplate[ "position", vector ] ),
+            TTemplate[ "scale", vector ],
+            entity( ):toWorld( TTemplate[ "angle", angle ] ),
+            vec4( TTemplate[ "color", vector ], TTemplate[ "alpha", number ] ),
+            TTemplate[ "model", string ]
+        )
+        holoMaterial( I, TTemplate[ "material", string ] )
+        holoShadow( I, 0 )
+        holoParent( I, entity( ) )
+    }
+    
+    function hologramCreate( ) {
+        hologramCreate(
+            table(
+                "model" = "cube",
+                "material" = "",
+                "position" = vec( 0 ),
+                "angle" = ang( 0 ),
+                "scale" = vec( 1 ),
+                "color" = vec( 255 ),
+                "alpha" = 255,
+                "parent" = 0,
+                "clip" = table( ),
+                "note" = "",
+                "tnote" = ""
+            )
+        )
+    }
+    
+    function hologramDelete( Index:number ) {
+        if( holoEntity( Index ):isValid( ) ) {
+            for( I = 1, THologram:count( ) ) {
+                if( THologram[ I, table ][ "parent", number ] == Index ) {
+                    holoUnparent( I )
+                }
+            }
+            holoDelete( Index )
+            THologram[ Index, table ] = table( )
+            NSpawned--
+            hologramSelectPrevious( )
+        }
+    }
+    
+    function hologramDelete( ) {
+        hologramDelete( NIndex )
+    }
+    
+    function hologramDeleteAll( ) {
+        holoDeleteAll( )
+        THologram = table( )
+        NCreation = 0
+        NSpawned = 0
+        NIndex = 0
+        # spawn new indicator ( less intense than looping and deleting all except indicator )
+    }
+
+    function onChatClk( PLAYER:entity, CMD:string, PARAM:array ) {
+        #print( "CMD: " + CMD + ", PARAM(S): " + PARAM:concat( ", " ) + ", PARAM COUNT: " + PARAM:count( ) )
+        
+        local A = PARAM[ 1, string ], local X = A:toNumber( )
+        local B = PARAM[ 2, string ], local Y = B:toNumber( )
+        local C = PARAM[ 3, string ], local Z = C:toNumber( )
+        local D = PARAM[ 4, string ], local W = D:toNumber( )
+        
+        switch( PARAM:count( ) ) {
+            case 0,
+                switch( CMD ) {
+                    case "", break
+                    case "h",
+                    case "help", printChat( "Read the E2 file, you lazy fucking cunt!\nIt's all listed inside the 'onChatClk' and 'onKeyClkDown' functions.\nHint: numpad 0 spawns a hologram.\nTry typing commands like /pos 0 0 5, /ang 10 20 45, etc." ), break
+                    case "i", 
+                    case "index", printChat( "Index: " + NIndex ), break
+                    case "pos",
+                    case "vec", printChat( "Position: " + ( ERoot:toLocal(holoEntity( NIndex ):pos( ) ) ) ) , break
+                    case "ang", printChat( "Angle: " + ( ERoot:toLocal( holoEntity( NIndex ):angles( ) ) ) ) , break
+                    case "color", printChat( "Color: " + holoEntity( NIndex ):getColor( ) + " Alpha: " + holoEntity( NIndex ):getAlpha( ) ), break
+                    case "scale", printChat( "Scale: " + holoScale( NIndex ) ), break
+                    case "units", printChat( "Scale: " + holoScaleUnits( NIndex ) ), break
+                    case "parent", printChat( "Parent: " + THologram[ NIndex, table ][ "parent", number ] ), break
+                    case "delete", hologramDelete( ), break
+                    case "save", break
+                    case "clear",
+                    case "reset", hologramDeleteAll( ), break
+                    case "name", break
+                }
+                break
+            case 1,
+                switch( CMD ) {
+                    case "", break
+                    case "save", break
+                    case "load", break
+                    case "i",
+                    case "index",
+                    case "sel",
+                    case "select", if( holoEntity( X ):isValid( ) ) { NIndex = X }, printChat( "Index: " + NIndex ), break
+                    case "del",
+                    case "delete", hologramDelete( X ), printChat( "Deleted: " + NIndex ), break
+                    case "mdl",
+                    case "model", break
+                    case "mat",
+                    case "material", break
+                    case "color", break
+                    case "alpha", break
+                    case "s",
+                    case "scale", break
+                    case "u",
+                    case "units", break
+                    case "ang", break
+                    case "skin", break
+                    case "parent", break
+                    case "parentall", break
+                    case "fx",
+                    case "renderfx", break
+                    case "copy", break
+                    case "search",
+                    case "list", break
+                    case "cpos",
+                    case "cvec", break
+                    case "cang", break
+                    case "ccolor", break
+                    case "calpha", break
+                    case "cscale", break
+                    case "cunits", break
+                    case "cmdl",
+                    case "cmodel", break
+                    case "cmat",
+                    case "cmaterial", break
+                    
+                }
+                break
+            case 2,
+                switch( CMD ) {
+                    case "", break
+                }
+                break
+            case 3,
+                switch( CMD ) {
+                    case "", break
+                    case "pos",
+                    case "vec", holoPos( NIndex, ERoot:toWorld( vec( X, Y, Z ) ) ), break
+                    case "ang", holoAng( NIndex, ERoot:toWorld( ang( X, Y, Z ) ) ), break
+                    case "color", holoColor( NIndex, vec( X, Y, Z ) ), break
+                    case "s",
+                    case "scale", holoScale( NIndex, vec( X, Y, Z ) ), break
+                    case "u",
+                    case "units", holoScaleUnits( NIndex, vec( X, Y, Z ) ), break
+                }
+                break
+            case 4,
+                switch( CMD ) {
+                    case "", break
+                    case "color", holoColor( NIndex, vec( X, Y, Z ) ), holoAlpha( NIndex, W ), break
+                }
+                break
+            case 5,
+                switch( CMD ) {
+                    case "", break
+                }
+                break
+        }
+    }
+    
+    function onKeyClkDown( PLAYER:entity, KEY:string ) {
+        if( EUser:keyPressed( "lalt" ) ) {
+            local Q = quat( ERoot:toLocal( holoEntity( NIndex ):angles( ) ) )
+            switch( KEY ) {
+                case "pad_0", break
+                case "pad_1", break
+                case "pad_2", break
+                case "pad_3", break
+                case "pad_4", holoAng( NIndex, ERoot:toWorld( ( Q * quat( ang( 0, 0, -NNudge ) ) ):toAngle( ) ) ), break
+                case "pad_5", holoAng( NIndex, ERoot:toWorld( ( Q * quat( ang( -NNudge, 0, 0 ) ) ):toAngle( ) ) ), break
+                case "pad_6", holoAng( NIndex, ERoot:toWorld( ( Q * quat( ang( 0, 0, NNudge ) )  ):toAngle( ) ) ), break
+                case "pad_7", holoAng( NIndex, ERoot:toWorld( ( Q * quat( ang( 0, NNudge, 0 ) )  ):toAngle( ) ) ), break
+                case "pad_8", holoAng( NIndex, ERoot:toWorld( ( Q * quat( ang( NNudge, 0, 0 ) )  ):toAngle( ) ) ), break
+                case "pad_9", holoAng( NIndex, ERoot:toWorld( ( Q * quat( ang( 0, -NNudge, 0 ) ) ):toAngle( ) ) ), break
+                case "pad_divide", break
+                case "pad_multiply", break
+                case "pad_minus", break
+                case "pad_plus", break
+                case "pad_enter", break
+                case "pad_decimal", break
+                case "e", break
+            }
+        } elseif( EUser:keyPressed( "lcontrol" ) ) {
+            local V = holoScaleUnits( NIndex )
+            switch( KEY ) {
+                case "pad_0", break
+                case "pad_1", break
+                case "pad_2", break
+                case "pad_3", break
+                case "pad_4", holoScaleUnits( NIndex, V + vec( 0, NNudge, 0 ) ), break
+                case "pad_5", holoScaleUnits( NIndex, V - vec( NNudge, 0, 0 ) ), break
+                case "pad_6", holoScaleUnits( NIndex, V - vec( 0, NNudge, 0 ) ), break
+                case "pad_7", holoScaleUnits( NIndex, V - vec( 0, 0, NNudge ) ), break
+                case "pad_8", holoScaleUnits( NIndex, V + vec( NNudge, 0, 0 ) ), break
+                case "pad_9", holoScaleUnits( NIndex, V + vec( 0, 0, NNudge ) ), break
+                case "pad_divide", break
+                case "pad_multiply", break
+                case "pad_minus", break
+                case "pad_plus", break
+                case "pad_enter", break
+                case "pad_decimal", break
+                case "e", break
+            }
+        } else {
+            local V = ERoot:toLocal( holoEntity( NIndex ):pos( ) )
+            switch( KEY ) {
+                case "pad_0", hologramCreate( ), printChat( "Index: " + NIndex ), break
+                case "pad_1", break
+                case "pad_2", break
+                case "pad_3", break
+                case "pad_4", holoPos( NIndex, ERoot:toWorld( V + vec( 0, NNudge, 0 ) ) ), break
+                case "pad_5", holoPos( NIndex, ERoot:toWorld( V - vec( NNudge, 0, 0 ) ) ), break
+                case "pad_6", holoPos( NIndex, ERoot:toWorld( V - vec( 0, NNudge, 0 ) ) ), break
+                case "pad_7", holoPos( NIndex, ERoot:toWorld( V - vec( 0, 0, NNudge ) ) ), break
+                case "pad_8", holoPos( NIndex, ERoot:toWorld( V + vec( NNudge, 0, 0 ) ) ), break
+                case "pad_9", holoPos( NIndex, ERoot:toWorld( V + vec( 0, 0, NNudge ) ) ), break
+                case "pad_divide", break
+                case "pad_multiply", NNudgeOnce = NNudgeOnce == 1 ? 0 : 1, printChat( "Nudge Once: " + NNudgeOnce ), break
+                case "pad_minus", nudgeDecrease( ), print( "Nudge: " + NNudge ), break
+                case "pad_plus", nudgeIncrease( ), print( "Nudge: " + NNudge ), break
+                case "pad_enter", break
+                case "pad_decimal", break
+                case "e", break
+            }
+        }
+    }
+    
+    function onClk( ) {
+        if( !NNudgeOnce ) {
+            local R = array( "pad_1", "pad_2", "pad_3", "pad_4", "pad_5", "pad_6", "pad_7", "pad_8", "pad_9" )
+            for( I = 1, R:count( ) ) {
+                if( EUser:keyPressed( R[ I, string ] ) ) {
+                    onKeyClkDown( EUser, R[ I, string ] )
+                }
+            }
+        }
+    }
+    
+    function onFileListClk( ) {
+        
+    }
+    
+    function onFileReadClk( ) {
+        
+    }
+    
+}
+
+if( chatClk( ) ) {
+    if( lastSpoke( ) == EUser ) {
+        local S = lastSaid( )
+        if( S:left( 1 ) == "/" ) {
+            hideChat( 1 )
+            local R = S:explode( " " )
+            local P = R:count( ) > 1 ? S:sub( R[ 1, string ]:length( ) + 2 ):explode( " " ) : array( )
+            onChatClk( lastSpoke( ), R[ 1, string ]:replace( "/", "" ), P )
+        }
+    }
+}
+
+if( keyClk( ) ) { 
+    local P = keyClk( )
+    if( P == EUser ) {
+        local K = keyClkPressed( )
+        if( P:keyPressed( K ) ) {
+            onKeyClkDown( P, K )
+        }
+    }
+}
+
+if( clk( ) ) {
+    onClk( )
+}
+
+if( fileListClk( ) ) {
+    RLoadedFileList = fileReadList( )
+    onFileListClk( )
+}
+
+if( fileClk( ) ) {
+    SLoadedFileData = fileRead( )
+    onFileReadClk( )
+}
+    
+    
+# cuz fuck you
+ERoot:setPos( VRoot )
+ERoot:setAng( ang( 0 ) )
+ERoot:propFreeze( 1 )
+
+
+
+
+

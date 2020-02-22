@@ -1,0 +1,76 @@
+@name tut_hologramy_eng
+# NAME OF THE CHIP, COMPLETELLY OPTIONAL BUT ITS NICE TO SET IT SO OTHER PEOPLE AND YOU WILL KNOW WHAT THAT SPECIFIC E2 IS
+
+@inputs
+# VALUES THAT ENTER THE CODE, WE DONT NEED ANY IN THIS TUTORIAL
+
+@outputs
+# VALUES THAT EXIT THE CODE, WE DONT THESE EITHER.
+
+@persist Timer
+# PERSIST ARE VALUES CALCULATED IN THE CODE NOT INCLUDED IN OUTPUTS OR INPUTS
+
+
+
+
+runOnTick(1)
+# CODE LOOP
+
+if(first()){
+# thanks to that the code will be executed only once and not infinite amount of times(because of the loop above)
+
+holoCreate(1) 
+# creates hologram with ID "1" which is basically a method of recognition which hologram is which
+
+holoPos(1, entity():toWorld(vec(0,0,30))) 
+# positions the hologram to "local" position of "entity()" entity() stands for expression2 itself
+# local position means that if you rotate the expression hologram will always be up for expression(entity())
+# if you want hologram to be ABOVE expression relative to world then we need to position hologram on entity with some
+# added height... lets say 50 so it goes like this: 
+# holoPos(1, entity():pos() + vec(0,0,50))
+
+#LITERALLY: HoloPosition(holo with index 1, position of expression2 chip + vector 0,0,50)
+# that 50 is vector Z which stands for height in this game
+
+holoAng(1, entity():toWorld(ang(90,0,0)))
+# sets the angle of a hologram, just like with holoPos i used "toWorld" here so hologram will change angle to angle of
+# expression chip. Instead of that you can just give it an angle for example angle 0,0,0(Pitch, Yaw, Roll) and it will stay like that
+# EXAMPLE:
+# holoAng(1, ang(0,0,0))
+
+holoScaleUnits(1, vec(8,8,8))
+# sets the size of a hologram, there are two types of scaling holograms "holoscaleUnits" and "holoScale"
+# the difference is that with holoScaleUnits you will scale something to this exact size, but if you use holoScale
+# it will simply multiply or divide the numbers you give to it... for example if you make a jeep hologram with holoScale of 
+# vector 1,1,1 it will be just normal sized jeep, if you use 2,2,2 it will double in its size, you can also put 0.5,0.5,0.5 to 
+# make it half of the size or even make the scales negative so you will see "insides" of holograms
+
+holoColor(1, vec(255,255,255))
+# sets color of a hologram, these 3 values are Red, Gree, Blue
+
+holoModel(1, "hq_cylinder")
+# this sets model of the hologram, on most of the servers you can use whatever model you want
+# but in this case i used official holographic model from wiremod "hq_cylinder". If you want to get a model "name"
+# from Q-menu just click a prop there with right click and click "copy to clipboard" and then paste it in holoModel()
+
+holoMaterial(1, "models/cheeze/buttons2/1")
+# this sets material for the hologram, you can use any material from material tool and many more that
+# are not listed there. For this example i chose material of a button "1", you can change that number on 
+# the end of it to whatever between 0 and 9 and it will give you different material.
+
+holoParent(1, entity())
+# this parent your hologram to anything you want, in this example i parented it to expression2 chip(entity())
+# WHAT IS PARENT ?: Parent is basically super-welding something to something, now that it is parented it will move
+# and rotate with whatever you parented it to.
+
+}
+# CLOSING "if(first())" Code after this line will repeat infinite amount of times since loop affects it
+
+Timer++
+# This timer adds one unit of "Timer" every time Code is run, since we looped entire E2 it will add.. and add.. and add...
+
+holoAng(1, entity():toWorld(ang(90,Timer,0)))
+# now we are using angle again, but this time i set Timer which count up as a Yaw angle, this will make this shit rotate
+# I also set Pitch to 90
+
+# FEEL FRY TO CHANGE ANYTHING

@@ -1,0 +1,59 @@
+@name Artillery_lib_test
+@persist Artillery:string Me:entity
+
+#include "libs/async"
+#include "libs/heap"
+#include "libs/artillery"
+
+if( first() ) {
+    
+    Me = owner()
+    Artillery = createArtillery()
+    
+    #[ OPTIONAL VARS
+    Artillery:setProjectileArc( TRAJECTORY_ARC_HIGH )
+    Artillery:setProjectileArc( TRAJECTORY_ARC_LOW )
+    Artillery:setProjectilePower( 50 )
+    Artillery:setProjectileModel( "models/props_phx/cannonball.mdl" )
+    Artillery:setProjectileModel( "models/props_phx/misc/egg.mdl" )
+    Artillery:setProjectileMass( 50000 )
+
+    Artillery:setTrailStart( 1 )
+    Artillery:setTrailEnd( 10 )
+    Artillery:setTrailLength( 1 )
+    Artillery:setTrailMaterial( "trails/smoke" )
+    Artillery:setTrailColor( hsv2rgb( random(360), 1, 1 ) )
+    Artillery:setTrailAlpha( 255 )
+    ]#
+    
+    Artillery:setProjectilePower( 25 )
+    Artillery:setProjectileArc( TRAJECTORY_ARC_HIGH )
+    #Artillery:setProjectileModel( "models/props_phx/misc/potato_launcher_explosive.mdl" )
+}
+
+interval( 10 )
+
+if( Me:keyReload() && changed( Me:keyReload() ) ) {
+    
+    Artillery:setOrigin( entity():pos() )
+    Artillery:setTarget( Me:aimPos() )
+    Artillery:setTrailColor( hsv2rgb( random(360), 1, 1 ) )
+    
+    local I_HITTIME = Artillery:fire()
+    
+    ##[ Adds a crosshair at target, and deletes it with async
+    local Crosshair = randint( 2e10 )
+    holoCreate( Crosshair )
+    holoScaleUnits( Crosshair, vec(1):setX(200) )
+    holoColor( Crosshair, vec(0):setX(255) )
+    holoPos( Crosshair, Me:aimPos() )
+    
+    holoCreate( Crosshair + 1 )
+    holoScaleUnits( Crosshair + 1, vec(1):setY(200) )
+    holoColor( Crosshair + 1, vec(0):setX(255) )
+    holoPos( Crosshair + 1, Me:aimPos() )
+    
+    async( I_HITTIME, "holoDelete", Crosshair )
+    async( I_HITTIME, "holoDelete", Crosshair + 1 )
+    #]#
+}

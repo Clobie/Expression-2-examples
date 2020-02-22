@@ -1,0 +1,83 @@
+@name default
+@persist 
+
+#include "lib/variable"
+#include "lib/button"
+#include "lib/artillery"
+#include "lib/prng"
+
+if( first() ) {
+    
+    owner():keysListen( 1 )
+    buttoncallback_bind( "event_button" )
+    bindcallback_keydown( "event_keydown" )
+    bindcallback_keyup( "event_keyup" )
+    
+    function event_button( Ply:entity, Btn:string ) {
+        #print( Ply:name() + " pressed button id: " + Btn )
+    }
+    
+    function event_keydown( Ply:entity, Key:string ) {
+        #print( Ply:name() + " pressed " + Key )
+    }
+    
+    function event_keyup( Ply:entity, Key:string ) {
+        #( Ply:name() + " released " + Key )
+    }
+}
+
+#######################################################################
+# lib/button
+#######################################################################
+#   string = buttonCreate()
+#   string:buttonSetToggleable( number )
+#   string:buttonSetToggleDuration( number )
+#   string:buttonSetPosition( vector )
+#   string:buttonSetAngle( angle )
+#   string:buttonWhitelist( entity )
+#   string:buttonWhitelistAll()
+#   string:buttonBlacklist( entity )
+#   string:buttonColorOn( vector )
+#   string:buttonColorOff( vector )
+#   string:buttonColorOutlineOn( vector )
+#   string:buttonColorOutlineOff( vector )
+#   string:buttonSetMaterialOn( string )
+#   string:buttonSetMaterialOff( string )
+#   string:buttonSetOutlineMaterialOn( string )
+#   string:buttonSetOutlineMaterialOff( string )
+#   string:buttonValueOn( number )
+#   string:buttonValueOff( number )
+#   string string:buttonValue()
+#   buttoncallback_bind( string )
+#   buttoncallback_unbind( string )
+#   
+#######################################################################
+# lib/artillery
+#######################################################################
+#   string = createArtillery()
+#   string:setOrigin( vector )
+#   string:setTarget( vector )
+#   string:setArc( number )
+#   string:setPower( number )
+#   string:setProjectileModel( string )
+#   string:setProjectileMass( number )
+#   string:setTrails( number, number, number, string, vector, number )
+#   string:fire()
+#   
+#######################################################################
+# lib/prng
+#######################################################################
+#   number = srand( number )
+#   number = rand()
+#   
+#######################################################################
+# lib/keyboard
+#######################################################################
+#   
+#   keyup and keydown functions must have entity (player) and string (key) as parameters
+#   
+#   entity:keysListen( number )
+#   bindcallback_keydown( string )
+#   bindcallback_keyup( string )
+#   unbindcallback_keydown( string )
+#   unbindcallback_keyup( string )

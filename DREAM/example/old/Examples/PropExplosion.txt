@@ -1,0 +1,28 @@
+@name 
+@inputs 
+@outputs 
+@persist I:number A:array
+@trigger 
+
+interval(50)
+
+if(first())
+{
+    findByClass("prop_*")
+    A = findToArray()
+    print(A:count())
+    I = 1
+}
+elseif( clk() )
+{
+    while(perf() & I < A:count())
+    {
+        I++
+        A[I, entity]:setAng( ang(random(0,360),random(0,360),random(0,360)) )
+        A[I, entity]:setColor( vec(random(0,255),random(0,255),random(0,255)) )
+    }
+    if(I >= A:count())
+    {
+        I = 0
+    }
+}

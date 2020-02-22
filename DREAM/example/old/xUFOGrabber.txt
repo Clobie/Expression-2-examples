@@ -1,0 +1,191 @@
+# ____                                      __               __  __          ___                                                                      __          ___                   
+#/\  _ `.                                  /\ \             /\ \/\ \        /\_ \                                                 /'\_/`\            /\ \        /\_ \                  
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/      ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___     /\      \    ___    \_\ \     __\//\ \      __   _ __  
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/      /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\   \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \   /'__`\/\`'__\
+#  \ \ \_\ \ \ \//\  __//\ \L\.\_/\ \/\ \/\ \      /\__, `\   \ \ \ \ \/\ \L\ \\_\ \_/\ \L\ \/\ \L\ \ \ \//\ \L\.\_/\ \/\ \/\ \   \ \ \_/\ \/\ \L\ \/\ \L\ \/\  __/ \_\ \_/\  __/\ \ \/ 
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\     \/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\ \____\\ \_\ 
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/      \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___L\ \/_/ \/__/\/_/\/_/\/_/\/_/    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/\/____/ \/_/ 
+#                                                                                               /\____/                                                                                 
+#                                                                                               \_/__/
+# Hologram Modeler File Output
+# Modeler version: v4
+# Date: 11/11/2018 @ 216
+# Holograms: 18
+# Hologram Notes:   
+#                   1: anchor
+#                   1: anchor
+#                   1: anchor
+#                   1: anchor
+#                   1: anchor
+
+@name ufo01
+@inputs
+@outputs Grab GrabStrength
+@persist [ HologramModel HologramPosition HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramSkin  HologramParent HologramNote ]:array
+@persist [ HoloCounter SetupComplete CameraToggle GrabberToggle Grab GrabStrength]:number
+@persist [ Me Chip Grabber ]:entity
+@persist 
+
+interval( 25 )
+
+if( first() ) {
+
+    #include "_/dream/lib/async"
+    #include "_/dream/lib/trajectory"
+
+    Me = owner()
+    Chip = entity()
+    
+    Grab = 0
+    GrabStrength = 50000
+    CameraToggle = 0
+    GrabberToggle = 0
+    
+    
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    SetupComplete = 0
+    HoloCounter = 0
+    HologramModel = array("models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_torus.mdl","models/holograms/hq_torus.mdl","models/holograms/hq_torus.mdl","models/holograms/hq_torus.mdl","models/sprops/geometry/fring_12.mdl")
+    HologramPosition = array(vec(0,0,25),vec(0,0,25),vec(0,0,25),vec(0,0,25),vec(0,0,25),vec(0,0,25),vec(0,0,30.5996),vec(0,0,25),vec(0,0,29.7998),vec(-23.1943,0,28.3994),vec(23.1943,0,28.4004),vec(0,-23.1943,28.3994),vec(0,23.1943,28.3994),vec(-23.1943,0,28.7998),vec(23.1943,0,28.7998),vec(0,-23.1943,28.7998),vec(0,23.1943,28.7998),vec(50,0,25))
+    HologramAngle = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(-15,0,0),ang(15,0,0),ang(0,0,15),ang(0,0,-15),ang(-15,0,0),ang(15,0,0),ang(0,0,15),ang(0,0,-15),ang(0,90,0))
+    HologramScale = array(vec(5,5,1),vec(-5.1,-5.1,-1.1),vec(5.6,5.6,1),vec(-5.7,-5.7,-1),vec(2,2,2),vec(-2.1,-2.1,-2.1),vec(1.9,1.9,1.9),vec(5.3,5.3,1),vec(3,3,1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.015,0.015,0.015))
+    HologramColor = array(vec(75,0,0),vec(0,0,0),vec(75,0,0),vec(0,0,0),vec(100,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(40,40,40),vec(40,40,40),vec(40,40,40),vec(40,40,40),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0))
+    HologramAlpha = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    HologramMaterial = array("","","","","","","","","","","","","","","","","","debug/debugdrawflat")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    HologramNote = array("anchor","","","","","","","","","","","","","","","","","")
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    
+    function setup() {
+        HoloCounter++
+        holoCreate( HoloCounter, Chip:pos() + HologramPosition[ HoloCounter, vector ], HologramScale[ HoloCounter, vector ], HologramAngle[ HoloCounter, angle ], HologramColor[ HoloCounter, vector ], HologramModel[ HoloCounter, string ] )
+        holoMaterial( HoloCounter, HologramMaterial[ HoloCounter, string ] )
+        holoSkin( HoloCounter, HologramSkin[ HoloCounter, number ] )
+        holoAlpha( HoloCounter, HologramAlpha[ HoloCounter, number ] )
+        if( HoloCounter == HologramModel:count() ) {
+            for( I = 1, HoloCounter ) {
+                if( HologramParent[ I, number ] > 0 ) {
+                    holoParent( I, HologramParent[ I, number ] )
+                }
+            }
+            
+            cameraCreate( 1 )
+            cameraPos( 1, Chip:pos() + vec( 32, 0, 25 ) )
+            cameraParent( 1, holoEntity( 1 ) )
+            cameraToggle( 1, 1 )
+            holoParent( 1, Grabber )
+            
+            
+            SetupComplete = 1
+        }
+    }
+    timer( "setup", 50 )
+    
+    findByModel( "models/jaanus/wiretool/wiretool_siren.mdl" )
+    Grabber = findClosest( entity():pos() )
+    Grabber:setPos( Chip:pos() + vec( 0, 0, 25 ) )
+    Grabber:setAng( ang( 90, 0, 0 ) )
+    Grabber:setMass( 50000 )
+    
+    Grabber:createWire( Chip, "Grab", "Grab" )
+    Grabber:createWire( Chip, "Strength", "GrabStrength" )
+}
+
+if( clk( "setup" ) ) {
+    
+    while( perf( 90 ) & HoloCounter < HologramModel:count() & holoCanCreate() ) {
+        setup()
+    }
+    if( HoloCounter < HologramModel:count() ) {
+        timer( "setup", 1 )
+    }
+}
+
+if( SetupComplete == 1 ) {
+
+    if( clk() ) {
+        local Sprint = 1
+        if( Me:keySprint() ) {
+            Sprint = 10
+        } else {
+            Sprint = 1
+        }
+        
+        local Pos = Grabber:pos()
+        if( Me:keyForward() ) {
+            Pos = Pos + Grabber:up() * 2 * Sprint
+        }
+        if( Me:keyBack() ) {
+            Pos = Pos + Grabber:up() * -2 * Sprint
+        }
+        if( Me:keyLeft() ) {
+            Pos = Pos + Grabber:right() * -2 * Sprint
+        }
+        if( Me:keyRight() ) {
+            Pos = Pos + Grabber:right() * 2 * Sprint
+        }
+        if( Me:keyJump() ) {
+            Pos = Pos + Grabber:forward() * -2 * Sprint
+        }
+        if( Me:keyAttack1() ) {
+            Grab = 1
+        } else {
+            Grab = 0
+        }
+        Grabber:setPos( Pos )
+        Grabber:setAng( Me:eye():toAngle() + ang( 90, 0, 0 ) )
+    }
+
+    if( keyClk() ) {
+        local Player = keyClk()
+        local Key = keyClkPressed()
+        local Pressed = Player:keyPressed( Key ) ? 1 : 0
+        
+        if( Player == Me & Pressed == 1 & Key == "mouse_right" ) {
+            propSpawn( "models/sprops/cuboids/height06/size_1/cube_6x6x6.mdl", Grabber:pos() + ( Grabber:up() * 75 ), ang( 0, 0, 0 ), 0 )
+        }
+        
+        if( Player == Me & Key == "space" & Pressed ) {
+            if( CameraToggle ) {
+                CameraToggle = 0
+                #cameraToggle( 1, 0 )
+            } else {
+                CameraToggle = 1
+                #cameraToggle( 1, 1 )
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

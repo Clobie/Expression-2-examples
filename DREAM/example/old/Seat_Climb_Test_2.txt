@@ -1,0 +1,88 @@
+@name Seat Climb Test 2
+@persist [ Entity Seat Driver Body ]:entity
+@persist RangerOffset Height Debug Speed Yaw
+
+#exit()
+
+if( first() ) {
+    
+    Debug = 1
+    RangerOffset = 100
+    Height = 50
+    Speed = 20
+    
+    Yaw = 0
+    
+    holoCreate( 0, entity():pos(), vec(0.3), ang(), vec(255), "hq_sphere" )
+    for( I = 1, 16 ) { holoCreate( I, vec(), vec(0.3), ang(), select( 1 + ( I % 3 ), vec(255,0,0), vec(0,255,0), vec(0,0,255) ), "hq_sphere" ) }
+    
+    function ranger visibleRanger( A, B, C, From:vector, To:vector ) {
+        local XRD = rangerOffset( From, To )
+        holoPos( A, From )
+        holoPos( B, ( XRD:position( ) + From ) / 2 )
+        holoAng( B, ( XRD:position( ) - From ):toAngle( ) )
+        holoScaleUnits( B, vec( XRD:distance( ), 1, 1 ) )
+        holoPos( C, XRD:position( ) )
+        return XRD
+    }
+    
+    function angle incrementAngle( O:angle, T:angle, S:number ) {
+        Ang = acos( O:forward():dot( T:forward() ) )
+        return Ang > S ? slerp( quat( O ), quat( T ), S / Ang ):toAngle() : T
+    }
+    
+    Entity = entity()
+    Body = propSpawn( "models/sprops/rectangles/size_3/rect_24x24x3.mdl", entity():toWorld( vec( 0, 0, 20 ) ), ang( 0 ), 0 )
+    Seat = seatSpawn( "models/nova/airboat_seat.mdl", Body:toWorld( vec( 0, 0, 5 ) ), Body:angles( ) - ang( 0, 90, 0 ), 0 )
+    Seat:parentTo( Body )
+    rangerPersist( 1 )
+    rangerFilter( Body )
+    rangerFilter( Seat )
+    rangerFilter( Entity )
+    rangerDefaultZero( 0 )
+    propSpawnUndo( 0 )
+    runOnTick( 1 )
+}
+
+if( tickClk() ) {
+    
+    Driver = Seat:driver( )
+    
+    local Thing = holoEntity( 0 )
+    local From = Thing:toWorld( vec( 0, 0, Height ) )
+    XRDMiddle = visibleRanger( 1, 2, 3, From, Thing:toWorld( vec( 0, 0, -Height * 2 ) ) )
+    XRDFront =  visibleRanger( 4, 5, 6, From, Thing:toWorld( vec( RangerOffset, 0, -Height * 1.2 ) ) )
+    XRDRear =   visibleRanger( 7, 8, 9, From, Thing:toWorld( vec( -RangerOffset, 0, -Height * 1.2 ) ) )
+    XRDLeft =   visibleRanger( 10, 11, 12, From, Thing:toWorld( vec( 0, -RangerOffset, -Height * 1.2 ) ) )
+    XRDRight =  visibleRanger( 13, 14, 15, From, Thing:toWorld( vec( 0, RangerOffset, -Height * 1.2 ) ) )
+    
+    local Ang = ang( 
+        XRDFront:distance( ) - XRDRear:distance( ), 
+        Driver:keyAttack1() ? 1 : Driver:keyAttack2() ? -1 : 0, 
+        XRDLeft:distance( ) - XRDRight:distance( ) 
+    )
+    
+    holoAng( 0, incrementAngle( Thing:angles(), Ang, 0.1 ) )
+    
+    #print( Ang )
+    
+    holoPos( 0, ( XRDFront:position() + XRDRear:position() + XRDLeft:position() + XRDRight:position() ) / 4 )
+    
+    Body:setPos( Thing:toWorld( vec( 0, 0, Height ) ) )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

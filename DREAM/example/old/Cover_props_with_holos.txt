@@ -1,0 +1,79 @@
+@name prop
+@persist Mimmick:array Prop:array Timer Scale
+
+interval(50)
+
+if( first() ) {
+    
+    Scale = 1
+    
+    function number uid() {
+        return randint(2e10)
+    }
+    
+    function number createMimmick() {
+        local I_BASE = uid()
+        holoCreate( I_BASE )
+        return I_BASE
+    }
+    
+    function props() {
+        findIncludePlayerProps( "freaky" )
+        findByClass("prop_*")
+        Prop = findToArray()
+        #Prop = players()
+        #print( Prop:count() )
+    }
+    
+    props()
+}
+
+if( clk() ) {
+    
+    Timer++
+    
+    while( Prop:count() > Mimmick:count() && holoCanCreate() && perf(50) ) 
+    {
+        Mimmick:pushNumber( createMimmick() )
+        local ID = Mimmick[Mimmick:count(), number]
+        holoPos( ID, Prop[Mimmick:count(), entity]:pos() )
+        holoModel( ID, Prop[Mimmick:count(), entity]:model() )
+        holoAng( ID, Prop[Mimmick:count(), entity]:angles() )
+        #holoColor( ID, Prop[Mimmick:count(), entity]:getColor() )
+        #holoColor( ID, vec( 0 ) )
+        holoMaterial( ID, Prop[Mimmick:count(), entity]:getMaterial() )
+        holoMaterial( ID, "debug/debugdrawflat" )
+        holoAlpha( ID, Prop[Mimmick:count(), entity]:getAlpha() )
+        #holoColor( ID, hsv2rgb(random(360),1,1) )
+        holoScale( ID, vec(Scale) )
+        holoParent( ID, Prop[Mimmick:count(), entity] )
+        #Prop[Mimmick:count(), entity]:setAlpha(0)
+        #holoVisible( ID, Prop[Mimmick:count(), entity], 0 )
+    }
+    
+    local RESET = 0
+    while( Prop:count() < Mimmick:count() && holoCanCreate() && perf(50) ) {
+        RESET = 1
+        holoDelete( Mimmick[Mimmick:count(), number] )
+        Mimmick:remove( Mimmick:count() )
+    }
+    
+    if( RESET ) {
+        for( I = 1, Mimmick:count() ) {
+            local ID = Mimmick[I, number]
+            holoPos( ID, Prop[I, entity]:pos() )
+            holoAng( ID, Prop[I, entity]:angles() )
+            holoColor( ID, Prop[I, entity]:getColor() )
+            holoScale( ID, vec(Scale) )
+            holoParent( ID, Prop[I, entity] )
+        }
+    }
+    
+    #[
+    if( !RESET ) {
+        for( I = 1, Mimmick:count() ) {
+            holoAng( Mimmick[I, number], Prop[I, entity]:eye():toAngle() * ang(0,1,0) )
+        }
+    }
+    ]#
+}

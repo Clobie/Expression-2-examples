@@ -1,0 +1,93 @@
+@name Sol_burst_Test
+@inputs 
+@outputs G S:string Use R:ranger T T2 T3 Props:array Temp
+@persist 
+#@model models/hunter/tubes/circle4x4.mdl
+
+runOnTick(1)
+Use = owner():keyUse()
+S="/ambient/explosions/citadel_end_explosion1.wav"
+
+rangerFilter(entity())
+R = rangerOffset(9999999999,entity():pos(), vec(0,0,1))
+
+if(first()){
+ #   entity():setAlpha(0)
+    G=255
+    holoCreate(0)
+    holoModel(0, "hq_cylinder")
+    holoMaterial(0, "models/roller/rollermine_glow")
+    holoScaleUnits(0, vec(9000,9000,0.3))
+    holoPos(0, entity():toWorld(vec(0,0,0)))
+    holoAng(0, entity():toWorld(ang(0,0,0)))
+    holoParent(0, entity())
+    holoAlpha(0,0)
+    for(I=1,20){
+        holoCreate(I)
+        holoAlpha(I, 0)
+        holoPos(I, R:position())
+        holoEntity(I):setTrails(10+(I*20),50+(I*20),3+(I/6),"trails/laser",vec(165,255,255),255)
+
+
+
+
+}
+holoCreate(1337)
+holoMaterial(1337 ,"models/roller/rollermine_glow")
+holoScale(1337, vec(999,999,0.01))
+
+holoCreate(1338)
+holoMaterial(1338 ,"models/roller/rollermine_glow")
+#holoScale(1338, vec(999,999,100))
+holoModel(1338, "hq_icosphere")
+
+holoCreate(1339)
+holoMaterial(1339 ,"models/roller/rollermine_glow")
+#holoScale(1338, vec(999,999,100))
+holoModel(1339, "hq_icosphere")
+holoAng(1339, ang(0,180,0))
+
+}
+if(Use&$Use){
+    Temp=1
+    for(I=1,20){
+    holoPos(I, entity():pos())
+    
+    
+    }
+    holoEntity(0):soundPlay(1,soundDuration(S),S)
+    soundPitch(1, 900)
+    
+    T=255
+    T2=155
+    T3=0
+    holoScale(1338, vec(100,100,100))
+    
+    }
+
+T-=0.6
+if(T<=0){T=0}   
+   holoAlpha(1337, T) 
+
+T2-=0.5
+if(T2<=0){T2=0}   
+T3+=1
+if(T3<=0){T3=0}   
+   holoAlpha(1338, T2) 
+    holoAlpha(1339, T2)
+    holoScale(1338, -vec(1,1,1)*T3/8)
+    holoScale(1339, -vec(1,1,1)*T3/8)
+    
+
+if(owner():keyUse()){G--}
+#holoAlpha(0, G)
+
+findByClass("prop_*")
+findIncludePlayerProps(owner())
+Props=findToArray()
+for(I=1, Props:count()){
+    
+    if(findResult(I):pos():distance(entity():pos())<400 &Temp){
+    findResult(I):applyForce((findResult(I):pos()-entity():pos())*findResult(I):mass()/3)
+    }
+}

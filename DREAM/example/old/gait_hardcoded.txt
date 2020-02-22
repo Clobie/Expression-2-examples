@@ -1,0 +1,237 @@
+@name gait_hardcoded
+@inputs 
+@outputs [GaitCycle GaitVelocity GaitDelay GaitSize]
+@persist [GaitCycle GaitVelocity GaitDelay GaitSize]
+@persist [FL_Offset FL_Prev FL_Dest FL_Pos]:vector FL_ShouldMove FL_IsMoving FL_LastMove FL_Length
+@persist [FR_Offset FR_Prev FR_Dest FR_Pos]:vector FR_ShouldMove FR_IsMoving FR_LastMove FR_Length
+@persist [RL_Offset RL_Prev RL_Dest RL_Pos]:vector RL_ShouldMove RL_IsMoving RL_LastMove RL_Length
+@persist [RR_Offset RR_Prev RR_Dest RR_Pos]:vector RR_ShouldMove RR_IsMoving RR_LastMove RR_Length
+@persist Entity:entity Scale
+@trigger none
+
+if (first()) {
+    Scale = 1
+    
+    Entity = entity()
+    
+    #-- Hardcoded Legs
+    FL_Offset = vec(45, 45, 0)*Scale
+    FR_Offset = vec(45, -45, 0)*Scale
+    RL_Offset = vec(-45, 45, 0)*Scale
+    RR_Offset = vec(-45, -45, 0)*Scale
+    
+    FL_Prev = FL_Dest = FL_Pos = Entity:toWorld(FL_Offset)
+    FR_Prev = FR_Dest = FR_Pos = Entity:toWorld(FR_Offset)
+    RL_Prev = RL_Dest = RL_Pos = Entity:toWorld(RL_Offset)
+    RR_Prev = RR_Dest = RR_Pos = Entity:toWorld(RR_Offset)
+
+    FL_ShouldMove = FL_IsMoving = FL_LastMove = 0
+    FR_ShouldMove = FR_IsMoving = FR_LastMove = 0
+    RL_ShouldMove = RL_IsMoving = RL_LastMove = 0
+    RR_ShouldMove = RR_IsMoving = RR_LastMove = 0
+    
+    FL_Length = 100
+    FR_Length = 100
+    RL_Length = 100
+    RR_Length = 100
+    
+    holoCreate(1)
+    holoCreate(2)
+    holoCreate(3)
+    holoCreate(4)
+    
+    rangerFilter(Entity)
+    rangerPersist(1)
+}
+
+interval(60)
+
+
+EntityUp = Entity:up()
+EntityPos = Entity:pos()
+EntityVel = Entity:vel()
+EntityVelLength = Entity:vel():length()
+
+#-----------------
+#-- Gait Sequencer
+GaitDelay = 6
+GaitVelocity = GaitVelocity*0.1 + EntityVelLength*(1 - 0.01)
+
+local Multiply = GaitVelocity/(100 * Scale)
+
+GaitCycle = GaitCycle + (0.05 + 0.03*Multiply)
+GaitSize = clamp(0.4 + 0.03*Multiply, 0, 0.9)
+
+
+#-----------------
+#-- Individual Timers
+
+
+#-----------------
+#-- Front Left
+local Order = 0
+local GStart = Order - floor(Order)
+local GStop = GStart + GaitSize
+
+local GLerp = 0
+local GMove = 0
+
+if (GaitCycle >= GStart & GaitCycle <= GStop) { GLerp = (GaitCycle - GStart) / (GStop - GStart), GMove = 1 }
+if (GStart < 0) { if (GaitCycle >= abs(GStart) & GaitCycle <= 1) { GLerp = (GaitCycle - GStart) / (GStop - GStart), GMove = 1 } }
+elseif (GStop > 1) { if (GaitCycle + 1 >= GStart & GaitCycle + 1 <= GStop) { GLerp = (GaitCycle + 1 - GStart) / (GStop - GStart), GMove = 1 } }
+
+local TraceA = rangerOffset(EntityPos, Entity:toWorld(FL_Offset)):position()
+local TraceB = rangerOffset(TraceA, TraceA + EntityVel / GaitDelay)
+local TraceC = rangerOffset(FL_Length*2, TraceB:position(), -EntityUp)
+local TraceD = TraceB:hit() ? TraceB : TraceC
+
+if (GMove) {
+    FL_Dest = TraceD:position()
+    if (!FL_IsMoving) {
+        FL_Prev = FL_Pos
+        if (FL_Pos:distance(TraceD:position()) >= 4) {
+            local Dot = 0
+            if (TraceD:hit()) { Dot = 1 - EntityUp:dot(TraceD:hitNormal()) }
+            if (TraceD:distance() < FL_Length + Dot*100*clamp(EntityVelLength/100, 0, FL_Length/2)) { FL_ShouldMove = 1 }
+        }
+    }
+    if (FL_ShouldMove) {
+        FL_Pos = bezier(FL_Prev, (FL_Dest + FL_Prev)/2 + TraceD:hitNormal()*clamp(FL_Prev:distance(FL_Dest)/4, 0, FL_Length/2), FL_Dest, GLerp)
+        FL_LastMove = 1
+    }
+}
+else {
+    if (FL_LastMove) { FL_Pos = FL_Dest, FL_LastMove = 0 }
+    FL_ShouldMove = 0
+}
+FL_IsMoving = GMove ? FL_ShouldMove : 0
+
+
+#-----------------
+#-- Front Right
+local Order = 0.5
+local GStart = Order - floor(Order)
+local GStop = GStart + GaitSize
+
+local GLerp = 0
+local GMove = 0
+
+if (GaitCycle >= GStart & GaitCycle <= GStop) { GLerp = (GaitCycle - GStart) / (GStop - GStart), GMove = 1 }
+if (GStart < 0) { if (GaitCycle >= abs(GStart) & GaitCycle <= 1) { GLerp = (GaitCycle - GStart) / (GStop - GStart), GMove = 1 } }
+elseif (GStop > 1) { if (GaitCycle + 1 >= GStart & GaitCycle + 1 <= GStop) { GLerp = (GaitCycle + 1 - GStart) / (GStop - GStart), GMove = 1 } }
+
+local TraceA = rangerOffset(EntityPos, Entity:toWorld(FR_Offset)):position()
+local TraceB = rangerOffset(TraceA, TraceA + EntityVel / GaitDelay)
+local TraceC = rangerOffset(FR_Length*2, TraceB:position(), -EntityUp)
+local TraceD = TraceB:hit() ? TraceB : TraceC
+
+if (GMove) {
+    FR_Dest = TraceD:position()
+    if (!FR_IsMoving) {
+        FR_Prev = FR_Pos
+        if (FR_Pos:distance(TraceD:position()) >= 4) {
+            local Dot = 0
+            if (TraceD:hit()) { Dot = 1 - EntityUp:dot(TraceD:hitNormal()) }
+            if (TraceD:distance() < FR_Length + Dot*100*clamp(EntityVelLength/100, 0, FR_Length/2)) { FR_ShouldMove = 1 }
+        }
+    }
+    if (FR_ShouldMove) {
+        FR_Pos = bezier(FR_Prev, (FR_Dest + FR_Prev)/2 + TraceD:hitNormal()*clamp(FR_Prev:distance(FR_Dest)/4, 0, FR_Length/2), FR_Dest, GLerp)
+        FR_LastMove = 1
+    }
+}
+else {
+    if (FR_LastMove) { FR_Pos = FR_Dest, FR_LastMove = 0 }
+    FR_ShouldMove = 0
+}
+FR_IsMoving = GMove ? FR_ShouldMove : 0
+
+       
+#-----------------
+#-- Rear Left
+local Order = 0.75
+local GStart = Order - floor(Order)
+local GStop = GStart + GaitSize
+
+local GLerp = 0
+local GMove = 0
+
+if (GaitCycle >= GStart & GaitCycle <= GStop) { GLerp = (GaitCycle - GStart) / (GStop - GStart), GMove = 1 }
+if (GStart < 0) { if (GaitCycle >= abs(GStart) & GaitCycle <= 1) { GLerp = (GaitCycle - GStart) / (GStop - GStart), GMove = 1 } }
+elseif (GStop > 1) { if (GaitCycle + 1 >= GStart & GaitCycle + 1 <= GStop) { GLerp = (GaitCycle + 1 - GStart) / (GStop - GStart), GMove = 1 } }
+
+local TraceA = rangerOffset(EntityPos, Entity:toWorld(RL_Offset)):position()
+local TraceB = rangerOffset(TraceA, TraceA + EntityVel / GaitDelay)
+local TraceC = rangerOffset(RL_Length*2, TraceB:position(), -EntityUp)
+local TraceD = TraceB:hit() ? TraceB : TraceC
+
+if (GMove) {
+    RL_Dest = TraceD:position()
+    if (!RL_IsMoving) {
+        RL_Prev = RL_Pos
+        if (RL_Pos:distance(TraceD:position()) >= 4) {
+            local Dot = 0
+            if (TraceD:hit()) { Dot = 1 - EntityUp:dot(TraceD:hitNormal()) }
+            if (TraceD:distance() < RL_Length + Dot*100*clamp(EntityVelLength/100, 0, RL_Length/2)) { RL_ShouldMove = 1 }
+        }
+    }
+    if (RL_ShouldMove) {
+        RL_Pos = bezier(RL_Prev, (RL_Dest + RL_Prev)/2 + TraceD:hitNormal()*clamp(RL_Prev:distance(RL_Dest)/4, 0, RL_Length/2), RL_Dest, GLerp)
+        RL_LastMove = 1
+    }
+}
+else {
+    if (RL_LastMove) { RL_Pos = RL_Dest, RL_LastMove = 0 }
+    RL_ShouldMove = 0
+}
+RL_IsMoving = GMove ? RL_ShouldMove : 0
+
+
+#-----------------
+#-- Rear Right
+local Order = 0.25
+local GStart = Order - floor(Order)
+local GStop = GStart + GaitSize
+
+local GLerp = 0
+local GMove = 0
+
+if (GaitCycle >= GStart & GaitCycle <= GStop) { GLerp = (GaitCycle - GStart) / (GStop - GStart), GMove = 1 }
+if (GStart < 0) { if (GaitCycle >= abs(GStart) & GaitCycle <= 1) { GLerp = (GaitCycle - GStart) / (GStop - GStart), GMove = 1 } }
+elseif (GStop > 1) { if (GaitCycle + 1 >= GStart & GaitCycle + 1 <= GStop) { GLerp = (GaitCycle + 1 - GStart) / (GStop - GStart), GMove = 1 } }
+
+local TraceA = rangerOffset(EntityPos, Entity:toWorld(RR_Offset)):position()
+local TraceB = rangerOffset(TraceA, TraceA + EntityVel / GaitDelay)
+local TraceC = rangerOffset(RR_Length*2, TraceB:position(), -EntityUp)
+local TraceD = TraceB:hit() ? TraceB : TraceC
+
+if (GMove) {
+    RR_Dest = TraceD:position()
+    if (!RR_IsMoving) {
+        RR_Prev = RR_Pos
+        if (RR_Pos:distance(TraceD:position()) >= 4) {
+            local Dot = 0
+            if (TraceD:hit()) { Dot = 1 - EntityUp:dot(TraceD:hitNormal()) }
+            if (TraceD:distance() < RR_Length + Dot*100*clamp(EntityVelLength/100, 0, RR_Length/2)) { RR_ShouldMove = 1 }
+        }
+    }
+    if (RR_ShouldMove) {
+        RR_Pos = bezier(RR_Prev, (RR_Dest + RR_Prev)/2 + TraceD:hitNormal()*clamp(RR_Prev:distance(RR_Dest)/4, 0, RR_Length/2), RR_Dest, GLerp)
+        RR_LastMove = 1
+    }
+}
+else {
+    if (RR_LastMove) { RR_Pos = RR_Dest, RR_LastMove = 0 }
+    RR_ShouldMove = 0
+}
+RR_IsMoving = GMove ? RR_ShouldMove : 0
+
+
+#-----------------
+#-- Reset Gait Cycle
+if (GaitCycle > 1) { GaitCycle = 0 }
+
+holoPos(1, FL_Pos)
+holoPos(2, FR_Pos)
+holoPos(3, RL_Pos)
+holoPos(4, RR_Pos)

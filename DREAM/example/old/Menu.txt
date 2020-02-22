@@ -1,0 +1,174 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5
+# Date: 11/30/2018 @ 2024
+@name Menu
+@persist PlayerIndex:number Player:array PlayerJailed:table
+
+#include "dream/lib/dream"
+
+if( first( ) ) {
+
+    Model = array("models/holograms/cube.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/holograms/cplane.mdl","models/sprops/misc/alphanum/alphanum_lessthan.mdl","models/sprops/misc/alphanum/alphanum_lessthan.mdl","models/props_phx/misc/potato_launcher_explosive.mdl","models/holograms/cplane.mdl","models/props_c17/fence01a.mdl","models/holograms/cplane.mdl")
+    Position = array(vec(0,0,50),vec(0,0,65),vec(0.0879,0,65),vec(0,0,35),vec(0.0879,0,35),vec(0,20,50),vec(0.0879,20,50),vec(0,-20,50),vec(0.0879,-20,50),vec(0,12.3999,60.7002),vec(0.0879,12.3999,60.7002),vec(0,-12.4097,60.7002),vec(0.0879,-12.4097,60.7002),vec(0,-12.3999,39.291),vec(0.0879,-12.3999,39.291),vec(0,12.4365,39.291),vec(0.0879,12.4365,39.291),vec(0,20,50),vec(0,-20,50),vec(0,12.3999,58.21),vec(-0.2,0,65),vec(-0.1,-12.4097,60.7002),vec(-0.1,0,35))
+    IsPositionLocal = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Angle = array(ang(0,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(-90,0,0),ang(0,90,0),ang(0,-90,0),ang(0,90,0),ang(90,-180,0),ang(0,0,0),ang(90,-180,0))
+    Scale = array(vec(1,1,1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(1,1,1),vec(1.1,1.1,1.1),vec(0.5,0.01,0.5),vec(0.5,0.01,0.5),vec(0.4,0.01,0.4),vec(0.5,0.5,0.5),vec(0.0206,0.0446,0.0552),vec(0.6,0.6,0.6))
+    IsScaleUnits = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Color = array(vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Alpha = array(0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Material = array("","","","","","","","","","","","","","","","","","debug/debugdrawflat","debug/debugdrawflat","","models/cheeze/buttons2/fire.mdl","","models/cheeze/buttons2/air")
+    Skin = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Parent = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    
+    function left( Ply:entity, Index:number ) {
+        Player = players( )
+        PlayerIndex = PlayerIndex - 1
+        if( PlayerIndex == 0 ) {
+            PlayerIndex = Player:count( )
+        }
+        menuSetText( PlayerIndex + " / " + Player:count( ) + "\n \n" + Player[ PlayerIndex, entity ]:name( ) )
+        holoTextColor( teamColor( Player[ PlayerIndex, entity ]:team( ) ) )
+    }
+    
+    function right( Ply:entity, Index:number ) {
+        Player = players( )
+        PlayerIndex = PlayerIndex + 1
+        if( PlayerIndex == Player:count( ) + 1 ) {
+            PlayerIndex = 1
+        }
+        menuSetText( PlayerIndex + " / " + Player:count( ) + "\n \n" + Player[ PlayerIndex, entity ]:name( ) )
+        holoTextColor( teamColor( Player[ PlayerIndex, entity ]:team( ) ) )
+    }
+    
+    function top( Ply:entity, Index:number ) {
+        local A = randint( 2e8 )
+        holoCreate( A )
+        holoPos( A, Player[ PlayerIndex, entity ]:pos( ) + vec( 0, 0, 20 ) )
+        holoEntity( A ):ignite( 10, 100 )
+        holoAlpha( A, 0 )
+        async( 10, "holoDelete", A )
+    }
+    
+    function topleft( Ply:entity, Index:number ) {
+        Player[ PlayerIndex, entity ]:blowUp( "models/props_phx/misc/potato_launcher_explosive.mdl" )
+    }
+    
+    function topright( Ply:entity, Index:number ) {
+        
+        if( PlayerJailed[ Player[ PlayerIndex, entity ]:steamID( ), array ][ 1, number ] == 1 ) {
+            PlayerJailed[ Player[ PlayerIndex, entity ]:steamID( ), array ][ 1, number ] = 0
+            for( I = 1, 3 ) {
+                PlayerJailed[ Player[ PlayerIndex, entity ]:steamID( ), array ][ I + 1, entity ]:propDelete( )
+            }
+            menuSetText( PlayerIndex + " / " + Player:count( ) + "\n \n" + Player[ PlayerIndex, entity ]:name( ) + "\n \nUnjailed" )
+        } else {
+            local A = propSpawn( "models/sprops/misc/tubes/size_5/tube_96x96.mdl", Player[ PlayerIndex, entity ]:pos( ) + vec( 0, 0, 50 ), 1 )
+            A:setAng( ang( 0, 0, 90 ) )
+            A:setMaterial( "debug/debugdrawflat" )
+            A:setAlpha( 255 )
+            A:setColor( vec( 0 ) )
+            local B = propSpawn( "models/sprops/geometry/fdisc_96.mdl", Player[ PlayerIndex, entity ]:pos( ) + vec( 0, 0, 97 ), 1 )
+            B:setAng( ang( 0, 0, 90 ) )
+            B:setMaterial( "debug/debugdrawflat" )
+            B:setAlpha( 255 )
+            B:setColor( vec( 0 ) )
+            local C = propSpawn( "models/sprops/geometry/fdisc_96.mdl", Player[ PlayerIndex, entity ]:pos( ) + vec( 0, 0, 3 ), 1 )
+            C:setAng( ang( 0, 0, 90 ) )
+            C:setMaterial( "debug/debugdrawflat" )
+            C:setAlpha( 255 )
+            C:setColor( vec( 0 ) )
+            PlayerJailed[ Player[ PlayerIndex, entity ]:steamID( ), array ] = array( 1, A, B, C )
+            menuSetText( PlayerIndex + " / " + Player:count( ) + "\n \n" + Player[ PlayerIndex, entity ]:name( ) + "\n \nJailed" )
+        }
+    }
+    
+    function bottom( Ply:entity, Index:number ) {
+        local Away = ( Player[ PlayerIndex, entity ]:pos( ) - Me:pos( ) ):normalized( )
+        local X = propSpawn( "models/sprops/cuboids/height06/size_1/cube_6x6x6.mdl", Player[ PlayerIndex, entity ]:pos( ) + ( Away * 100 ), 0 )
+        X:setMass( 50000 )
+        X:setAlpha( 0 )
+        X:applyForce( ( vec( 0, 0, 0.2 ) + ( Away * -1 ) ) * X:mass( ) * 5000 )
+        async( 0.4, "propDelete", X )
+    }
+    
+    function bottomleft( Ply:entity, Index:number ) {
+        fireLaser( holoEntity( 1 ):pos( ), Player[ PlayerIndex, entity ]:shootPos( ), 4 )
+        local X = propSpawn( "models/props_phx/misc/potato_launcher_explosive.mdl", Player[ PlayerIndex, entity ]:shootPos( ), 1 )
+        X:setAlpha( 0 )
+        X:propBreak( )
+    }
+    
+    function bottomright( Ply:entity, Index:number ) {
+        Player = players( )
+        PlayerIndex = PlayerIndex + 1
+        if( PlayerIndex == Player:count( ) + 1 ) {
+            PlayerIndex = 1
+        }
+        menuSetText( PlayerIndex + " / " + Player:count( ) + "\n \n" + Player[ PlayerIndex, entity ]:name( ) )
+        fireLaser( holoEntity( 1 ):pos( ), Player[ PlayerIndex, entity ]:shootPos( ), 4 )
+    }
+    
+    function setup( ) {
+        PlayerIndex = 1
+        Player = players( )
+        menuCreate( array( "top", "bottom", "left", "right", "topleft", "topright", "bottomright", "bottomleft" ), 8 )
+        
+        Player = players( )
+        PlayerIndex = 1
+        menuSetText( PlayerIndex + " / " + Player:count( ) + "\n \n" + Player[ PlayerIndex, entity ]:name( ) )
+        
+    }
+       
+    function main( ) {
+        
+    }
+    
+    function chat( Player:entity, Text:string ) {
+        
+    }
+    
+    function key( Player:entity, Key:string, Down:number ) {
+        
+    }
+}
+
+if( ModelLoaded ) {
+    interval( 60 )
+    if( clk( ) ) { main( ) }
+    if( chatClk( ) ) { chat( lastSpoke( ), lastSaid( ) ) }
+    if( keyClk( ) ) {
+        local Player = keyClk()
+        local Key = keyClkPressed()
+        local Down = Player:keyPressed( Key ) ? 1 : 0
+        key( Player, Key, Down )
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

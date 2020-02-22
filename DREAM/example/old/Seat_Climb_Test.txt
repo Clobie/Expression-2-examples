@@ -1,0 +1,85 @@
+@name Seat Climb Test
+@persist [ Entity Seat Driver Body ]:entity
+@persist RangerOffset Height Speed Yaw YawSpeed
+
+#exit()
+
+if( first() ) {
+    
+    Height = 65
+    RangerOffset = Height * 2
+    Speed = 20
+    YawSpeed = 40
+    
+    for( I = 1, 16 ) {
+        holoCreate( I, vec(), vec(0.3), ang(), select( 1 + ( I % 3 ), vec(255,0,0), vec(0,255,0), vec(0,0,255) ), "hq_sphere" )
+    }
+    
+    function ranger visibleRanger( A, B, C, From:vector, To:vector ) {
+        local XRD = rangerOffset( From, To )
+        holoPos( A, From )
+        holoPos( B, ( XRD:position( ) + From ) / 2 )
+        holoAng( B, ( XRD:position( ) - From ):toAngle( ) )
+        holoScaleUnits( B, vec( XRD:distance( ), 1, 1 ) )
+        holoPos( C, XRD:position( ) )
+        return XRD
+    }
+    
+    Entity = entity()
+    Body = propSpawn( "models/sprops/rectangles/size_3/rect_24x24x3.mdl", entity():toWorld( vec( 0, 0, 20 ) ), ang( 0 ), 0 )
+    Seat = seatSpawn( "models/nova/airboat_seat.mdl", Body:toWorld( vec( 0, 0, 5 ) ), Body:angles( ) - ang( 0, 90, 0 ), 0 )
+    Seat:parentTo( Body )
+    rangerPersist( 1 )
+    rangerFilter( Body )
+    rangerFilter( Seat )
+    rangerFilter( Entity )
+    rangerDefaultZero( 0 )
+    propSpawnUndo( 0 )
+    runOnTick( 1 )
+}
+
+if( tickClk() ) {
+    
+    Driver = Seat:driver( )
+    #XRDMiddle = visibleRanger( 1, 2, 3,    Body:pos(), Body:toWorld( vec( 0, 0, -Height + -50 ) ) )
+    XRDFront =  visibleRanger( 4, 5, 6,    Body:pos(), Body:toWorld( vec( RangerOffset, 0, -Height + -5 ) ) )
+    XRDRear =   visibleRanger( 7, 8, 9,    Body:pos(), Body:toWorld( vec( -RangerOffset, 0, -Height + -5 ) ) )
+    XRDLeft =   visibleRanger( 10, 11, 12, Body:pos(), Body:toWorld( vec( 0, -RangerOffset, -Height + -5 ) ) )
+    XRDRight =  visibleRanger( 13, 14, 15, Body:pos(), Body:toWorld( vec( 0, RangerOffset, -Height + -5 ) ) )
+    
+    Yaw = 0
+    if( Driver:keyAttack1() ) { Yaw = YawSpeed }
+    elseif( Driver:keyAttack2() ) { Yaw = -YawSpeed }
+    
+    local Torque = vec( XRDLeft:distance( ) - XRDRight:distance( ), XRDFront:distance( ) - XRDRear:distance( ), Yaw )
+    Body:applyTorque( Body:inertia() * ( Torque * 1.5 - Body:angVelVector() ) * 27.05 )
+    
+    local Controls = Body:toWorldAxis(
+        vec(
+            Driver:keyForward( ) - Driver:keyBack( ), 
+            Driver:keyLeft( )    - Driver:keyRight( ), 
+            Driver:keyJump( )    - Driver:keyWalk( )
+        )
+    )
+    #local Up = ( Body:pos( ) - XRDMiddle:position( ) ):normalized( ) * ( Height - XRDMiddle:distance( ) )
+    local Mid = (XRDLeft:position() + XRDRight:position() + XRDFront:position() + XRDRear:position() ) / 4 
+    local Up = ( Body:pos() - Mid ):normalized() * ( Height - Mid:distance( Body:pos() ) )
+    
+    Body:applyForce( Body:mass( ) * Controls * Speed + Body:mass( ) * -propGravity() * tickInterval( ) - Body:mass( ) * Body:vel() / 5 + Body:mass( ) * Up * 3 )#* XRDMiddle:distance( ) / 5 )
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

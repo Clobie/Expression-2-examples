@@ -1,0 +1,59 @@
+@name objectGetBoundPoints
+
+if( first( ) ) {
+    
+    function table entity:objectGetBoundPoints( Display:number ) {
+        
+        local AABB = This:aabbSize( ) / 2
+        local Position = This:pos( )
+        local Forward = This:forward( )
+        local Up = This:up( )
+        local Right = This:right( )
+        local X = AABB:x( )
+        local Y = AABB:y( )
+        local Z = AABB:z( )
+        local T = table(    "center_right" =            Position + ( Right * Y ),
+                            "center_left" =             Position + ( Right * -Y ),
+                            "center_front" =            Position + ( Forward * X ),
+                            "center_back" =             Position + ( Forward * -X ),
+                            "center_top" =              Position + ( Up * Z ),
+                            "center_bottom" =           Position + ( Up * -Z ),
+                            "front_right" =             Position + ( Forward * X ) + ( Right * Y ),
+                            "front_left" =              Position + ( Forward * X ) + ( Right * -Y ),
+                            "front_top" =               Position + ( Forward * X ) + ( Up * Z ),
+                            "front_bottom" =            Position + ( Forward * X ) + ( Up * -Z ),
+                            "back_right" =              Position + ( Forward * -X ) + ( Right * Y ),
+                            "back_left" =               Position + ( Forward * -X ) + ( Right * -Y ),
+                            "back_top" =                Position + ( Forward * -X ) + ( Up * Z ),
+                            "back_bottom" =             Position + ( Forward * -X ) + ( Up * -Z ),
+                            "top_right" =               Position + ( Up * Z ) + ( Right * Y ),
+                            "top_left" =                Position + ( Up * Z ) + ( Right * -Y ),
+                            "top_front" =               Position + ( Up * Z ) + ( Forward * X ),
+                            "top _back" =               Position + ( Up * Z ) + ( Forward * -X ),
+                            "bottom_right" =            Position + ( Up * -Z ) + ( Right * Y ),
+                            "bottom_left" =             Position + ( Up * -Z ) + ( Right * -Y ),
+                            "bottom_front" =            Position + ( Up * -Z ) + ( Forward * X ),
+                            "bottom_back" =             Position + ( Up * -Z ) + ( Forward * -X ),
+                            "front_top_right" =         Position + ( Forward * X ) + ( Up * Z ) + ( Right * Y ),
+                            "front_top_left" =          Position + ( Forward * X ) + ( Up * Z ) + ( Right * -Y ),
+                            "front_bottom_right" =      Position + ( Forward * X ) + ( Up * -Z ) + ( Right * Y ),
+                            "front_bottom_left" =       Position + ( Forward * X ) + ( Up * -Z ) + ( Right * -Y ),
+                            "back_top_right" =          Position + ( Forward * -X ) + ( Up * Z ) + ( Right * Y ),
+                            "back_top_left" =           Position + ( Forward * -X ) + ( Up * Z ) + ( Right * -Y ),
+                            "back_bottom_right" =       Position + ( Forward * -X ) + ( Up * -Z ) + ( Right * Y ),
+                            "back_bottom_left" =        Position + ( Forward * -X ) + ( Up * -Z ) + ( Right * -Y )
+                            
+                            
+                            
+                        )
+        if( Display ) {
+            local K = T:keys( )
+            for( I = 1, T:count( ) ) {
+                holoCreate( I, T[ K[ I, string ], vector ], vec( 0.05 ) ), holoColor( I, vec( 0 ) ), holoParent( I, This )
+            }
+        }
+        return T
+    }
+    
+    entity( ):isWeldedTo( ):objectGetBoundPoints( 1 )
+}

@@ -1,0 +1,68 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 1/11/2019 @ 232
+# Holograms: 
+# Notes: 
+# --------------------------------------------- #
+@name copy_785952
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff05f.mdl","models/props_wasteland/rockcliff01f.mdl","models/props_wasteland/rockcliff_cluster02b.mdl","models/props_wasteland/rockcliff_cluster02c.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff_cluster02b.mdl","models/props_wasteland/rockcliff_cluster03a.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff05f.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff05f.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff_cluster02c.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff05f.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff05f.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster02a.mdl","models/props_wasteland/rockcliff05f.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster03b.mdl","models/props_wasteland/rockcliff_cluster03b.mdl")
+    Hologram[ "position", array ] = array(vec(-1009.6968,-1196.8506,293.0684),vec(1025.3555,150.3179,293.2227),vec(1247.3931,176.1548,86.4443),vec(1012.5249,497.6372,283.439),vec(-467.7251,-273.6113,263.1807),vec(1530.6992,-655.7861,293.0908),vec(37.8013,339.5405,293.0908),vec(-932.7231,-342.668,283.4429),vec(-651.8862,-40.3496,172.6968),vec(900.5405,-1107.9727,200.8135),vec(-250.3872,-1597.5605,293.0908),vec(541.7397,529.8384,293.1255),vec(1131.0752,-228.7378,293.0894),vec(1119.6851,-607.6294,200.8833),vec(-640.7397,-761.2588,293.0684),vec(255.7905,689.5835,293.2144),vec(152.9712,-1686.3008,293.0454),vec(834.6685,-1138.541,200.8799),vec(1045.9233,-1374.3447,200.8135),vec(867.3149,-1338.5889,293.0684),vec(-414.5977,-1303.2256,263.1807),vec(1000.729,-1222.5889,200.8135),vec(-477.6675,417.3687,293.0454),vec(1540.7622,-369.749,293.0908),vec(431.9487,243.2314,293.207),vec(1576.916,-872.5469,200.8833),vec(760.9956,233.9673,200.8833),vec(-134.4263,-24.835,200.8833),vec(530.6123,-1536.8838,293.2227),vec(1391.7056,-781.501,200.8833),vec(574.5161,-1856.709,293.0684),vec(-715.3052,-1567.6963,293.2227),vec(-325.8433,114.1973,200.8691),vec(1255.1279,-700.2822,200.8833),vec(-561.6392,-1150.0791,200.8223))
+    Hologram[ "angle", array ] = array(ang(0.002,2.3656,-0.0062),ang(-0.0251,-116.1761,0.0031),ang(-85.7199,143.0615,90.5401),ang(-0.0368,-115.615,-0.0498),ang(-0.0253,-36.1188,-0.0099),ang(-0.0041,-89.6194,0.0139),ang(-0.0041,-89.6194,0.0139),ang(-0.0374,-20.0533,-0.0507),ang(-0.0021,-24.4812,0.0056),ang(0.1373,45.1146,0.104),ang(-0.0041,-89.6194,0.0139),ang(0.0015,-147.4431,0.0012),ang(-0.0054,166.8767,0.0073),ang(0.114,-107.7399,0.087),ang(0.002,2.3656,-0.0062),ang(-0.0004,-73.3522,-0.0081),ang(0.0134,-49.6981,-0.0023),ang(0.1128,134.7487,0.0911),ang(0.1373,45.1146,0.104),ang(0.002,2.3656,-0.0062),ang(-0.0253,-36.1188,-0.0099),ang(0.1373,45.1146,0.104),ang(0.0134,-49.6981,-0.0023),ang(-0.0041,-89.6194,0.0139),ang(0.0004,-102.8792,0.0003),ang(0.114,-107.7399,0.087),ang(0.114,-107.74,0.087),ang(0.114,-107.7399,0.087),ang(-0.0251,-116.1761,0.0031),ang(0.114,-107.7399,0.087),ang(0.002,2.3656,-0.0062),ang(-0.0251,-116.1761,0.0031),ang(0.0654,-72.7623,0.0799),ang(0.114,-107.7399,0.087),ang(0.1634,-58.5119,0.0692))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1),vec(1,1,1))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else {
+            for( I = 1, Hologram[ "model", array ]:count( ) ) {holoParent(I, Hologram["parent", array][I, number]) }
+            interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

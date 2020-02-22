@@ -1,0 +1,46 @@
+@name XXX 
+@inputs 
+@outputs 
+@persist Run Seat:entity
+@model models/sprops/cuboids/height24/size_1/cube_24x24x24.mdl
+interval(10)
+if(first()){
+propSpawnUndo(0)
+#entity():propNotSolid(1)
+Seat = seatSpawn("",entity():toWorld(vec(0,0,25)),entity():toWorld(ang(0,180,0)),1),Seat:parentTo(entity()),Seat:setMaterial("holograms/hologram"),Seat:setColor(vec(0,0,0))
+entity():setMaterial("Models/effects/vol_light001")
+    
+# Crank
+holoCreate(1,entity():toWorld(vec(0,0,0)),vec(2),entity():toWorld(ang(0,0,0)),vec(0,0,0),"models/sprops/cylinders/size_3/cylinder_6x3.mdl"),holoParent(1,entity()),holoMaterial(1,"holograms/hologram")
+
+
+# Piston
+holoCreate(2,entity():toWorld(vec(0,0,0)),vec(1),entity():toWorld(ang(0,0,0)),vec(0,0,0),"models/sprops/cylinders/size_3/cylinder_6x3.mdl"),holoParent(2,entity()),holoMaterial(2,"holograms/hologram")
+
+
+# Connecting rod
+holoCreate(3,entity():toWorld(vec(0,0,0)),vec(1,1,1),entity():toWorld(ang(0,0,0)),vec(0,0,0),"models/sprops/cylinders/size_1/cylinder_1_5x24.mdl"),holoParent(3,entity()),holoMaterial(3,"holograms/hologram")
+holoClipEnabled(3,1)
+holoClip(3,vec(0,0,1),vec(0,0,-1),0)
+
+holoCreate(4,holoEntity(2):toWorld(vec(0,0,9)),vec(0.8,0.8,5),holoEntity(2):toWorld(ang(0,0,0)),vec(127,95,0),"models/sprops/cylinders/size_3/cylinder_6x3.mdl"),holoParent(4,holoEntity(2)),holoMaterial(4,"holograms/hologram")
+holoCreate(5,holoEntity(4):toWorld(vec(0,0,7)),vec(1,1,1),holoEntity(4):toWorld(ang(0,0,0)),vec(150,95,0),"models/sprops/misc/domes/size_0/dome_6x6.mdl"),holoParent(5,holoEntity(4)),holoMaterial(5,"holograms/hologram")
+   
+}
+
+
+if(Seat:driver():isPlayer()){
+Run += 1000/120
+Cos = cos(Run*2)*(8+5)
+Sin = sin(Run*2)*(2+5)
+for(V=1,5){holoAlpha(V,255)
+}}else{for(V=1,5){holoAlpha(V,0)}}
+
+
+holoAng(1,entity():toWorld(ang(270+Run*2,0,90)))#Crank
+
+holoPos(2,entity():toWorld(vec(0,0,11.5+Sin)))#Piston 1
+
+holoPos(3,entity():toWorld(vec(0,0,11.5+Sin)))#Connecting rod 1
+holoAng(3,entity():toWorld(ang(Cos*2,0,0)))
+

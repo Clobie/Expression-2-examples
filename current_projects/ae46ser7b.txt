@@ -1,0 +1,7 @@
+@name ae46ser7b
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+owner():plySetPos( vec( 10276.557617, 9228.208984, -9215.718750 ) )

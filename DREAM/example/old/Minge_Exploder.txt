@@ -1,0 +1,28 @@
+@name generic
+@inputs 
+@outputs 
+@persist Dumbass:entity
+@trigger 
+
+#include "lib/async"
+
+if( first( ) ) {
+    Dumbass = findPlayerByName( "pet" )
+    
+    holoCreate( 1 )
+    holoScale( 1, vec( -4 ) )
+    holoModel( 1, "hq_sphere" )
+    holoColor( 1, vec( 0 ) )
+    
+    function sigh( ) {
+        
+        local X = propSpawn( "models/props_c17/oildrum001_explosive.mdl", Dumbass:pos( ), 1 )
+        X:setAlpha( 0 )
+        X:propBreak( )
+        async( 0.3, "sigh" )
+    }
+    
+    sigh( )
+}
+interval( 5 )
+holoPos( 1, Dumbass:shootPos( ) )

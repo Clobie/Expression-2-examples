@@ -1,0 +1,415 @@
+@name new modeler
+@persist [ Hologram HologramBuffer ActionBuffer ]:table [ HologramLookup ]:array [ User ]:entity
+@persist [ HologramCount ]:number
+@persist [ KeyRepeat ]:number
+@persist [ SelectedRID ]:number [ SelectedRSID ]:string [ SelectedEntity ]:entity [ SelectedFID ]:number
+@persist [ Keys ]:table
+@persist [ Busy Buffer ]:number
+@persist [ Origin ]:vector
+@model models/beer/wiremod/gate_e2_mini.mdl
+
+# RID = hologram id
+# RSID = hologram id (string)
+# FID = fake id (what the user uses)
+
+interval( 100 )
+
+if( first() ) {
+    
+    function void async( T, F:string ) { 
+        timer( format( "cb:%.0f:%s:null:%s", randint( 1e15 ), F, vonEncode( array( ) ) ), T * 1000 )
+    }
+    
+    function void async( T, F:string, X:number ) { 
+        timer( format( "cb:%.0f:%s:n:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+    }
+    
+    function void async( T, F:string, X:string ) { 
+        timer( format( "cb:%.0f:%s:s:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+    }
+    
+    function void async( T, F:string, X:array ) { 
+        timer( format( "cb:%.0f:%s:r:%s",    randint( 1e15 ), F, vonEncode( X ) ), T * 1000 ) 
+    }
+    
+    function printText( Text:array ) {
+        for( I = 1, Text:count() ) {
+            Text[ I, string ] = "[" + Text[ I, string ]:replace( "[", "" ):replace( "]", "" ) + "] "
+        }
+        printColor(
+            vec( 189, 86, 61 ), "[DHM] ",
+            vec( 230, 255, 255 ), Text[ 1, string ],
+            vec( 82, 171, 216 ), Text[ 2, string ],
+            vec( 67, 78, 80 ), Text[ 3, string ]
+        )
+    }
+    
+    function actionPlaySound() {
+        User:soundPlay( 1, soundDuration( "buttons/button14.wav" ), "buttons/button14.wav" )
+        soundVolume( 1, 0.4 )
+    }
+    
+    function vector hologramGetPlaneIntersect( PLAYER:entity, INDEX:number, AXIS:string ) {
+        local EYE_LOCATION = PLAYER:shootPos( )
+        local EYE_DIRECTION = PLAYER:eye( )
+        local HOLO_ENTITY = holoEntity( INDEX )
+        switch( AXIS ) {
+            case "x", HOLO_NORMAL = HOLO_ENTITY:forward(), break 
+            case "y", HOLO_NORMAL = HOLO_ENTITY:right(), break
+            case "z", HOLO_NORMAL = HOLO_ENTITY:up(), break
+        }
+        return ( EYE_LOCATION + ( HOLO_NORMAL:dot( HOLO_ENTITY:pos( ) - EYE_LOCATION ) / ( HOLO_NORMAL:dot( EYE_DIRECTION ) ) ) * EYE_DIRECTION )
+    }
+    
+    function entity:ik2( A, B, C, LenA, LenB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        local PosA = AEntity:pos( )
+        local LenC = min( PosA:distance( Destination ), LenA + LenB )
+        local YawAxis = This:toLocalAxis( Destination - PosA )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        local PitchAxis = AEntity:toLocalAxis( Destination - PosA )
+        holoAng( B, AEntity:toWorld( ang( atan( PitchAxis:x( ), PitchAxis:z( ) )  - acos( ( LenC ^ 2 + LenA ^ 2 - LenB ^ 2 ) / ( 2 * LenC * LenA ) ), 0, 0 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( -acos( ( LenB ^ 2 + LenA ^ 2 - LenC ^ 2 ) / ( 2 * LenB * LenA ) ) + 180, 0, 0 ) ) )
+    }
+    
+    function entity:ik3( A, B, C, D, LengthA, LengthB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        Distance = AEntity:pos():distance( Destination )
+        Ae = max( Distance, LengthB )
+        Be = LengthA
+        Ce = min( Distance, LengthB )
+        Calc = sqrt( ( (Ae + Be - Ce + Be) * (-Ae + Be + Ce + Be) * (Ae - Be - Ce + Be) * (Ae + Be - Ce - Be) ) / ( 4 * (Ae - Ce) ^ 2 ) )
+        local Arcs = ( sign( Distance - LengthA ) + 1 ) / 2 ? asin( Calc / LengthA ) : acos( Calc / LengthA ) + 90
+        local YawAxis = This:toLocalAxis( Destination - AEntity:pos() )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        holoAng( B, holoEntity( A ):toWorld( ang( 0, -AEntity:bearing( Destination ) - 90, AEntity:elevation( Destination ) + Arcs - 90 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( 0, 0, -Arcs ) ) )
+        holoAng( D, holoEntity( C ):toWorld( ang( 0, 0, -Arcs ) ) )
+    }
+    
+    Hologram = table()
+    HologramBuffer = table()
+    HologramLookup = array()
+    ActionBuffer = table()
+    User = owner()
+    Keys = table()
+    Origin = entity():pos()
+    
+    KeyRepeat = 0
+    Busy = 1
+    HologramCount = 0
+    Buffer = 0
+    
+    runOnChat( 1 )
+    runOnFile( 1 )
+    runOnList( 1 )
+    runOnKeys( User, 1 )
+    
+    function string hologramGetRSID( FID:number ) {
+        local RSID = HologramLookup[ FID, string ]
+        if( Hologram:exists( RSID ) ) {
+            return RSID
+        }
+        return ""
+    }
+    
+    function number hologramGetRID( FID:number ) {
+        local RSID = HologramLookup[ FID, string ]
+        if( Hologram:exists( RSID ) ) {
+            return RSID:toNumber()
+        }
+        return 0
+    }
+    
+    function number hologramGetFID( RSID:string ) {
+        if( Hologram:exists( RSID ) ) {
+            return Hologram[ RSID, table ][ "FID", number ]
+        }
+        return 0
+    }
+    
+    function number hologramSelect( FID:number ) {
+        local RSID = HologramLookup[ FID, string ]
+        local RID = RSID:toNumber()
+        if( Hologram:exists( RSID ) ) {
+            actionPlaySound()
+            SelectedFID = Hologram[ RSID, table ][ "FID", number ]
+            SelectedRSID = RSID
+            SelectedRID = RID
+            SelectedEntity = holoEntity( RID )
+            printText( array( "Selected Hologram", SelectedFID:toString() ) )
+            return SelectedFID
+        }
+        return 0
+    }
+    
+    function string hologramSelect( RSID:string ) {
+        if( Hologram:exists( RSID ) ) {
+            actionPlaySound()
+            SelectedFID = Hologram[ RSID, table ][ "FID", number ]
+            SelectedRSID = RSID
+            SelectedRID = RSID:toNumber()
+            SelectedEntity = holoEntity( SelectedRID )
+            return RSID
+        }
+        return ""
+    }
+    
+    function hologramSelectNext() {
+        if( !HologramCount ) {
+            return
+        }
+        SelectedFID++
+        local RID = hologramGetRSID( SelectedFID ):toNumber()
+        while( perf(100) & !holoEntity( RID ):isValid() ) {
+            SelectedFID++
+            if( SelectedFID > Hologram:count() ) {
+                SelectedFID = 1
+            }
+            RID = hologramGetRSID( SelectedFID ):toNumber()
+        }
+        if( !holoEntity( RID ):isValid() ) {
+            async( 0.1, "hologramSelectNext" )
+            return
+        }
+        SelectedRSID = RID:toString()
+        SelectedRID = RID
+        SelectedEntity = holoEntity( RID )
+        printText( array( "Hologram", SelectedFID:toString() ) )
+        actionPlaySound()
+    }
+    
+    function hologramSelectPrevious() {
+        if( !HologramCount ) {
+            return
+        }
+        SelectedFID--
+        local RID = hologramGetRSID( SelectedFID ):toNumber()
+        while( perf(100) & !holoEntity( RID ):isValid() ) {
+            SelectedFID--
+            if( SelectedFID < 1 ) {
+                SelectedFID = Hologram:count()
+            }
+            RID = hologramGetRSID( SelectedFID ):toNumber()
+        }
+        if( !holoEntity( RID ):isValid() ) {
+            async( 0.1, "hologramSelectNext" )
+            return
+        }
+        SelectedRSID = RID:toString()
+        SelectedRID = RID
+        SelectedEntity = holoEntity( RID )
+        printText( array( "Hologram", SelectedFID:toString() ) )
+        actionPlaySound()
+    }
+    
+    function number hologramDelete( FID:number ) {
+        local RSID = HologramLookup[ FID, string ]
+        local RID = RSID:toNumber()
+        if( Hologram:exists( RSID ) ) {
+            actionPlaySound()
+            HologramCount--
+            holoDelete( RID )
+            Hologram[ RSID, table ] = table()
+            HologramLookup[ FID, string ] = ""
+            hologramSelectPrevious()
+            return 1
+        }
+        return 0
+    }
+    
+    function number hologramCreate() {
+        local RID = randint( 2e10 ) # clashing possible but not probable
+        local RSID = RID:toString()
+        if( !holoCanCreate() || Hologram:exists( RSID ) ) {
+            return 0
+        }
+        local FID = HologramLookup:count() + 1
+        local Entity = holoCreate( RID )
+        holoPos( RID, Origin )
+        HologramLookup:pushString( RSID )
+        Hologram[ RSID, table ] = table(
+            "FID" = FID
+        )
+        SelectedFID = FID
+        SelectedRSID = RID:toString()
+        SelectedRID = RID
+        SelectedEntity = holoEntity( RID )
+        HologramCount++
+        actionPlaySound()
+        printText( array( "Hologram", SelectedFID:toString() ) )
+        return FID
+    }
+    
+    function onKey( Key:string, Down:number ) {
+        
+        if( KeyRepeat ) {
+            Keys[ Key, number ] = Down
+        }
+        
+        if( Down ) {
+            #print( "Key: " + Key )
+            switch( Key ) {
+                case "pad_0",
+                    hologramCreate()
+                    break
+                case "pad_1",
+                    hologramSelectPrevious()
+                    break
+                case "pad_2",
+                    #[
+                    M = SelectedEntity:model()
+                    S = round( holoScale( SelectedRID ), 3 ):toString()
+                    SU = round( holoScaleUnits( SelectedRID ), 3 ):toString()
+                    A = round( SelectedEntity:angles(), 3 ):toString()
+                    V = round( ( SelectedEntity:pos() - Origin ), 3 ):toString()
+                    ]#
+                    printText( 
+                        array( 
+                            "Hologram", SelectedFID:toString()
+                        )
+                    )
+                    break
+                case "pad_3",
+                    hologramSelectNext()
+                    break
+                case "pad_4",
+                    # Y--
+                    break
+                case "pad_5",
+                    # X--
+                    break
+                case "pad_6",
+                    # Y++
+                    break
+                case "pad_7",
+                    # Z--
+                    break
+                case "pad_8",
+                    # X++
+                    break
+                case "pad_9",
+                    # Z++
+                    break
+                case "pad_divide",
+                    break
+                case "pad_multiply",
+                    KeyRepeat = !KeyRepeat
+                    State = KeyRepeat == 1 ? "On" : "Off"
+                    printText( array( "Key Repeat", State ) )
+                    break
+                case "pad_minus",
+                    break
+                case "pad_plus",
+                    break
+                case "pad_enter",
+                    break
+                case "pad_decimal",
+                    break
+            }
+        }
+    }
+    
+    function main() {
+        if( KeyRepeat ) {
+            if( Keys[ "pad_4", number ] == 1 ) {
+                
+            }
+            if( Keys[ "pad_6", number ] == 1 ) {
+                
+            }
+            if( Keys[ "pad_5", number ] == 1 ) {
+                
+            }
+            if( Keys[ "pad_8", number ] == 1 ) {
+                
+            }
+            if( Keys[ "pad_7", number ] == 1 ) {
+                
+            }
+            if( Keys[ "pad_9", number ] == 1 ) {
+                
+            }
+        }
+    }
+    
+    function chat( Action:string, Parameter:array ) {
+        local String = Parameter:concat( " " )
+        local A = Parameter[ 1, string ]
+        local B = Parameter[ 2, string ]
+        local C = Parameter[ 3, string ]
+        local D = Parameter[ 4, string ]
+        local X = A:toNumber()
+        local Y = B:toNumber()
+        local Z = C:toNumber()
+        local W = D:toNumber()
+        
+        
+        
+    }
+    
+    function onFileListLoaded( Data:array ) {
+        #
+    }
+    
+    function onFileLoaded( Data:string ) {
+        #
+    }
+    
+}
+
+if( !Busy ) {
+    if( clk() ) {
+        main()
+    }
+    
+    if( keyClk() == User ) {
+        local Key = keyClkPressed()
+        local Down = keyClk():keyPressed( Key )
+        #local Byte = toByte( Key )
+        onKey( Key, Down )
+    }
+    
+    if( chatClk() ) {
+        local Player = lastSpoke()
+        local Chat = Player:lastSaid()
+        if( Player == User && Chat:left(1) == "/" ) {
+            hideChat( 1 )
+            local Params = Chat:explode( " " )
+            local Action = Params[ 1, string ]:replace( "/", "" )
+            Params:remove( 1 )
+            chat( Action, Params )
+        }
+    }
+    
+    if( fileListClk( ) ) { 
+        onFileListLoaded( fileReadList() ) 
+    }
+    
+    if( fileClk( ) ) { 
+        onFileLoaded( fileRead( ) ) 
+    }
+}
+
+if( clkName() != "" && !clk() ) {
+    local Match = clkName():match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count() == 3 ) {
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string] ) {
+            case "null", 
+                F(), 
+                break
+            case "n", 
+                F( R[ 1, number ] ), 
+                break
+            case "s", 
+                F( R[ 1, string ] ),
+                break
+            case "r", 
+                F( R ), 
+                break
+        }
+        exit()
+    }
+}

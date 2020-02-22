@@ -1,0 +1,8 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+interval(50)
+entity():setPos( entity():pos() + vec(1,0,0) )

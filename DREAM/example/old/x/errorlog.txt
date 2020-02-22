@@ -1,0 +1,4 @@
+Improperly Formatted Parameters<br><br>Usage:<br>/HoloModeler.au3?request=version<br>/HoloModeler.au3?request=list<br>/HoloModeler.au3?request=update<br>/HoloModeler.au3?request=download?file=filename.txt<br>/HoloModeler.au3?request=upload?file=filename.txt?data=filedata<br>
+
+Improperly Formatted Parameters<br><br>Usage:<br>/HoloModeler.au3?request=version<br>/HoloModeler.au3?request=list<br>/HoloModeler.au3?request=update<br>/HoloModeler.au3?request=download?file=filename.txt<br>/HoloModeler.au3?request=upload?file=filename.txt?data=filedata<br>
+

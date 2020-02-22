@@ -1,0 +1,14 @@
+@name minger
+@outputs Fire
+@persist A:entity C:entity
+
+if( first() ) {
+    Fire = 1
+    C = findPlayerByName( "must" )
+    A = entity():isWeldedTo()
+    A:setPos( A:toWorld( vec( 0, 0, 30 ) ) )
+    A:propFreeze( 1 )
+    A:createWire(entity(), "Fire", "Fire")
+    runOnTick( 1 )
+}
+A:setAng( (C:toWorld( vec( 0, 0, 5 ) ) - A:pos() ):toAngle() )

@@ -1,0 +1,12 @@
+@name 
+@inputs 
+@outputs 
+@persist 
+@trigger 
+
+function stepSound() {
+    I = round( random( 1, 7 ) )
+    soundPlay( 1, soundDuration( "phx/epicmetal_soft" + I + ".wav" ), "phx/epicmetal_soft" + I + ".wav" )
+}
+
+stepSound()

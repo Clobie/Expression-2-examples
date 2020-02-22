@@ -1,0 +1,68 @@
+# -------------------------------------------------------------------------------
+# HOLOGRAM MODELER OUTPUT FILE
+# -------------------------------------------------------------------------------
+@name Hologram Modeler Output File Template
+@inputs 
+@outputs 
+
+# -------------------------------------------------------------------------------
+# Global Constants
+# -------------------------------------------------------------------------------
+@persist Me:entity
+@persist Chip:entity
+@persist Hologram:table
+@persist Interval:number
+
+# -------------------------------------------------------------------------------
+# Toggle Variables
+# -------------------------------------------------------------------------------
+@persist Loaded:number
+@persist CurrentLoop:number
+
+# -------------------------------------------------------------------------------
+# NOTES
+# -------------------------------------------------------------------------------
+# This is a hologram output file template.
+# These are lines of notes.
+# These would normally be filled with data called from /note 
+
+# -------------------------------------------------------------------------------
+# Setup
+# -------------------------------------------------------------------------------
+if( dupefinished() ) { reset() }
+elseif( first() )
+{
+    Me = owner()
+    Chip = entity()
+    
+    Hologram = table(
+                        "model" = array(),
+                        "local" = array(),
+                        "world" = array(),
+                        "angle" = array(),
+                        "scale" = array(),
+                        "color" = array(),
+                        "alpha" = array(),
+                        "material" = array(),
+                        "skin" = array(),
+                        "parent" = array(),
+                        "clipped" = array(),
+                        "clipveca" = array(),
+                        "clipvecb" = array()
+                        
+                    )
+    
+    timer( "setupHolograms", 100 )
+}
+elseif( clk( "setupHolograms" ) )
+{
+    # Spawn
+}
+elseif( clk( "parentHolograms" ) )
+{
+    # Parent
+}
+elseif( clk( "main" ) )
+{
+    # Main
+}

@@ -1,0 +1,64 @@
+
+if( first() ) {
+    
+    #include "lib/variable"
+    #include "lib/heap"
+    #include "lib/async"
+    
+    # GET
+    function vector string:hPositionWorld() { return holoEntity( This:toNumber() ):pos() }
+    function vector string:hPositionLocal( N:number ) { return holoEntity( N ):toLocal( holoEntity( This:toNumber() ):pos() ) }
+    function vector string:hPositionLocal( E:entity ) { return E:toLocal( holoEntity( This:toNumber() ):pos() ) }
+    function vector string:hColor() { return holoEntity( This:toNumber() ):getColor() }
+    function vector string:hScale() { return holoScale( This:toNumber() ) }
+    function vector string:hScaleUnits() { return holoScaleUnits( This:toNumber() ) }
+    function number string:hAlpha() { return holoEntity( This:toNumber() ):getAlpha() }
+    function number string:hShading() {  }
+    function number string:hParent() {  }
+    function number string:hRenderFX() {  }
+    function number string:hShadow() {  }
+    function number string:hSkin() {  }
+    function number string:hMaterial() {  }
+    function number string:hModel() {  }
+    function number string:hAngle() {  }
+    function number string:hActive() {  }
+    
+    # SET
+    function string:hPositionWorld( V:vector ) {  }
+    function string:hPositionLocal( N:number, V:vector ) {  }
+    function string:hPositionLocal( E:entity, V:vector  ) {  }
+    function string:hColor( V:vector ) {  }
+    function string:hScale( V:vector ) {  }
+    function string:hScaleUnits( V:vector ) {  }
+    function string:hAlpha( N:number ) {  }
+    function string:hShading( N:number ) {  }
+    function string:hParent( N:number ) {  }
+    function string:hRenderFX( N:number ) {  }
+    function string:hShadow( N:number ) {  }
+    function string:hSkin( N:number ) {  }
+    function string:hMaterial( S:string ) {  }
+    function string:hModel( S:string ) {  }
+    function string:hAngle( A:angle ) {  }
+    function string:hActive( N:number ) {  }
+    
+    # Load SINGLE HOLOGRAM data to later be used by hcreate()
+    function string hload( S:string ) {
+        
+    }
+    
+    # Load a SET OF HOLOGRAM data later to be used by hcreate()
+    function string hload( S:string, T:table ) {
+        
+    }
+    
+    # Create a SINGLE hologram
+    function string hcreate() {
+        local H = new(), holoCreate( H:toNumber() ), return H
+    }
+    
+    # Create a SET of holograms
+    function string hcreate() {
+        
+    }
+}
+

@@ -1,0 +1,23 @@
+@name Setang Seetring
+@persist [ A B C D E F G H I J K X ]:string
+
+#exit()
+
+if( first() ) {
+    runOnTick( 1 )
+    X = "ABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFGABCDEFG"
+}
+
+while( perf( ) ) {
+    A += X
+    B += X
+    C += X
+    D += X
+    E += X
+    F += X
+    G += X
+    H += X
+    I += X
+    J += X
+    K += X
+}

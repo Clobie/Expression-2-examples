@@ -1,0 +1,117 @@
+@name ctaGroundCannon1.0
+@persist [HologramName HologramModel HologramPosition HologramPositionWorld HologramSkin HologramAngle HologramScale HologramColor HologramAlpha HologramMaterial HologramParent]:array
+@persist [Origin]:vector
+@persist [Bullet BulletTimer]:array
+@persist [HoloCounter Loaded Power Gravity ArcMode HoloYaw HoloAim BulletRemoveDelay Timer AimMode TargetCanHit]:number
+@persist [Me Chip Target]:entity
+@persist [TrajObj]:string
+
+#include "libs/async"
+
+interval(25)
+
+if( first() | dupefinished() )
+{
+    runOnChat(1)
+    Me = owner()
+    Chip = entity()
+    Origin = Chip:pos()
+    Loaded = 0
+    
+    Target = owner()
+    
+    HoloYaw = 2
+    HoloAim = 8
+    
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    HoloCounter = 0
+    HologramModel = array("models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/rcube_thick.mdl","models/holograms/cube.mdl","models/holograms/hq_tube_thin.mdl","models/holograms/hq_tube_thin.mdl","models/holograms/hq_tube.mdl")
+    HologramPosition = array(vec(0,0,2.4401),vec(0,0,5.4001),vec(-7.0168,0,7.0402),vec(-7.0269,6.3062,13.3498),vec(7.0269,6.3062,13.3498),vec(7.0168,0,7.0402),vec(0,3.9036,17.7496),vec(0,3.9036,17.7496),vec(0,-9.7979,17.7496),vec(0,-24.7942,17.7496),vec(0,-36.7913,17.7496))
+    HologramAngle = array(ang(360,0,0),ang(0,-90,0),ang(0,0,45),ang(90,0,0),ang(90,0,0),ang(0,0,45),ang(0,90,0),ang(0,90,0),ang(90,90,0),ang(90,90,0),ang(90,90,0))
+    HologramScale = array(vec(4,4,0.5),vec(3,3,0.5),vec(0.5,1.5,1.5),vec(1.5,1.5,0.5),vec(1.5,1.5,0.5),vec(0.5,1.5,1.5),vec(2,0.65,0.65),vec(0.1,0.1,0.1),vec(0.3,0.3,1),vec(0.26,0.26,2),vec(0.35,0.35,0.35))
+    HologramColor = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    HologramAlpha = array(255,255,255,255,255,255,255,255,255,255,255)
+    HologramMaterial = array("sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3","sprops/textures/sprops_metal3")
+    HologramSkin = array(0,0,0,0,0,0,0,0,0,0,0)
+    HologramParent = array(0,1,2,2,2,2,8,2,8,8,8)
+    timer("createHolos", 1)
+    # DO NOT EDIT THIS SECTION UNLESS YOU KNOW WHAT YOU ARE DOING, OR IT MAY NOT PARSE IN MODELER CORRECTLY!
+    
+    function angle incrementedAngle(Origin:angle, Target:angle, Speed:number)
+    {
+        local Ang = acos( Origin:forward():dot( Target:forward() ) )
+        if( Ang > Speed ) { return slerp( quat( Origin ), quat( Target ), Speed / Ang ):toAngle() }
+        return Target
+    }
+    TrajObj = trajectoryInitialize()
+    TrajObj:trajectorySetPower( 25 )
+    TrajObj:trajectorySetArc( TRAJECTORY_HIGH )
+    TrajObj:trajectorySetProjectile( "models/props_junk/watermelon01.mdl" )
+}
+elseif( clk("createHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count() & holoCanCreate())
+    {
+        HoloCounter++
+        holoCreate( HoloCounter )
+        holoPos(HoloCounter, Origin + HologramPosition[HoloCounter, vector])
+        holoScale(HoloCounter, HologramScale[HoloCounter, vector])
+        holoAng(HoloCounter, HologramAngle[HoloCounter, angle])
+        holoColor(HoloCounter, HologramColor[HoloCounter, vector])
+        holoModel( HoloCounter, HologramModel[HoloCounter, string] )
+        holoMaterial( HoloCounter, HologramMaterial[HoloCounter, string] )
+        holoSkin( HoloCounter, HologramSkin[HoloCounter, number] )
+        holoAlpha( HoloCounter, HologramAlpha[HoloCounter, number] )
+    }
+    if(HoloCounter < HologramModel:count()) { timer("createHolos", 1) }
+    else { timer("parentHolos", 1) HoloCounter = 0 }
+}
+elseif( clk("parentHolos") )
+{
+    while(perf(90) & HoloCounter < HologramModel:count())
+    {
+        HoloCounter++
+        if(HologramParent[HoloCounter, number] > 0) { holoParent(HoloCounter, HologramParent[HoloCounter, number]) }
+    }
+    if(HoloCounter == HologramModel:count()) { Loaded = 1 }
+    else { timer("parentHolos", 1) }
+}
+elseif( clk() & Loaded == 1)
+{
+    TrajObj:trajectorySetOrigin( holoEntity(8):pos() )
+    TrajObj:trajectorySetTarget( Target:pos() )
+    local Data = TrajObj:trajectoryAngleAndTime(    TrajObj:trajectoryGetOrigin(), 
+                                                    TrajObj:trajectoryGetTarget(), 
+                                                    TrajObj:trajectoryGetArc(), 
+                                                    TrajObj:trajectoryGetPower() )
+    local Angle = Data[1, angle]
+    local Time = Data[2, number]
+
+    holoAng(HoloYaw, Angle * ang(0,1,0) )
+    holoAng(HoloAim, Angle * ang(1,1,0) + ang(180,0,0))
+    
+    if( changed(Me:keyReload()) & Me:keyReload() )
+    {
+        holoEntity(8):soundPlay(0, 0, "/weapons/rpg/rocketfire1.wav")
+        TrajObj:trajectoryFire()
+    }
+}
+elseif( chatClk(Me) )
+{
+    local S = Me:lastSaid()
+    local Param = S:explode(" ")
+    local Command = Param[1, string]
+    
+    if(Command:left(1) == "/" | Command:left(1) == "!" ) { hideChat(1) }
+    
+    if( Param:count() == 1 )
+    {
+        if      (Command == "/high")    { TrajObj:trajectorySetArc( TRAJECTORY_HIGH ) }
+        elseif  (Command == "/low")     { TrajObj:trajectorySetArc( TRAJECTORY_LOW ) }
+    }
+    elseif( Param:count() == 2)
+    {
+        if      (Command == "/t")       { Target = findPlayerByName(Param[2, string]) }
+        elseif  (Command == "/power")   { TrajObj:trajectorySetPower( Param[2, string]:toNumber() ) }
+    }
+}

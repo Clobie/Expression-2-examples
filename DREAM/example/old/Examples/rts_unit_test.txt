@@ -1,0 +1,166 @@
+@name unit_test
+@persist [HologramIndex TargetUpdaterLoop HoloProjectileIndex]:number
+@persist [Me Chip]:entity
+#@persist []:array
+@persist [Unit Projectile]:table
+#@persist []:vector
+#@persist []:angle
+
+interval(100)
+
+if( first() )
+{
+    Me = owner()
+    Chip = entity()
+    Unit = table()
+    HologramIndex = 0
+    TargetUpdaterLoop = 0
+    
+    HoloProjectileIndex = 999999999
+    
+    function number getHologramIndex(E:entity)
+    {
+        return holoIndex(E)
+    }
+    
+    function unitSetPos(UnitID:number, Position:vector)
+    {
+        holoPos(UnitID, Position)
+    }
+    
+    function vector unitGetPos(UnitID:number)
+    {
+        return holoEntity(UnitID):pos()
+    }
+    
+    function entity getHologramEntity(I:number)
+    {
+        return holoEntity(I)
+    }
+    
+    function unitCreate(Type:number, Team:number)
+    {
+        if( holoCanCreate() )
+        {
+            HologramIndex++
+            holoCreate( HologramIndex )
+            
+            Unit[HologramIndex, array] = array( Type, Team, 0, 0)
+            if(Team == 0) { holoColor(HologramIndex, vec(255,0,0)) }
+            elseif( Team == 1 ) { holoColor(HologramIndex, vec(0,255,0)) }
+            unitSetPos(HologramIndex, Me:aimPos())
+        }
+    }
+    
+    function number unitFindClosest(UnitID:number)
+    {
+        local Index = 0
+        local Distance = 50000
+        
+        for(I = 1, Unit:count())
+        {
+            if(I != UnitID && Unit[I, array][2, number] != Unit[UnitID, array][2, number])
+            {
+                local Dist = holoEntity(I):pos():distance(holoEntity(UnitID):pos())
+                if( Dist <= Distance )
+                {
+                    Distance = Dist
+                    Index = I
+                }
+            }
+        }
+        return Index
+    }
+    
+    function spawnProjectile(Origin:vector, Target:vector, TargetEntity:entity, Speed:number, Team:number)
+    {
+        if( holoCanCreate() )
+        {
+            HoloProjectileIndex++
+            holoCreate(HoloProjectileIndex, Origin, vec(0.2, 0.2, 0.2), (Target - Origin):toAngle(), vec(255), "models/weapons/w_models/w_rocket.mdl")
+            #holoMaterial(HoloProjectileIndex, "models/props_c17/fisheyelens")
+            #holoMaterial(HoloProjectileIndex, "models/props_combine/tpballglow")
+            holoEntity(HoloProjectileIndex):setTrails(2, 2, 5, "trails/smoke", vec(255,0,0), 255)
+            Projectile:pushArray( array(HoloProjectileIndex, Origin, Target, TargetEntity, Speed, Team) )
+        }
+    }
+    
+    function updateProjectile()
+    {
+        for( I = 1, Projectile:count() )
+        {
+            local ID = Projectile[I, array][1, number]
+            local T = Projectile[I, array][3, vector]
+            local E = holoEntity(ID)
+            local S = Projectile[I, array][5, number]
+            if( Projectile[I, array][4, entity]:isValid() )
+            {
+                T = Projectile[I, array][4, entity]:pos()
+            }
+            
+            holoAng( ID, ( T - E:pos() ):toAngle() )
+            holoPos( ID, E:pos() + ( E:forward() * S ) )
+            #holoScaleUnits( ID, vec( 10, 0.55, 0.55) )
+            if(E:pos():distance(T) <= S)
+            {
+                #local X = propSpawn("models/props_phx/ball.mdl", 0)
+                #X:setPos( holoEntity(ID):pos() )
+                #X:propBreak()
+                holoDelete(ID)
+                Projectile:remove(I)
+                #Unit:remove(getHologramIndex(Projectile[I, array][4, entity]))
+                #holoDelete(getHologramIndex(Projectile[I, array][4, entity]))
+            }
+        }
+    }
+    
+    timer("updateTarget", 1000)
+    timer("moveUnits", 1000)
+}
+elseif( clk() )
+{
+    updateProjectile()
+    
+    if( Me:keyReload() && changed(Me:keyReload()) )
+    {
+        unitCreate(0, 0)
+    }
+    
+    if( Me:keyUse() && changed(Me:keyUse()) )
+    {
+        unitCreate(0, 1)
+    }
+}
+elseif( clk("updateTarget") )
+{
+    while(perf() && TargetUpdaterLoop < Unit:count())
+    {
+        TargetUpdaterLoop++
+        Unit[TargetUpdaterLoop, array][3, number] = unitFindClosest(TargetUpdaterLoop)
+        if(TargetUpdaterLoop == Unit:count())
+        {
+            TargetUpdaterLoop = 0
+        }
+    }
+    timer("updateTarget", 1500)
+}
+elseif( clk("moveUnits") )
+{
+    for(I = 1, Unit:count())
+    {
+        local Dist = getHologramEntity(I):pos():distance(getHologramEntity(Unit[I, array][3, number]):pos())
+        if( Dist > 18 && Dist < 500 )
+        {
+            holoAng( I, (unitGetPos(Unit[I, array][3, number]) - unitGetPos(I)):toAngle() )
+            unitSetPos( I, unitGetPos(I) + getHologramEntity(I):forward() * 2 )
+        }
+        
+        if( Unit[I, array][4, number] <= realtime() && Unit[I, array][3, number] > 0 )
+        {
+            Unit[I, array][4, number] = realtime() + 1
+            spawnProjectile( unitGetPos(I), unitGetPos(Unit[I, array][3, number]), getHologramEntity(Unit[I, array][3, number]), 5, Unit[I, array][2, number] )
+        }
+    }
+    timer("moveUnits", 100)
+}
+

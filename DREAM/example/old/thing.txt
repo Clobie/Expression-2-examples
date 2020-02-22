@@ -1,0 +1,204 @@
+@name 
+@persist [Skill_Left Skill_Right]:string
+@persist [Skill_Left_Toggle Skill_Right_Toggle Skill_Left_Cooldown Skill_Right_Cooldown]:number
+@persist [Platform PowerPickup]:table
+
+#include "lib/async"
+
+interval(10)
+
+if( first() )
+{
+    
+    Skill_Left = "skill_basic"
+    Skill_Right = "skill_basic"
+    Skill_Left_Toggle = 1
+    Skill_Right_Toggle = 1
+    Skill_Left_Cooldown = 1
+    Skill_Right_Cooldown = 1
+    
+    function entity:generatePlatform() {
+        if( propCanCreate() ) {
+            local A = propSpawn("models/props_phx/construct/glass/glass_angle360.mdl", This:pos() + vec(0,0,100), ang(), 0)
+            A:propFreeze(1)
+            Platform[This:steamID(), entity] = A
+        }
+    }
+    
+    function movePlatforms() {
+        foreach( K, V:entity = players() ) {
+            if( Platform:exists( V:steamID() ) ) {
+                if( Platform[V:steamID(), entity]:isValid() ) {
+                    Platform[V:steamID(), entity]:setPos( V:pos():setZ( entity():pos():z() + 75 ) )
+                    Platform[V:steamID(), entity]:setAng( ang() )
+                }
+            }
+        }
+    }
+    
+    function generatePowerPickup() {
+        foreach( K, V:entity = players() ) {
+            local I = randint(2e8)
+            local J = randint(0, 10)
+            print(J)
+            PowerPickup[I, number] = J
+            holoCreate( I )
+            holoPos( I, entity():pos() + vec( randint( -1000, 1000 ), randint( -1000, 1000 ), 75 ) )
+            holoModel( I, "hq_sphere" )
+        }
+    }
+    
+    function entity:attachEffect_Spiral_1( Size:number ) {
+        if( holoRemainingSpawns() >= 2 )
+        {
+            local I = randint(2e8)
+            holoCreate(I)
+            holoCreate(I+1)
+            holoPos(I, This:pos() + (This:right() * Size))
+            holoPos(I+1, This:pos() + (This:right() * -Size))
+            holoAlpha(I, 1)
+            holoAlpha(I+1, 1)
+            holoParent(I, This)
+            holoParent(I+1, This)
+            holoEntity(I):setTrails( 25,25,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            holoEntity(I+1):setTrails( 25,25,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            This:setTrails( 25,25,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+        }
+    }
+    
+    function entity:attachEffect_Spiral_2( Size:number ) {
+        if( holoRemainingSpawns() >= 2 )
+        {
+            This:setTrails( 25,25,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            local I = randint(2e8)
+            local P = 1
+            local PosOffset = table( This:pos() + (This:right() * Size), This:pos() + (This:right() * -Size), This:pos() + (This:up() * Size), This:pos() + (This:up() * -Size) )
+            for( J = I, I + 3 ) {
+                holoCreate(J, PosOffset[P, vector])
+                holoAlpha(J, 0)
+                holoParent(J, This)
+                holoEntity(J):setTrails( 25,25,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+                P++
+            }
+        }
+    }
+    
+    function entity:propDelayDelete() {
+        This:setAlpha( 0 )
+        This:propFreeze( 1 )
+        async( 2, "propDelete", This )
+    }
+    
+    function entity:propDelayExplode() {
+        This:takeDamage( This:health() )
+    }
+    
+    function entity:selectSkill( Skill:number, Mouse:number ) {
+        local S = ""
+        local SC = 0
+        
+        if( Skill == 1 ) {
+            S = "skill_basic"
+            SC = 0.75
+        }
+        if( Skill == 2 ) {
+            S = "skill_fireball"
+            SC = 2
+        }
+        
+        if( Mouse == 1 ) {
+            Skill_Left = S
+            Skill_Left_Cooldown = SC
+        }
+        if( Mouse == 2 ) {
+            Skill_Right = S
+            Skill_Right_Cooldown = SC
+        }
+    }
+    
+    function entity:resetSkillLeft() {
+        Skill_Left_Toggle = 1
+    }
+    
+    function entity:resetSkillRight() {
+        Skill_Right_Toggle = 1
+    }
+    
+    function entity:castSkillLeft() {
+        if( Skill_Left_Toggle == 1 ) {
+            Skill_Left( owner() )
+            Skill_Left_Toggle = 0
+            async( Skill_Left_Cooldown, "resetSkillLeft", This )
+        }
+    }
+    
+    function entity:castSkillRight() {
+        if( Skill_Right_Toggle == 1 ) {
+            Skill_Right( owner() )
+            Skill_Right_Toggle = 0
+            async( Skill_Right_Cooldown, "resetSkillRight", This )
+        }
+    }
+    
+    function skill_basic( Ent:entity ) {
+        if( propCanCreate() ) {
+            local A = propSpawn( "models/Items/AR2_Grenade.mdl", ( Ent:shootPos() - vec(0,0,15) )+  ( Ent:eye() * 75 ), Ent:eyeAngles(), 0 )
+            A:setAlpha( 255 )
+            A:setMass( 50 )
+            A:setMaterial( "debug/debugdrawflat" )
+            A:propGravity( 0 )
+            A:propFreeze( 0 )
+            A:applyForce( Ent:eye():toAngle():forward() * A:mass() * 1000 )
+            A:setTrails( 25,25,1, "trails/laser", hsv2rgb( random( 360 ), 1, 1 ), 255 )
+            A:applyAngForce( ang(0,0,1) * A:mass() * 5 )
+            async( 3, "propDelayDelete", A )
+        }
+    }
+    
+    function skill_fireball( Ent:entity ) {
+        if( propCanCreate() && holoCanCreate() ) {
+            local I = randint(2e8)
+            local A = propSpawn( "models/props_junk/gascan001a.mdl", ( Ent:shootPos() - vec(0,0,15) )+  ( Ent:eye() * 75 ), Ent:eyeAngles(), 0 )
+            A:setAlpha( 0 )
+            A:setMaterial( "debug/debugdrawflat" )
+            A:propGravity( 0 )
+            A:propFreeze( 0 )
+            
+            holoCreate( I )
+            holoPos( I, A:pos() )
+            holoParent( I, A )
+            holoMaterial( I, "models/effects/splode_sheet" )
+            holoScale( I, vec(3) )
+            holoModel( I, "hq_sphere" )
+            
+            
+            A:applyForce( Ent:eye():toAngle():forward() * A:mass() * 1750 )
+            A:setTrails( 1750,1750,1000, "trails/laser", vec( random(200, 255), 50, 50), 255 )
+            A:applyAngForce( ang(0,0,1) * A:mass() * 5 )
+            #async( 3, "propDelayDelete", A )
+            async( 2, "propDelayExplode", A )
+        }
+    }
+    
+    owner():generatePlatform()
+    generatePowerPickup()
+    
+    owner():selectSkill( 2, 2 )
+}
+
+
+if( clk() ) {
+    
+    movePlatforms()
+    
+    
+    if( owner():keyAttack1() ) {
+        owner():castSkillLeft()
+    }
+    if( owner():keyAttack2() ) {
+        owner():castSkillRight()
+    }
+}
+
+
+

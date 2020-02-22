@@ -1,0 +1,35 @@
+@name taylor swift
+@persist State Prop:table Count
+
+if( first( ) ) {
+    Count = 20
+    propSpawnUndo( 0 )
+    function buffer() {
+        while( propCanCreate() & Prop:count() < Count ) {
+            local E = propSpawn( "models/props_trainstation/train003.mdl", entity():toWorld( vec( randint( 3000 ) ) ):setZ( 0 ), entity():angles(), 0 )
+            E:setMass( 50000 )
+            E:setAng( ang( randint( 360 ) ) )
+            #E:propDraw( 0 )
+            Prop:pushEntity( E )
+        }
+    }
+    State = 1
+}
+
+interval( 150 )
+
+if( Prop:count( ) < Count ) { buffer() } else {
+    State = !State
+    
+    if( State ) {
+        for( I = 1, Count ) {
+            Prop[ I, entity ]:setPos( entity():toWorld( randvec( -5000, 5000 ) ):setZ( entity():pos():z() + 500 ) )
+            Prop[ I, entity ]:propFreeze( 1 )
+        }
+    } else {
+        for( I = 1, Count ) {
+            Prop[ I, entity ]:propFreeze( 0 )
+            Prop[ I, entity ]:applyForce( vec(0,0,-1) * Prop[ I, entity ]:mass() * 50000 )
+        }
+    }
+}

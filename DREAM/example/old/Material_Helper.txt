@@ -1,0 +1,20 @@
+@name 
+@inputs 
+@outputs 
+@persist M:string P:entity
+@trigger 
+
+if( first() ) {
+    P = entity():isWeldedTo()
+}
+
+if( M != P:getMaterial() ) {
+    M = P:getMaterial( )
+    if( fileCanWrite() ) {
+        fileAppend( ">e2shared/materials.txt", "\"" + M + "\",\n" )
+        #concmd( "say " + M + " written")
+        print(M + " written")
+    }
+}
+
+runOnTick(1)

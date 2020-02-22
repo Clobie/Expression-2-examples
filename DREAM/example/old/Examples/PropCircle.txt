@@ -1,0 +1,48 @@
+@name PropCircle
+@persist [Me Chip]:entity
+@persist [Prop]:array
+@persist [Distance Height Timer]:number
+
+interval(25)
+
+if( first() )
+{
+    Me = owner()
+    Chip = entity()
+    Prop = array()
+    
+    Distance = 200
+    Height = 80
+    Timer = 0
+    
+    function propFind()
+    {
+        findIncludePlayerProps(Me)
+        findExcludeEntity(Chip)
+        findByClass("prop_physics")
+        Prop = findToArray()
+    }
+    
+    function propMove()
+    {
+        Timer++
+        for( I = 1, Prop:count() )
+        {
+            if( Prop[I, entity]:isValid() )
+            {
+                Prop[I, entity]:setPos( Me:pos() + vec( sin(Timer + ( I * ( 360 / Prop:count() ) )) * Distance, cos(Timer + ( I * ( 360 / Prop:count() ) )) * Distance, Height ) )
+            }
+        }
+    }
+    
+    timer( "propFind", 10 )
+}
+elseif( clk() )
+{
+    propMove()
+}
+elseif( clk("propFind") )
+{
+    propFind()
+    timer( "propFind", 1000 )
+}

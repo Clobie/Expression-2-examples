@@ -1,0 +1,5 @@
+@name slerp
+
+function angle slerpAng( OriginAng:angle, TargetAng:angle, Step:number ) {
+    return slerp( quat( OriginAng ), quat( TargetAng ), Step / clamp( acos( OriginAng:forward():dot( TargetAng:forward() ) ), 0, 1 ) ):toAngle() 
+}

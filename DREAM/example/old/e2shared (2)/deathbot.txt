@@ -1,0 +1,67 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/20/2018 @ 1615
+# Holograms: 40
+# Notes: 
+# 1 ->  1
+# --------------------------------------------- #
+@name deathbot
+@inputs 
+@outputs 
+@persist Hologram:table
+
+##include "lib/dream"
+
+if( first( ) ) {
+
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cylinder.mdl","models/holograms/cylinder.mdl","models/holograms/cylinder.mdl","models/holograms/cylinder.mdl","models/holograms/cylinder.mdl","models/holograms/cylinder.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/mechanics/roboticslarge/g1.mdl","models/mechanics/roboticslarge/g1.mdl","models/mechanics/roboticslarge/g1.mdl","models/mechanics/roboticslarge/g1.mdl","models/mechanics/roboticslarge/g1.mdl","models/mechanics/roboticslarge/g1.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/sprops/trans/exhaust/tip_1.mdl","models/items/combine_rifle_ammo01.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl","models/items/combine_rifle_ammo01.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,25),vec(23,-23,6),vec(23,23,6),vec(-23,-23,6),vec(-23,23,6),vec(0,-23,18),vec(0,23,18),vec(14.5,23,17.25),vec(-14.5,23,17.25),vec(-14.5,-23,17.25),vec(14.5,-23,17.25),vec(0,-23,0),vec(0,23,0),vec(0,23,23.5),vec(0,-23,23.5),vec(25,23,12),vec(25,-23,12),vec(-25,23,12),vec(-25,-23,12),vec(-25,-23,17),vec(-25,23,17),vec(25,23,17),vec(25,-23,17),vec(0,-22,55),vec(0,22,55),vec(0,-22,55),vec(0,22,55),vec(0,0,55),vec(0,0,60),vec(0,0,55),vec(17,-22,55),vec(17,22,55),vec(0,0,60),vec(0,0,65),vec(-6.1992,0,65),vec(4,-22,55),vec(4,22,55),vec(0,0,31),vec(0,23,27),vec(0,-23,27))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(90,90,0),ang(90,90,0),ang(90,90,0),ang(90,90,0),ang(90,90,0),ang(90,90,0),ang(28,0,0),ang(-28,0,0),ang(-28,0,0),ang(28,0,0),ang(0,0,0),ang(0,0,0),ang(0,-90,-90),ang(0,-90,-90),ang(0,-90,-110),ang(0,-90,-110),ang(0,-90,-70),ang(0,-90,-70),ang(70,40,0),ang(70,-40,0),ang(-70,40,0),ang(-70,-40,0),ang(0,0,0),ang(0,0,0),ang(0,-180,0),ang(0,-180,0),ang(0,0,90),ang(0,180,180),ang(0,0,-90),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,90,0),ang(90,0,0),ang(90,0,0),ang(0,180,180),ang(0,0,90),ang(0,0,-90))
+    Hologram[ "scale", array ] = array(vec(1,1,1),vec(1,1,0.75),vec(1,1,0.75),vec(1,1,0.75),vec(1,1,0.75),vec(1,1,0.75),vec(1,1,0.75),vec(2.2,0.75,0.01),vec(2.2,0.75,0.01),vec(2.2,0.75,0.01),vec(2.2,0.75,0.01),vec(3.8,0.75,0.01),vec(3.8,0.75,0.01),vec(0.1525,0.25,0.25),vec(0.1525,0.25,0.25),vec(0.1525,0.25,0.25),vec(0.1525,0.25,0.25),vec(0.1525,0.25,0.25),vec(0.1525,0.25,0.25),vec(1,1,2),vec(1,1,2),vec(1,1,2),vec(1,1,2),vec(0.75,0.75,0.75),vec(0.75,0.75,0.75),vec(0.1,0.1,0.1),vec(0.1,0.1,0.1),vec(1,1,2.5),vec(5,5,3),vec(1,1,2.5),vec(5,1.5,1.5),vec(5,1.5,1.5),vec(4,4,0.75),vec(2,2,0.5),vec(1.5,1,0.15),vec(1.2,1.2,2.3),vec(1.2,1.2,2.3),vec(4,4,1.5),vec(1,1,2),vec(1,1,2))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(0,0,0),vec(255,0,0),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("Models/Combine_Turrets/ground_turret/ground_turret01","","","","","","","","","","","","","Models/Combine_Turrets/ground_turret/ground_turret01","Models/Combine_Turrets/ground_turret/ground_turret01","Models/Combine_Turrets/ground_turret/ground_turret01","Models/Combine_Turrets/ground_turret/ground_turret01","Models/Combine_Turrets/ground_turret/ground_turret01","Models/Combine_Turrets/ground_turret/ground_turret01","","","","","Models/Combine_Turrets/ground_turret/ground_turret01","Models/Combine_Turrets/ground_turret/ground_turret01","","","Models/Combine_Turrets/ground_turret/ground_turret01","Models/Combine_Turrets/ground_turret/ground_turret01","Models/Combine_Turrets/ground_turret/ground_turret01","","","","","","","","","","")
+    Hologram[ "skin", array ] = array(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "parent", array ] = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40)
+    Hologram[ "note", array ] = array(" 1","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","")
+
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            Hologram[ "next", number ] = I
+        }
+        if( Next < Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 )
+        } else { for( I = 1, Hologram[ "model", array ]:count( ) ) { holoParent(I, Hologram["parent", array][I, number]) }, interval( 100 ) }
+    } buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( clk( ) ) {
+    interval( 60 )
+
+}
+
+
+
+
+

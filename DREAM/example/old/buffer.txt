@@ -1,0 +1,10 @@
+@name buffer
+
+#include "libs/async"
+
+function buffer(N) {
+    while( holoCanCreate() && N > 0 ) { holoCreate(N), N-- }
+    if( N > 0 ) { async(0.1, "buffer") }
+}
+
+buffer(50)

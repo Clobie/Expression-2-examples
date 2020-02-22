@@ -1,0 +1,67 @@
+@name coins
+
+#include "lib/variable"
+#include "lib/heap"
+
+if( first() ) {
+    
+    "coin":t( table() )
+    "player":t( table() )
+    
+    function entity:addPlayer() {
+        "player":t():pushEntity( This )
+    }
+    
+    function string coinCreate( V:vector ) {
+        local S = new()
+        local T = S:get()
+        holoCreate( S:toNumber() )
+        holoModel( S:toNumber(), "models/holograms/icosphere.mdl" )
+        holoScaleUnits( S:toNumber(), vec( 6, 18, 18 ) )
+        holoColor( S:toNumber(), vec(255, 215, 0) )
+        T["position", vector] = V + vec(0,0,25)
+        return S
+    }
+    
+    function string:coinUpdate() {
+        local T = This:get()
+        local I = This:toNumber()
+        
+        holoPos( I, T["position", vector] + vec( 0, 0, sin(realtime() * 300) * 2 ) )
+        holoAng( I, ang( 0, realtime() * 300, 0 ) )
+        
+        local P = "player":t()
+        local Coin = "coin":t()
+        
+        for( J = 1, P:count() ) {
+            if( P[J, entity]:pos():distance( T["position", vector] ) < 75 ) {
+                Coin:remove( This )
+                holoDelete( I )
+                local Snd = randint( 2e8 )
+                soundPlay( Snd, 0, "level/gnomeftw.wav" )
+                soundPitch( Snd, 500 )
+                #concmd( "ulx tsay " + P[J, entity]:name() + " got a coin" )
+                #local C = coinCreate( entity():pos() + vec( random(-500,500), random(-500,500), 0 ) )
+                #Coin[C, number] = 1
+            }
+        }
+    }
+    
+    foreach( K, V:entity = players() ) { V:addPlayer() }
+    
+    local Coin = "coin":t()
+    for( I = 1, 15 ) {
+        local C = coinCreate( entity():pos() + vec( random(-250,250), random(-250,250), 0 ) )
+        Coin[C, number] = 1
+    }
+}
+
+interval( 100 )
+
+if( "coin":t():count() > 0 ) {
+    foreach( K, V:number = "coin":t() ) {
+        K:coinUpdate()
+    }
+} else {
+    reset()
+}

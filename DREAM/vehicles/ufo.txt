@@ -1,0 +1,209 @@
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                     #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                    #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___         #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\       #
+#  \ \ \_\ \ \ \//\  __//\ \ \.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \ \ \\_\ \_/\ \ \ \/\ \ \ \ \ \//\ \ \.\_/\ \/\ \/\ \      #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\     #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___ \ \/_/ \/__/\/_/\/_/\/_/\/_/     #
+#                                                                                          /\____/                              #
+#                                                                                          \_/__/                               #
+# ----------------------------------------------------------------------------------------------------------------------------- #
+# Modeler Version: v5.1
+# Date: 12/20/2018 @ 1626
+# Holograms: 18
+# Notes: W S A D Space Alt Shift Mouse1
+# --------------------------------------------- #
+@name UFO
+@persist Hologram:table Entity:entity Seat:entity Speed ShiftSpeed Material:array Driver:entity Body:entity Active CanFire RateofFire Breakable Eye
+@persist N
+@model models/sprops/rectangles/size_2_5/rect_18x18x3.mdl
+
+if( first( ) ) {
+    
+    # Editable
+    Breakable = 0
+    Speed = 15
+    ShiftSpeed = 500
+    RateofFire = 0.1
+    Eye = 0
+    #Driver = owner()
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_torus_thin.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_sphere.mdl","models/holograms/hq_torus.mdl","models/holograms/hq_torus.mdl","models/holograms/hq_torus.mdl","models/holograms/hq_torus.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,25),vec(0,0,25),vec(0,0,25),vec(0,0,25),vec(0,0,25),vec(0,0,25),vec(0,0,30.5996),vec(0,0,25),vec(0,0,29.501),vec(-23.1943,0,28.3994),vec(23.1943,0,28.4004),vec(0,-23.1943,28.3994),vec(0,23.1943,28.3994),vec(-23.1943,0,28.7998),vec(23.1943,0,28.7998),vec(0,-23.1943,28.7998),vec(0,23.1943,28.7998))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(180,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(-15,0,0),ang(15,0,0),ang(0,0,15),ang(0,0,-15),ang(-15,0,0),ang(15,0,0),ang(0,0,15),ang(0,0,-15))
+    Hologram[ "scale", array ] = array(vec(5,5,1),vec(-5.1,-5.1,-1.1),vec(5.6,5.6,5.6),vec(-5.7,-5.7,-5.7),vec(2,2,2),vec(-2.1,-2.1,-2.1),vec(1.9,1.9,1.9),vec(5.3,5.3,1),vec(3,3,3),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1),vec(0.4,0.4,0.1))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(255,255,255),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255),vec(40,40,40),vec(40,40,40),vec(40,40,40),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","sprops/textures/sprops_chrome","","","","","phoenix_storms/pack2/glass","phoenix_storms/pack2/glass","phoenix_storms/pack2/glass","phoenix_storms/pack2/glass","","","","")
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    
+    Entity = entity( )
+    Active = 0
+    CanFire = 0
+    propSpawnUndo( 0 )
+    runOnTick( 1 )
+    
+    function void async( T, F:string, X:entity ) {
+        timer( format( "cb:%.0f:%s:e:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+    }
+    
+    function entity:fire( ) {
+        if( holoRemainingSpawns( ) >= 15 && propCanCreate() ) {
+        local Projectile = propSpawn( "models/props_phx/ball.mdl", Body:pos( ) + This:eye( ) * 50, This:eyeAngles( ), 0 )
+        Projectile:setAlpha( 0 )
+        Projectile:setMass( 50000 )
+        Projectile:propGravity( 0 )
+        Projectile:propFreeze( 0 )
+        Projectile:applyForce( This:eyeAngles():forward() * Projectile:mass() * 10000 )
+        Projectile:applyAngForce( ang( 0, 0, 1 ) * Projectile:mass() * 1500 )
+        local J = randint( 2e8 )
+        
+        for( I = J, J + 15 ) {
+            H = holoCreate( I ), holoAlpha( I, 0 )
+            H:setTrails( 50, 50, 1, "trails/laser", hsv2rgb( ( ( I - J ) / 15 ) * 360, 1, 1 ), 255 )
+            holoParent( I, Projectile )
+            holoPos(
+                I,
+                Projectile:toWorld(
+                    vec(
+                        0,
+                        cos( ( ( I - J ) / 15 ) * 360 ) * 35,
+                        sin( ( ( I - J ) / 15 ) * 360 ) * 35 
+                    )
+                )
+            )
+        }
+            
+            Body:soundPlay( randint( 2e8 ), 0.45, "weapons/fx/nearmiss/bulletltor12.wav" ) #weapons/masadamagpul/masada_sil.wav
+            async( 2, "propBreak", Projectile )
+        }
+    }
+    
+    function buffer( ) {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            holoParent(I, Hologram["parent", array][I, number])
+            Hologram[ "next", number ] = I
+        }
+        if( Next < Hologram[ "model", array ]:count( ) ) { timer( "buffer", 0.1 ) } else {
+            if( Driver:isValid( ) ) {
+                for( I = 1, 5, 2 ) {
+                    holoColor( I, teamColor( Driver:team( ) ) )
+                }
+            }
+            local Mdl = "models/sprops/rectangles/size_2_5/rect_18x18x3.mdl"
+            if( Breakable ) {
+                Mdl = "models/props_phx/construct/glass/glass_plate1x1.mdl"
+            }
+            Body = propSpawn( Mdl, Entity:pos( ), Entity:angles( ), 1 )
+            Body:setAlpha( 0 )
+            Body:setMass( 50000 )
+            Seat = seatSpawn( "models/nova/airboat_seat.mdl", Body:pos( ), Body:angles( ), 0 )
+            Seat:parentTo( Body )
+            Seat:setAlpha( 0 )
+            holoPos( 1, Body:pos( ) )
+            holoParent( 1, Body )
+            Seat:propFreeze( 0 )
+            Body:propFreeze( 0 )
+            Body:soundPlay( "ufo", 0, "hl1/ambience/labdrone2.wav" )
+            noCollideAll( Body, 1 )
+            noCollideAll( Seat, 1 )
+            Active = 1
+            hint( "New UFO spawned", 3 )
+            for( I = 100, N + 100 ) {
+                holoParent( I, 1 )
+            }
+        }
+    } 
+    
+    
+    N = holoRemainingSpawns() / 2
+    
+    for( I = 100, N + 100 ) {
+        H = holoCreate( I ), holoAlpha( I, 0 )
+        H:setTrails( 12, 1, 1, "trails/laser", hsv2rgb( ( I / N ) * 360, 1, 1 ), 255 )
+        holoPos(
+            I,
+            entity():toWorld(
+                vec(
+                    cos( ( I / N ) * 360 ) * 30,
+                    sin( ( I / N ) * 360 ) * 30,
+                    0 
+                )
+            )
+        )
+    }
+    
+    
+    
+    buffer( )
+}
+
+if( clk( "buffer" ) ) { buffer( ) } elseif( tickClk( ) ) {
+    if( Active ) {
+        if( Seat:driver( ):isValid( ) & Driver != Seat:driver( ) ) {
+                Driver = Seat:driver( )
+                runOnKeys( Driver, 1 )
+                for( I = 1, 5, 2 ) { 
+                    holoColor( I, teamColor( Driver:team( ) ) ) 
+                    holoMaterial( I, "debug/debugdrawflat" )
+                }
+        }
+        
+        #for( I = 1, 5, 2 ) { 
+        #    holoColor( I, hsv2rgb( realtime() * 256, 1, 1 ) )
+        #}
+        
+        if( Seat:driver( ) == Driver ) {
+            local Controls = vec( 
+                Driver:keyForward( ) - Driver:keyBack( ), 
+                Driver:keyLeft( )    - Driver:keyRight( ), 
+                Driver:keyJump( )    - Driver:keyWalk( )
+            )
+            Controls = Eye ? Controls:normalized( ):rotate( Driver:eye( ):toAngle( ) ) : Controls:normalized( ):rotate( Driver:eye( ):setZ( 0 ):toAngle( ) )
+            
+            Body:applyForce( Body:mass( ) * -propGravity() * tickInterval( ) - ( Body:mass( ) * Body:vel( ) ) / 20 + Body:mass( ) * Controls * ( Speed +  ShiftSpeed * Driver:keySprint( ) ) )
+        } elseif( Driver:isValid( ) ) {
+            local V = Driver:shootPos():distance( Body:pos() ) > 250 ? ( ( Driver:pos() + vec(0,0,15) ) - Body:pos() ) / 20 : vec(0)
+            Body:applyForce( ( Body:mass( ) * -propGravity() * tickInterval( ) - ( Body:vel() * Body:mass() ) / 20 ) + ( V * Body:mass( ) ) )
+        }
+        
+        Body:applyTorque( ( Body:inertia() * (rotationVector(inv(quat(Body))) * 5 - Body:angVelVector()) * 20 ) )
+        if( !Body:isValid( ) ) {
+            Active = 0
+            Hologram[ "next", number ] = 0
+            buffer( )
+        }
+        soundPitch( "ufo", clamp( 50 + Body:vel( ):length( ) / 60, 0, 160 ) )
+        holoAng( 1, holoEntity( 1 ):toWorld( ang( 0, 1 + clamp( Body:vel( ):length( ) / 250, 0, 10 ), 0 ) ) )
+    }
+}
+
+if( Seat:driver( ) == Driver & Driver:keyAttack1( ) ) {
+    if( CanFire < realtime( ) ) {
+        CanFire = realtime( ) + RateofFire
+        Driver:fire( )
+    }
+}
+
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3){
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) { case "e", F( R[ 1, entity ] ), break }
+        exit()
+    }
+}

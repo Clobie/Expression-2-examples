@@ -1,0 +1,279 @@
+@name Library Tutorial
+@persist Button:string
+
+#include "lib/artillery"
+#include "lib/variable"
+#include "lib/button"
+#include "lib/prng"
+
+if( first() ) {
+    
+    runOnTick( 1 )
+    ###################################################################################################
+    # Tutorial part 1:
+    #   "lib/variable"
+    ###################################################################################################
+    # 
+    # First, we set a global variable called step.  
+    # We do this by typing the string in quotes as a prefix variable (by adding : at the end)
+    # Next we add the type as a function ( n() )
+    # Lastly, we set the value to 0 by adding it as a parameter.
+    # Thus, we have a gobal variable called step that equals 5.
+    "step":n( 5 )
+    
+    # Now we really don't want to start with 5, we want to start with 0.
+    # So we set a new value to the "step" global variable.
+    "step":n( 0 )
+    
+    # Just to make sure, we will print the value of "step" to chat.
+    print( "The value of \"step\":n() is: " + "step":n() )
+    
+    ###################################################################################################
+    # Tutorial part 2:
+    #   "lib/async"
+    ###################################################################################################
+    #
+    # First, we will explain why async is so great.  async stands for asynchronous timers.
+    #   1. Normal timers clash, while async timers can not.
+    #       Example: If you need 2 timers for the same call and use 
+    #                a standard timer(), only the second will go off.
+    #                If I use async, I can use an unlimited number of
+    #                async timers and they will never clash.
+    #   2. Parameters!  Normal timers cannot have parameters.
+    #       Example: async( 10, "propDelete" Entity )
+    #                This will delete the prop "Entity" after 10 seconds
+    #                Instead of looping X number of props and checking
+    #                time, distance, or whatever else you check to delete props,
+    #                you can simply delete them at a certain time DIRECTLY!
+    #   3. EASY loops!
+    #       Example: You can make a while(perf()) function call itself again
+    #                in only 1 line of code, completely avoiding any extra effort.
+    #                function myLoop()
+    #                    while( perf() ) {
+    #                        Do Things!
+    #                    }
+    #                    if( IAmNotDoneYet ) { async( 0.05, "myLoop" ) }
+    #                }
+    #
+    # Next, we will show it off!
+    # Hologram burst limit is 80 holograms.  What if we want to spawn 200 of them?
+    # What if we want our code to look clean, avoid counters, and work efficiently?
+    # Lets do it with async!
+    # BUT - Lets also use our awesome variable things, too!
+    function buffer( N ) {
+        if( !"started":n() ) { "ang":n( 360 / N ), "started":n( 1 ) }
+        while( holoCanCreate() && perf() ) {
+            holoCreate( N )
+            holoModel( N, "hq_sphere" )
+            holoColor( N, hsv2rgb( N * "ang":n(), 1, 1 ) )
+            holoPos( N, entity():pos() + vec( sin( N * "ang":n() ) * 75, cos( N * "ang":n() ) * 75, 0 ) )
+            N--
+        }
+        if( N > 0 ) {
+            async( 1, "buffer", N )    # Note, hologram burst buffer adds 15 per second.  Thus we completely avoid it here!
+        }
+        else {
+            print( "buffer is done" )
+        }
+    }
+    
+    # Now we have our buffer function.  I added a little fanciness for fun.
+    # Lets start it.... later.  How about in 5 seconds? And we set the parameter to 200, for 200 holograms.
+    async( 5, "buffer", 200 )
+    
+    ###################################################################################################
+    # Tutorial part 3:
+    #   "lib/button"
+    ###################################################################################################
+    #
+    # First, this is pretty simple.  It makes buttons.
+    # However, there's a little more to it.  We have direct button callbacks, and a lot of options!
+    # When you create a button, it returns a string.  This string can be used for all
+    # button functions.  So why not store it in our custom variables?
+    # We will also set up some variables.  I will list ALL of the options.
+    #   S = buttonCreate()
+    #   S:buttonSetToggleable( number )
+    #   S:buttonSetToggleDuration( number )
+    #   S:buttonSetPosition( vector )
+    #   S:buttonSetAngle( angle )
+    #   S:buttonWhitelist( entity )
+    #   S:buttonWhitelistAll()
+    #   S:buttonColorOn( vector )
+    #   S:buttonColorOff( vector )
+    #   S:buttonColorOutlineOn( vector )
+    #   S:buttonColorOutlineOff( vector )
+    #   S:buttonSetMaterialOn( string )
+    #   S:buttonSetMaterialOff( string )
+    #   S:buttonSetOutlineMaterialOn( string )
+    #   S:buttonSetOutlineMaterialOff( string )
+    #   S:buttonValueOn( number )
+    #   S:buttonValueOff( number )
+    # That's great and all... but lets get started.
+    # This will create the button.  Note: you do not have to use these custom variables.
+    # I will show both ways.
+    "button":s( buttonCreate() )                                    # First, we create the button
+    "button":s():buttonSetPosition( entity():pos() + vec(0,-15,50) )  # Next, we set the position
+    "button":s():buttonSetAngle( ang(90,0,0) )                      # And the angle
+    "button":s():buttonColorOn( vec(0,255,0) )                      # We set the color it will be when we click it
+    "button":s():buttonWhitelist( owner() )                         # We enable owner() to press the button
+    
+    # Note - we must @persist Button because we are not using the
+    # custom variable library.
+    Button = buttonCreate()                                         # We do the same things for our other button
+    Button:buttonSetPosition( entity():pos() + vec(0,15,50) )       # Except, we set a different position
+    Button:buttonSetAngle( ang(90,0,0) )
+    Button:buttonColorOn( vec(0,0,255) )                            # And a different ON color
+    Button:buttonWhitelist( owner() )
+    
+    # There.  Our buttons are created.  I used some very basic options to show you
+    # how they work.  Next, we will set up our callback functions.
+    # The function name does not matter.
+    # It MUST HAVE parameters for Entity (player who pressed button) and String (the button's string id) in this order.
+    #   Example:
+    #       function myButtonCallback( Ply:entity, Btn:string ) { Do Stuff }
+    #       Example is of the bare minimum.
+    # Now lets set it up for real.
+    buttoncallback_bind( "myFunctionName" )
+    function myFunctionName( Ply:entity, Btn:string ) {
+        if( Btn == "button":s() ) {
+            print( Ply:name() + " pressed the button!" )
+        }
+        elseif( Button == Btn ) {
+            print( Ply:name() + " pressed the button!" )
+        }
+    }
+    
+    # Great!  Press the buttons in game to see how they work.
+    
+    ###################################################################################################
+    # Tutorial part 4:
+    #   "lib/artillery"
+    ###################################################################################################
+    # 
+    # We need to create some artillery!
+    # I will assume you are familiar with the custom variable system from this point on.
+    # In case you are not, you can use String = createArtillery() instead.  Are you following, now
+    # Here are all the options
+    #A = createArtillery()
+    #A:setOrigin( vector )
+    #A:setTarget( vector )
+    #A:setArc( number )
+    #A:setPower( number )
+    #A:setProjectileModel( string )
+    #A:setProjectileMass( number )
+    #A:setTrails( number, number, number, string, vector, number )
+    #A:fire()
+    # Note - TRAJECTORY_ARC_HIGH equals -1 and TRAJECTORY_ARC_LOW equals 1 and you may use them (they are globals) for A:setArc( number )
+    "gun":s( createArtillery() )
+    "gun":s():setOrigin( entity():pos() )
+    "gun":s():setTarget( entity():pos() + vec(0,100,0) )
+    
+    # Notice I didn't set any other options.
+    # The ones not set have default values.
+    # I also want to lower the power (default is 50)
+    "gun":s():setPower( 15 )
+    
+    # Remember our buttons?  Lets set a callback so we can use them! ( We can have multiple callbacks )
+    # Note - I also use async to delete the prop when it hits!
+    buttoncallback_bind( "btn_callback" )
+    function btn_callback( Ply:entity, Btn:string ) {
+        if( Btn == "button":s() ) {
+            "gun":s():setTarget( entity():pos() + vec(1000,-100,0) )
+            "gun":s():setProjectileModel( "models/props_junk/watermelon01.mdl" )
+            local I = "gun":s():getHitTime()            # Gets the exact seconds until the prop lands! :)
+            async( I, "propBreak", "gun":s():fire() )   # I stick fire() directly in to async.  It returns the entity
+        } elseif( Btn == Button ) {
+            "gun":s():setTarget( entity():pos() + vec(1000,100,0) )
+            "gun":s():setProjectileModel( "models/props_phx/ball.mdl" )
+            local I = "gun":s():getHitTime()            # Gets the exact seconds until the prop lands! :)
+            local E = "gun":s():fire()
+            async( I, "propBreak", E )                  # But I can also use a variable.
+        }
+    }
+    
+    ###################################################################################################
+    # Tutorial part 5:
+    #   "lib/keyboard"
+    ###################################################################################################
+    # 
+    # First, keyboard has callbacks, just like buttons.
+    # In fact, buttons use keyboard callbacks!  But we won't get in to that.
+    # Lets simply show how the keyboard callbacks work.
+    # Here are all the options:
+    # function entity:keysListen( string )
+    # function bindcallback_keydown( string )
+    # function bindcallback_keyup( string )
+    # function unbindcallback_keydown( string )
+    # function unbindcallback_keyup( string )
+    #
+    # Next, we simply create callbacks, and it's as simple as that.
+    # Reminder, you can have multiple callbacks!
+    owner():keysListen( 1 )
+    
+    function my_custom_keydown_callback( P:entity, K:string ) {
+        print( "Custom key down function: " + P:name() + " pressed " + K )
+    }
+    bindcallback_keydown( "my_custom_keydown_callback" )
+    
+    function my_custom_keyup_callback( P:entity, K:string ) {
+        print( "Custom key down function: " + P:name() + " released " + K )
+    }
+    bindcallback_keyup( "my_custom_keyup_callback" )
+    
+    ###################################################################################################
+    # Tutorial part 6:
+    #   "lib/heap"
+    ###################################################################################################
+    # Heap is like a data heap.
+    # You put stuff in it, and you read from it.
+    # Almost all of my library files use it, because simply put, it is very useful.
+    # Here are all of the options:
+    # string = new()
+    # string = table:new()
+    # string = new( table )
+    # string:get()
+    # get( string )
+    # string:clear()
+    # clear( string )
+    # string:delete()
+    # delete( string )
+    # 
+    # Now that we have all of the options, lets use it.
+    Data1 = new()
+    Data2 = new( table( "mydataindex" = "mydata" ) )
+    Data3 = table( "mydataindex" = "mydata" ):new()
+    
+    T = table( "asdf", "asdf2", "asdf3" )
+    Data4 = T:new()
+    
+    Data1:delete()
+    Data2:delete()
+    Data3:delete()
+    print( "Data4 table:" )
+    printTable( Data4:get() )
+    
+    ###################################################################################################
+    # Tutorial part 7:
+    #   "lib/prng"
+    ###################################################################################################
+    # 
+    # I don't really know what to say, except this is pressed self explanitory.
+    # First we seed with srand( number )
+    # Next, we get numbers with rand()
+    # Each time we get a number with prng(), it produces the next random number in the seed sequence
+    Table1 = table()
+    Table2 = table()
+    
+    # Set a seed, then pull 10 numbers.
+    srand( 91827 )
+    for( I = 1, 10 ) { Table1:pushNumber( rand() ) }
+    
+    # Set the same seed, then pull 10 numbers again.
+    srand( 91827 )
+    for( I = 1, 10 ) { Table2:pushNumber( rand() ) }
+    
+    # The seed should produce the same sequence.  Lets check.
+    X = 0
+    for( I = 1, 10 ) { if( Table1[I, number] == Table2[I, number] ) { X++ } }
+    print( "prng rand() made " + X + " out of 10 matches" )
+}

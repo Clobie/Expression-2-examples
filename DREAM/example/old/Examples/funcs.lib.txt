@@ -1,0 +1,360 @@
+# -------------------------------------------------------------
+# Function Library
+# -------------------------------------------------------------
+@name funcs.lib
+
+# -------------------------------------------------------------
+# TODO
+# -------------------------------------------------------------
+# Fix setupEgp
+# holoAdjustColor()
+# holoAdjustScale()
+# stringTokenize()
+#
+#
+#
+#
+
+# -------------------------------------------------------------
+# Random
+# -------------------------------------------------------------
+function vector getRandomColor()
+{
+    return vec( random(0, 255), random(0, 255), random(0, 255 ) )
+}
+
+function vector getRandomVector()
+{
+    return vec( random(-1, 1), random(-1, 1), random(-1, 1) )
+}
+
+function angle getRandomAngle()
+{
+    return ang( random(0, 360), random(0, 360), random(0, 360) )
+}
+
+# -------------------------------------------------------------
+# Entity/Player Discovery
+# -------------------------------------------------------------
+function entity playerFindClosest( Origin:vector )
+{
+    local TempDistance = 0
+    local Entity = owner()
+    foreach( I, V:array = players())
+    {
+        if(Entity == owner()) { continue }
+        Dst = V[I, entity]:pos():distance( Origin )
+        if(TempDistance == 0 | Dst < TempDistance)
+        {
+            Entity = V[I, entity]
+            TempDistance = Dst
+        }
+    }
+    return Entity
+}
+
+function entity playerFindFurthest( Origin:vector )
+{
+    local TempDistance = 0
+    local Entity = owner()
+    foreach( I, V:array = players() )
+    {
+        if( Entity == owner() ) { continue }
+        Dst = V[I, entity]:pos():distance( Origin )
+        if(Dst > TempDistance)
+        {
+            TempDistance = Dst
+            Entity = V[I, entity]
+        }
+    }
+    return Entity
+}
+
+# -------------------------------------------------------------
+# Vector Math
+# -------------------------------------------------------------
+function vector getNormalizedAimVector( P:entity, T:entity )
+{
+    return (T:pos() - P:pos()):normalized()
+}
+
+function array getCircleCoordinates( Center:vector, Points:number, Radius:number )
+{
+    local Array = array()
+    for( I = 1, Points )
+    {
+        # TODO
+    }
+    return Array
+}
+
+# -------------------------------------------------------------
+# Angle Math
+# -------------------------------------------------------------
+function angle getAimAngle( P:entity, T:entity )
+{
+    return getNormalizedAimVector(P, T):toAngle()
+}
+
+# -------------------------------------------------------------
+# EGP
+# -------------------------------------------------------------
+function entity egpSetup(N:number)
+{
+    findByClass("gmod_wire_egp")
+    local Entities = findToArray()
+    local EgpArray = array()
+    local EmitterArray = array()
+    
+    for(I = 1, Entities:count())
+    {
+        if(Entities[I, entity]:type() == "gmod_wire_egp" & Entities[I, entity]:owner() == owner())
+        {
+            EgpArray:pushEntity(Entities[I, entity])
+        }
+    }
+    
+    if(EgpArray:count() > 0)
+    {
+        local PosStart = entity():pos() + vec(0, 125, EgpArray[1, entity]:boxSize():y() / 1.8)
+        local Pos = array(    PosStart,
+                            PosStart + vec(-80.9,-33.5,0),#PosStart + vec(33.5,-80.9,0),
+                            PosStart + vec(80.9,-33.5,0))
+                        
+        local Ang = array(    entity():angles() + ang(90,90,180),
+                            entity():angles() + ang(90,135,180),
+                            entity():angles() + ang(90,45,180))
+        
+        EgpArray[N, entity]:setPos(Pos[N, vector])
+        EgpArray[N, entity]:setAng(Ang[N, angle])
+        return EgpArray[N, entity]
+    }
+}
+
+# -------------------------------------------------------------
+# String
+# -------------------------------------------------------------
+function string stringScramble( Original:string )
+{
+    local Scrambled = Original
+    while(Scrambled == Original)
+    {
+        A = Original:explode("")
+        for(I = 1, A:count())
+        {
+            N1 = random(1, A:count())
+            N2 = random(1, A:count())
+            Tmp = A[N1, string]
+            A[N1, string] = A[N2, string]
+            A[N2, string] = A[N1, string]
+        }
+    }
+    return Scrambled
+}
+
+function stringUnscramble( Scrambled:string )
+{
+    # TODO
+}
+
+function array stringTokenize( S:string, D:string )
+{
+    # TODO
+}
+
+# -------------------------------------------------------------
+# Array
+# -------------------------------------------------------------
+function array sortPlayerArrayByTeam(A:array, )
+{
+    local Unsorted = 1
+    while(Unsorted == 1)
+    {
+        local Complete = 1
+        for(I = 1, A:count())
+        {
+            CurrentEntity = A[I, entity]
+            NextEntity = A[I+1, entity]
+            if(CurrentEntity:team()+1 < NextEntity:team()+1)
+            {
+                A[I, entity] = NextEntity
+                A[I+1, entity] = CurrentEntity
+                Complete = 0
+            }
+        }
+        if(Complete == 1)
+        {
+            Unsorted = 0
+        }
+    }
+    return A
+}
+
+function array arrayBubbleSort(A:array, Order:number)
+{
+    local Temp = 0
+    local Len = A:count()
+    local Complete = 0
+    
+    if( Order == 1 )
+    {
+        while( !Complete )
+        {
+            Complete = 1
+            for( I = 1, Len )
+            {
+                if( A[I-1, number] > A[I, number] )
+                {
+                    Temp = A[I, number]
+                    A[I, number] = A[I-1, number]
+                    A[I-1, number] = Temp
+                    Complete = 0
+                }
+            }
+        }
+    }
+    else
+    {
+        while( !Complete )
+        {
+            Complete = 1
+            for( I = 1, Len )
+            {
+                if( A[I, number] > A[I-1, number] )
+                {
+                    Temp = A[I, number]
+                    A[I, number] = A[I-1, number]
+                    A[I-1, number] = Temp
+                    Complete = 0
+                }
+            }
+        }
+    }
+}
+
+# -------------------------------------------------------------
+# Hologram Manipulation
+# -------------------------------------------------------------
+function holoAdjustVector( N:number, V:vector )
+{
+    holoPos( N, holoEntity(N):pos() + V )
+}
+
+function holoAdjustAngle( N:number, A:angle )
+{
+    holoAng( N, holoEntity(N):angles() + A )
+}
+
+function holoAdjustScale( N:number, V:vector )
+{
+    holoScale( N, holoScale(N) + V )
+}
+
+function holoAdjustColor( N:number, C:vector )
+{
+    local Color = holoEntity(N):getColor()
+    Color = vec( clamp(Color:x() + C:x(), 0, 255), clamp(Color:y() + C:y(), 0, 255), clamp(Color:z() + C:z(), 0, 255) )
+    holoColor(N, Color)
+}
+
+function holoAdjustAlpha(N:number, A:number )
+{
+    holoAlpha( N, clamp( A, 0, 255 ) )
+}
+
+function holoSetVector( N:number, V:vector )
+{
+    holoPos( N, V )
+}
+
+function holoSetAngle( N:number, A:angle )
+{
+    holoAng( N, A )
+}
+
+function holoSetScale(N:number, V:vector)
+{
+    holoScale( N, V )
+}
+
+function holoSetColor( N:number, C:vector )
+{
+    holoColor( N, C )
+}
+
+function holoSetAlpha( N:number, A:number )
+{
+    holoAlpha( N, clamp( A, 0, 255 ) )
+}
+
+function holoSetMaterial( N:number, S:string )
+{
+    holoMaterial( N, S )
+}
+
+function holoSetSkin( N:number, S:number )
+{
+    holoSkin( N, S )
+}
+
+function holoSetParent( N:number, T:number )
+{
+    if( holoEntity(N):hasConstraints() )
+    {
+        holoUnparent(N)
+    }
+    holoParent( N, T )
+}
+
+function holoSetNextSkin(N:number)
+{
+    local HoloEntity = holoEntity(N)
+    local Skin = HoloEntity:getSkin()
+    local Skins = HoloEntity:getSkinCount()
+    Skin++
+    if( Skin > Skins ) { Skin = 1 }
+    holoSkin(N, Skin)
+}
+
+function holoMirrorVector( N:number, V:vector, Axis:string )
+{
+    HoloEnt = holoEntity(N)
+    VOrigin = HoloEnt:toLocal(V)
+    VDest = VOrigin
+    if( Axis:find( "x" ) ) { VDest *= vec( -1, 1, 1 ) }
+    if( Axis:find( "y" ) ) { VDest *= vec( 1, -1, 1 ) }
+    if( Axis:find( "z" ) ) { VDest *= vec( 1, 1, -1 ) }
+    holoPos( N, V + VDest )
+}
+
+function holoMirrorAngle( N:number, A:angle, Axis:string )
+{
+    ADest = A
+    if( Axis:find( "p" ) ) { ADest *= ang( -1, 1, 1 ) }
+    if( Axis:find( "y" ) ) { ADest *= ang( 1, -1, 1 ) }
+    if( Axis:find( "r" ) ) { ADest *= ang( 1, 1, -1 ) }
+    holoAng( N, ADest )
+}
+
+function holoRotateAroundAxis(N:number, V:vector)
+{
+    # TODO
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

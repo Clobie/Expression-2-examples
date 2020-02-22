@@ -1,0 +1,19 @@
+@name Ramio2
+@persist [Node]:string
+@persist 
+@persist 
+@persist 
+@persist 
+@persist 
+@persist 
+
+#include "lib/heap"
+#include "lib/async"
+
+if( first() ) {
+    
+    Node = new()
+    
+    Node
+    
+}

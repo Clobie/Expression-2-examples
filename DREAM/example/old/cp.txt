@@ -1,0 +1,40 @@
+@name cp
+
+#include "libs/vars"
+#include "libs/async"
+#include "libs/heap2"
+
+if( first() ) {
+    
+    "slot":n( 0 )
+    
+    function table prop() {
+        findIncludePlayerProps( "Tek" )
+        findByClass( "prop_*" )
+        local T = "prop":s():get()
+        "prop":s( findToTable():new() )
+        async(1, "prop")
+    }
+    
+    function color() {
+        local T = "prop":s():get()
+        local N = "slot":n()
+        while( perf() && N <  T:count() ) {
+            N++
+            local A = Me:pos():distance( T[N, entity]:pos() )
+            if( A <= 360 ) {
+                #T[N, entity]:setColor( hsv2rgb( A , 1, 1 ) )
+                T[N, entity]:setAlpha( 355 - A )
+            } else {
+                #T[N, entity]:setColor( vec(0) )
+                T[N, entity]:setAlpha( 0 )
+            }
+            T[N, entity]:setMaterial( "debug/debugdrawflat" )
+        }
+        if( N >= T:count() ) { "slot":n( 0 ) } else { "slot":n( N ) }
+        async(0.05, "color")
+    }
+    
+    prop()
+    color()
+}

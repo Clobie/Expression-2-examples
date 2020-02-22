@@ -1,0 +1,79 @@
+@name Player Launcher
+@inputs 
+@outputs 
+@persist PLTarget:entity
+@trigger 
+
+#include "dream/lib/dream"
+
+if( first( ) ) {
+    
+    runOnKeys( Me, 1 )
+    
+    function entity playerFindClosest( Origin:vector )
+    {
+        local TempDistance = 0
+        local Entity = owner()
+        local P = players( )
+        for( I = 1, P:count( ) ) {
+            local Dst = P[ I, entity ]:pos( ):distance( Origin )
+            if( ( TempDistance == 0 | Dst < TempDistance ) ) { #& P[ I, entity ] != Me ) {
+                Entity = P[ I, entity ]
+                TempDistance = Dst
+            }
+        }
+        return Entity
+    }
+    
+    function entity:launch( ) {
+        PLTarget = This
+        print( "Target: " + PLTarget:name( ) )
+        local Away = ( This:pos( ) - Me:pos( ) ):normalized( )
+        local X = propSpawn( "models/sprops/cuboids/height06/size_1/cube_6x6x6.mdl", This:pos( ) + ( Away * 100 ), 0 )
+        X:setMass( 50000 )
+        X:setAlpha( 0 )
+        X:applyForce( ( vec( 0, 0, 0.2 ) + ( Away * -1 ) ) * X:mass( ) * 5000 )
+        async( 0.4, "propDelete", X )
+    }
+    
+    function entity:bounceBack( ) {
+        local Back = This:vel( ):normalized( )
+        local X = propSpawn( "models/sprops/cuboids/height06/size_1/cube_6x6x6.mdl", This:pos( ) + ( Back * 150 ), 0 )
+        X:setMass( 50000 )
+        X:setAlpha( 0 )
+        X:applyForce( ( vec( 0, 0, 0.2 ) + ( Back * -1 ) ) * X:mass( ) * 5000 )
+        async( 0.4, "propDelete", X )
+    }
+    
+    function setup( ) {
+        
+    }
+    
+    function main( ) {
+        
+    }
+    
+    function chat( Player:entity, Text:string ) {
+        
+    }
+    
+    function key( Player:entity, Key:string, Down:number ) {
+        if( Down & Player == Me & Me:keyPressed( "lshift" ) ) {
+            if( Key == "mouse_left" ) {
+                playerFindClosest( Me:aimPos( ) ):launch( )
+            }
+            if( Key == "mouse_right" ) {
+                PLTarget:bounceBack( )
+            }
+        }
+    }
+}
+
+if( clk( ) ) { main( ) }
+if( chatClk( ) ) { chat( lastSpoke( ), lastSaid( ) ) }
+if( keyClk( ) ) {
+    local Player = keyClk()
+    local Key = keyClkPressed()
+    local Down = Player:keyPressed( Key ) ? 1 : 0
+    key( Player, Key, Down )
+}

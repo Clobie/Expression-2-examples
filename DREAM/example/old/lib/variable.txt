@@ -1,0 +1,39 @@
+
+@persist VARIABLE:table
+
+if( first() ) {
+    function string string:s() { return VARIABLE[This, string] }
+    function string:s( STRING:string ) { VARIABLE[This, string] = STRING }
+    function vector string:v() { return VARIABLE[This, vector] }
+    function string:v( VECTOR:vector ) { VARIABLE[This, vector] = VECTOR }
+    function vector2 string:xv2() { return VARIABLE[This, vector2] }
+    function string:xv2( VECTOR:vector2 ) { VARIABLE[This, vector2] = VECTOR }
+    function vector4 string:xv4() { return VARIABLE[This, vector4] }
+    function string:xv4( VECTOR:vector4 ) { VARIABLE[This, vector4] = VECTOR }
+    function matrix string:m() { return VARIABLE[This, matrix] }
+    function string:m( MATRIX:matrix ) { VARIABLE[This, matrix] = MATRIX }
+    function matrix2 string:xm2() { return VARIABLE[This, matrix2] }
+    function string:xm2( MATRIX:matrix2 ) { VARIABLE[This, matrix2] = MATRIX }
+    function matrix4 string:xm4() { return VARIABLE[This, matrix4] }
+    function string:xm4( MATRIX:matrix4 ) { VARIABLE[This, matrix4] = MATRIX }
+    function angle string:a() { return VARIABLE[This, angle] }
+    function string:a( ANGLE:angle ) { VARIABLE[This, angle] = ANGLE }
+    function quaternion string:q() { return VARIABLE[This, quaternion] }
+    function string:q( QUATERNION:quaternion ) { VARIABLE[This, quaternion] = QUATERNION }
+    function array string:r() { return VARIABLE[This, array] }
+    function string:r( ARRAY:array ) { VARIABLE[This, array] = ARRAY }
+    function table string:t() { return VARIABLE[This, table] }
+    function string:t( TABLE:table ) { VARIABLE[This, table] = TABLE }
+    function bone string:b() { return VARIABLE[This, bone] }
+    function string:b( BONE:bone ) { VARIABLE[This, bone] = BONE }
+    function complex string:c() { return VARIABLE[This, complex] }
+    function string:c( COMPLEX:complex ) { VARIABLE[This, complex] = COMPLEX }
+    function wirelink string:xwl() { return VARIABLE[This, wirelink] }
+    function string:xwl( WIRELINK:wirelink ) { VARIABLE[This, wirelink] = WIRELINK }
+    function ranger string:xrd() { return VARIABLE[This, ranger] }
+    function string:xrd( RANGER:ranger ) { VARIABLE[This, ranger] = RANGER }
+    function entity string:e() { return VARIABLE[This, entity] }
+    function string:e( ENTITY:entity ) { VARIABLE[This, entity] = ENTITY }
+    function number string:n() { return VARIABLE[This, number] }
+    function string:n( NUMBER:number ) { VARIABLE[This, number] = NUMBER }
+}

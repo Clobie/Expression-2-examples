@@ -1,0 +1,14 @@
+@name Heuristics Test
+@persist 
+
+#include "lib/button"
+#include "lib/variable"
+
+if( first() ) {
+    
+    # Goals
+    #   Prop spam
+    #   Minge E2 detection
+    #   Prop killing detection
+    
+}
