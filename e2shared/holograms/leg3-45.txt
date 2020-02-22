@@ -1,0 +1,59 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 12/21/2019 @ 2233
+# Holograms: 5
+# World: [3298.3762207031,-2665.748046875,-7167.71875]
+# Notes: 
+########################################
+@name leg3-25
+@persist Hologram:table
+
+if( first() ) {
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(0,0,0),vec(0,0,125),vec(0,0,250),vec(0,0,375))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4))
+    Hologram[ "color", array ] = array(vec(255,0,255),vec(0,255,255),vec(255,255,0),vec(255,0,0),vec(0,0,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","")
+    Hologram[ "parent", array ] = array(0,1,2,3,4)
+    Hologram[ "note", array ] = array("","","","","")
+    
+    for( I = 1, Hologram[ "model", array ]:count() ) {
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector],
+            Hologram["alpha", array ][I,number]),
+            Hologram["model", array][I, string]
+        )
+        holoMaterial(I, Hologram["material", array][I, string])
+        holoParent(I, Hologram["parent", array][I, number])
+    }
+    
+    holoParent( 1, entity() )
+    
+    function entity:ik3c( A, B, C, D, LengthA, LengthB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        Distance = AEntity:pos():distance( Destination )
+        Ae = max( Distance, LengthB )
+        Be = LengthA
+        Ce = min( Distance, LengthB )
+        Calc = sqrt( ( (Ae + Be - Ce + Be) * (-Ae + Be + Ce + Be) * (Ae - Be - Ce + Be) * (Ae + Be - Ce - Be) ) / ( 4 * (Ae - Ce) ^ 2 ) )
+        local Arcs = ( sign( Distance - LengthA ) + 1 ) / 2 ? asin( Calc / LengthA ) : acos( Calc / LengthA ) + 90
+        local YawAxis = This:toLocalAxis( Destination - AEntity:pos() )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        holoAng( B, holoEntity( A ):toWorld( ang( 0, -AEntity:bearing( Destination ) - 90, AEntity:elevation( Destination ) + Arcs - 90 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( 0, 0, -Arcs ) ) )
+        holoAng( D, holoEntity( C ):toWorld( ang( 0, 0, -Arcs ) ) )
+    }
+    
+}
+
+interval( 60 )
+entity():ik3c( 1, 2, 3, 4, 125, 125, owner():aimPos() )
+

@@ -1,0 +1,43 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 12/22/2019 @ 139
+# Holograms: 6
+# World: [3314.8334960938,-175.89880371094,-7167.71875]
+# Notes: 
+# 1 -> hydraulic_bottom
+# 4 -> hydraulic_top
+########################################
+@name h2
+@persist Hologram:table
+
+if( first() ) {
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl","models/holograms/cube.mdl","models/holograms/hq_cylinder.mdl","models/holograms/hq_cylinder.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(227.5,0,0),vec(0,0,0),vec(910,0.0001,0),vec(682.5,0.0001,0),vec(910,0.0001,0))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(-90,180,0),ang(0,-180,-90),ang(0,0,0),ang(-90,-180,0),ang(0,-180,-90))
+    Hologram[ "scale", array ] = array(vec(4.5,1,1),vec(4.5833,4.5833,37.9167),vec(8.3333,8.3333,5),vec(1,1,1),vec(3.3333,3.3333,37.9167),vec(8.3333,8.3333,5))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(250,250,250),vec(150,150,150),vec(255,255,255),vec(255,255,255),vec(150,150,150))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","sprops/trans/misc/ls_m1","sprops/trans/misc/ls_m1","phoenix_storms/fender_chrome","phoenix_storms/fender_chrome","sprops/trans/misc/ls_m1")
+    Hologram[ "parent", array ] = array(1,1,1,3,4,4)
+    Hologram[ "note", array ] = array("hydraulic_bottom","","","hydraulic_top","","")
+    
+    for( I = 1, Hologram[ "model", array ]:count() ) {
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector],
+            Hologram["alpha", array ][I,number]),
+            Hologram["model", array][I, string]
+        )
+        holoMaterial(I, Hologram["material", array][I, string])
+        holoParent(I, Hologram["parent", array][I, number])
+    }
+}
+
+if( clk() ) {
+    interval( 60 )
+}

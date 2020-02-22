@@ -1,0 +1,41 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 1/4/2020 @ 1917
+# Holograms: 1
+# World: [2314.3747558594,-3878.5290527344,-14335.71875]
+# Notes: 
+########################################
+@name test
+@persist Hologram:table
+
+if( first() ) {
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0))
+    Hologram[ "angle", array ] = array(ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(1,1,1))
+    Hologram[ "color", array ] = array(vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255)
+    Hologram[ "material", array ] = array("")
+    Hologram[ "parent", array ] = array(0)
+    Hologram[ "note", array ] = array("")
+    
+    for( I = 1, Hologram[ "model", array ]:count() ) {
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector],
+            Hologram["alpha", array ][I,number]),
+            Hologram["model", array][I, string]
+        )
+        holoMaterial(I, Hologram["material", array][I, string])
+        holoParent(I, Hologram["parent", array][I, number])
+    }
+}
+
+if( clk() ) {
+    interval( 60 )
+}

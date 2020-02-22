@@ -1,0 +1,268 @@
+@name 4 legged mech template
+@persist [ Hologram ]:table
+@persist [ FR FL RR RL ]:number
+@persist [ FRP1 FRP2 FRP3 ]:vector
+@persist [ FLP1 FLP2 FLP3 ]:vector
+@persist [ RRP1 RRP2 RRP3 ]:vector
+@persist [ RLP1 RLP2 RLP3 ]:vector
+@persist [ FRXRD FLXRD RRXRD RLXRD ]:ranger
+@persist [ FRSTEP FLSTEP RRSTEP RLSTEP ]:number
+@persist [ HEIGHT SPEED SPRINTSPEED STEPINTERVAL STEPSPEED STEPHEIGHTDIV MAXSTEP TURNSPEED LEGLENGTH STEPDDIV STEPLENGTHMAX STEPINCREMENT STEPSOUND]:number
+@persist [ RANGERDIST RANGERHEIGHT RANGEROFFSET RANGEROFFSET2 RANGERDIRECTIONOFFSET RANGERDIRECTIONOFFSET2 ]:number
+@persist [ BODY SEAT DRIVER ]:entity
+@persist [ STEPSOUNDS ]:array
+@model models/sprops/cuboids/height12/size_3/cube_36x36x12.mdl
+
+if( first() ) {
+    
+    function void async( T, F:string           ) { timer( format( "cb:%.0f:%s:null:%s", randint( 1e15 ), F, vonEncode( array(   ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:entity ) { timer( format( "cb:%.0f:%s:e:%s"   , randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:number ) { timer( format( "cb:%.0f:%s:n:%s"   , randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    function void async( T, F:string, X:array  ) { timer( format( "cb:%.0f:%s:r:%s"   , randint( 1e15 ), F, vonEncode(        X ) )  , T * 1000 ) }
+    function void async( T, F:string, X:table  ) { timer( format( "cb:%.0f:%s:t:%s"   , randint( 1e15 ), F, vonEncode(        X ) )  , T * 1000 ) }
+    function void async( T, F:string, X:string ) { timer( format( "cb:%.0f:%s:s:%s"   , randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 ) }
+    
+    function init() {
+        
+        FR = "<FR>"
+        FL = "<FL>"
+        RR = "<RR>"
+        RL = "<RL>"
+        
+        HEIGHT = "<HEIGHT>"
+        SPEED = "<SPEED>"
+        SPRINTSPEED = "<SPRINTSPEED>"
+        STEPSPEED = "<STEPSPEED>"
+        STEPHEIGHTDIV = "<STEPHEIGHTDIV>"
+        STEPLENGTHMAX = "<STEPLENGTHMAX>"
+        STEPINCREMENT = "<STEPINCREMENT>"
+        TURNSPEED = "<TURNSPEED>"
+        LEGLENGTH = "<LEGLENGTH>"
+        STEPDDIV = "<STEPDDIV>"
+        RANGERDIRECTIONOFFSET = 0.4
+        RANGERDIRECTIONOFFSET2 = 0.25
+        STEPSOUNDS = array(
+"<STEPSOUNDS>"
+        )
+        
+        BODY = entity()
+        BODY:setMass( 50000 )
+        BODY:propGravity( 0 )
+        SEAT = seatSpawn( "models/nova/airboat_seat.mdl", holoEntity( 1 ):toWorld( vec( 0,0,8 ) ), BODY:toWorld( ang( 0, 90, 0 ) ), 0 )
+        SEAT:parentTo( holoEntity( 1 ) )
+        SEAT:propFreeze( 0 )
+        holoParent( 1, BODY )
+        holoPos( 1, BODY:pos( ) )
+        BODY:setPos( BODY:toWorld( vec( 0, 0, HEIGHT ) ) )
+        BODY:propFreeze( 1 )
+        rangerFilter( SEAT )
+        rangerFilter( BODY )
+        STEPSOUND = 1
+        RANGERDIST = LEGLENGTH * 2.5
+        RANGEROFFSET = LEGLENGTH * 0.9
+        RANGERHEIGHT = ( LEGLENGTH * 0.5 ) + ( HEIGHT * 0.4 )
+        RANGEROFFSET2 = LEGLENGTH * 1.25
+        rangerPersist( 1 )
+        async( ( STEPSPEED / 4 ) * 0, "fr" )
+        async( ( STEPSPEED / 4 ) * 2, "fl" )
+        async( ( STEPSPEED / 4 ) * 3, "rr" )
+        async( ( STEPSPEED / 4 ) * 1, "rl" )
+        runOnTick( 1 )
+    }
+    
+    "<HOLOGRAMDATA>"
+    
+    function buffer() {
+        local Next = Hologram[ "next", number ]
+        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ "model", array ]:count( ) - Next + 1 ) ) {
+            holoCreate(
+                I,
+                entity():toWorld(Hologram["position", array][I, vector]),
+                Hologram["scale", array][I, vector],
+                entity():toWorld(Hologram["angle", array][I, angle]),
+                vec4(Hologram["color", array][I, vector],
+                Hologram["alpha", array ][I,number]),
+                Hologram["model", array][I, string]
+            )
+            holoMaterial(I, Hologram["material", array][I, string])
+            holoParent(I, Hologram["parent", array][I, number])
+            Hologram[ "next", number ] = I
+        }
+        if( Next <= Hologram[ "model", array ]:count( ) ) { async( 0.1, "buffer" ) } else { init() }
+    } buffer()
+    
+    function entity:ik3c( A, B, C, D, LengthA, LengthB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        Distance = AEntity:pos():distance( Destination )
+        Ae = max( Distance, LengthB )
+        Be = LengthA
+        Ce = min( Distance, LengthB )
+        Calc = sqrt( ( (Ae + Be - Ce + Be) * (-Ae + Be + Ce + Be) * (Ae - Be - Ce + Be) * (Ae + Be - Ce - Be) ) / ( 4 * (Ae - Ce) ^ 2 ) )
+        local Arcs = ( sign( Distance - LengthA ) + 1 ) / 2 ? asin( Calc / LengthA ) : acos( Calc / LengthA ) + 90
+        local YawAxis = This:toLocalAxis( Destination - AEntity:pos() )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        holoAng( B, holoEntity( A ):toWorld( ang( 0, -AEntity:bearing( Destination ) - 90, AEntity:elevation( Destination ) + Arcs - 90 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( 0, 0, -Arcs ) ) )
+        holoAng( D, holoEntity( C ):toWorld( ang( 0, 0, -Arcs ) ) )
+    }
+    
+    # Leg step position / timers
+    function fl() {
+        FLP1 = holoEntity( FL + 4 ):pos( )
+        FLP3 = FLXRD:position( )
+        FLP2 = ( FLP1 + FLP3 ) * 0.5 + BODY:up() * FLP1:distance( FLP3 ) / STEPHEIGHTDIV
+        FLSTEP = 0
+        if( FLP1:distance( FLP3 ) > 35 ) {
+            STEPSOUND = 0
+        }
+        async( STEPSPEED, "fl" )
+    }
+    
+    function fr() {
+        FRP1 = holoEntity( FR  + 4 ):pos( )
+        FRP3 = FRXRD:position( )
+        FRP2 = ( FRP1 + FRP3 ) * 0.5 + BODY:up() * FRP1:distance( FRP3 ) / STEPHEIGHTDIV
+        FRSTEP = 0
+        if( FRP1:distance( FRP3 ) > 35 ) {
+            STEPSOUND = 0
+        }
+        async( STEPSPEED, "fr" )
+    }
+    
+    function rl() {
+        RLP1 = holoEntity( RL + 4 ):pos( )
+        RLP3 = RLXRD:position( )
+        RLP2 = ( RLP1 + RLP3 ) * 0.5 + BODY:up() * RLP1:distance( RLP3 ) / STEPHEIGHTDIV
+        RLSTEP = 0
+        if( RLP1:distance( RLP3 ) > 35 ) {
+            STEPSOUND = 0
+        }
+        async( STEPSPEED, "rl" )
+    }
+    
+    function rr() {
+        RRP1 = holoEntity( RR + 4 ):pos( )
+        RRP3 = RRXRD:position( )
+        RRP2 = ( RRP1 + RRP3 ) * 0.5 + BODY:up() * RRP1:distance( RRP3 ) / STEPHEIGHTDIV
+        RRSTEP = 0
+        if( RRP1:distance( RRP3 ) > 35 ) {
+            STEPSOUND = 0
+        }
+        async( STEPSPEED, "rr" )
+    }
+}
+
+if( tickClk() ) {
+    
+    # Controls
+    DRIVER = SEAT:driver()
+    local Controls = BODY:toWorldAxis( 
+        vec( 
+            DRIVER:keyForward( ) - DRIVER:keyBack( ), 
+            DRIVER:keyLeft( ) - DRIVER:keyRight( ), 
+            0
+        ) 
+    )
+    
+    Yaw = clamp( round( sin( BODY:toLocal( DRIVER:eyeAngles() ):yaw() ), 3 ) * 2 * TURNSPEED, -TURNSPEED, TURNSPEED )
+    if( abs(Yaw) < TURNSPEED / 3 || !DRIVER:isValid() ) {
+        Yaw = 0
+    }
+    
+    # Easy mount
+    if( !DRIVER:isValid() || DRIVER:keyWalk() ) {
+        H = HEIGHT / 3
+    } elseif( DRIVER:keyJump() ) {
+        H = HEIGHT * 1.67
+    } else {
+        H = HEIGHT
+    }
+    
+    # Rangers
+    local V = BODY:toWorldAxis( BODY:velL( ):normalized( ):setZ( 0 ) * clamp( BODY:velL():length() / STEPDDIV, -STEPLENGTHMAX, STEPLENGTHMAX ) )
+    RRXRD = rangerOffset( RANGERDIST, BODY:toWorld( vec( -RANGEROFFSET, -RANGEROFFSET, RANGERHEIGHT ) ) + V, -BODY:up() + -BODY:forward() * RANGERDIRECTIONOFFSET +  BODY:right() * RANGERDIRECTIONOFFSET )
+    if( !RRXRD:hit() ) {
+        RRXRD = rangerOffset( RANGERDIST, BODY:toWorld( vec( -RANGEROFFSET2, -RANGEROFFSET2, RANGERHEIGHT ) ) + V, -BODY:up() + BODY:forward() * RANGERDIRECTIONOFFSET2 + -BODY:right() * RANGERDIRECTIONOFFSET2 )
+    }
+    RLXRD = rangerOffset( RANGERDIST, BODY:toWorld( vec( -RANGEROFFSET,  RANGEROFFSET, RANGERHEIGHT ) ) + V, -BODY:up() + -BODY:forward() * RANGERDIRECTIONOFFSET + -BODY:right() * RANGERDIRECTIONOFFSET )
+    if( !RLXRD:hit() ) {
+        RLXRD = rangerOffset( RANGERDIST, BODY:toWorld( vec( -RANGEROFFSET2, RANGEROFFSET2, RANGERHEIGHT ) ) + V, -BODY:up() + BODY:forward() * RANGERDIRECTIONOFFSET2 + BODY:right() * RANGERDIRECTIONOFFSET2 )
+    }
+    FRXRD = rangerOffset( RANGERDIST, BODY:toWorld( vec(  RANGEROFFSET, -RANGEROFFSET, RANGERHEIGHT ) ) + V, -BODY:up() +  BODY:forward() * RANGERDIRECTIONOFFSET+  BODY:right() * RANGERDIRECTIONOFFSET )
+    if( !FRXRD:hit() ) {
+        FRXRD = rangerOffset( RANGERDIST, BODY:toWorld( vec( RANGEROFFSET2, -RANGEROFFSET2, RANGERHEIGHT ) ) + V, -BODY:up() + -BODY:forward() * RANGERDIRECTIONOFFSET2 + -BODY:right() * RANGERDIRECTIONOFFSET2 )
+    }
+    FLXRD = rangerOffset( RANGERDIST, BODY:toWorld( vec(  RANGEROFFSET,  RANGEROFFSET, RANGERHEIGHT ) ) + V, -BODY:up() +  BODY:forward() * RANGERDIRECTIONOFFSET + -BODY:right() * RANGERDIRECTIONOFFSET )
+    if( !FLXRD:hit() ) {
+        FLXRD = rangerOffset( RANGERDIST, BODY:toWorld( vec( RANGEROFFSET2, RANGEROFFSET2, RANGERHEIGHT ) ) + V, -BODY:up() + -BODY:forward() * RANGERDIRECTIONOFFSET2 + BODY:right() * RANGERDIRECTIONOFFSET2 )
+    }
+    
+    # BODY angle
+    F = ( FRXRD:distance() + FLXRD:distance() ) / 2
+    B = ( RRXRD:distance() + RLXRD:distance() ) / 2
+    R = ( FRXRD:distance() + RRXRD:distance() ) / 2
+    L = ( FLXRD:distance() + RLXRD:distance() ) / 2
+    local Torque = vec( R - L, F - B, Yaw )
+    BODY:applyTorque( ( Torque * BODY:inertia() * 33.33 ) - ( BODY:angVelVector() * BODY:inertia() * 25 ) + Yaw * 2 )
+    
+    # Height
+    local Mid = ( holoEntity( FR + 4 ):pos() + holoEntity( FL + 4 ):pos() + holoEntity( RR + 4 ):pos() + holoEntity( RL + 4 ):pos() ) / 4
+    local Up = ( BODY:pos() - Mid ):normalized() * ( H + BODY:toLocal( Mid ):z() )
+    BODY:applyForce( BODY:mass( ) * Controls * SPEED + BODY:mass( ) * tickInterval( ) - BODY:mass( ) * BODY:vel() / 2 + BODY:mass( ) * Up * 2 )
+    
+    # Leg movement
+    FRSTEP = clamp( FRSTEP + STEPINCREMENT, 0, 1 )
+    BODY:ik3c( FR, FR + 1, FR + 2, FR + 3, LEGLENGTH, LEGLENGTH, bezier( FRP1, FRP2, FRP3, FRSTEP ) )
+    FLSTEP = clamp( FLSTEP + STEPINCREMENT, 0, 1 )
+    BODY:ik3c( FL, FL + 1, FL + 2, FL + 3, LEGLENGTH, LEGLENGTH, bezier( FLP1, FLP2, FLP3, FLSTEP ) )
+    RRSTEP = clamp( RRSTEP + STEPINCREMENT, 0, 1 )
+    BODY:ik3c( RR, RR + 1, RR + 2, RR + 3, LEGLENGTH, LEGLENGTH, bezier( RRP1, RRP2, RRP3, RRSTEP ) )
+    RLSTEP = clamp( RLSTEP + STEPINCREMENT, 0, 1 )
+    BODY:ik3c( RL, RL + 1, RL + 2, RL + 3, LEGLENGTH, LEGLENGTH, bezier( RLP1, RLP2, RLP3, RLSTEP ) )
+    
+    # Step sounds & step dip movement
+    if( STEPSOUND == 0 ) {
+        if( FRSTEP == 1 ) {
+            Index = round( random( 1, STEPSOUNDS:count() ) )
+            holoEntity( FR + 4 ):soundPlay( FR, soundDuration( STEPSOUNDS[ Index, string ] ), STEPSOUNDS[ Index, string ] )
+            BODY:setPos( BODY:pos() + BODY:up() * -HEIGHT * 0.042 )
+            STEPSOUND = 1
+        }
+        if( FLSTEP == 1 ) {
+            Index = round( random( 1, STEPSOUNDS:count() ) )
+            holoEntity( FR + 4 ):soundPlay( FL, soundDuration( STEPSOUNDS[ Index, string ] ), STEPSOUNDS[ Index, string ] )
+            BODY:setPos( BODY:pos() + BODY:up() * -HEIGHT * 0.042 )
+            STEPSOUND = 1
+        }
+        if( RRSTEP == 1 ) {
+            Index = round( random( 1, STEPSOUNDS:count() ) )
+            holoEntity( FR + 4 ):soundPlay( RR, soundDuration( STEPSOUNDS[ Index, string ] ), STEPSOUNDS[ Index, string ] )
+            BODY:setPos( BODY:pos() + BODY:up() * -HEIGHT * 0.042 )
+            STEPSOUND = 1
+        }
+        if( RLSTEP == 1 ) {
+            Index = round( random( 1, STEPSOUNDS:count() ) )
+            holoEntity( FR + 4 ):soundPlay( RL, soundDuration( STEPSOUNDS[ Index, string ] ), STEPSOUNDS[ Index, string ] )
+            BODY:setPos( BODY:pos() + BODY:up() * -HEIGHT * 0.042 )
+            STEPSOUND = 1
+        }
+    }
+}
+
+if( clkName() != "" && !clk() ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count() == 3 ) {
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string ] ) {
+            case "null", F(), break
+            case "e", F( R[ 1, entity ] ), break
+            case "n", F( R[ 1, number ] ), break
+            case "r", F( R ), break
+            case "t", F( vonDecodeTable( Match[ 3, string ] ) ), break
+            case "s", F( R[ 1, string ] ), break
+        }
+        exit()
+    }
+}
+

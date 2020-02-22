@@ -1,0 +1,42 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 1/30/2019 @ 19
+# Holograms: 9
+# World: [-448.92620849609,-367.35870361328,-12287.71875]
+# Notes: 
+# 1 -> anchor
+########################################
+@name blimp
+@persist Hologram:table
+
+if( first() ) {
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/hq_sphere.mdl","models/holograms/cylinder.mdl","models/holograms/cylinder.mdl","models/holograms/cylinder.mdl","models/holograms/cylinder.mdl","models/props_junk/plasticcrate01a.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,49.4414),vec(3.6,-6.1201,43.6201),vec(-3.6,4.0799,43.6201),vec(-3.6,-6.1201,43.6201),vec(3.6,4.0799,43.6201),vec(0,-1.0201,39.9609),vec(0,-19.8,47.7012),vec(0,-19.8,51.1201),vec(0,-19.8,49.3799))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(-20,0,-11),ang(20,0,11),ang(20,0,-11),ang(-20,0,11),ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(90,0,0))
+    Hologram[ "scale", array ] = array(vec(1.2,3,1.2),vec(0.06,0.06,0.6),vec(0.06,0.06,0.6),vec(0.06,0.06,0.6),vec(0.06,0.06,0.6),vec(0.57,0.48,0.06),vec(0.6,0.6,0.006),vec(0.6,0.6,0.006),vec(0.006,0.6,0.84))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","")
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("anchor","","","","","","","","")
+    
+    for( I = 1, Hologram[ "model", array ]:count() ) {
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector],
+            Hologram["alpha", array ][I,number]),
+            Hologram["model", array][I, string]
+        )
+        holoMaterial(I, Hologram["material", array][I, string])
+        holoParent(I, Hologram["parent", array][I, number])
+    }
+}
+
+if( clk() ) {
+    interval( 60 )
+}

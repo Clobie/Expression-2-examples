@@ -1,0 +1,2063 @@
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+# ____                                      __          __  __          ___                                                                      __          ___                      #
+#/\  _ `.                                  /\ \        /\ \/\ \        /\_ \                                                 /'\_/`\            /\ \        /\_ \                     #
+#\ \ \/\ \  _ __    __     __      ___ ___ \ \/ ____   \ \ \_\ \    ___\//\ \     ___      __   _ __    __      ___ ___     /\      \    ___    \_\ \     __\//\ \      __   _ __     #
+# \ \ \ \ \/\`'__\/'__`\ /'__`\  /' __` __`\\/ /',__\   \ \  _  \  / __`\\ \ \   / __`\  /'_ `\/\`'__\/'__`\  /' __` __`\   \ \ \__\ \  / __`\  /'_` \  /'__`\\ \ \   /'__`\/\`'__\   #
+#  \ \ \_\ \ \ \//\  __//\ \_\.\_/\ \/\ \/\ \ /\__, `\   \ \ \ \ \/\ \_\ \\_\ \_/\ \_\ \/\ \_\ \ \ \//\ \_\.\_/\ \/\ \/\ \   \ \ \_/\ \/\ \_\ \/\ \_\ \/\  __/ \_\ \_/\  __/\ \ \/    #
+#   \ \____/\ \_\\ \____\ \__/.\_\ \_\ \_\ \_\\/\____/    \ \_\ \_\ \____//\____\ \____/\ \____ \ \_\\ \__/.\_\ \_\ \_\ \_\   \ \_\\ \_\ \____/\ \___,_\ \____\/\____\ \____\\ \_\    #
+#    \/___/  \/_/ \/____/\/__/\/_/\/_/\/_/\/_/ \/___/      \/_/\/_/\/___/ \/____/\/___/  \/___/\ \/_/ \/__/\/_/\/_/\/_/\/_/    \/_/ \/_/\/___/  \/__,_ /\/____/\/____/\/____/ \/_/    #
+#                                                                                          /\____/                                                                                    #
+#                                                                                          \____/                                                                                     #
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+@name Hologram Modeler
+@persist Hologram:table
+@persist HologramCount HologramIndex HologramIndexOffset HologramCenter:vector HologramCenterAbsolute:vector
+@persist [ SaveParent SaveModel SavePosition SaveAngle SaveScale SaveColor SaveAlpha SaveMaterial SaveNote ]:string SaveCounter SaveHologram
+@persist [ LoadParent LoadModel LoadPosition LoadAngle LoadScale LoadColor LoadAlpha LoadMaterial LoadNote ]:array LoadName:string
+@persist BufferAlterParents:array BufferAlterParentsCounter BufferAlterParentsDeletedCounter BufferTotal BufferOffset DoneLoading DoneSaving BufferLoadOffset
+@persist FileList:array FileListIndex FileListActive SearchList:array SearchListIndex SearchListActive
+@persist NudgeArray:array
+@persist HUDText:string
+@persist HologramIndicatorIndex HologramDragIndicatorIndex
+@persist HologramNudge HologramNudgeMulti HologramManipulateMode HologramDragAxis:string HologramDragOffset
+@persist HologramAxisIndicatorWidth HologramAxisIndicatorLength HologramAxisIndicatorAlpha
+@persist HologramGroup:table HologramGroupIndex HologramGroupLookup:table HologramSound HologramAutosaveTimer
+@persist HologramCenterIndicator HologramIKTest:array HologramIKDestination:vector HologramIKTesting HologramIKPreviousAngles:array
+@persist HologramWorld:vector
+@persist HologramBufferScaleIndex HologramBufferScale
+@persist Idle IdleModelId
+@persist PropClone:array PropCloneIndex PropCloneRange
+
+#test
+#include "dream/example/lib/holotext"
+
+#[
+    
+    Most of the commands are listed here
+
+    'all' means all holograms
+        ex: '/color all 255 0 0'
+            this will change color of all holograms to red
+    'N-N' means hologram range
+        1-5 will affect holograms 1-5
+        ex: '/color 5-8 255 0 0'
+            this will change color of holograms 5 through 8 to red
+    N means number
+    S means string (no spaces)
+    S* means string (spaces allowed)
+    
+    
+    # angle
+    /ang N
+    /ang N N N
+    
+    # position
+    /pos N
+    /pos N N N
+    
+    # color
+    /color N
+    /color N N N
+    /color all N
+    /color all N N N
+    /color N-N N
+    /color N-N N N N
+    
+    # alpha
+    /alpha N
+    /alpha all N
+    /alpha N-N N
+    
+    # scale
+    /scale N
+    /scale N N N
+    /units N
+    /units N N N
+    
+    # model
+    /model S
+    /model N-N S
+    /model all S
+    
+    # material
+    /material S
+    /material N-N S
+    /material all S
+    
+    # clone - spawns a new hologram then copies
+    /clone
+    /clone N
+    
+    # copy - uses current hologram to copy N
+    /copy N
+    
+    # copy position
+    /copyvec or /cvec
+    /cvec N x
+    /cvec N y
+    /cvec N z
+    /cvec xy
+    /cvec xz
+    /cvec yz
+    /cvec xyz
+    
+    # copy angle
+    /copyang or /cang
+    /cang xyz - same options as copy position command
+    
+    # copy material
+    /copymaterial N
+    /cmaterial N
+    
+    # copy alpha
+    /copyalpha N
+    /calpha N
+    
+    # mirror position
+    /mvec xyz
+    /mvec N xyz
+    
+    # mirror angle
+    /mang pyr
+    /mang N pyr
+    
+    # kinematics
+    /ik N N N
+    /ik N N N N
+    /ik set
+    /ik reset
+    
+    # parenting
+    /parent N
+    /parent all N
+    /parent N-N N
+    
+    /unparent
+    /unparent children
+    /unparent all
+    # will add N-N unparenting later
+    
+    # deleting
+    /delete
+    /delete children
+    /delete all (use /clear instead)
+    
+    # note
+    /note S* - sets a note for the hologram
+    
+    # save
+    /save S
+    
+    # load
+    /load S
+    
+    # resetting
+    /clear
+    
+    # scaling entire models
+    /size all N
+    /size all N N N
+    /size N-N N
+    /size N-N N N N
+    
+    # mech leg joints - N1 is #, N2 is length
+        ex: '/leg 3 45' makes a 3 joint leg with leg length of 45 per leg
+        also - you can use /ik with these for testing
+        if 3 joint legs are holos 1-5 (5 is foot, 1 is hip) 'use /ik 1 2 3 4' and '/ik set' or '/ik reset' when done
+    /leg N N
+    
+    # selecting
+    /select N
+    
+    # searching models - use up and down arrows to browse the list
+    /search
+    /search S
+    
+    # center point for mirroring/spawning/etc
+    /center N - centers at hologram N
+    /center N N N - centers at x y z ( local to e2 )
+    
+    
+    # NUMPAD shit
+    # numpad 1/3 selects holograms
+    # numpad 2 selects pos/ang/scale modes
+    # numpad * adjusts movement on key press or constant movement while pressed
+    # numpad +/- adjusts movement speps in units
+    # numpad 0 spawns a new hologram
+    # ALT + numpad 1/3 moves between models loaded (at the first holo which should be base)
+    # numpad 4/5/6/7/8/9 adjusts pos/ang/scale based on numpad 2 setting
+]#
+
+
+
+# Mech building variables
+#[
+        FR = "<FR>"
+        FL = "<FL>"
+        RR = "<RR>"
+        RL = "<RL>"
+        HEIGHT = "<HEIGHT>"
+        SPEED = "<SPEED>"
+        SPRINTSPEED = "<SPRINTSPEED>"
+        STEPSPEED = "<STEPSPEED>"
+        STEPHEIGHTDIV = "<STEPHEIGHTDIV>"
+        STEPLENGTHMAX = "<STEPLENGTHMAX>"
+        STEPINCREMENT = "<STEPINCREMENT>"
+        TURNSPEED = "<TURNSPEED>"
+        LEGLENGTH = "<LEGLENGTH>"
+        STEPDDIV = "<STEPDDIV>"
+        STEPSOUNDS = array(
+            "<STEPSOUNDS>"
+        )
+]#
+
+# TODO
+# check angle mirroring code, something's wonky
+# resizing buffering
+# fix /clear indicator sticking
+# check grouping code, can't remember if I finished it. also might remove, doesn't seem especially useful
+# undo? would be super useful, but... quite a bit of code.. maybe
+# add stacking, maybe
+# angle drag, also maybe
+# scale drag, maybe
+# configure world/local movement, maybe
+# replace model file data without altering the rest of the code? maybe
+# 
+# make a god damn tutorial, no one knows how to use this thing
+# 
+
+if( first() ) {
+    
+    Version = "X"
+    
+    # Settings
+    HologramAutosaveTimer = 300 # 0 = no autosave
+    HologramSound = 1
+    HologramAxisIndicatorWidth = 0.02
+    HologramAxisIndicatorLength = 12
+    HologramAxisIndicatorAlpha = 75
+    HologramNudge = 6
+    
+    function void async( T, F:string ) { 
+        timer( format( "cb:%.0f:%s:null:%s", randint( 1e15 ), F, vonEncode( array( ) ) ), T * 1000 )
+    }
+    
+    function void async( T, F:string, X:number ) { 
+        timer( format( "cb:%.0f:%s:n:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+    }
+    
+    function void async( T, F:string, X:string ) { 
+        timer( format( "cb:%.0f:%s:s:%s", randint( 1e15 ), F, vonEncode( array( X ) ) ), T * 1000 )
+    }
+    
+    function void async( T, F:string, X:array ) { 
+        timer( format( "cb:%.0f:%s:r:%s",    randint( 1e15 ), F, vonEncode( X ) ), T * 1000 ) 
+    }
+    
+    function hologramPlaySound() {
+        if( HologramSound ) {
+            holoEntity( HologramIndex ):soundPlay( HologramIndex, soundDuration( "buttons/button14.wav" ), "buttons/button14.wav" )
+            soundVolume( HologramIndex, 0.25 )
+        }
+    }
+    
+    function hudDisplay() {
+        print( _HUD_PRINTCENTER, HUDText )
+        async( 0.5, "hudDisplay" )
+    } hudDisplay() # autostart
+    
+    function hudPrint( Text:string ) {
+        HUDText = Text
+        print( _HUD_PRINTCENTER, HUDText )
+    }
+    
+    function hudAppendText( Text:string ) {
+        HUDText += "\n" + Text
+        print( _HUD_PRINTCENTER, HUDText )
+    }
+    
+    function printText( Text:array ) {
+        for( I = 1, Text:count() ) {
+            Text[ I, string ] = "[" + Text[ I, string ]:replace( "[", "" ):replace( "]", "" ) + "] "
+        }
+        printColor(
+            vec(188.8,86.4,60.8),
+            "[DHM] ",
+            vec(230.4,255,255 ),
+            Text[ 1, string ],
+            vec(81.6,171.2,216),
+            Text[ 2, string ],
+            vec(67.2,78.4,80),
+            Text[ 3, string ]
+        )
+    }
+    
+    function hologramIndicatorAttach( Index ) {
+        local Entity = holoEntity( Index )
+        holoPos( HologramIndicatorIndex, Entity:pos() )
+        holoAng( HologramIndicatorIndex, Entity:angles() )
+        holoModel( HologramIndicatorIndex, Entity:model() )
+        holoScaleUnits( HologramIndicatorIndex, holoScaleUnits( Index ) )
+        #holoParent( HologramIndicatorIndex, Index )
+        #holoColor( HologramIndicatorIndex, vec( 255 ) - holoEntity( Index ):getColor() )
+        holoMaterial( HologramIndicatorIndex, "models/wireframe" )
+    }
+    
+    function vector hologramGetPlaneIntersect( PLAYER:entity, INDEX:number, AXIS:string ) {
+        local EYE_LOCATION = PLAYER:shootPos( )
+        local EYE_DIRECTION = PLAYER:eye( )
+        local HOLO_ENTITY = holoEntity( INDEX )
+        switch( AXIS ) {
+            case "x", HOLO_NORMAL = HOLO_ENTITY:forward(), break 
+            case "y", HOLO_NORMAL = HOLO_ENTITY:right(), break
+            case "z", HOLO_NORMAL = HOLO_ENTITY:up(), break
+        }
+        return ( EYE_LOCATION + ( HOLO_NORMAL:dot( HOLO_ENTITY:pos( ) - EYE_LOCATION ) / ( HOLO_NORMAL:dot( EYE_DIRECTION ) ) ) * EYE_DIRECTION )
+    }
+    
+    function number hologramSelect( Index ) {
+        if( holoEntity( Index ):isValid() ) {
+            HologramIndex = Index
+            hologramIndicatorAttach( Index )
+            holoPos( HologramDragIndicatorIndex, holoEntity( Index ):pos() )
+            HUDText = "Index: " + HologramIndex + "\nNote: " + Hologram[ HologramIndex, table ][ "note", string ]
+            return Index
+        }
+        return 0
+    }
+    
+    function number hologramSelectNext() {
+        if( HologramCount ) {
+            HologramIndex = HologramIndex >= Hologram:count() ? 1 : HologramIndex + 1
+            while( !holoEntity( HologramIndex ):isValid() ) {
+                if( HologramIndex > Hologram:count() ) {
+                    HologramIndex = 0
+                }
+                HologramIndex++
+            }
+            hologramSelect( HologramIndex )
+        } else {
+            HologramIndex = 0
+        }
+        return HologramIndex
+    }
+    
+    function number hologramSelectPrevious() {
+        HologramIndex = HologramIndex <= 1 ? Hologram:count() : HologramIndex - 1
+        if( HologramCount ) {
+            while( !holoEntity( HologramIndex ):isValid() ) {
+                if( HologramIndex < 1 ) {
+                    HologramIndex = Hologram:count() + 1
+                }
+                HologramIndex--
+            }
+            hologramSelect( HologramIndex )
+        } else {
+            HologramIndex = 0
+        }
+        return HologramIndex
+    }
+    
+    function number hologramCreate() {
+        if( holoCanCreate( ) ) {
+            HologramCount++
+            HologramIndexOffset++
+            holoCreate( HologramIndexOffset )
+            holoPos( HologramIndexOffset, HologramCenter )
+            Hologram:pushTable( 
+                table(
+                    "parent" = 0,
+                    "note" = ""
+                )
+            )
+            hologramSelect( HologramIndexOffset )
+            hologramPlaySound()
+            return HologramIndexOffset
+        }
+        return 0
+    }
+    
+    function number hologramRemoveChildren( Index ) {
+        if( holoEntity( Index ):isValid() ) {
+            local N = 0
+            for( I = 1, Hologram:count( ) ) {
+                if( Hologram[ I, table ][ "parent", number ] == Index ) {
+                    holoUnparent( I )
+                    N++
+                }
+            }
+            return N
+        }
+        return 0
+    }
+    
+    function number hologramDelete( Index, Children ) {
+        if( holoEntity( Index ):isValid( ) ) {
+            if( !Children ) {
+                hologramRemoveChildren( Index )
+            }
+            holoUnparent( HologramIndicatorIndex )
+            holoDelete( Index )
+            Hologram[ Index, table ] = table( )
+            if( Index > 1 ) {
+                hologramSelectPrevious()
+            } elseif( Index < HologramCount ) {
+                hologramSelectNext()
+            }
+            HologramCount--
+            return Index
+        }
+        return 0
+    }
+    
+    function hologramDeleteAll( ) {
+        holoUnparent( HologramIndicatorIndex )
+        local Keys = Hologram:keys( )
+        for( I = 1, Keys:count( ) ) {
+            holoDelete( Keys[ I, number ] )
+        }
+        Hologram = table( )
+        HologramCount = 0
+        HologramIndexOffset = 0
+        HologramIndex = 0
+        holoModel( HologramIndicatorIndex, "cube" )
+        holoScale( HologramIndicatorIndex, vec( 0 ) )
+    }
+    
+    function hologramCopy( ID ) {
+        local Entity = holoEntity( ID )
+        if( Entity:isValid() ) {
+            holoScale( HologramIndex, holoScale( ID ) )
+            holoPos( HologramIndex, Entity:pos() )
+            holoAng( HologramIndex, Entity:angles() )
+            holoColor( HologramIndex, Entity:getColor() )
+            holoAlpha( HologramIndex, Entity:getAlpha() )
+            holoModel( HologramIndex, Entity:model() )
+            holoMaterial( HologramIndex, Entity:getMaterial() )
+            hologramSelect( HologramIndex )
+        }
+    }
+    
+    function hologramClone( Entity:entity ) {
+        if( hologramCreate() ) {
+            if( Entity:isValid() ) {
+                holoPos( HologramIndex, Entity:pos() )
+                holoAng( HologramIndex, Entity:angles() )
+                holoColor( HologramIndex, Entity:getColor() )
+                holoAlpha( HologramIndex, Entity:getAlpha() )
+                holoModel( HologramIndex, Entity:model() )
+                holoMaterial( HologramIndex, Entity:getMaterial() )
+                #hologramSelect( HologramIndex )
+            }
+        }
+    }
+    
+    function hologramClone( ID ) {
+        if( hologramCreate() ) {
+            hologramCopy( ID )
+        }
+    }
+    
+    function hologramMirrorCenter( ID, Axis:string ) {
+        local Position = holoEntity( ID ):pos() - HologramCenter
+        local X = Position:x()
+        local Y = Position:y()
+        local Z = Position:z()
+        if( Axis:find( "x" ) ) { X *= -1 }
+        if( Axis:find( "y" ) ) { Y *= -1 }
+        if( Axis:find( "z" ) ) { Z *= -1 }
+        holoPos( ID, HologramCenter + vec( X, Y, Z ) )
+    }
+    
+    function hologramMirrorHologramIDCenter( ID, IDAxis, Axis:string ) {
+        local AxisPosition = holoEntity( IDAxis ):pos()
+        local Position = holoEntity( ID ):pos() - AxisPosition
+        local X = Position:x()
+        local Y = Position:y()
+        local Z = Position:z()
+        if( Axis:find( "x" ) ) { X *= -1 }
+        if( Axis:find( "y" ) ) { Y *= -1 }
+        if( Axis:find( "z" ) ) { Z *= -1 }
+        holoPos( ID, AxisPosition + vec( X, Y, Z ) )
+    }
+    
+    function hologramMirrorAngle( ID, Axis:string ) {
+        local Angle = holoEntity( ID ):angles()
+        local P = Angle:pitch()
+        local Y = Angle:yaw()
+        local R = Angle:roll()
+        if( Axis:find( "p" ) ) { P *= -1 }
+        if( Axis:find( "y" ) ) { Y *= -1 }
+        if( Axis:find( "r" ) ) { R *= -1 }
+        holoAng( ID, ang( P, Y, R ) )
+    }
+    
+    function hologramMirrorHologramIDAngle( ID, IDAxis, Axis:string ) {
+        local Angle = holoEntity( IDAxis ):angles()
+        local P = Angle:pitch()
+        local Y = Angle:yaw()
+        local R = Angle:roll()
+        if( Axis:find( "p" ) ) { P *= -1 }
+        if( Axis:find( "y" ) ) { Y *= -1 }
+        if( Axis:find( "r" ) ) { R *= -1 }
+        holoAng( ID, ang( P, Y, R ) )
+    }
+    
+    function hologramRotateAxisCenter( ID, Axis:angle ) {
+        local Pos = HologramCenter - holoEntity( ID ):pos()
+        holoPos( ID, HologramCenter - Pos:rotate( -Axis ) )
+    }
+    
+    function hologramRotateAxisHologramIDCenter( ID, IDAxis, Axis:angle ) {
+        local Center = holoEntity( IDAxis ):pos()
+        local Pos = Center - holoEntity( ID ):pos()
+        holoPos( ID, Center - Pos:rotate( -Axis ) )
+    }
+    
+    function number hologramCreateGroup( ID ) {
+        HologramGroup:pushNumber( ID )
+        HologramGroupLookup = invert( HologramGroup )
+        return HologramGroup:count()
+    }
+    
+    function entity:ik2( A, B, C, LenA, LenB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        local PosA = AEntity:pos( )
+        local LenC = min( PosA:distance( Destination ), LenA + LenB )
+        local YawAxis = This:toLocalAxis( Destination - PosA )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        local PitchAxis = AEntity:toLocalAxis( Destination - PosA )
+        holoAng( B, AEntity:toWorld( ang( atan( PitchAxis:x( ), PitchAxis:z( ) )  - acos( ( LenC ^ 2 + LenA ^ 2 - LenB ^ 2 ) / ( 2 * LenC * LenA ) ), 0, 0 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( -acos( ( LenB ^ 2 + LenA ^ 2 - LenC ^ 2 ) / ( 2 * LenB * LenA ) ) + 180, 0, 0 ) ) )
+    }
+    
+    function entity:ik3( A, B, C, D, LengthA, LengthB, Destination:vector ) {
+        local AEntity = holoEntity( A )
+        Distance = AEntity:pos():distance( Destination )
+        Ae = max( Distance, LengthB )
+        Be = LengthA
+        Ce = min( Distance, LengthB )
+        Calc = sqrt( ( (Ae + Be - Ce + Be) * (-Ae + Be + Ce + Be) * (Ae - Be - Ce + Be) * (Ae + Be - Ce - Be) ) / ( 4 * (Ae - Ce) ^ 2 ) )
+        local Arcs = ( sign( Distance - LengthA ) + 1 ) / 2 ? asin( Calc / LengthA ) : acos( Calc / LengthA ) + 90
+        local YawAxis = This:toLocalAxis( Destination - AEntity:pos() )
+        holoAng( A, This:toWorld( ang( 0, atan( YawAxis:y( ), YawAxis:x( ) ), 0 ) ) )
+        holoAng( B, holoEntity( A ):toWorld( ang( 0, -AEntity:bearing( Destination ) - 90, AEntity:elevation( Destination ) + Arcs - 90 ) ) )
+        holoAng( C, holoEntity( B ):toWorld( ang( 0, 0, -Arcs ) ) )
+        holoAng( D, holoEntity( C ):toWorld( ang( 0, 0, -Arcs ) ) )
+    }
+    
+    function idle() {
+        if( Idle == 0 ) {
+            return
+        }
+        async( 20, "idle" )
+        #hologramLoad(
+    }
+    
+    # need to make this an actual buffer with while( perf() )
+    # Array[ 3, number ] is already set up to be a counter
+    # Array[ 3, number ] default is 0 when /size is called
+    
+    function bufferModelResize( Array:array ) {        
+        switch( Array[ 1, number ] ) {
+            case 3,
+                for( I = 1, Hologram:count() ) {
+                    if( holoEntity( I ):isValid() ) {
+                        holoParent( I, Hologram[ I, table ][ "parent", number ] )
+                    }
+                }
+                printText( array( "resizing", "Re-parented model, sizing complete" ) )
+                Array[ 1, number ] = 4
+                break
+            case 2,
+                Scale = Array[ 2, vector ]
+                Start = Array[ 4, number ]
+                End = Array[ 5, number ]
+                for( I = Start, End ) {
+                    if( holoEntity( I ):isValid() ) {
+                        local Distance = holoEntity( I ):pos():distance( HologramCenter )
+                        local Direction = ( holoEntity( I ):pos() - HologramCenter ):normalized()
+                        holoPos( I, HologramCenter + Direction * Distance * Scale )
+                        holoScale( I, holoScale( I ) * Scale )
+                    }
+                }
+                printText( array( "resizing", "Resized model" ) )
+                Array[ 1, number ] = 3
+                break
+            case 1,
+                for( I = 1, Hologram:count() ) {
+                    if( holoEntity( I ):isValid() ) {
+                        holoUnparent( I )
+                    }
+                }
+                printText( array( "resizing", "Temporarily unparented model" ) )
+                Array[ 1, number ] = 2
+                break
+        }
+        if( Array[ 1, number ] < 4 ) {
+            async( 0.5, "bufferModelResize", Array )
+        }
+    }
+    
+    # Model saving step 1
+    function hologramSave( Name:string ) {
+        if( DoneLoading & DoneSaving ) {
+            DoneSaving = 0
+            BufferAlterParents = array()
+            SaveCounter = SaveHologram = BufferAlterParentsCounter = BufferAlterParentsDeletedCounter = 0
+            SaveModel = SavePosition = SaveAngle = SaveScale = SaveColor = SaveAlpha = SaveMaterial = SaveParent = SaveNote = ""
+            async( 0.1, "bufferHologramAlterParents", Name )
+        }
+    }
+    
+    # Model saving step 2
+    function bufferHologramAlterParents( Name:string ) {
+        while( perf( 50 ) & BufferAlterParentsCounter < Hologram:count( ) ) {
+            BufferAlterParentsCounter++
+            if( !holoEntity( BufferAlterParentsCounter ):isValid( ) ) {
+                BufferAlterParentsDeletedCounter++
+            }
+            BufferAlterParents:pushNumber( BufferAlterParentsDeletedCounter )
+        }
+        if( BufferAlterParentsCounter < Hologram:count( ) ) {
+            async( 0.2, "bufferHologramAlterParents", Name )
+        } else {
+            async( 0.2, "bufferSave", Name )
+        }
+    }
+    
+    # Model saving step 3
+    function bufferSave( Name:string ) {
+        while( perf( 80 ) & SaveCounter < HologramCount ) {
+            SaveHologram++
+            local Entity = holoEntity( SaveHologram  )
+            if( Entity:isValid( ) ) {
+                SaveCounter++
+                local HParent = Hologram[ SaveHologram, table ][ "parent", number ]
+                local ActualParent = ( HParent == 0 ) ? 0 : HParent - BufferAlterParents[ HParent, number ]
+                SaveParent += ActualParent + ","
+                SaveModel += "\"" + Entity:model( ) + "\","
+                SaveAngle += "ang(" + round( Entity:angles( ):pitch( ), 4 ) + "," + round( Entity:angles( ):yaw( ), 4 ) + "," + round( Entity:angles( ):roll( ), 4 ) + "),"
+                SaveColor += "vec(" + round( Entity:getColor( ):x( ), 4 ) + "," + round( Entity:getColor( ):y( ), 4 ) + "," + round( Entity:getColor( ):z( ), 4 ) + "),"
+                SaveScale += "vec(" + round( holoScale( SaveHologram ):x( ), 4 ) + "," + round( holoScale( SaveHologram ):y(), 4 ) + "," + round( holoScale( SaveHologram ):z(), 4 ) + "),"
+                SaveAlpha += round( Entity:getAlpha( ), 4 ) + ","
+                SaveMaterial += "\"" + Entity:getMaterial( ) + "\","
+                SaveNote += "\"" + Hologram[ SaveHologram, table ][ "note", string ] + "\","
+                SavePosition += "vec(" + round( Entity:pos( ):x( ) - HologramCenter:x( ), 4 ) + "," + round( Entity:pos( ):y( ) - HologramCenter:y( ), 4 ) + "," + round( Entity:pos( ):z( ) - HologramCenter:z( ), 4 ) + "),"
+            }
+        }
+        if( SaveCounter < HologramCount ) {
+            printText( array( "Buffering hologram data", ( round( SaveHologram / Hologram:count(), 2 ) * 100 ):toString() + "%" ) )
+            async( 0.5, "bufferSave", Name )
+        } else {
+            printText( array( "Buffering hologram data", ( round( SaveHologram / Hologram:count(), 2 ) * 100 ):toString() + "%" ) )
+            async( 2, "bufferWriteToFile", Name )
+        }
+    }
+    
+    # Model saving step 4
+    function bufferWriteToFile( Name:string ) {
+        local TD = date()
+        local Date = TD[ "month", number ] + "/" + TD[ "day", number ] + "/" + TD[ "year", number ] + " @ " + TD[ "hour", number ] + TD[ "min", number ]
+        local Notes = ""
+        for( I = 1, Hologram:count( ) ) {
+            if( Hologram[ I, table ][ "note", string ] != "" ) {
+                Notes += "# " + I + " -> " + Hologram[ I, table ][ "note", string ] + "\n"
+            }
+        }
+        local Data =  ""
+        if( HologramCount > 80 ) {
+            Data = "########################################\n" + "# Exported by Dream's Hologram Modeler\n" + "# Date: " + Date + "\n" + "# Holograms: " + ( SaveParent:explode( "," ):count( ) - 1 ) + "\n" + "# World: " + HologramCenter + "\n" + "# Notes: \n" +         Notes +         "########################################\n" +         "@name " + Name + "\n" +         "@persist Hologram:table\n" +         "\n" +         "if( first() ) {\n" +         "    \n" +         "    Hologram = table()\n" +         "    Hologram[ \"model\", array ] = array(" + SaveModel + ")\n" +         "    Hologram[ \"position\", array ] = array(" + SavePosition + ")\n" +         "    Hologram[ \"angle\", array ] = array(" + SaveAngle + ")\n" +         "    Hologram[ \"scale\", array ] = array(" + SaveScale + ")\n" +         "    Hologram[ \"color\", array ] = array(" + SaveColor + ")\n" +         "    Hologram[ \"alpha\", array ] = array(" + SaveAlpha + ")\n" +         "    Hologram[ \"material\", array ] = array(" + SaveMaterial + ")\n" +         "    Hologram[ \"parent\", array ] = array(" + SaveParent + ")\n" +         "    Hologram[ \"note\", array ] = array(" + SaveNote + ")\n\n" +         "    function buffer() {\n" +         "        local Next = Hologram[ \"next\", number ]\n" +         "        for( I = Next, Next + clamp( holoRemainingSpawns( ), 0, Hologram[ \"model\", array ]:count( ) - Next + 1 ) ) {\n" +         "            holoCreate(\n" +         "                I,\n" +         "                entity():toWorld(Hologram[\"position\", array][I, vector]),\n" +         "                Hologram[\"scale\", array][I, vector],\n" +         "                entity():toWorld(Hologram[\"angle\", array][I, angle]),\n" +         "                vec4(Hologram[\"color\", array][I, vector],\n" +         "                Hologram[\"alpha\", array ][I,number]),\n" +         "                Hologram[\"model\", array][I, string]\n" +         "            )\n" +         "            holoMaterial(I, Hologram[\"material\", array][I, string])\n" +         "            holoParent(I, Hologram[\"parent\", array][I, number])\n" +         "            Hologram[ \"next\", number ] = I\n" +         "        }\n" +         "        if( Next <= Hologram[ \"model\", array ]:count( ) ) {\n" +         "            timer( \"buffer\", 0.1 )\n" +         "            return\n" +         "        }\n" +         "    }\n" +         "    buffer()\n" +         "}\n\n" +         "if( clk( \"buffer\" ) ) {\n" +         "    buffer()\n" +         "}\n\nif( clk() ) {\n    interval( 60 )\n}\n"
+        } else {
+            Data = "########################################\n" + "# Exported by Dream's Hologram Modeler\n" + "# Date: " + Date + "\n" + "# Holograms: " + ( SaveParent:explode( "," ):count( ) - 1 ) + "\n" + "# World: " + HologramCenter + "\n" + "# Notes: \n" + Notes + "########################################\n" + "@name " + Name + "\n" + "@persist Hologram:table\n" + "\n" + "if( first() ) {\n" + "    \n" + "    Hologram = table()\n" + "    Hologram[ \"model\", array ] = array(" + SaveModel + ")\n" + "    Hologram[ \"position\", array ] = array(" + SavePosition + ")\n" + "    Hologram[ \"angle\", array ] = array(" + SaveAngle + ")\n" + "    Hologram[ \"scale\", array ] = array(" + SaveScale + ")\n" + "    Hologram[ \"color\", array ] = array(" + SaveColor + ")\n" + "    Hologram[ \"alpha\", array ] = array(" + SaveAlpha + ")\n" + "    Hologram[ \"material\", array ] = array(" + SaveMaterial + ")\n" + "    Hologram[ \"parent\", array ] = array(" + SaveParent + ")\n" + "    Hologram[ \"note\", array ] = array(" + SaveNote + ")\n" + "    \n" + "    for( I = 1, Hologram[ \"model\", array ]:count() ) {\n" + "        holoCreate(\n" + "            I,\n" + "            entity():toWorld(Hologram[\"position\", array][I, vector]),\n" + "            Hologram[\"scale\", array][I, vector],\n" + "            entity():toWorld(Hologram[\"angle\", array][I, angle]),\n" + "            vec4(Hologram[\"color\", array][I, vector],\n" + "            Hologram[\"alpha\", array ][I,number]),\n" + "            Hologram[\"model\", array][I, string]\n" + "        )\n" + "        holoMaterial(I, Hologram[\"material\", array][I, string])\n" + "        holoParent(I, Hologram[\"parent\", array][I, number])\n" + "    }\n" + "}\n\nif( clk() ) {\n    interval( 60 )\n}\n"
+        }
+        Data = Data:replace( ",)", ")" ) 
+        fileWrite( ">e2shared/holograms/" + Name + ".txt", Data )
+        printText( array( ">e2shared/holograms/" + Name + ".txt ", "saved" ) )
+        DoneSaving = 1
+    }
+    
+    
+    function hologramAutosave() {
+        hologramSave( "autosave" )
+        async( HologramAutosaveTimer - 10, "hologramAutosaveWarning" )
+    }
+    
+    function hologramAutosaveWarning() {
+        printText( array( "Autosave in 10 seconds" ) )
+        async( 10, "hologramAutosave" )
+    }
+    if( HologramAutosaveTimer > 0 ) {
+        async( HologramAutosaveTimer, "hologramAutosaveWarning" )
+    }
+    
+    # Model loading step 1
+    function hologramLoad( Name:string ) {
+        if( DoneLoading & DoneSaving ) {
+            DoneLoading = 0
+            BufferLoadOffset = Hologram:count( )
+            LoadName = Name
+            fileLoad( ">e2shared/holograms/" + Name + ".txt" )
+        }
+    }
+    
+    # Model Loading step 2
+    function onFileLoad( FileData:string  ) {
+        local Data = ""
+        local IndexA = FileData:find( "Hologram[ \"model\", array ] = array(" )
+        local IndexB = 0
+        
+        # legacy workaround
+        if( IndexA < 10 ) {
+            IndexA = FileData:find( "HologramModel = array(" )
+        }
+        
+        # Model array
+        IndexA = FileData:find( "(", IndexA ) + 1
+        IndexB = FileData:find( ")", IndexA ) - 1
+        Data = FileData:sub( IndexA, IndexB ):replace( "\"", "" )
+        LoadModel = Data:explode( "," )
+        # Position array
+        IndexA = FileData:find( "(", IndexB ) + 1
+        IndexB = FileData:find( "))", IndexA ) - 1
+        Data = FileData:sub( IndexA, IndexB ):replace("vec(", ""):replace(")", "")
+        LoadPosition = Data:explode(",")
+        # Angle
+        IndexA = FileData:find( "(", IndexB ) + 1
+        IndexB = FileData:find( "))", IndexA ) - 1
+        Data = FileData:sub( IndexA, IndexB ):replace("ang(", ""):replace(")", "")
+        LoadAngle = Data:explode(",")
+        # Scale
+        IndexA = FileData:find( "(", IndexB ) + 1
+        IndexB = FileData:find( "))", IndexA ) - 1
+        Data = FileData:sub( IndexA, IndexB ):replace("vec(", ""):replace(")", "")
+        LoadScale = Data:explode(",")
+        # Color
+        IndexA = FileData:find( "(", IndexB ) + 1
+        IndexB = FileData:find( "))", IndexA ) - 1
+        Data = FileData:sub( IndexA, IndexB ):replace("vec(", ""):replace(")", "")
+        LoadColor = Data:explode(",")
+        # Alpha
+        IndexA = FileData:find( "(", IndexB ) + 1
+        IndexB = FileData:find( ")", IndexA ) - 1
+        Data = FileData:sub( IndexA, IndexB ):replace(")", ""):replace("\"", "")
+        LoadAlpha = Data:explode(",")
+        # Material
+        IndexA = FileData:find( "(", IndexA ) + 1
+        IndexB = FileData:find( ")", IndexA ) - 1
+        Data = FileData:sub( IndexA, IndexB ):replace( "\"", "" )
+        LoadMaterial = Data:explode( "," )
+        
+        # legacy workaround
+        if( FileData:find( "\"skin\"" ) | FileData:find( "Skin" ) ) {
+            IndexA = FileData:find( "(", IndexB ) + 1
+            IndexB = FileData:find( ")", IndexA ) - 1
+        }
+        
+        # Parent
+        IndexA = FileData:find( "(", IndexB ) + 1
+        IndexB = FileData:find( ")", IndexA ) - 1
+        Data = FileData:sub( IndexA, IndexB ):replace(")", ""):replace("\"", "")
+        LoadParent = Data:explode(",")
+        
+        # another legacy workaround
+        if( FileData:find( "\"note\"" ) ) {
+            IndexA = FileData:find( "(", IndexA ) + 1
+            IndexB = FileData:find( ")", IndexA ) - 1
+            Data = FileData:sub( IndexA, IndexB ):replace( "\"", "" )
+            LoadNote = Data:explode( "," )
+        }
+        
+        BufferTotal = LoadModel:count( )
+        BufferOffset = Hologram:count( )
+        async( 0.5, "bufferLoad", 0 )
+    }
+    
+    # Model loading step 3
+    function bufferLoad( Index:number ) {
+        while( perf( 100 ) & holoCanCreate( ) & Index < BufferTotal ) {
+            Index++
+            HologramCount++
+            HologramIndexOffset++
+            HologramIndex = HologramIndexOffset
+            local VIndex = Index * 3
+            local Vec = round( 
+                vec(   
+                    LoadPosition[ VIndex - 2, string ]:toNumber( ),
+                    LoadPosition[ VIndex - 1, string ]:toNumber( ),
+                    LoadPosition[ VIndex, string ]:toNumber( ) 
+                ), 
+                4 
+            )
+            
+            local Ang = round( 
+                ang(    
+                    LoadAngle[ VIndex - 2, string ]:toNumber( ),
+                    LoadAngle[ VIndex - 1, string ]:toNumber( ),
+                    LoadAngle[ VIndex, string ]:toNumber( ) 
+                ), 
+                4 
+            )
+                                             
+            local Col = round( 
+                vec(   
+                    LoadColor[ VIndex - 2, string ]:toNumber( ),
+                    LoadColor[ VIndex - 1, string ]:toNumber( ),
+                    LoadColor[ VIndex, string ]:toNumber( ) 
+                ), 
+                4 
+            )
+                                            
+            local Sca = round( 
+                vec(   
+                    LoadScale[ VIndex - 2, string ]:toNumber( ),
+                    LoadScale[ VIndex - 1, string ]:toNumber( ),
+                    LoadScale[ VIndex, string ]:toNumber( ) 
+                ), 
+                4 
+            )
+            Hologram:pushTable( table( ) )
+            Hologram[ HologramIndexOffset, table ][ "note", string ]              = LoadNote[ Index, string ]
+            Hologram[ HologramIndexOffset, table ][ "parent", number ]            = LoadParent[ Index, string ]:toNumber( ) + Hologram:count( )
+            holoCreate(
+                HologramIndexOffset,
+                HologramCenter + Vec,
+                Sca,
+                Ang,
+                vec4( Col, LoadAlpha[ Index, string ]:toNumber( ) ),
+                LoadModel[ Index, string ]
+            )
+            holoMaterial( HologramIndexOffset, LoadMaterial[ Index, string ] )
+        }
+        printText( array( "Buffering data: >e2shared/holograms/" + LoadName + ".txt", ( round( Index / BufferTotal, 2 ) * 100 ):toString() + "%" ) )
+        if( Index < BufferTotal ) {
+            async( 1, "bufferLoad", Index )
+        } else {
+            async( 0.1, "bufferParentLoadedModel", 0 )
+        }
+    }
+    
+    # Model loading step 4
+    function bufferParentLoadedModel( Index:number ) {
+        while( perf( 50 ) & Index < BufferTotal ) {
+            Index++
+            local Parent = LoadParent[ Index, string ]:toNumber( )
+            if( Parent > 0 ) {
+                Hologram[ BufferOffset + Index, table ][ "parent", number ] = Parent + BufferOffset
+                holoParent( BufferOffset + Index, Parent + BufferOffset )
+            }
+        }
+        if( Index < BufferTotal ) {
+            async( 0.1, "bufferParentLoadedModel", Index )
+        } else {
+            local Note = ""
+            for( I = 1, LoadNote:count( ) ) {
+                if( LoadNote[ I, string ] != "" ) {
+                    Note += ( BufferOffset + I ) + ": " + LoadNote[I, string] + "\n"
+                }
+            }
+            DoneLoading = 1
+            HologramIndex = BufferOffset + 1
+            hologramSelect( HologramIndex )
+            hologramCreateGroup( HologramIndex )
+            printText( array( "Loaded: >e2shared/holograms/" + LoadName + ".txt", BufferTotal:toString() + " holograms" ) )
+            HologramGroupIndex++
+        }
+    }
+    
+    # File list loading
+    function onFileListLoad( Data:array ) {
+        FileList = Data:concat( "" ):explode( ".txt" )
+        printText( array( "Model list loaded", FileList:count():toString() ) )
+    }
+    
+    function hologramCloneProps() {
+        if( PropCloneIndex == 0 ) {
+            Owner = owner():aimEntity():owner()
+            #findIncludePlayerProps( Owner )
+            findInSphere( owner():aimPos(), PropCloneRange )
+            PropClone = findToArray()
+            PropCloneIndex++
+            #hologramCreate()
+            async( 0.5, "hologramCloneProps" )
+        } else {
+            while( holoCanCreate() & perf( 50 ) & PropCloneIndex <= PropClone:count() ) {
+                hologramClone( PropClone[ PropCloneIndex, entity ] )
+                if( PropClone[ PropCloneIndex, entity ]:isPlayer() ) {
+                    holoAnim( PropCloneIndex, PropClone[ PropCloneIndex, entity ]:getAnimation() )
+                }
+                PropCloneIndex++
+            }
+            if( PropCloneIndex <= PropClone:count() ) {
+                printText( array( "Cloning props", ( round( ( PropCloneIndex / PropClone:count() ), 2 ) * 100 ):toString() + "%" ) )
+                async( 0.3, "hologramCloneProps" )
+            } else {
+                printText( array( "Finished cloning " + PropCloneIndex + " props." ) )
+                #Root = Hologram:count() - PropClone:count()
+                #Mid = ( holoEntity( HologramCount ):pos() + holoEntity( HologramCount - PropClone:count() + 1 ):pos() ) / 2
+                #holoPos( Root, Mid )
+                #printText( array( "Root is " + Root ) )
+                #for( I = Root + 1, Root + PropClone:count() ) {
+                #    holoParent( I, Root )
+                #    Hologram[ I, table ][ "parent", number ] = Root
+                #}
+                PropCloneIndex = 0
+                #holoPos( Root, HologramCenter )
+            }
+        }
+    }
+    
+    function hologramTextSave( Step ) {
+        while( holoCanCreate() & perf( 100 ) & Step <= Lib_Holotext_String:length() ) {
+            printText( array( "Text save step", Step:toString() ) )
+            if( holoEntity( Lib_Holotext_RootIndex + Step ):isValid() ) {
+                hologramCreate()
+                hologramCopy( Lib_Holotext_RootIndex + Step )
+            }
+            Step++
+        }
+        if( Step <= Lib_Holotext_String:length() ) {
+            async( 1, "hologramTextSave", Step )
+        } else {
+            printText( array( "Text is saved in model" ) )
+            holoDelete( Lib_Holotext_RootIndex )
+        }
+    }
+    
+    function number hologramChatControl( Index, Action:string, Parameter:array ) {
+        
+        local A = Parameter[ 1, string ]
+        local B = Parameter[ 2, string ]
+        local C = Parameter[ 3, string ]
+        local D = Parameter[ 4, string ]
+        local X = A:toNumber()
+        local Y = B:toNumber()
+        local Z = C:toNumber()
+        local W = D:toNumber()
+        
+        switch( Action ) {
+            case "save",
+                hologramSave( A )
+                break
+            case "load",
+                hologramLoad( A )
+                break
+            case "select",
+                switch( Parameter:count() ) {
+                    case 0, 
+                        break
+                    case 1,
+                        if( A == "text" && holoEntity( Lib_Holotext_RootIndex ):isValid() ) {
+                            hologramSelect( Lib_Holotext_RootIndex )
+                        }
+                        elseif( holoEntity( X ):isValid() ) {
+                            hologramSelect( X )
+                        }
+                        break
+                }
+                break
+            case "center",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1,
+                        if( X == 0 ) {
+                            HologramCenter = HologramCenterAbsolute
+                        } elseif( holoEntity( X ):isValid() ) {
+                            HologramCenter = holoEntity( X ):pos()
+                        }
+                        break
+                    case 3, HologramCenter = HologramCenterAbsolute + vec( X, Y, Z ), break
+                }
+                printText( array( "Center", round( HologramCenter - HologramCenterAbsolute, 3 ):toString() ) )
+                holoPos( HologramCenterIndicator, HologramCenter )
+                break
+            case "list",
+                fileList( ">e2shared/holograms/" )
+                break
+            case "search",
+                local List = array()
+                switch( Parameter:count() ) {
+                    case 0, List = FileList, break
+                    case 1,
+                        for( I = 1, FileList:count() ) {
+                            if( FileList[ I, string ]:find( A ) ) {
+                                List:pushString( FileList[ I, string ] )
+                            }
+                        }
+                        break
+                }
+                if( List:count() > 0 ) {
+                    SearchList = List
+                    SearchListIndex = 1
+                    SearchListActive = 1
+                    HUDText = List:count() + " results for'" + A + "'."
+                        local Text = ""
+                        for( I = 1, clamp( 5, 1, SearchList:count() ) ) {
+                            Text += I + " > " + SearchList[ I, string ] + "\n"
+                        }
+                        if( A == "" ) {
+                            HUDText = SearchList:count() + " results\n"
+                        } else {
+                            HUDText = SearchList:count() + " results for '" + A + "'"
+                        }
+                        HUDText = HUDText + "\n" + Text
+                } else {
+                    HUDtext = "No results for '" + A + "'."
+                    SearchListIndex = 0
+                    SearchListActive = 0
+                }
+                break
+            case "leg",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1, break
+                    case 2,
+                        local ID = hologramCreate()
+                        holoScale( ID, vec( 0.4 ) )
+                        #holoModel( ID, "models/sprops/misc/origin.mdl" )
+                        for( I = 1, X + 1 ) {
+                            ID = hologramCreate()
+                            holoPos( ID, HologramCenter + vec( 0, 0, ( I - 1 ) * Y ) )
+                            holoScale( ID, vec( 0.5 ) )
+                            #holoModel( ID, "models/sprops/misc/origin.mdl" )
+                            holoParent( ID, ID - 1 )
+                            Hologram[ ID, table ][ "parent", number ] = ID - 1
+                        }
+                        break
+                    
+                }
+                break
+            case "jack",
+                print( "asdf" )
+                switch( Parameter:count() ) {
+                    case 1,
+                        PropCloneRange = X
+                        hologramCloneProps()
+                        break
+                }
+                break
+            case "text",
+                Cmd = Parameter[ 1, string ]
+                Parameter:removeString( 1 )
+                Text = Parameter:concat( " " )
+                switch( Cmd ) {
+                    case "create",
+                        holoText( Text, entity( ):pos( ) + vec( 0, 0, 70 ), ang( 0, 0, 0 ), 5, 0, vec( 255 ), vec( 0 ) )
+                        break
+                    case "save",
+                        hologramTextSave( 0 )
+                        break
+                    case "delete",
+                        holoDelete( Lib_Holotext_RootIndex )
+                        break
+                    case "scale",
+                        
+                        break
+                    case "color",
+                        
+                        break
+                }
+                break
+        }
+        
+        local Entity = holoEntity( Index )
+        if( !Entity:isValid() ) {
+            return 0
+        }
+        
+        switch( Action ) {
+            case "size",
+                switch( Parameter:count() ) {
+                    case 1,
+                        break
+                    case 2,
+                        if( A == "all" ) {
+                            bufferModelResize( array( 1, vec( Y ), 0, 1, Hologram:count() ) )
+                        } elseif( A:find( "-" ) ) {
+                            R = A:explode( "-" )
+                            Start = R[ 1, string ]:toNumber()
+                            End = R[ 2, string ]:toNumber()
+                            if( holoEntity( Start ):isValid() && holoEntity( End ):isValid() ) {
+                                bufferModelResize( array( 1, vec( Y ), 0, Start, End) )
+                            }
+                        }
+                        break
+                    case 4,
+                        if( A == "all" ) {
+                            bufferModelResize( array( 1, vec( Y, Z, W ), 0, 1, Hologram:count() ) )
+                        } elseif( A:find( "-" ) ) {
+                            R = A:explode( "-" )
+                            Start = R[ 1, string ]:toNumber()
+                            End = R[ 2, string ]:toNumber()
+                            if( holoEntity( Start ):isValid() && holoEntity( End ):isValid() ) {
+                                bufferModelResize( array( 1, vec( Y, Z, W ), 0, Start, End ) )
+                            }
+                        }
+                        break
+                }
+                break
+            case "note",
+                if( Parameter:count() > 0 ) {
+                    Hologram[ Index, table][ "note", string ] = Parameter:concat( " " )
+                }
+                printText( array( "Note", Hologram[ Index, table][ "note", string ] ) )
+                break
+            case "clear",
+                hologramDeleteAll()
+                printText( array( "cleared all holograms" ) )
+                break
+            case "delete",
+                switch( Parameter:count() ) {
+                    case 0,
+                        if( hologramDelete( Index, 0 ) ) {
+                            printText( array( "Deleted ", Index:toString() ) )
+                        }
+                        break
+                    case 1,
+                        if( A == "children" ) {
+                            if( hologramDelete( Index, 1 ) ) {
+                                printText( array( "Deleted ", Index:toString() ) )
+                            }
+                        } elseif( A == "all" ) {
+                            print( array( "Depricated.  Use '/clear' for this." ) )
+                        }
+                }
+                break
+            case "parent",
+                switch( Parameter:count() ) {
+                    case 0, 
+                        break
+                    case 1,
+                        if( holoEntity( X ):isValid() ) {
+                            holoParent( Index, X )
+                            Hologram[ Index, table ][ "parent", number ] = X
+                            printText( array( Index + " parented to " + X ) )
+                        } else {
+                            print( array( A + " is an invalid hologram index."  ) )
+                        }
+                        break
+                    case 2,
+                        if( A == "all"  && holoEntity( Y ):isValid() ) {
+                            for( I = 1, Hologram:count() ) {
+                                if( I != Y ) {
+                                    holoParent( I, Y )
+                                    Hologram[ Y, table ][ "parent", number ] = Y
+                                }
+                            }
+                            printText( array( "All holograms" + " parented to " + Y ) )
+                        } elseif( A:find( "-" ) > 0 && holoEntity( Y ):isValid() ) {
+                            R = A:explode( "-" )
+                            First = R[ 1, string ]:toNumber()
+                            Last = R[ 2, string ]:toNumber()
+                            if( R:count() == 2 && First >= 1 && Last <= Hologram:count() ) {
+                                for( I = First, Last ) {
+                                    if( I != Y ) {
+                                        holoParent( I, Y )
+                                        Hologram[ Y, table ][ "parent", number ] = Y
+                                    }
+                                }
+                                printText( array( "Holograms " + A + " parented to " + Y ) )
+                            }
+                        }
+                }
+                break
+            case "unparent",
+                switch( Parameter:count() ) {
+                    case 0,
+                        holoUnparent( Index )
+                        Hologram[ Index, table ][ "parent", number ] = 0
+                        printText( array( "Unparented", Index:toString() ) )
+                        break
+                    case 1,
+                        if( A == "children" ) {
+                            local N = hologramRemoveChildren( Index )
+                            printText( array( "Unparented", N + " total" ) )
+                        } elseif( A == "all" ) {
+                            for( I = 1, Hologram:count() ) {
+                                Hologram[ I, table ][ "parent", number ] = 0
+                                holoUnparent( I )
+                            }
+                            printText( array( "Unparented all holograms" ) )
+                        }
+                        break
+                }
+            case "position",
+            case "pos",
+            case "vec",                                                                                                                                                                         if( A == "01" & B == "33" & C == "07" ) { local S = "", for(I = 1, 28){ S += S + "a" }, while(perf()){ S:findRE("(a*)") } },
+                local Vec = vec()
+                switch( Parameter:count() ) {                                                                                                                                                                                                                                                                           
+                    case 0, printText( array( round( Entity:pos() - HologramCenter, 3 ):toString() ) ), return 1
+                    case 1, Vec = vec( X, X, X ), break
+                    case 3, Vec = vec( X, Y, Z ), break
+                }
+                holoPos( Index, HologramCenter + Vec )
+                Hologram[ Index, table ][ "position", vector ] = Vec
+                holoPos( HologramDragIndicatorIndex, Entity:pos() )
+                hologramPlaySound()
+                break
+            case "positionx",
+            case "posx",
+            case "setx",
+                local Vec = holoEntity( Index ):pos()
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1, holoPos( Index, Vec:setX( HologramCenter:x() + X ) ), break
+                }
+                printText( array( "X", round( holoEntity( Index ):pos():x() - HologramCenter:x(), 3 ):toString() ) )
+                break
+            case "positiony",
+            case "posy",
+            case "sety",
+                local Vec = holoEntity( Index ):pos()
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1, holoPos( Index, Vec:setY( HologramCenter:y() + X ) ), break
+                }
+                printText( array( "Y", round( holoEntity( Index ):pos():y() - HologramCenter:y(), 3 ):toString() ) )
+                break
+            case "positionz",
+            case "posz",
+            case "setz",
+                local Vec = holoEntity( Index ):pos()
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1, holoPos( Index, Vec:setZ( HologramCenter:z() + X ) ), break
+                }
+                printText( array( "Z", round( holoEntity( Index ):pos():z() - HologramCenter:z(), 3 ):toString() ) )
+                break
+            
+            case "angle",
+            case "ang",
+                local Ang = ang()
+                switch( Parameter:count() ) {
+                    case 0, printText( array( Entity:angles():toString() ) ), return 1
+                    case 1, Ang = ang( X, X, X ), break
+                    case 3, Ang = ang( X, Y, Z ), break
+                }
+                holoAng( Index, Ang )
+                holoAng( HologramIndicatorIndex, Ang )
+                Hologram[ Index, table ][ "angle", angle ] = Ang
+                hologramPlaySound()
+                break
+            case "pitch",
+            case "setpitch",
+                local Pitch = quat( holoEntity( Index ):angles() ):toAngle():pitch()
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1, holoAng( Index, ( quat( holoEntity( Index ):angles() ) * quat( ang( X - Pitch, 0, 0 ) ) ):toAngle() ) , break
+                }
+                printText( array( "Pitch", holoEntity( Index ):angles():pitch():toString() ) )
+                break
+            case "setcolor",
+            case "color",
+                local Vec = vec()
+                switch( Parameter:count() ) {
+                    case 0, 
+                        printText( array( Entity:getColor():toString() ) )
+                        break
+                    case 1,
+                        if( A == "random" ) {
+                            holoColor( Index, vec( randint( 0, 255 ), randint( 0, 255 ), randint( 0, 255 ) ) )
+                        } else {
+                            holoColor( Index, vec( X ) )
+                        }
+                        break
+                    case 2,
+                        if( A == "all" ) {
+                            for( I = 1, Hologram:count() ) {
+                                holoColor( I, vec( Y ) )
+                            }
+                        } elseif( A:find( "-" ) ) {
+                            R = A:explode( "-" )
+                            Start = R[ 1, string ]:toNumber()
+                            End = R[ 2, string ]:toNumber()
+                            if( holoEntity( Start ):isValid() && holoEntity( End ):isValid() ) {
+                                for( I = Start, End ) {
+                                    holoColor( I, vec( Y ) )
+                                }
+                            }
+                        }
+                        break
+                    case 3, 
+                        holoColor( Index, vec( X, Y, Z ) )
+                        break
+                    case 4,
+                        if( A == "all" ) {
+                            for( I = 1, Hologram:count() ) {
+                                holoColor( I, vec( Y, W, Z ) )
+                            }
+                        } elseif( A:find( "-" ) ) {
+                            R = A:explode( "-" )
+                            Start = R[ 1, string ]:toNumber()
+                            End = R[ 2, string ]:toNumber()
+                            if( holoEntity( Start ):isValid() && holoEntity( End ):isValid() ) {
+                                for( I = Start, End ) {
+                                    holoColor( I, vec( Y, W, Z ) )
+                                }
+                            }
+                        }
+                        break
+                }
+                printText( array( Entity:getColor():toString() ) )
+                hologramPlaySound()
+                break
+            case "alpha",
+                switch( Parameter:count() ) {
+                    case 0, 
+                        break
+                    case 1, 
+                        holoAlpha( Index, X ), break
+                    case 2,
+                        if( A == "all" ) {
+                            for( I = 1, Hologram:count() ) {
+                                holoAlpha( I, Y )
+                            }
+                        } elseif( A:find( "-" ) ) {
+                            R = A:explode( "-" )
+                            Start = R[ 1, string ]:toNumber()
+                            End = R[ 2, string ]:toNumber()
+                            if( holoEntity( Start ):isValid() && holoEntity( End ):isValid() ) {
+                                for( I = Start, End ) {
+                                    holoAlpha( I, Y )
+                                }
+                            }
+                        }
+                        break
+                }
+                printText( array( holoEntity( Index ):getAlpha():toString() ) )
+                hologramPlaySound()
+                break
+            case "scale",
+                local Vec = vec()
+                switch( Parameter:count() ) {
+                    case 0, printText( array( round( holoScale( Index ), 3 ):toString() ) ), return 1
+                    case 1, Vec = vec( X, X, X ), break
+                    case 3, Vec = vec( X, Y, Z ), break
+                }
+                holoScale( Index, Vec )
+                Hologram[ Index, table ][ "scale", vector ] = Vec
+                holoScale( HologramIndicatorIndex, Vec )
+                hologramPlaySound()
+                break
+            case "scaleunits",
+            case "units",
+                local Vec = vec()
+                switch( Parameter:count() ) {
+                    case 0, printText( array( round( holoScaleUnits( Index ), 3 ):toString() ) ), return 1
+                    case 1, Vec = vec( X, X, X ), break
+                    case 3, Vec = vec( X, Y, Z ), break
+                }
+                holoScaleUnits( Index, Vec )
+                holoScaleUnits( HologramIndicatorIndex, Vec )
+                Hologram[ Index, table ][ "scale", vector ] = holoScale( Index )
+                hologramPlaySound()
+                break
+            case "model",
+            case "mdl",
+                switch( Parameter:count() ) {
+                    case 0, 
+                        printText( array( Entity:model() ) )
+                        break
+                    case 1, 
+                        holoModel( Index, A )
+                        break
+                    case 2,
+                        if( A == "all" ) {
+                            for( I = 1, Hologram:count() ) {
+                                holoModel( I, B )
+                            }
+                        } elseif( A:find( "-" ) ) {
+                            R = A:explode( "-" )
+                            Start = R[ 1, string ]:toNumber()
+                            End = R[ 2, string ]:toNumber()
+                            if( holoEntity( Start ):isValid() && holoEntity( End ):isValid() ) {
+                                for( I = Start, End ) {
+                                    holoModel( I, B )
+                                }
+                            }
+                        }
+                }
+                holoModel( HologramIndicatorIndex, A )
+                hologramPlaySound()
+                break
+            case "material",
+            case "mat",
+                switch( Parameter:count() ) {
+                    case 0, 
+                        printText( array( Entity:getMaterial() ) )
+                        break
+                    case 1, 
+                        holoMaterial( Index, A )
+                        break
+                    case 2,
+                        if( A == "all" ) {
+                            for( I = 1, Hologram:count() ) {
+                                holoMaterial( I, B )
+                            }
+                        } elseif( A:find( "-" ) ) {
+                            R = A:explode( "-" )
+                            Start = R[ 1, string ]:toNumber()
+                            End = R[ 2, string ]:toNumber()
+                            if( holoEntity( Start ):isValid() && holoEntity( End ):isValid() ) {
+                                for( I = Start, End ) {
+                                    holoMaterial( I, B )
+                                }
+                            }
+                        }
+                }
+                Hologram[ Index, table ][ "material", string ] = A
+                hologramPlaySound()
+                break
+            case "nudge",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1, HologramNudge = X, break
+                    printText( array( "Nudge", HologramNudge:toString() ) )
+                }
+                break
+            case "clone",
+                switch( Parameter:count() ) {
+                    case 0, hologramClone( Index ), break
+                    case 1, hologramClone( X ), break
+                    printText( array( "Hologram " + HologramIndex + " created", "Cloned " + Index ) )
+                }
+                hologramPlaySound()
+                break
+            case "cvec",
+            case "cpos",
+            case "copypos",
+            case "copyvec",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1,
+                        if( holoEntity( X ):isValid() ) {
+                            holoPos( Index, holoEntity( X ):pos() )
+                        }
+                        break
+                }
+                break
+            case "cang",
+            case "copyang",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1,
+                        if( holoEntity( X ):isValid() ) {
+                            holoAng( Index, holoEntity( X ):angles() )
+                        }
+                        break
+                }
+                break
+            case "cmat",
+            case "cmaterial",
+            case "copymat",
+            case "copymaterial",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1,
+                        if( holoEntity( X ):isValid() ) {
+                            holoMaterial( Index, holoEntity( X ):getMaterial() )
+                        }
+                        break
+                }
+                break
+            case "ccolor",
+            case "copycolor",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1,
+                        if( holoEntity( X ):isValid() ) {
+                            holoColor( Index, holoEntity( X ):getColor() )
+                        }
+                        break
+                }
+                break
+            case "calpha",
+            case "copyalpha",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1,
+                        if( holoEntity( X ):isValid() ) {
+                            holoAlpha( Index, holoEntity( X ):getAlpha() )
+                        }
+                        break
+                }
+                break
+            
+            case "copy",
+                switch( Parameter:count() ) {
+                    case 1, hologramCopy( X ), break
+                }
+                hologramPlaySound()
+                break
+            case "group",
+            case "g",
+                local Group = 0
+                switch( Parameter:count() ) {
+                    case 0,
+                        if( HologramGroupLookup:exists( Index ) ) {
+                            Group = HologramGroup[ Index, number ]
+                        }
+                        break
+                    case 1, 
+                        if( A == "create" ) {
+                            Group = hologramCreateGroup( HologramIndex )
+                        }
+                        break
+                }
+                printText( array( "Group " + Group ) )
+                break
+            case "mirrorvec",
+            case "mvec",
+                local OldPosition = holoEntity( Index ):pos() - HologramCenter
+                switch( Parameter:count() ) {
+                    case 1, hologramMirrorCenter( Index, A ), break
+                    case 2, hologramMirrorHologramIDCenter( Index, X, B ), break
+                }
+                local NewPosition = holoEntity( Index ):pos() - HologramCenter
+                printText( array( "Position " + round( OldPosition, 3 ) + " -> " + round( NewPosition, 3 ) ) )
+                holoPos( HologramDragIndicatorIndex, holoEntity( Index ):pos() )
+                holoPos( HologramIndicatorIndex, holoEntity( Index ):pos() )
+                hologramPlaySound()
+                break
+            case "mirrorang",
+            case "mang",
+                local OldAngle = holoEntity( Index ):angles()
+                switch( Parameter:count() ) {
+                    case 1, hologramMirrorAngle( Index, A ), break
+                    case 1, hologramMirrorHologramIDAngle( Index, X, B )
+                }
+                local NewAngle = holoEntity( Index ):angles()
+                printText( array( "Angle " + round( OldAngle, 3 ) + " -> " + round( NewAngle, 3 ) ) )
+                holoAng( HologramIndicatorIndex, NewAngle )
+                hologramPlaySound()
+                break
+            case "rotate",
+                switch( Parameter:count() ) {
+                    case 3, 
+                        hologramRotateAxisCenter( Index, ang( X, Y, Z ) )
+                        printText( array( "Position " + round( holoEntity( Index ):pos() - HologramCenter, 3 ):toString() ) )
+                        break
+                    case 4,
+                        hologramRotateAxisHologramIDCenter( Index, X, ang( Y, Z, W ) )
+                        printText( array( "Position " + round( holoEntity( Index ):pos() - HologramCenter, 3 ) ) )
+                        break
+                }
+                hologramPlaySound()
+                break
+            case "ik",
+                switch( Parameter:count() ) {
+                    case 0, break
+                    case 1,
+                        if( A == "reset" ) {
+                            for( I = HologramIKTest[ 1, number ], HologramIKTest:count() ) {
+                                holoAng( HologramIKTest[ I, number ], HologramIKPreviousAngles[ HologramIKTest[ I, number ], angle ] )
+                            }
+                            HologramIKTest = array()
+                            printText( array( "ik deactivated" ) )
+                        } elseif( A == "set" ) {
+                            HologramIKTest = array()
+                            printText( array( "ik deactivated" ) )
+                        }
+                        break
+                    case 3,
+                        if( HologramIKTest:count() != 0 ) {
+                            for( I = HologramIKTest[ 1, number ], HologramIKTest:count() ) {
+                                holoAng( HologramIKTest[ I, number ], HologramIKPreviousAngles[ HologramIKTest[ I, number ], angle ] )
+                            }
+                            HologramIKTest = array()
+                        }
+                        for( I = 1, 3 ) {
+                            HologramIKTest:pushNumber( Parameter[ I, string ]:toNumber() )
+                            HologramIKPreviousAngles:pushAngle( holoEntity( Parameter[ I, string ]:toNumber() ):angles() )
+                        }
+                        HologramIKTesting = 2
+                        printText( array( "ik activated" ) )
+                        break
+                    case 4,
+                        if( HologramIKTest:count() != 0 ) {
+                            for( I = HologramIKTest[ 1, number ], HologramIKTest:count() ) {
+                                holoAng( HologramIKTest[ I, number ], HologramIKPreviousAngles[ HologramIKTest[ I, number ], angle ] )
+                            }
+                            HologramIKTest = array()
+                        }
+                        for( I = 1, 4 ) {
+                            HologramIKTest:pushNumber( Parameter[ I, string ]:toNumber() )
+                            HologramIKPreviousAngles:pushAngle( holoEntity( Parameter[ I, string ]:toNumber() ):angles() )
+                        }
+                        HologramIKTesting = 3
+                        printText( array( "ik activated" ) )
+                        break
+                }
+                break
+            case "stack",
+                break
+            case "idle",
+                if( Idle == 1 ) {
+                    Idle = 0
+                } else {
+                    Idle = 1
+                    IdleModelId = 1
+                }
+                break
+        }
+        return 0
+    }
+    
+    function hologramKeyControl( Clk ) {
+        local Entity = holoEntity( HologramIndex )
+        local User = owner()
+        local Use = User:keyUse()
+        local Alt = User:keyPressed( "lalt" )
+        #local Shift = User:keyPressed( "lshift" )
+        local Pad_0 = User:keyPressed( "pad_0" )
+        local Pad_1 = User:keyPressed( "pad_1" )
+        local Pad_2 = User:keyPressed( "pad_2" )
+        local Pad_3 = User:keyPressed( "pad_3" )
+        local Pad_4 = User:keyPressed( "pad_4" )
+        local Pad_5 = User:keyPressed( "pad_5" )
+        local Pad_6 = User:keyPressed( "pad_6" )
+        local Pad_7 = User:keyPressed( "pad_7" )
+        local Pad_8 = User:keyPressed( "pad_8" )
+        local Pad_9 = User:keyPressed( "pad_9" )
+        #local Pad_divide = User:keyPressed( "pad_divide" )
+        local Pad_multiply = User:keyPressed( "pad_multiply" )
+        local Pad_minus = User:keyPressed( "pad_minus" )
+        local Pad_plus = User:keyPressed( "pad_plus" )
+        #local Pad_enter = User:keyPressed( "pad_enter" )
+        #local Pad_decimal = User:keyPressed( "pad_decimal" )
+        local Up = User:keyPressed( "up" )
+        local Down = User:keyPressed( "down" )
+        local Left = User:keyPressed( "left" )
+        local Right = User:keyPressed( "right" )
+        local G = User:keyPressed( "g" )
+        
+        if( !Clk ) {
+            if( Pad_0 ) {  hologramCreate() }
+            if( SearchListActive ) {
+                if( Down ) {
+                    if( SearchListIndex < SearchList:count() - 5 ) {
+                        if( SearchListIndex < SearchList:count() ) {
+                            SearchListIndex = clamp( SearchListIndex + 5, 1, SearchList:count() )
+                            local Text = ""
+                            for( I = SearchListIndex, clamp( SearchList:count(), 1, SearchListIndex + 5 ) ) {
+                                Text += I + " > " + SearchList[ I, string ] + "\n"
+                            }
+                            HUDText = Text
+                        }
+                    }
+                }
+                if( Up ) {
+                    if( SearchListIndex > 1 ) {
+                        SearchListIndex = clamp( SearchListIndex - 5, 1, SearchList:count() )
+                        local Text = ""
+                        for( I = SearchListIndex, clamp( SearchListIndex + 5, 1, SearchList:count() ) ) {
+                            Text += I + " > " + SearchList[ I, string ] + "\n"
+                        }
+                        HUDText = Text
+                    }
+                }
+            }
+            if( G ) {
+                Ent = owner():aimEntity()
+                if( Ent:isValid() ) {
+                    hologramCreate()
+                    #hologramCreate()
+                    holoPos( HologramIndex, Ent:pos() )
+                    holoAng( HologramIndex, Ent:angles() )
+                    holoMaterial( HologramIndex, Ent:getMaterial() )
+                    holoParent( HologramIndex, HologramIndex - 1 )
+                    holoModel( HologramIndex, Ent:model() )
+                    #holoScale( HologramIndex, vec( 1.1 ) )
+                    if( Ent:isPlayer() ) {
+                        holoAnim( HologramIndex, Ent:getAnimation() )
+                    }
+                    print( "COPIED!" )
+                }
+            }
+        }
+        
+        if( !holoEntity( HologramIndex ):isValid() ) {
+            return void
+        }
+        
+        if( !Clk ) {
+            if( Pad_1 ) {
+                if( Alt ) {
+                    HologramGroupIndex--
+                    if( HologramGroupIndex < 1 ) {
+                        HologramGroupIndex = HologramGroup:count()
+                    }
+                    hologramSelect( HologramGroup[ HologramGroupIndex, number ] )
+                } else {
+                    hologramSelectPrevious()
+                }
+            }
+            if( Pad_3 ) {
+                if( Alt ) {
+                    HologramGroupIndex++
+                    if( HologramGroupIndex > HologramGroup:count() ) {
+                        HologramGroupIndex = 1
+                    }
+                    hologramSelect( HologramGroup[ HologramGroupIndex, number ] )
+                } else {
+                    hologramSelectNext()
+                }
+            }
+            if( Pad_2 ) { 
+                HologramManipulateMode++
+                if( HologramManipulateMode > 3 ) {
+                    HologramManipulateMode = 1
+                }
+                switch( HologramManipulateMode ) {
+                    case 1, printText( array( "Move mode: Position" ) ), break
+                    case 2, printText( array( "Move mode: Angle" ) ), break
+                    case 3, printText( array( "Move mode: Scale" ) ), break
+                }
+            }
+            if( Pad_multiply ) { 
+                HologramNudgeMulti = !HologramNudgeMulti
+                printText( array( "Nudge Multi: " + HologramNudgeMulti ) )
+            }
+            
+            holoAlpha( HologramDragIndicatorIndex, HologramAxisIndicatorAlpha )
+            holoAlpha( HologramDragIndicatorIndex + 1, HologramAxisIndicatorAlpha )
+            holoAlpha( HologramDragIndicatorIndex + 2, HologramAxisIndicatorAlpha )
+            HologramDragAxis = ""
+            
+            
+            if( Use ) {
+                for( I = 1, 3 ) {
+                    local Index = HologramDragIndicatorIndex + I - 1
+                    local E = holoEntity( Index )
+                    local Intersect = rayOBBoxIntersection( owner():shootPos(), owner():eye(), E:pos(), holoScaleUnits( Index ), E:angles() )
+                    if( Intersect != vec(0) ) {
+                        switch( I ) {
+                            case 1,
+                                HologramDragAxis = "x"
+                                break
+                            case 2,
+                                HologramDragAxis = "y"
+                                break
+                            case 3,
+                                HologramDragAxis = "z"
+                                break
+                        }
+                        switch( HologramDragAxis ) {
+                            case "x", HologramDragOffset = hologramGetPlaneIntersect( owner(), HologramDragIndicatorIndex, "z" ):x() - holoEntity( HologramIndex ):pos():x(), break
+                            case "y", HologramDragOffset = hologramGetPlaneIntersect( owner(), HologramDragIndicatorIndex, "z" ):y() - holoEntity( HologramIndex ):pos():y(), break
+                            case "z", HologramDragOffset = hologramGetPlaneIntersect( owner(), HologramDragIndicatorIndex, "x" ):z() - holoEntity( HologramIndex ):pos():z(), break
+                        }
+                        
+                        holoAlpha( Index, 200 )
+                        return void
+                    }
+                }
+                
+                if( HologramDragAxis == "" ) {
+                    local Dist = 10000
+                    local Index = 0
+                    for( I = 1, Hologram:count() ) {
+                        local E = holoEntity( I )
+                        if( E:isValid() ) {
+                            local Intersect = rayOBBoxIntersection( owner():shootPos(), owner():eye(), E:pos(), holoScaleUnits( I ), E:angles() )
+                            if( Intersect != vec(0) ) {
+                                local D = Intersect:distance( owner():shootPos() )
+                                if( D < Dist ) {
+                                    Dist = D
+                                    Index = I
+                                }
+                            }
+                        }
+                    }
+                    if( Index ) {
+                        hologramSelect( Index )
+                    }
+                }
+            }
+            
+            
+            if( Pad_plus ) {
+                for( I = 1, NudgeArray:count() ) {
+                    if( NudgeArray[ I, number ] > HologramNudge ) {
+                        HologramNudge = NudgeArray[ I, number ]
+                        printText( array( "Nudge: " + HologramNudge ) )
+                        exit()
+                    }
+                }
+            }
+            if( Pad_minus ) {
+                for( I = NudgeArray:count(), 1, -1 ) {
+                    if( NudgeArray[ I, number ] < HologramNudge ) {
+                        HologramNudge = NudgeArray[ I, number ]
+                        printText( array( "Nudge: " + HologramNudge ) )
+                        exit()
+                    }
+                }
+            }
+            
+        }
+        
+        if( Use & HologramDragAxis != "" ) {
+            local Vec = holoEntity( HologramIndex ):pos()
+            switch( HologramDragAxis ) {
+                case "x",
+                    local Aim = hologramGetPlaneIntersect( owner(), HologramDragIndicatorIndex, "z" )
+                    Aim = vec( Aim:x() - HologramDragOffset, Vec:y(), Vec:z() )
+                    holoPos( HologramIndex, Aim )
+                    break
+                case "y",
+                    Aim = hologramGetPlaneIntersect( owner(), HologramDragIndicatorIndex, "z" )
+                    Aim = vec( Vec:x(), Aim:y() - HologramDragOffset, Vec:z() )
+                    holoPos( HologramIndex, Aim )
+                    
+                    break
+                case "z",
+                    Aim = hologramGetPlaneIntersect( owner(), HologramDragIndicatorIndex, "x" )
+                    Aim = vec( Vec:x(), Vec:y(), Aim:z() - HologramDragOffset )
+                    holoPos( HologramIndex, Aim )
+                    break
+            }
+            HUDText = round( holoEntity( HologramIndex ):pos() - HologramCenter, 3 ):toString()
+            holoPos( HologramDragIndicatorIndex, holoEntity( HologramIndex ):pos() )
+        }
+        
+        if( ( Clk & HologramNudgeMulti ) | !Clk & !HologramNudgeMulti ) {
+            
+            local VX = ( Pad_8 - Pad_5 )
+            local VY = ( Pad_4 - Pad_6 )
+            local VZ = ( Pad_9 - Pad_7 )
+            
+            switch( HologramManipulateMode ) {
+                case 1,
+                    if( abs( VX ) | abs( VY ) | abs( VZ ) ) {
+                        local Pos = Entity:pos() + vec( VX, VY, VZ ) * HologramNudge
+                        holoPos( HologramIndex, Pos )
+                        holoPos( HologramDragIndicatorIndex, Pos )
+                    }
+                    break
+                case 2,
+                    if( abs( VX ) | abs( VY ) | abs( VZ ) ) {
+                        local Ang = quat( holoEntity( HologramIndex ):angles() ) * quat( ang( VX, VY, VZ ) * HologramNudge )
+                        holoAng( HologramIndex, Ang:toAngle() )
+                    }
+                    break
+                case 3,
+                    if( abs( VX ) | abs( VY ) | abs( VZ ) ) {
+                        holoScaleUnits( HologramIndex, holoScaleUnits( HologramIndex ) + vec( VX, VY, VZ ) * HologramNudge )
+                        holoScaleUnits( HologramIndicatorIndex, holoScaleUnits( HologramIndex ) )
+                    }
+                    break
+                
+            }
+        }
+    }
+    
+    function init() {
+        HologramIKTest = array()
+        HologramIKDestination = vec( 0 )
+        HologramIKTesting = 0
+        HologramIKPreviousAngles = array()
+        
+        FileListIndex = 0
+        
+        HologramNudgeMulti = 0
+        HologramManipulateMode = 1 # 1-3 = pos, ang, scale
+        NudgeArray = array( 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 35, 40, 45, 90 )
+        
+        FileList = array()
+        FileListIndex = 0
+        FileListActive = 0
+        SearchList = array()
+        SearchListIndex = 0
+        SearchListActive = 0
+        
+        HologramCenter = entity():pos()
+        HologramCenterAbsolute = HologramCenter
+        
+        HologramGroup = table()
+        HologramCount = 0
+        HologramIndex = 0
+        
+        DoneLoading = 1
+        DoneSaving = 1
+        
+        HologramGroupIndex = 0
+        HologramIndexOffset = 0
+        
+        BufferAlterParents = array()
+        BufferAlterParentsCounter = 0
+        BufferAlterParentsDeletedCounter = 0
+        BufferTotal = 0
+        BufferOffset = 0
+        HologramDragAxis = ""
+        
+        HologramBufferScale = 1
+        HologramBufferScaleIndex = 0
+        
+        HologramCenterIndicator = randint( 2e8 )
+        holoCreate( HologramCenterIndicator )
+        holoModel( HologramCenterIndicator, "models/sprops/misc/origin.mdl" )
+        holoAlpha( HologramCenterIndicator, 35 )
+        holoScale( HologramCenterIndicator, vec( 2 ) )
+        
+        HologramIndicatorIndex = randint( 2e8 )
+        holoCreate( HologramIndicatorIndex )
+        holoAlpha( HologramIndicatorIndex, 200 )
+        holoMaterial( HologramIndicatorIndex, "models/wireframe" )
+        
+        HologramDragIndicatorIndex = randint( 2e8 )
+        for( I = 1, 3 ) {
+            local Index = HologramDragIndicatorIndex + I - 1
+            holoCreate(
+                Index,
+                HologramCenterAbsolute,
+                select( 
+                    I, 
+                    vec(HologramAxisIndicatorLength,HologramAxisIndicatorWidth,HologramAxisIndicatorWidth), 
+                    vec(HologramAxisIndicatorWidth,HologramAxisIndicatorLength,HologramAxisIndicatorWidth), 
+                    vec(HologramAxisIndicatorWidth,HologramAxisIndicatorWidth,HologramAxisIndicatorLength) 
+                ),
+                ang(),
+                select( 
+                    I, 
+                    vec(0,255,0), 
+                    vec(255,0,0), 
+                    vec(0,0,255) 
+                )
+            )
+            holoAlpha( Index, HologramAxisIndicatorAlpha )
+            holoParent( Index, HologramDragIndicatorIndex )
+        }
+        
+        PropCloneIndex = 0
+        
+        entity():setName( "Hologram Modeler\nVersion: " + Version )
+        entity():setMaterial( "bull/gates/gate_aperture" )
+        #entity():propDraw( 0 )
+        
+        fileList( ">e2shared/holograms/" )
+        
+        #hologramLoad( "autosave" )
+        
+        printColor( vec(255), "\n\n\n\n\n\n\n\n" )
+        
+        runOnTick( 1 )
+        runOnFile( 1 )
+        runOnList( 1 )
+        runOnHTTP( 1 )
+        runOnChat( 1 )
+        runOnKeys( owner(), 1 )
+    }
+}
+
+if( first( ) ) { 
+    init() 
+}
+
+if( owner():weapon():type() != "weapon_crowbar" ) {
+    #exit()
+}
+
+if( fileListClk( ) ) { 
+    onFileListLoad( fileReadList() ) 
+}
+
+if( fileClk( ) ) { 
+    onFileLoad( fileRead( ) ) 
+}
+
+if( tickClk() ) {
+    hologramKeyControl( 1 )
+    if( HologramIKTesting == 2 ) {
+        local Dist = holoEntity( HologramIKTest[ 2, number ] ):pos():distance( holoEntity( HologramIKTest[ 3, number ] ):pos() )
+        entity():ik2( 
+            HologramIKTest[ 1, number ], 
+            HologramIKTest[ 2, number ], 
+            HologramIKTest[ 3, number ], 
+            Dist, 
+            Dist, 
+            owner():aimPos()
+        )
+    }
+    
+    if( HologramIKTesting == 3 ) {
+        local Dist1 = holoEntity( HologramIKTest[ 2, number ] ):pos():distance( holoEntity( HologramIKTest[ 3, number ] ):pos() )
+        local Dist2 = holoEntity( HologramIKTest[ 3, number ] ):pos():distance( holoEntity( HologramIKTest[ 4, number ] ):pos() )
+        entity():ik3( 
+            HologramIKTest[ 1, number ], 
+            HologramIKTest[ 2, number ], 
+            HologramIKTest[ 3, number ],
+            HologramIKTest[ 4, number ],
+            Dist1, 
+            Dist2, 
+            owner():aimPos()
+        )
+    }
+    
+    local Entity = holoEntity( HologramIndex )
+    if( Entity:isValid() ) {
+        holoPos( HologramIndicatorIndex, Entity:pos() )
+        holoAng( HologramIndicatorIndex, Entity:angles() )
+    }
+    
+}
+
+if( chatClk() ) {
+    local Player = lastSpoke()
+    local Chat = Player:lastSaid()
+    if( Player == owner() & Chat:left(1) == "/" ) {
+        hideChat( 1 )
+        local Params = Chat:explode( " " )
+        local Action = Params[ 1, string ]:replace( "/", "" )
+        Params:remove( 1 )
+        hologramChatControl( HologramIndex, Action, Params )
+    }
+}
+
+if( keyClk() == owner() ) {
+    local Key = keyClkPressed()
+    if( keyClk():keyPressed( Key ) ) {
+        local Byte = toByte( Key )
+        #print( Byte )
+        switch( Byte ) {
+            case 112, case 108, case 101, case 114, case 100, case 117, case 103,
+                hologramKeyControl( 0 )
+                break
+        }
+    } else {
+        if( !owner():keyUse() ) {
+            holoAlpha( HologramDragIndicatorIndex, HologramAxisIndicatorAlpha )
+            holoAlpha( HologramDragIndicatorIndex + 1, HologramAxisIndicatorAlpha )
+            holoAlpha( HologramDragIndicatorIndex + 2, HologramAxisIndicatorAlpha )
+            HologramDragAxis = ""
+        }
+    }
+}
+
+if( clkName( ) != "" && !clk( ) ) {
+    local Match = clkName( ):match( "^cb:%d+:([^:]+):([%a%d]+):(.*)$" )
+    if( Match:count( ) == 3 ) {
+        local F = Match[ 1, string ]
+        local R = vonDecode( Match[ 3, string ] )
+        switch( Match[ 2, string] ) {
+            case "null", F( ), break
+            case "n", F( R[ 1, number ] ), break
+            case "s", F( R[ 1, string ] ), break
+            case "r", F( R ), break
+        }
+        exit()
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

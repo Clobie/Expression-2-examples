@@ -1,0 +1,48 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 1/5/2020 @ 153
+# Holograms: 30
+# World: [2063.4418945313,907.47192382813,-12799.71875]
+# Notes: 
+# 4 -> tab1
+# 5 -> tab2
+# 6 -> tab3
+# 7 -> tab4
+# 9 -> checkbox1
+# 10 -> checkbox2
+# 11 -> checkbox3
+########################################
+@name menu_tabs
+@persist Hologram:table
+
+if( first() ) {
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/hq_stube_thin.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/sprops/misc/alphanum/alphanum_l_p.mdl","models/sprops/misc/alphanum/alphanum_l_o.mdl","models/sprops/misc/alphanum/alphanum_l_s.mdl","models/sprops/misc/alphanum/alphanum_l_i.mdl","models/sprops/misc/alphanum/alphanum_l_t.mdl","models/sprops/misc/alphanum/alphanum_l_i.mdl","models/sprops/misc/alphanum/alphanum_l_o.mdl","models/sprops/misc/alphanum/alphanum_l_n.mdl","models/sprops/misc/alphanum/alphanum_l_s.mdl","models/sprops/misc/alphanum/alphanum_l_c.mdl","models/sprops/misc/alphanum/alphanum_l_a.mdl","models/sprops/misc/alphanum/alphanum_l_l.mdl","models/sprops/misc/alphanum/alphanum_l_e.mdl","models/sprops/misc/alphanum/alphanum_l_a.mdl","models/sprops/misc/alphanum/alphanum_l_n.mdl","models/sprops/misc/alphanum/alphanum_l_g.mdl","models/sprops/misc/alphanum/alphanum_l_l.mdl","models/sprops/misc/alphanum/alphanum_l_e.mdl")
+    Hologram[ "position", array ] = array(vec(-12,0,56),vec(-12,0,56),vec(-12.0901,0,56),vec(-12,-14.2794,65.793),vec(-12,-10.4957,65.793),vec(-12,-6.6967,65.793),vec(-12,-2.8476,65.793),vec(-12,0,55.0527),vec(-11.9316,-14.7549,63.3516),vec(-11.9316,-14.7549,61.623),vec(-11.9316,-14.7549,59.8018),vec(0,0,0),vec(-11.9456,-13.191,59.9404),vec(-11.9456,-12.2911,59.9404),vec(-11.9456,-11.3911,59.9404),vec(-11.9456,-10.491,59.9404),vec(-11.9456,-9.5911,59.9404),vec(-11.9456,-8.691,59.9404),vec(-11.9456,-7.7911,59.9404),vec(-11.9456,-6.8911,59.9404),vec(-11.9016,-13.285,61.6592),vec(-11.9016,-12.385,61.6592),vec(-11.9016,-11.485,61.6592),vec(-11.9016,-10.585,61.6592),vec(-11.9016,-9.6851,61.6592),vec(-11.9016,-13.2717,63.3516),vec(-11.9016,-12.3716,63.3516),vec(-11.9016,-11.4717,63.3516),vec(-11.9016,-10.5715,63.3516),vec(-11.9016,-9.6716,63.3516))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(90,0,0),ang(90,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0),ang(0,-90,0))
+    Hologram[ "scale", array ] = array(vec(0.01,0.2,0.2),vec(2,3,0.0001),vec(1.9,2.9,0.0001),vec(0.0001,0.3,0.15),vec(0.0001,0.3,0.15),vec(0.0001,0.3,0.15),vec(0.0001,0.3,0.15),vec(0,2.6717,1.6083),vec(0,0.1,0.1),vec(0,0.1,0.1),vec(0,0.1,0.1),vec(1,1,1),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078),vec(0.078,0.0024,0.078))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(0,0,0),vec(120,120,120),vec(230,230,230),vec(230,230,230),vec(230,230,230),vec(230,230,230),vec(230,230,230),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","","","","","","","","","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat","debug/debugdrawflat")
+    Hologram[ "parent", array ] = array(1,1,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    Hologram[ "note", array ] = array("","","","tab1","tab2","tab3","tab4","","checkbox1","checkbox2","checkbox3","","","","","","","","","","","","","","","","","","","")
+    
+    for( I = 1, Hologram[ "model", array ]:count() ) {
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector],
+            Hologram["alpha", array ][I,number]),
+            Hologram["model", array][I, string]
+        )
+        holoMaterial(I, Hologram["material", array][I, string])
+        holoParent(I, Hologram["parent", array][I, number])
+    }
+}
+
+if( clk() ) {
+    interval( 60 )
+}

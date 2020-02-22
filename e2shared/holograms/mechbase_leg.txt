@@ -1,0 +1,41 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 12/24/2019 @ 416
+# Holograms: 5
+# World: [1726.2741699219,-3006.0871582031,-14319.71875]
+# Notes: 
+########################################
+@name mechbase_leg
+@persist Hologram:table
+
+if( first() ) {
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl","models/holograms/cube.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,0),vec(0,0,0),vec(0,0,100),vec(0,0,200),vec(0,0,300))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4),vec(0.4,0.4,0.4))
+    Hologram[ "color", array ] = array(vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255)
+    Hologram[ "material", array ] = array("","","","","")
+    Hologram[ "parent", array ] = array(1,1,2,3,4)
+    Hologram[ "note", array ] = array("","","","","")
+    
+    for( I = 1, Hologram[ "model", array ]:count() ) {
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector],
+            Hologram["alpha", array ][I,number]),
+            Hologram["model", array][I, string]
+        )
+        holoMaterial(I, Hologram["material", array][I, string])
+        holoParent(I, Hologram["parent", array][I, number])
+    }
+}
+
+if( clk() ) {
+    interval( 60 )
+}

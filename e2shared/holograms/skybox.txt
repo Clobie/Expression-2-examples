@@ -1,0 +1,41 @@
+########################################
+# Exported by Dream's Hologram Modeler
+# Date: 12/19/2019 @ 1744
+# Holograms: 21
+# World: [-9812.369140625,-629.87445068359,-12799.71875]
+# Notes: 
+########################################
+@name skybox
+@persist Hologram:table
+
+if( first() ) {
+    
+    Hologram = table()
+    Hologram[ "model", array ] = array("models/sprops/cuboids/height96/size_1/cube_96x96x96.mdl","models/props_foliage/tree_pine01_4cluster.mdl","models/props_foliage/tree_pine01_8cluster.mdl","models/props_foliage/grass_02_cluster01.mdl","models/props_foliage/grass_02_cluster01.mdl","models/props_foliage/grass_02_cluster01.mdl","models/props_foliage/grass_02_detailmodel.mdl","models/props_foliage/grass_01.mdl","models/props_foliage/shrub_03_cluster.mdl","models/props_foliage/shrub_03_cluster02.mdl","models/props_swamp/fern_01.mdl","models/sprops/cuboids/height96/size_1/cube_96x96x96.mdl","models/props_foliage/shrub_03_cluster02.mdl","models/props_foliage/shrub_03_cluster.mdl","models/props_foliage/grass_02_cluster01.mdl","models/props_forest/cliff_wall_07_mirrored.mdl","models/props_forest/cliff_wall_02_mirrored.mdl","models/props_forest/cliff_wall_02c.mdl","models/props_2fort/cow001_reference.mdl","models/props_2fort/cow001_reference.mdl","models/holograms/hq_sphere.mdl")
+    Hologram[ "position", array ] = array(vec(0,0,196.4121),vec(-145.8652,498.8047,0),vec(-500,-20.2041,0),vec(-500,-411.7148,0),vec(-500,-363,0),vec(-500,114,0),vec(-500,429,0),vec(500,0,0),vec(500,144,0),vec(500,-56,0),vec(500,-400.0001,0),vec(0,0,0),vec(500,462.8989,0),vec(-405,-500.0001,0),vec(-90,-500.0001,-5),vec(150,-500.0001,0),vec(-325,-500.0001,0),vec(0,-500.0001,0),vec(500,-335,0),vec(500,-235,0),vec(0.0293,0,88.9336))
+    Hologram[ "angle", array ] = array(ang(0,0,0),ang(0,90,0),ang(0,0,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,0,0),ang(0,90,0),ang(0,0,0),ang(0,90,0),ang(0,90,0),ang(0,90,0),ang(0,0,0),ang(0,0,0),ang(0,0,0))
+    Hologram[ "scale", array ] = array(vec(-10.4352,-10.4352,-4.1451),vec(0.01,1,1),vec(0.01,0.8,0.8),vec(2,0.01,2),vec(2,0.01,2),vec(2,0.01,2),vec(2,0.01,2),vec(2,0.01,2),vec(0.01,2,2),vec(0.01,2,2),vec(0.01,1,1),vec(10.4352,10.4352,0.0104),vec(0.01,2,2),vec(0.01,3,3),vec(2,0.01,2),vec(0.01,3,3),vec(0.01,0.5,0.5),vec(0.01,1,1),vec(0.01,1,1),vec(0.01,0.4,0.4),vec(0.1,0.1,0.1))
+    Hologram[ "color", array ] = array(vec(21,25,38),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(8,15,8),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(0,0,0),vec(255,255,255))
+    Hologram[ "alpha", array ] = array(255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255)
+    Hologram[ "material", array ] = array("debug/debugdrawflat","","","","","","","","","","","debug/debugdrawflat","","","","","","","","","")
+    Hologram[ "parent", array ] = array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    Hologram[ "note", array ] = array("","","","","","","","","","","","","","","","","","","","","")
+    
+    for( I = 1, Hologram[ "model", array ]:count() ) {
+        holoCreate(
+            I,
+            entity():toWorld(Hologram["position", array][I, vector]),
+            Hologram["scale", array][I, vector],
+            entity():toWorld(Hologram["angle", array][I, angle]),
+            vec4(Hologram["color", array][I, vector],
+            Hologram["alpha", array ][I,number]),
+            Hologram["model", array][I, string]
+        )
+        holoMaterial(I, Hologram["material", array][I, string])
+        holoParent(I, Hologram["parent", array][I, number])
+    }
+}
+
+if( clk() ) {
+    interval( 60 )
+}
